@@ -1,0 +1,56 @@
+<!doctype html>
+<html>
+<head>
+	
+<style>
+      .closed {
+        color: red;
+      }
+    </style>	
+		
+<meta charset="UTF-8">
+<title>6myDate</title>
+</head>
+
+<body>
+
+	<div class="myDate">28 Mar 2023</div>
+	<div class="myDate">29 Mar 2023</div>
+	<div class="myDate">30 Mar 2023</div>
+	<div class="myDate">31 Mar 2023</div>
+	<br>
+    <button onclick="validateDates()">Check Dates</button>
+	
+<script>
+	
+// Get all elements with class="myDate"
+var myDates = document.getElementsByClassName("myDate");
+
+// Get current date
+var currentDate = new Date();
+
+// Loop through all elements with class="myDate"
+for (var i = 0; i < myDates.length; i++) {
+  // Get date string from element
+  var dateString = myDates[i].innerHTML;
+
+  // Convert date string to Date object
+  var date = new Date(dateString);
+
+  // Check if date is today or in the past
+  if (date <= currentDate) {
+    // Call function doThis() for this element
+    doThis(myDates[i]);
+  }
+}
+
+// Function doThis() to add "closed" text to element
+function doThis(element) {
+  element.innerHTML += " closed";
+}
+	
+	
+</script>
+	
+</body>
+</html>

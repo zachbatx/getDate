@@ -1,0 +1,48 @@
+<!doctype html>
+<html>
+<head>
+	
+<style>
+      .closed {
+        color: red;
+      }
+    </style>	
+	
+<meta charset="UTF-8">
+<title>5myDate</title>
+</head>
+
+<body>
+
+	<div class="myDate">03 26 2023</div>
+    <div class="myDate">03 27 2023</div>
+    <div class="myDate">03 28 2023</div>
+    <div class="myDate">03 31 2023</div>
+	<br>
+    <button onclick="validateDates()">Check Dates</button>
+	
+<script>
+	
+function validateDates() {
+  const currentDate = new Date();
+  const myDateElems = document.querySelectorAll('.myDate');
+  myDateElems.forEach(elem => {
+    const dateString = elem.textContent.trim();
+    const [month, day, year] = dateString.split(' ');
+    const date = new Date(year, month - 1, day); // month is 0-based in Date constructor
+    if (date <= currentDate) {
+      doThis(elem);
+    }
+  });
+}
+
+function doThis(elem) {
+  elem.classList.add('closed');
+  elem.textContent += ' (closed)';
+}
+	
+	
+</script>	
+	
+</body>
+</html>

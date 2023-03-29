@@ -1,0 +1,78 @@
+<!doctype html>
+<html>
+<head>
+	
+		
+<meta charset="UTF-8">
+<title>7myDate</title>
+</head>
+
+<body>
+
+	<div class="cont"><a class="external-link" href="">enroll</a> <time class="myDate">28 Mar 2023</time></div>
+	<div class="cont"><time class="myDate">29 Mar 2023</time></div>
+	<div class="cont"><a class="external-link" href="">enroll</a> <time class="myDate">25 Mar 2023</time></div>
+	<div class="cont"><a class="external-link" href="">enroll</a> <time class="myDate">31 Mar 2023</time></div>
+	
+<br>
+	<button onClick="replLink()">replace</button>
+<script>
+	
+/// Get all elements with tag "time"
+//var timeElements = document.getElementsByTagName("time");
+var timeElements = document.querySelectorAll("div.cont time");
+const externalLinks = document.querySelectorAll('a.external-link');
+// Get current date plus one day
+var currentDate = new Date();
+currentDate.setDate(currentDate.getDate() + 1);
+
+// Loop through all elements with tag "time"
+for (var i = 0; i < timeElements.length; i++) {
+  // Get date string from element
+  var dateString = timeElements[i].innerHTML;
+
+  // Convert date string to Date object
+  var date = new Date(dateString);
+
+  // Check if date plus one day is today or in the past
+  if (date <= currentDate) {
+    // Call function doThis() for this element
+    doThis(timeElements[i]);
+	
+  }
+}
+
+// Function doThis() to replace the innerHTML of <a> before "time" tag with "closed"
+function doThis(element) {
+  var prevSibling = element.previousSibling;
+  const div = document.createElement('div').innerHTML = "closed";
+  while (prevSibling && prevSibling.nodeType !== 1) {
+    prevSibling = prevSibling.previousSibling;
+  }
+  if (prevSibling && prevSibling.className === "external-link") {
+    //prevSibling.innerHTML = "closed";
+	prevSibling.replaceWith(div);
+	  
+  } 
+}
+	
+//window.onload = setTimeout(replLink, 2000);	
+
+function replLink() {
+	
+	// Get all the <a> elements with the class "external-link"
+//const externalLinks = document.querySelectorAll('a.external-link');
+
+// Loop through each <a> element and replace it with a <div> element
+	externalLinks.forEach(link => {
+  	const div = document.createElement('div');
+  	div.className = 'closedDiv';
+  	div.innerHTML = link.innerHTML;
+  	link.parentNode.replaceChild(div, link);
+});
+}
+
+</script>
+	
+</body>
+</html>

@@ -1,0 +1,75 @@
+<!doctype html>
+<html>
+<head>
+	
+		
+<meta charset="UTF-8">
+<title>9myDate</title>
+</head>
+
+<body>
+
+	<div class="tabpage">
+		<div class="te">
+			<ul>
+				<li>
+			<a class="external-link" href="">enroll</a> <br>
+				 <time class="myDate">27 Mar 2023</time>
+				</li>
+				<li>
+			<a class="external-link" href="">enroll</a> <br>
+				<time class="myDate">28 Mar 2023</time>
+				</li>
+				<li>
+			<a class="external-link" href="">enroll</a> <time class="myDate">29 Mar 2023</time>
+				</li>
+				<li>
+			<a class="external-link" href="">enroll</a> <time class="myDate">30 Mar 2023</time>
+				</li>
+				<li>
+			<a class="external-link" href="">enroll</a> <time class="myDate">31 Mar 2023</time>
+				</li>
+			</ul>
+		</div>
+	</div>
+
+	
+
+<script>
+	
+// Get all elements with tag "time"
+var timeElements = document.querySelectorAll(".tabpage .te ul li time");
+// Get current date
+var currentDate = new Date();
+currentDate.setDate(currentDate.getDate() - 1); // Set currentDate to one day in the past
+
+// Loop through all elements with tag "time"
+for (var i = 0; i < timeElements.length; i++) {
+  // Get date string from element
+  var dateString = timeElements[i].innerHTML;
+
+  // Convert date string to Date object
+  var date = new Date(dateString);
+
+  // Check if date is today or in the past
+  if (date <= currentDate) {
+    // Call function doThis() for this element
+    doThis(timeElements[i]);
+  }
+}
+
+// Function doThis() to replace the innerHTML of <a> with class "external-link" within the parent <li> of the "time" tag with "closed"
+function doThis(element) {
+  var parentLi = element.closest('li');
+  var externalLink = parentLi.querySelector('.external-link');
+  const div = document.createElement('div');
+  div.innerHTML = "closed";
+  if (externalLink) {
+    externalLink.replaceWith(div);
+  }
+}
+
+</script>
+	
+</body>
+</html>

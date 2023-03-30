@@ -53,21 +53,28 @@
 </div>
 
 <script>
+  // Wait for the DOM content to load before executing the script
   document.addEventListener('DOMContentLoaded', function() {
+    // Select the table and the <ul> element where new content will be appended
     const table = document.querySelector('table[border="1"]');
     const dataUl = document.querySelector('ul[aria-label="dates"]');
 
+    // Check if both table and <ul> element are found
     if (table && dataUl) {
+      // Iterate through each table row (excluding the header row)
       table.querySelectorAll('tbody tr:not(:first-child)').forEach(row => {
+        // Extract the required data from each table cell
         const dateData = row.cells[1].textContent;
         const titleData = row.cells[2].textContent;
         const linkData = row.cells[5].querySelector('a').href;
 
+        // Create new elements for each piece of data
         const newLi = document.createElement('li');
         const newH3 = document.createElement('h3');
         const newA = document.createElement('a');
         const newTime = document.createElement('time');
 
+        // Set the content and class attributes for each new element
         newH3.textContent = titleData;
         newH3.classList.add('courseHeaderH3');
         newLi.appendChild(newH3);
@@ -81,6 +88,7 @@
         newTime.classList.add('myDate');
         newLi.appendChild(newTime);
 
+        // Append the new <li> element with its children to the <ul> element
         dataUl.appendChild(newLi);
       });
     }
@@ -89,3 +97,4 @@
 
 </body>
 </html>
+

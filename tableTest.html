@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Data Import Example</title>
+  <style>
+    /* Add any required styles here */
+  </style>
+</head>
+<body>
+
+<table width="200" border="1">
+  <caption>Data</caption>
+  <tbody>
+    <tr>
+      <th scope="col">&nbsp;</th>
+      <th scope="col">date</th>
+      <th scope="col">title</th>
+      <th scope="col">category</th>
+      <th scope="col">type</th>
+      <th scope="col">link</th>
+      <th scope="col">learning # (offering)</th>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>27 Mar 2023</td>
+      <td>Accessibility Training</td>
+      <td>General</td>
+      <td>eLearning</td>
+      <td><a href="">link</a></td>
+      <td>ABC_10000</td>
+    </tr>
+	<tr>
+      <td>1</td>
+      <td>27 Mar 2023</td>
+      <td>Accessibility Training</td>
+      <td>General</td>
+      <td>eLearning</td>
+      <td><a href="">link</a></td>
+      <td>ABC_10000</td>
+    </tr>
+    <!-- Add more table rows with data as needed -->
+  </tbody>
+</table>
+
+<div class="tabpage">
+  <div class="te">
+    <ul aria-label="dates">
+      <!-- The script will populate this area with new <li> elements -->
+    </ul>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const table = document.querySelector('table[border="1"]');
+    const dataUl = document.querySelector('ul[aria-label="dates"]');
+
+    if (table && dataUl) {
+      table.querySelectorAll('tbody tr:not(:first-child)').forEach(row => {
+        const dateData = row.cells[1].textContent;
+        const titleData = row.cells[2].textContent;
+        const linkData = row.cells[5].querySelector('a').href;
+
+        const newLi = document.createElement('li');
+        const newH3 = document.createElement('h3');
+        const newA = document.createElement('a');
+        const newTime = document.createElement('time');
+
+        newH3.textContent = titleData;
+        newH3.classList.add('courseHeaderH3');
+        newLi.appendChild(newH3);
+
+        newA.textContent = 'enroll';
+        newA.href = linkData;
+        newA.classList.add('external-link', 'enrollLink');
+        newLi.appendChild(newA);
+
+        newTime.textContent = dateData;
+        newTime.classList.add('myDate');
+        newLi.appendChild(newTime);
+
+        dataUl.appendChild(newLi);
+      });
+    }
+  });
+</script>
+
+</body>
+</html>

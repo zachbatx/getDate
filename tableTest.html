@@ -5,12 +5,46 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Data Import Example</title>
   <style>
-    /* Add any required styles here */
+	  body {
+		  font-family: Gotham, "Helvetica Neue", Helvetica, Arial, "sans-serif";
+	  }
+	  .tabPage .te ul li:not(:last-child) {
+		  padding:0px 8px 8px 0px;
+		  margin:0px 10px 8px 0px;
+		  border-bottom:1px solid #c0c0c0;
+	  }
+	  ul {
+		  margin:15px 0px 15px -20px;
+	  }
+	  li {
+		  list-style: none;
+	  }
+	  h3  {
+		  padding:0px 0px 5px 0px;
+		  margin:0px 10px 0px 0px;
+	  }
+	  .tableClass {
+		  display:none;
+	  }
+	  .enrollLink {
+		  margin-right:10px;
+	  }
+	  .tabPage {
+		  border:solid 1px #c0c0c0;
+		  border-radius: 5px;
+		  background-color: #EEEEEE;
+		  width:500px;
+	  }
   </style>
+	
+	
+	
 </head>
 <body>
+	
+	
 
-<table width="200" border="1">
+<table class="tableClass" width="200" border="1">
   <caption>Data</caption>
   <tbody>
     <tr>
@@ -20,7 +54,7 @@
       <th scope="col">category</th>
       <th scope="col">type</th>
       <th scope="col">link</th>
-      <th scope="col">learning details</th>
+      <th scope="col">learning # (offering)</th>
     </tr>
     <tr>
       <td>1</td>
@@ -29,22 +63,40 @@
       <td>General</td>
       <td>Learning</td>
       <td><a href="">link</a></td>
-      <td>10000</td>
+      <td>ABC_10000</td>
     </tr>
 	<tr>
       <td>1</td>
-      <td>27 Mar 2023</td>
+      <td>28 Mar 2023</td>
       <td>Training</td>
       <td>General</td>
       <td>Learning</td>
       <td><a href="">link</a></td>
-      <td>10000</td>
+      <td>ABC_10000</td>
     </tr>
+	<tr>
+      <td>1</td>
+      <td>29 Mar 2023</td>
+      <td>Training</td>
+      <td>General</td>
+      <td>Learning</td>
+      <td><a href="">link</a></td>
+      <td>ABC_10000</td>
+    </tr>  
+	<tr>
+      <td>1</td>
+      <td>30 Mar 2023</td>
+      <td>Training</td>
+      <td>General</td>
+      <td>Learning</td>
+      <td><a href="">link</a></td>
+      <td>ABC_12300</td>
+    </tr> 
     <!-- Add more table rows with data as needed -->
   </tbody>
 </table>
 
-<div class="tabpage">
+<div class="tabPage">
   <div class="te">
     <ul aria-label="dates">
       <!-- The script will populate this area with new <li> elements -->
@@ -56,7 +108,7 @@
   // Wait for the DOM content to load before executing the script
   document.addEventListener('DOMContentLoaded', function() {
     // Select the table and the <ul> element where new content will be appended
-    const table = document.querySelector('table[border="1"]');
+    const table = document.querySelector('table.tableClass');
     const dataUl = document.querySelector('ul[aria-label="dates"]');
 
     // Check if both table and <ul> element are found
@@ -73,6 +125,7 @@
         const newH3 = document.createElement('h3');
         const newA = document.createElement('a');
         const newTime = document.createElement('time');
+		//newA.className = "external-link";
 
         // Set the content and class attributes for each new element
         newH3.textContent = titleData;
@@ -94,7 +147,48 @@
     }
   });
 </script>
+	
+<script>
+
+window.onload = setTimeout(checkDate, 1000);
+	
+function checkDate() {	
+	//alert('works');
+	
+// Get all elements with tag "time"
+var timeElements = document.querySelectorAll(".tabPage .te ul li time");
+// Get current date
+var currentDate = new Date();
+currentDate.setDate(currentDate.getDate() - 1); // Set currentDate to one day in the past
+
+// Loop through all elements with tag "time"
+for (var i = 0; i < timeElements.length; i++) {
+  // Get date string from element
+  var dateString = timeElements[i].innerHTML;
+	timeElements[i].setAttribute.color = "#FF0000";
+  // Convert date string to Date object
+  var date = new Date(dateString);
+
+  // Check if date is today or in the past
+  if (date <= currentDate) {
+    // Call function doThis() for this element
+    doThis(timeElements[i]);
+  }
+}
+
+// Function doThis() to replace the innerHTML of <a> with class "external-link" within the parent <li> of the "time" tag with "closed"
+function doThis(element) {
+  var parentLi = element.closest('li');
+  var externalLink = parentLi.querySelector('.external-link');
+  const div = document.createElement('span');
+  div.innerHTML = ("closed" + " ");
+  if (externalLink) {
+    externalLink.replaceWith(div);
+  }
+}
+}
+</script>
+	
 
 </body>
 </html>
-

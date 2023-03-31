@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>3Data Import Example</title>
+  <style>
+	  body {
+		  font-family: Gotham, "Helvetica Neue", Helvetica, Arial, "sans-serif";
+	  }
+	  .tabPage .te ul li:not(:last-child) {
+		  padding:0px 8px 8px 0px;
+		  margin:0px 10px 8px 0px;
+		  border-bottom:1px solid #c0c0c0;
+	  }
+	  ul {
+		  margin:15px 0px 15px -20px;
+	  }
+	  li {
+		  list-style: none;
+	  }
+	  h3  {
+		  padding:0px 0px 5px 0px;
+		  margin:0px 10px 0px 0px;
+	  }
+	  .confluenceTable {
+		  display:none;
+	  }
+	  .enrollLink {
+		  margin-right:10px;
+	  }
+	  .tabPage {
+		  border:solid 1px #c0c0c0;
+		  border-radius: 5px;
+		  background-color: #EEEEEE;
+		  width:500px;
+	  }
+  </style>
+	
+	
+	
+</head>
+<body>
+	
+
+<table class="confluenceTable" width="200" border="1">
+  <caption>Data</caption>
+	 <tr>
+      <th scope="col">&nbsp;</th>
+      <th scope="col">date</th>
+      <th scope="col">title</th>
+      <th scope="col">category</th>
+      <th scope="col">type</th>
+      <th scope="col">link</th>
+      <th scope="col">learning # (offering)</th>
+    </tr>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>27 Mar 2023</td>
+      <td>Training</td>
+      <td>General</td>
+      <td>Learning</td>
+      <td><a href="">link</a></td>
+      <td>10000</td>
+    </tr>
+    <!-- Add more table rows with data as needed -->
+  </tbody>
+</table>
+
+<div class="tabPage">
+  <div class="te">
+    <ul aria-label="dates">
+      <!-- The script will populate this area with new <li> elements -->
+    </ul>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const table = document.querySelector('table.confluenceTable');
+    const dataUl = document.querySelector('ul[aria-label="dates"]');
+
+    if (table && dataUl) {
+      table.querySelectorAll('tbody tr').forEach((row, index) => {
+        // Exclude the header row
+        if (index === 0) {
+          return;
+        }
+        
+        const dateData = row.cells[1].textContent;
+        const titleData = row.cells[2].textContent;
+        const linkData = row.cells[5].querySelector('a').href;
+
+        const newLi = document.createElement('li');
+        const newH3 = document.createElement('h3');
+        const newA = document.createElement('a');
+        const newTime = document.createElement('time');
+
+        newH3.textContent = titleData;
+        newLi.appendChild(newH3);
+
+        newA.textContent = 'enroll';
+        newA.href = linkData;
+        newA.classList.add('external-link', 'enrollLink');
+        newLi.appendChild(newA);
+
+        newTime.textContent = dateData;
+        newLi.appendChild(newTime);
+
+        dataUl.appendChild(newLi);
+      });
+    }
+  });
+</script>
+	
+<script>
+
+window.onload = setTimeout(checkDate, 1000);
+	
+function checkDate() {	
+	//alert('works');
+	
+// Get all elements with tag "time"
+var timeElements = document.querySelectorAll(".tabPage .te ul li time");
+// Get current date
+var currentDate = new Date();
+currentDate.setDate(currentDate.getDate() - 1); // Set currentDate to one day in the past
+
+// Loop through all elements with tag "time"
+for (var i = 0; i < timeElements.length; i++) {
+  // Get date string from element
+  var dateString = timeElements[i].innerHTML;
+	timeElements[i].setAttribute.color = "#FF0000";
+  // Convert date string to Date object
+  var date = new Date(dateString);
+
+  // Check if date is today or in the past
+  if (date <= currentDate) {
+    // Call function doThis() for this element
+    doThis(timeElements[i]);
+  }
+}
+
+// Function doThis() to replace the innerHTML of <a> with class "external-link" within the parent <li> of the "time" tag with "closed"
+function doThis(element) {
+  var parentLi = element.closest('li');
+  var externalLink = parentLi.querySelector('.external-link');
+  const div = document.createElement('span');
+  div.innerHTML = ("closed" + " ");
+  if (externalLink) {
+    externalLink.replaceWith(div);
+  }
+}
+}
+</script>
+	
+
+</body>
+</html>

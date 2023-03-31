@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Remove &nbsp; from Time Elements</title>
+</head>
+<body>
+
+<time>27 Mar 2023&nbsp;</time>
+<time>&nbsp;28 Mar 2023</time>
+<time>29 Mar 2023&nbsp;</time>
+
+<script>
+  function removeNbspFromTimeElements() {
+    const timeElements = document.querySelectorAll('time');
+    
+    timeElements.forEach(timeElement => {
+      timeElement.innerHTML = timeElement.innerHTML.replace(/&nbsp;/g, '');
+    });
+  }
+
+  // Execute the function when the DOM is loaded
+  document.addEventListener('DOMContentLoaded', removeNbspFromTimeElements);
+</script>
+
+</body>
+</html><!doctype html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Untitled Document</title>
+</head>
+
+<body>
+</body>
+</html>

@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>9Data Import Example</title>
+  <style>
+	  body {
+		  font-family: Gotham, "Helvetica Neue", Helvetica, Arial, "sans-serif";
+	  }
+	  .tabPage .te ul li:not(:last-child) {
+		  padding:0px 8px 8px 0px;
+		  margin:0px 10px 8px 0px;
+		  border-bottom:1px solid #c0c0c0;
+	  }
+	  ul {
+		  margin:15px 0px 15px -20px;
+	  }
+	  li {
+		  list-style: none;
+	  }
+	  h3  {
+		  padding:0px 0px 5px 0px;
+		  margin:0px 10px 0px 0px;
+	  }
+	  h4  {
+		  padding:0px 0px 5px 0px;
+		  margin:0px 10px 10px 0px;
+		  border-bottom:1px solid #c0c0c0;
+	  }
+	  h5 {
+		  font-size:15px;
+		  padding:0px 0px 0px 5px;
+		  margin:5px 0px 8px 0px;
+		  border-left:3px solid #c0c0c0;
+	  }
+	  .confluenceTable {
+		  display:none;
+	  }
+	  .enrollLink {
+		  margin-right:10px;
+	  }
+	  .tabPage {
+		  border:solid 1px #c0c0c0;
+		  border-radius: 5px;
+		  background-color: #EEEEEE;
+		  width:500px;
+		  margin:8px 0px 8px 0px;		  
+	  }
+  </style>
+	
+	
+	
+</head>
+<body>
+	
+I would like to dynamically create 
+	
+	
+		
+<div id="general"> <h3>General</h3>
+	<div id="general-March" class="tabPage">
+	  <div class="te">
+		<ul aria-label="dates"> <h4>March</h4>
+		 </ul>
+	  </div>
+	</div>
+	<div id="general-April" class="tabPage">
+	  <div class="te">
+		<ul aria-label="dates"> <h4>April</h4>
+		 </ul>
+	  </div>
+	</div>
+</div>
+
+<div id="ux"> <h3>UX</h3>
+	<div id="ux-March" class="tabPage">
+	  <div class="te">
+		<ul aria-label="dates"> <h4>March</h4>
+		 </ul>
+	  </div>
+	</div>
+	<div id="ux-April" class="tabPage">
+	  <div class="te">
+		<ul aria-label="dates"> <h4>April</h4>
+		 </ul>
+	  </div>
+	</div>
+</div>
+
+<div id="developer"> <h3>Developer</h3>
+	<div id="developer-March" class="tabPage">
+	  <div class="te">
+		<ul aria-label="dates"> <h4>March</h4>
+		 </ul>
+	  </div>
+	</div>
+	<div id="developer-April" class="tabPage">
+	  <div class="te">
+		<ul aria-label="dates"> <h4>April</h4>
+		 </ul>
+	  </div>
+	</div>
+</div>
+
+<div id="tester"> <h3>Tester</h3>
+	<div id="tester-March" class="tabPage">
+	  <div class="te">
+		<ul aria-label="dates"> <h4>March</h4>
+		 </ul>
+	  </div>
+	</div>
+	<div id="tester-April" class="tabPage">
+	  <div class="te">
+		<ul aria-label="dates"> <h4>April</h4>
+		 </ul>
+	  </div>
+	</div>
+</div>
+	
+<div class="table-excerpt">
+<div class="table-wrap">
+	
+<table class="confluenceTable" width="200" border="1">
+  <caption>Data</caption>
+	<colgroup></colgroup>
+	<thead>
+	 <tr>
+      <th scope="col">&nbsp;</th>
+      <th scope="col">date</th>
+      <th scope="col">title</th>
+      <th scope="col">category</th>
+      <th scope="col">type</th>
+      <th scope="col">link</th>
+      <th scope="col">learning # (offering)</th>
+    </tr>
+	</thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>7 Apr 2023 4 Apr 2023</td>
+      <td>Training General</td>
+      <td>General</td>
+      <td>Self-paced</td>
+      <td><a href="">link</a></td>
+      <td>10000</td>
+    </tr>
+	<tr>
+      <td>1</td>
+      <td>27 Mar 2023 30 Mar 2023</td>
+      <td>Training General</td>
+      <td>General</td>
+      <td>Self-paced</td>
+      <td><a href="">link</a></td>
+      <td>10000</td>
+    </tr>
+	 <tr>
+      <td>1</td>
+      <td>4 Mar 2023</td>
+      <td>Training UX</td>
+      <td>UX</td>
+      <td>Self-paced</td>
+      <td><a href="">link</a></td>
+      <td>10000</td>
+    </tr>
+	<tr>
+      <td>1</td>
+      <td>6 Apr 2023</td>
+      <td>Training UX</td>
+      <td>UX</td>
+      <td>Self-paced</td>
+      <td><a href="">link</a></td>
+      <td>10000</td>
+    </tr>
+	<tr>
+      <td>1</td>
+      <td>5 Mar 2023</td>
+      <td>Training Developer</td>
+      <td>Developer</td>
+      <td>Self-paced</td>
+      <td><a href="">link</a></td>
+      <td>10000</td>
+    </tr>
+	  <tr>
+      <td>1</td>
+      <td>6 Apr 2023</td>
+      <td>Training Developer</td>
+      <td>Developer</td>
+      <td>Self-paced</td>
+      <td><a href="">link</a></td>
+      <td>20000</td>
+    </tr>
+	  <tr>
+      <td>1</td>
+      <td>4 Apr 2023</td>
+      <td>Training Developer</td>
+      <td>Developer</td>
+      <td>Self-paced</td>
+      <td><a href="">link</a></td>
+      <td>20000</td>
+    </tr>
+	 <tr>
+      <td>1</td>
+      <td>27 Mar 2023 4 Mar 2023</td>
+      <td>Training Tester</td>
+      <td>Tester</td>
+      <td>Self-paced</td>
+      <td><a href="">link</a></td>
+      <td>10000</td>
+    </tr>
+	 <tr>
+      <td>1</td>
+      <td>27 Apr 2023 4 Apr 2023</td>
+      <td>Training Tester</td>
+      <td>Tester</td>
+      <td>Self-paced</td>
+      <td><a href="">link</a></td>
+      <td>10000</td>
+    </tr>
+	  <tr>
+      <td>1</td>
+      <td>3 Apr 2023 6 Apr 2023</td>
+      <td>Training General</td>
+      <td>General</td>
+      <td>Self-paced</td>
+      <td><a href="">link</a></td>
+      <td>10000</td>
+    </tr>
+    <!-- Add more table rows with data as needed -->
+  </tbody>
+</table>
+</div>
+</div>
+
+
+		
+<div id="general"> <h3>General</h3>
+	<div id="general-March" class="tabPage">
+	  <div class="te">
+		<ul aria-label="dates"> <h4>March</h4>
+		 </ul>
+	  </div>
+	</div>
+	<div id="general-April" class="tabPage">
+	  <div class="te">
+		<ul aria-label="dates"> <h4>April</h4>
+		 </ul>
+	  </div>
+	</div>
+</div>
+
+<div id="ux"> <h3>UX</h3>
+	<div id="ux-March" class="tabPage">
+	  <div class="te">
+		<ul aria-label="dates"> <h4>March</h4>
+		 </ul>
+	  </div>
+	</div>
+	<div id="ux-April" class="tabPage">
+	  <div class="te">
+		<ul aria-label="dates"> <h4>April</h4>
+		 </ul>
+	  </div>
+	</div>
+</div>
+
+<div id="developer"> <h3>Developer</h3>
+	<div id="developer-March" class="tabPage">
+	  <div class="te">
+		<ul aria-label="dates"> <h4>March</h4>
+		 </ul>
+	  </div>
+	</div>
+	<div id="developer-April" class="tabPage">
+	  <div class="te">
+		<ul aria-label="dates"> <h4>April</h4>
+		 </ul>
+	  </div>
+	</div>
+</div>
+
+<div id="tester"> <h3>Tester</h3>
+	<div id="tester-March" class="tabPage">
+	  <div class="te">
+		<ul aria-label="dates"> <h4>March</h4>
+		 </ul>
+	  </div>
+	</div>
+	<div id="tester-April" class="tabPage">
+	  <div class="te">
+		<ul aria-label="dates"> <h4>April</h4>
+		 </ul>
+	  </div>
+	</div>
+</div>
+	
+
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const table = document.querySelector('table.confluenceTable');
+
+    if (table) {
+      table.querySelectorAll('tbody tr').forEach((row, index) => {
+        // Exclude the header row
+        if (index === 0) {
+          return;
+        }
+        
+        const dateData = row.cells[1].textContent;
+        const titleData = row.cells[2].textContent;
+        const categoryData = row.cells[3].textContent.toLowerCase(); // Get the category
+        const linkData = row.cells[5].querySelector('a').href;
+
+        const newLi = document.createElement('li');
+        const newH3 = document.createElement('h5');
+        const newA = document.createElement('a');
+
+        newH3.textContent = titleData;
+        newLi.appendChild(newH3);
+
+        newA.textContent = 'enroll';
+        newA.href = linkData;
+        newA.classList.add('external-link', 'enrollLink');
+        newLi.appendChild(newA);
+
+        // Split the dateData string into an array of dates
+        const dateArray = dateData.match(/\d{1,2} \w{3} \d{4}/g);
+
+        // Loop through dateArray and create a new <time> element for each date
+        dateArray.forEach((date, index) => {
+          const newTime = document.createElement('time');
+          newTime.textContent = date;
+          newLi.appendChild(newTime);
+
+          // Add a space between the <time> tag instances
+          if (index < dateArray.length - 1) {
+            const space = document.createTextNode(' & ');
+            newLi.appendChild(space);
+          }
+        });
+
+        // Get the month from the first date in dateArray
+        const month = new Date(dateArray[0]).toLocaleString('default', { month: 'long' });
+
+        // Get the corresponding "ul" element based on the category and month
+        const dataUl = document.querySelector(`#${categoryData}-${month} ul[aria-label="dates"]`);
+
+        // Check if the "ul" element exists
+        if (dataUl) {
+          dataUl.appendChild(newLi);
+        }
+      });
+    }
+  });
+</script>
+
+	
+<script>
+  window.onload = setTimeout(checkDate, 2000);
+
+ function checkDate() {
+  // Get all elements with tag "time"
+  var timeElements = document.querySelectorAll(".tabPage .te ul li time");
+  // Get current date
+  var currentDate = new Date();
+  currentDate.setDate(currentDate.getDate() - 1); // Set currentDate to one day in the past
+
+  // Loop through all elements with tag "time"
+  for (var i = 0; i < timeElements.length; i++) {
+    // Get date string from element
+    var dateString = timeElements[i].innerHTML;
+    // Convert date string to Date object
+    var date = new Date(dateString);
+
+    // Check if there is a second instance of the <time> tag
+    var secondTimeElement = timeElements[i].nextElementSibling;
+    var secondDate;
+    if (secondTimeElement && secondTimeElement.tagName.toLowerCase() === 'time') {
+      var secondDateString = secondTimeElement.innerHTML;
+      secondDate = new Date(secondDateString);
+    }
+
+    // Check if date is today or in the past and if the second date is in the future or not present
+    if ((date <= currentDate && (!secondDate || secondDate <= currentDate)) || (date <= currentDate && !secondTimeElement)) {
+      // Call function doThis() for this element
+      doThis(timeElements[i]);
+    }
+  }
+}
+
+  // Function doThis() to replace the innerHTML of <a> with class "external-link" within the parent <li> of the "time" tag with "closed"
+  function doThis(element) {
+    var parentLi = element.closest('li');
+    var externalLink = parentLi.querySelector('.external-link');
+    const div = document.createElement('span');
+    div.innerHTML = ("closed" + " ");
+    if (externalLink) {
+      externalLink.replaceWith(div);
+    }
+  }
+</script>
+	
+	
+</body>
+</html>

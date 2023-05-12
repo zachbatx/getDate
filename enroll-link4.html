@@ -1,0 +1,71 @@
+<!doctype html>
+<html>
+<head>
+	
+	
+<meta charset="UTF-8">
+<title>enroll link aria-labelledby</title>
+</head>
+
+<body>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Find all <ul> elements
+  var ulElements = document.querySelectorAll('ul');
+  ulElements.forEach(function(ul) {
+    // Find the "Enroll" links within the <ul>
+    var enrollLinks = ul.querySelectorAll('a[href=""]');
+    enrollLinks.forEach(function(link) {
+      if (link.textContent.toLowerCase() === 'enroll') {
+        // Find the nearest preceding <h3> element within the <ul>
+        var heading = getPrecedingHeading(ul);
+        if (heading) {
+          // Generate a unique ID for the <h3> element if it doesn't have an ID already
+          if (!heading.id) {
+            heading.id = 'heading';
+          }
+
+          // Set the aria-labelledby attribute on the link, referencing the unique ID
+          link.setAttribute('aria-labelledby', heading.id);
+        }
+      }
+    });
+  });
+
+  function getPrecedingHeading(ul) {
+    var previousSibling = ul.previousElementSibling;
+    while (previousSibling) {
+      if (previousSibling.tagName.toLowerCase() === 'h3') {
+        return previousSibling;
+      }
+      previousSibling = previousSibling.previousElementSibling;
+    }
+    return null;
+  }
+});
+
+</script>	
+
+For some reason the script will not work if there are 2 list element enroll links within the same unordered list	
+	
+<h3 id="idfor01">Training basics</h3>
+<ul>
+  <li><a href="">Enroll</a></li>
+</ul>
+
+<h3 id="idfor02">>Training basics 2</h3>
+<ul>
+  <li><a href="">Enroll</a></li>
+  <li><a href="">Enroll</a></li>
+</ul>
+
+<h3 id="idfor03">>Training basics 3</h3>
+<ul>
+  <li><a href="">Enroll</a></li>
+</ul>
+	
+
+	
+</body>
+</html>

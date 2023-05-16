@@ -1,0 +1,55 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>remove excess br</title>
+    
+</head>
+<body>
+<script>
+        function removeExcessiveBrTags() {
+            // Get the div element
+            let divElem = document.getElementById('testElem');
+
+            // Regex to find three or more consecutive <br> tags
+            const regex = /(<br>\s*){3,}/gi;
+
+            // Replace three or more consecutive <br> tags with just two
+            divElem.innerHTML = divElem.innerHTML.replace(regex, '<br><br>');
+        }
+
+         function removeConsecutiveSpaces(node) {
+            for (let child = node.firstChild; child; child = child.nextSibling) {
+                if (child.nodeType === 3) { // Text node
+                    child.nodeValue = child.nodeValue.replace(/\s+/g, ' ');
+                } else if (child.nodeType === 1) { // Element node
+                    removeConsecutiveSpaces(child); // Recurse into children
+                }
+            }
+        }
+
+        // When DOM content is loaded, remove excessive <br> tags and consecutive spaces
+        document.addEventListener('DOMContentLoaded', (event) => {
+            removeExcessiveBrTags();
+            removeConsecutiveSpaces();
+        });
+    </script>
+	
+	can you please rewrite the script to remove spacing to only remove spacing without removing any element semantics. Here is example HTML where I only want any consecutive spacing to be replaced with a single space without changing any existing semantics 
+	
+	<span>test  test</span> test  <div>test     test</div>  test test
+	
+	The code should look like this after the script has been triggered with only sigle spaces
+	
+	<span>test test</span> test <div>test test</div> test test
+	
+	
+    <div id="testElem">
+        test<br><br>test
+        <br>
+        test<br><br><br>test
+        test<br><br><br><br>test    test test test  test  
+    </div>
+    <button onclick="removeExcessiveBrTags()">Remove Excessive Breaks</button>
+</body>
+</html>

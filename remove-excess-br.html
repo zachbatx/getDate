@@ -1,0 +1,35 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>remove excess br</title>
+    
+</head>
+<body>
+<script>
+	document.addEventListener('DOMContentLoaded', (event) => {
+            removeExcessiveBrTags();
+        });	
+	
+        function removeExcessiveBrTags() {
+            // Get the div element
+            let divElem = document.querySelector('body');
+
+            // Regex to find three or more consecutive <br> tags
+            const regex = /(<br>\s*){3,}/gi;
+
+            // Replace three or more consecutive <br> tags with just two
+            divElem.innerHTML = divElem.innerHTML.replace(regex, '<br><br>');
+        }
+    </script>	
+	
+	
+    <div id="testElem">
+        test<br><br>test
+        <br>
+        test<br><br><br>test
+        test<br><br><br><br>test
+    </div>
+    <button onclick="removeExcessiveBrTags()">Remove Excessive Breaks</button>
+</body>
+</html>

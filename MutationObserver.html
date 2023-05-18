@@ -1,0 +1,91 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>MutationObserver</title>
+</head>
+
+	
+<body>
+	
+<script>
+/ select the target node
+var target = document.querySelector('#some-id');
+
+// create an observer instance
+var observer = new MutationObserver(function(mutations) {
+  mutations.forEach(function(mutation) {
+    // Call each function in the array
+    myFunctions.forEach(function(func) {
+      func();
+    });
+  });    
+});
+
+// configuration of the observer
+var config = { attributes: true, childList: true, characterData: true };
+
+// pass in the target node, as well as the observer options
+observer.observe(target, config);
+
+// define your functions
+function function1() {
+  // Your code here
+}
+
+function function2() {
+  // Your code here
+}
+
+function function3() {
+  // Your code here
+}
+
+// array of functions
+var myFunctions = [function1, function2, function3];	
+	
+</script>	
+	
+<script>
+	
+// select the target node
+var target = document.querySelector('#some-id');
+
+// create an observer instance
+var observer = new MutationObserver(function(mutations) {
+  mutations.forEach(function(mutation) {
+    // Function 1
+    function1();
+
+    // Function 2
+    function2();
+
+    // Function 3
+    function3();
+  });    
+});
+
+// configuration of the observer
+var config = { attributes: true, childList: true, characterData: true };
+
+// pass in the target node, as well as the observer options
+observer.observe(target, config);
+
+// define your functions
+function function1() {
+  // Your code here
+}
+
+function function2() {
+  // Your code here
+}
+
+function function3() {
+  // Your code here
+}
+	
+</script>	
+	
+	
+</body>
+</html>

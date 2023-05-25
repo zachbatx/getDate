@@ -1,0 +1,63 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>table count</title>
+</head>
+
+<body>
+	
+<script>
+	
+// JavaScript code
+window.onload = function() {
+  // Get the table element
+  var table = document.getElementById("myTable");
+
+  // Get the number of rows in the table
+  var rowCount = table.rows.length;
+
+  // Add a new column header
+  var headerCell = document.createElement("th");
+  var headerText = document.createTextNode("Count");
+  headerCell.appendChild(headerText);
+  table.rows[0].insertBefore(headerCell, table.rows[0].firstChild);
+
+  // Iterate through each row and add a count column
+  for (var i = 1; i < rowCount; i++) {
+    var countCell = table.rows[i].insertCell(0);
+    var countText = document.createTextNode(i);
+    countCell.appendChild(countText);
+  }
+};	
+</script>	
+	
+
+  <table id="myTable">
+    <tr>
+      <th>Header 1</th>
+      <th>Header 2</th>
+      <!-- Existing columns -->
+    </tr>
+    <tr>
+      <td>Data 1</td>
+      <td>Data 2</td>
+      <!-- Existing data rows -->
+    </tr>
+	  <tr>
+      <td>Data 1</td>
+      <td>Data 2</td>
+      <!-- Existing data rows -->
+    </tr>
+	  <tr>
+      <td>Data 1</td>
+      <td>Data 2</td>
+      <!-- Existing data rows -->
+    </tr>
+    <!-- More rows... -->
+  </table>
+
+	
+	
+</body>
+</html>

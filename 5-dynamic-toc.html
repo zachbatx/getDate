@@ -1,0 +1,142 @@
+<html>
+<head>
+
+<style>
+	* {
+	  box-sizing: border-box;
+	}
+
+	/* Create two equal columns that floats next to each other */
+		.column {
+		  float: left;
+		  padding: 10px;
+		  height: 300px; /* Should be removed. Only for demonstration */
+		}
+		.column:first-of-type {
+		  float: left;
+		  width: 250px;
+		  padding: 10px;
+		  height: 300px; /* Should be removed. Only for demonstration */
+		}
+		.column:nth-child(2) {
+			border:solid 1px #c0c0c0;
+			border-radius:5px;
+			flex: 5;
+			width:40vw;
+		}
+
+		/* Clear floats after the columns */
+		.container:after {
+		  content: "";
+		  display: flex;
+		  clear: both;
+		  position:relative;
+		  margin-bottom:10px; 
+		}
+		.leftC {
+			background-color: #EEEEEE;
+		}
+		li {
+			list-style: decimal;
+		}
+		li.currentToc {
+			background-color:#4D4D4D;
+			color:#FFFFFF;
+		}
+		li.currentToc:before {
+			color:#000000 !important;
+		}
+	</style>	
+	
+<meta charset="UTF-8">
+<title>4 dynamic toc</title>
+</head>	
+	
+   <body>
+    <div class="container" slidenum="1" slidetitle="first slide">
+      <div class="column leftC">
+        <ul class="toc"></ul>
+      </div>  
+      <div class="column">
+        <div class="content"></div>
+      </div>
+    </div>  
+    <div class="container" slidenum="2" slidetitle="second slide">
+      <div class="column leftC">
+        <ul class="toc"></ul>
+      </div>  
+      <div class="column">
+        <div class="content"></div>
+      </div>
+    </div>      
+    <div class="container" slidenum="3" slidetitle="third slide">
+      <div class="column leftC">
+        <ul class="toc"></ul>
+      </div>  
+      <div class="column">
+        <div class="content"></div>
+      </div>
+    </div>  
+	   
+	   <div class="container" slidenum="3" slidetitle="third slide">
+      <div class="column leftC">
+        <ul class="toc"></ul>
+      </div>  
+      <div class="column">
+        <div class="content"></div>
+      </div>
+    </div>  
+	   <div class="container" slidenum="4" slidetitle="fourth slide">
+      <div class="column leftC">
+        <ul class="toc"></ul>
+      </div>  
+      <div class="column">
+        <div class="content"></div>
+      </div>
+    </div>  
+
+    <script>
+      const containers = document.querySelectorAll('.container');
+      const slideSet = new Set();
+      const slideData = [];
+
+      containers.forEach((container) => {
+        const slidetitle = container.getAttribute('slidetitle');
+        const slidenum = container.getAttribute('slidenum');
+        const contentDiv = container.querySelector('.content');
+
+        // If it's a duplicate, add a div with class 'dupSlide' to the 'content' div
+        if (slideSet.has(slidenum)) {
+          const dupDiv = document.createElement('div');
+          dupDiv.className = 'dupSlide';
+          dupDiv.textContent = 'duplicate ' + slidenum;
+          contentDiv.appendChild(dupDiv);
+        } else {
+          slideSet.add(slidenum);
+          slideData.push({ slidenum, slidetitle });
+
+          const h2 = document.createElement('h2');
+          h2.textContent = slidetitle;
+          contentDiv.prepend(h2);
+        }
+      });
+
+      // Now let's create the table of contents
+      containers.forEach((container) => {
+        const slidenum = container.getAttribute('slidenum');
+        const toc = container.querySelector('.toc');
+
+        slideData.forEach((data) => {
+          const li = document.createElement('li');
+          li.textContent = data.slidetitle;
+
+          if (data.slidenum === slidenum) {
+            li.className = "currentToc";
+          }
+
+          toc.appendChild(li);
+        });
+      });
+    </script>
+  </body>
+</html>

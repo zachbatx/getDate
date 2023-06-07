@@ -1,100 +1,104 @@
 <html>
 <head>
-
 <style>
-	* {
-	  box-sizing: border-box;
-	}
-
-	/* Create two equal columns that floats next to each other */
-		.column {
-		  float: left;
-		  padding: 10px;
-		  height: 300px; /* Should be removed. Only for demonstration */
-		}
-		.column:first-of-type {
-		  float: left;
-		  width: 250px;
-		  padding: 10px;
-		  height: 300px; /* Should be removed. Only for demonstration */
-		}
-		.column:nth-child(2) {
-			border:solid 1px #c0c0c0;
-			border-radius:5px;
-			flex: 5;
-			width:40vw;
-		}
-
-		/* Clear floats after the columns */
-		.container:after {
-		  content: "";
-		  display: flex;
-		  clear: both;
-		  position:relative;
-		  margin-bottom:10px; 
-		}
-		.leftC {
-			background-color: #EEEEEE;
-		}
-		li {
-			list-style: none;
-		}
-		li.currentToc {
-			background-color:#4D4D4D;
-			color:#FFFFFF;
-		}
-		li.currentToc:before {
-			color:#000000 !important;
-		}
-	</style>	
-	
+* {
+	box-sizing: border-box;
+}
+/* Create two equal columns that floats next to each other */
+.column {
+	float: left;
+	padding: 10px;
+	height: 300px; /* Should be removed. Only for demonstration */
+}
+.column:first-of-type {
+	float: left;
+	width: 250px;
+	padding: 10px;
+	height: 300px; /* Should be removed. Only for demonstration */
+}
+.column:nth-child(2) {
+	border: solid 1px #c0c0c0;
+	border-radius: 5px;
+	flex: 5;
+	width: 40vw;
+}
+/* Clear floats after the columns */
+.container:after {
+	content: "";
+	display: flex;
+	clear: both;
+	position: relative;
+	margin-bottom: 10px;
+}
+.leftC {
+	background-color: #EEEEEE;
+}
+li {
+	list-style: none;
+}
+li.currentToc {
+	background-color: #4D4D4D;
+	color: #FFFFFF;
+}
+li.currentToc:before {
+	color: #000000 !important;
+}
+.firstLetter {
+  text-transform: capitalize;
+}
+</style>
 <meta charset="UTF-8">
 <title>8 dynamic toc</title>
-</head>	
-	
-  <body>
-    <div class="container" slidenum="1" slidetitle="first slide">
-      <div class="column leftC">
-        <ul class="toc"></ul>
-      </div>  
-      <div class="column">
-        <div class="content"></div>
-      </div>
-    </div>  
-    <div class="container" slidenum="6" slidetitle="sixth slide">
-      <div class="column leftC">
-        <ul class="toc"></ul>
-      </div>  
-      <div class="column">
-        <div class="content"></div>
-      </div>
-    </div>  
-    <div class="container" slidenum="2" slidetitle="second slide">
-      <div class="column leftC">
-        <ul class="toc"></ul>
-      </div>  
-      <div class="column">
-        <div class="content"></div>
-      </div>
-    </div>
-	 <div class="container" slidenum="3" slidetitle="third slide">
-      <div class="column leftC">
-        <ul class="toc"></ul>
-      </div>  
-      <div class="column">
-        <div class="content"></div>
-      </div>
-    </div> 
-	 <div class="container" slidenum="2" slidetitle="second slide">
-      <div class="column leftC">
-        <ul class="toc"></ul>
-      </div>  
-      <div class="column">
-        <div class="content"></div>
-      </div>
-    </div>
+</head>
 
-    <script>
+<body>
+<h1>this is an h1</h1>	
+<div class="container" slidenum="1" slidetitle="first slide">
+  <div class="column leftC">
+    <ul class="toc">
+    </ul>
+  </div>
+  <div class="column">
+    <div class="content"></div>
+  </div>
+</div>
+<div class="container" slidenum="6" slidetitle="sixth slide">
+  <div class="column leftC">
+    <ul class="toc">
+    </ul>
+  </div>
+  <div class="column">
+    <div class="content"></div>
+  </div>
+</div>
+<div class="container" slidenum="2" slidetitle="second slide">
+  <div class="column leftC">
+    <ul class="toc">
+    </ul>
+  </div>
+  <div class="column">
+    <div class="content"></div>
+  </div>
+</div>
+<div class="container" slidenum="3" slidetitle="third slide">
+  <div class="column leftC">
+    <ul class="toc">
+    </ul>
+  </div>
+  <div class="column">
+    <div class="content"></div>
+  </div>
+</div>
+<div class="container" slidenum="2" slidetitle="second slide">
+  <div class="column leftC">
+    <ul class="toc">
+    </ul>
+  </div>
+  <div class="column">
+    <div class="content"></div>
+  </div>
+</div>
+<script>
       const body = document.body;
       const containers = Array.from(document.querySelectorAll('.container'));
 
@@ -149,7 +153,30 @@
           toc.appendChild(li);
         });
       });
-    </script>
-  </body>
+    </script> 
 	
+	
+	<script>
+	//window.onload = setTimeout(capHeading, 2000);
+	
+	//function capHeading() {
+		//alert('test');
+	  const headers = document.querySelectorAll('h1,h2,h3,h4,h5,h6, ul.toc li');
+
+	  headers.forEach((header) => {
+		let text = header.textContent;
+		let firstLetterIndex = text.search(/[a-zA-Z]/);  // find first letter
+		if (firstLetterIndex >= 0) {
+		  text = text.slice(0, firstLetterIndex) 
+			+ '<span class="firstLetter">'
+			+ text.slice(firstLetterIndex, firstLetterIndex + 1) 
+			+ '</span>' 
+			+ text.slice(firstLetterIndex + 1);
+		  header.innerHTML = text;
+		}
+	  });
+	//}
+	</script>
+	
+</body>
 </html>

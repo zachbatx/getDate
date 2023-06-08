@@ -1,0 +1,215 @@
+<html>
+<head>
+<style>
+body {
+	font-family: Gotham, "Helvetica Neue", Helvetica, Arial, "sans-serif";
+}
+* {
+	box-sizing: border-box;
+}
+/* Create two equal columns that floats next to each other */
+.column {
+	float: left;
+	padding: 10px;
+	height: 300px; /* Should be removed. Only for demonstration */
+}
+h2 {
+	font-weight: 400;
+	padding-top: 0px;
+	margin-top: 6px;
+}
+.columnDivSideBar {
+	float: left;
+	width: 200px;
+	padding: 10px;
+	height: 300px; /* Should be removed. Only for demonstration */
+}
+.columnDivRight {
+	float:left;
+	border: solid 1px #E1E1E1;
+	border-top-right-radius: 5px;
+	border-bottom-right-radius: 5px;
+	flex: 5;
+	width: 40vw;
+	padding: 15px 10px 10px 15px;
+}
+/* Clear floats after the columns */
+.sectionContain:after {
+	content: "";
+	display: flex;
+	clear: both;
+	position: relative;
+	margin-bottom: 10px;
+}
+.leftC {
+	background-color: #E1E1E1;
+	border-top-left-radius: 5px;
+	border-bottom-left-radius: 5px;
+}
+ul {
+	padding: 0px 5px 5px 10px;
+}
+li {
+	list-style: none;
+}
+li.currentToc {
+	background-color: #4D4D4D;
+	color: #FFFFFF;
+	border-radius: 5px;
+	padding: 2px 0px 3px 8px;
+	margin-left: -7px;
+}
+li.currentToc:before {
+	color: #000000 !important;
+}
+.firstLetter {
+	text-transform: capitalize;
+}
+.dupSlide {
+	background-color: #FF0000;
+	color: #FFFFFF;
+	padding: 6px;
+	border-radius: 5px;
+}
+</style>
+<meta charset="UTF-8">
+<title>9 dynamic toc</title>
+</head>
+
+<body>
+<h1>this is a heading</h1>
+<div class="sectionContain" slidenum="2" hastag="second slide">
+  <div class="sectionFlexContain">
+    <div class="columnContainer">
+      <div class="columnDivSideBar leftC">
+        <ul class="toc">
+        </ul>
+      </div>
+      <div class="columnDivRight">
+        <div class="content"></div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="sectionContain" slidenum="1" hastag="first slide">
+  <div class="sectionFlexContain">
+    <div class="columnContainer">
+      <div class="columnDivSideBar leftC">
+        <ul class="toc">
+        </ul>
+      </div>
+      <div class="columnDivRight">
+        <div class="content"></div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="sectionContain" slidenum="2" hastag="second slide">
+  <div class="sectionFlexContain">
+    <div class="columnContainer">
+      <div class="columnDivSideBar leftC">
+        <ul class="toc">
+        </ul>
+      </div>
+      <div class="columnDivRight">
+        <div class="content"></div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="sectionContain" slidenum="3" hastag="third slide">
+  <div class="sectionFlexContain">
+    <div class="columnContainer">
+      <div class="columnDivSideBar leftC">
+        <ul class="toc">
+        </ul>
+      </div>
+      <div class="columnDivRight">
+        <div class="content"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const body = document.body;
+  const containers = Array.from(document.querySelectorAll('.sectionContain'));
+
+  const slideSet = new Set();
+  const slideData = [];
+
+  containers.forEach((container) => {
+    const hastag = container.getAttribute('hastag');
+    const slidenum = container.getAttribute('slidenum');
+    const contentDiv = container.querySelector('.content');
+
+    if (slideSet.has(slidenum)) {
+      const dupDiv = document.createElement('div');
+      dupDiv.className = 'dupSlide';
+      dupDiv.textContent = 'Duplicate! | slidenum: ' + slidenum + ' | hastag: ' + hastag;
+      contentDiv.appendChild(dupDiv);
+      const h2 = document.createElement('h2');
+      h2.textContent = hastag;
+      contentDiv.append(h2);
+    } else {
+      slideSet.add(slidenum);
+      slideData.push({ slidenum, hastag });
+
+      const h2 = document.createElement('h2');
+      h2.textContent = hastag;
+      contentDiv.prepend(h2);
+    }
+  });
+
+  // Remove all containers from body
+  containers.forEach((container) => {
+    body.removeChild(container);
+  });
+
+  // Sort containers by slidenum
+  containers.sort((a, b) => a.getAttribute('slidenum') - b.getAttribute('slidenum'));
+
+  // Add containers back to body in sorted order
+  containers.forEach((container) => {
+    body.appendChild(container);
+  });
+
+  containers.forEach((container) => {
+    const slidenum = container.getAttribute('slidenum');
+    const toc = container.querySelector('.toc');
+
+    slideData.sort((a, b) => a.slidenum - b.slidenum).forEach((data) => {
+      const li = document.createElement('li');
+      li.textContent = data.slidenum + '. ' + data.hastag;
+
+      if (data.slidenum === slidenum) {
+        li.className = "currentToc";
+      }
+
+      toc.appendChild(li);
+    });
+  });
+</script>
+<script>
+	//window.onload = setTimeout(capHeading, 2000);
+	
+	//function capHeading() {
+		//alert('test');
+	  const headers = document.querySelectorAll('h1,h2,h3,h4,h5,h6, ul.toc li');
+
+	  headers.forEach((header) => {
+		let text = header.textContent;
+		let firstLetterIndex = text.search(/[a-zA-Z]/);  // find first letter
+		if (firstLetterIndex >= 0) {
+		  text = text.slice(0, firstLetterIndex) 
+			+ '<span class="firstLetter">'
+			+ text.slice(firstLetterIndex, firstLetterIndex + 1) 
+			+ '</span>' 
+			+ text.slice(firstLetterIndex + 1);
+		  header.innerHTML = text;
+		}
+	  });
+	//}
+	</script>
+</body>
+</html>

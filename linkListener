@@ -1,0 +1,16 @@
+window.addEventListener("DOMContentLoaded", (event) => {
+    let container = document.querySelector('.mainContainer');
+
+    if (container) {
+        let links = container.getElementsByTagName('a');
+        
+        for(let i = 0; i < links.length; i++) {
+            links[i].addEventListener('click', function(event) {
+                event.preventDefault(); // Prevents the default action (navigating to the link in the same tab)
+                window.open(this.href, '_blank'); // Opens the link in a new tab
+            });
+        }
+    } else {
+        console.log("No div with class 'mainContainer' found");
+    }
+});

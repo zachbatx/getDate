@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Get Username</title>
+</head>
+<body>
+
+<a href="#" data-username="123456">Zach</a> 
+
+<div id="userHere"></div>
+
+<script type="text/javascript">
+    document.querySelector("a").addEventListener("click", function(e) {
+        e.preventDefault(); // Prevents the default action of the click event
+        var username = this.getAttribute("data-username"); // Gets the value of the data-username attribute
+        document.getElementById("userHere").textContent = username; // Places the username value inside the div
+    });
+</script>
+
+</body>
+</html>

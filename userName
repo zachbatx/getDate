@@ -17,5 +17,14 @@
     });
 </script>
 
+<script type="text/javascript">
+    window.onload = function() {
+        setTimeout(function() {
+            var username = document.querySelector("a").getAttribute("data-username");
+            document.getElementById("userHere").textContent = username;
+        }, 2000);
+    }
+</script>
+
 </body>
 </html>

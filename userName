@@ -26,5 +26,12 @@
     }
 </script>
 
+<script type="text/javascript">
+    window.onload = function() {
+        var username = document.getElementById("user-menu-link").getAttribute("data-username");
+        document.getElementById("userHere").textContent = username;
+    }
+</script>
+
 </body>
 </html>

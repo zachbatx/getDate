@@ -6,3 +6,22 @@ document.addEventListener('keydown', function(event) {
         }
     }
 });
+
+document.addEventListener('click', function(event) {
+    var modal = document.querySelector('.modal');
+
+    // If there is no modal, do nothing
+    if (!modal) return;
+
+    var isClickInsideModal = modal.contains(event.target);
+
+    if (!isClickInsideModal) {
+        // The click was outside the modal, handle it
+        handleOutsideClick();
+    }
+});
+
+function handleOutsideClick() {
+    console.log('Clicked outside the modal!');
+    // You can define your function here
+}

@@ -1,0 +1,51 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>appendBtns</title>
+</head>
+
+<body>
+	
+	
+	<div class="columnRight" style="width:900px; height:900px; border:1px solid #c0c0c0;">
+	</div>
+	
+	<div class="columnRight" style="width:900px; height:900px; border:1px solid #c0c0c0;">
+		
+	</div>
+	
+	<div class="columnRight" style="width:900px; height:900px; border:1px solid #c0c0c0;">
+		
+	</div>
+	
+	
+	
+	
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    let columnRights = document.querySelectorAll('.columnRight');
+
+    columnRights.forEach((column) => {
+        let pvntBtn = document.createElement('div');
+        pvntBtn.classList.add('pvntBtn');
+
+        let prevBtn = document.createElement('button');
+        prevBtn.classList.add('prevBtn');
+        prevBtn.textContent = 'Previous';
+
+        let nextBtn = document.createElement('button');
+        nextBtn.classList.add('nextBtn');
+        nextBtn.textContent = 'Next';
+
+        pvntBtn.appendChild(prevBtn);
+        pvntBtn.appendChild(nextBtn);
+
+        column.appendChild(pvntBtn);
+    });
+});
+</script>	
+	
+	
+</body>
+</html>

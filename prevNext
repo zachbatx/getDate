@@ -1,0 +1,59 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>scrollToNext</title>
+</head>
+
+<body>
+<div class="sectionContain" style="width:900px; height:900px; border:1px solid #c0c0c0;">
+		<h2>Slide 1</h2>
+		<button class="prevBtn">Previous</button><button class="nextBtn">Next</button>
+	</div>
+	
+	<div class="sectionContain" style="width:900px; height:900px; border:1px solid #c0c0c0;">
+		<h2>Slide 2</h2>
+		<button class="prevBtn">Previous</button><button class="nextBtn">Next</button>
+	</div>
+	
+	<div class="sectionContain" style="width:900px; height:900px; border:1px solid #c0c0c0;">
+		<h2>Slide 3</h2>
+		<button class="prevBtn">Previous</button><button class="nextBtn">Next</button>
+	</div>
+	
+	<div class="sectionContain" style="width:900px; height:900px; border:1px solid #c0c0c0;">
+		<h2>Slide 4</h2>
+		<button class="prevBtn">Previous</button><button class="nextBtn">Next</button>
+	</div>	
+	
+	
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const sections = Array.from(document.querySelectorAll('.sectionContain'));
+
+    sections.forEach((section, index) => {
+        const nextButton = section.querySelector('.nextBtn');
+        const previousButton = section.querySelector('.prevBtn');
+
+        if (nextButton) {
+            nextButton.addEventListener('click', () => {
+                if (index < sections.length - 1) {
+                    sections[index + 1].scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        }
+
+        if (previousButton) {
+            previousButton.addEventListener('click', () => {
+                if (index > 0) {
+                    sections[index - 1].scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        }
+    });
+});
+</script>	
+	
+	
+</body>
+</html>

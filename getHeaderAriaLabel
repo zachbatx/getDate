@@ -1,0 +1,12 @@
+document.addEventListener("DOMContentLoaded", function() {
+    let headers = document.querySelectorAll('.myHeader');
+
+    headers.forEach((header) => {
+        let closeBtn = header.querySelector('.closeBTn');
+        let h2 = header.querySelector('h2');
+        
+        if(closeBtn && h2){
+            closeBtn.setAttribute('aria-label', h2.textContent);
+        }
+    });
+});

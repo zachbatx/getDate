@@ -1,0 +1,102 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>viewNotviewed</title>
+	
+<style>
+	.statNotViewed {
+		background-color: #FF0000;
+		width:25px;
+		height:25px;
+	}
+	.statViewed {
+		background-color:#28FF00;
+		width:25px;
+		height:25px;
+	}
+	
+</style>	
+	
+</head>
+
+<body>
+	
+Create a script that will add a div class=statNotViewed to each div class=sectionContain. If the class=sectionContain has been focused to from the class=nextBtn buttons the class=statNotViewed should change to class=statViewed 	
+	
+	Here is the sample code structure
+	
+	<div class="sectionContain" style="width:900px; height:900px; border:1px solid #c0c0c0;">
+		<h2>Slide 1</h2>
+		<button class="prevBtn">Previous</button><button class="nextBtn">Next</button>
+	</div>
+	
+	<div class="sectionContain" style="width:900px; height:900px; border:1px solid #c0c0c0;">
+		<h2>Slide 2</h2>
+		<button class="prevBtn">Previous</button><button class="nextBtn">Next</button>
+	</div>
+	
+	<div class="sectionContain" style="width:900px; height:900px; border:1px solid #c0c0c0;">
+		<h2>Slide 3</h2>
+		<button class="prevBtn">Previous</button><button class="nextBtn">Next</button>
+	</div>
+	
+	<div class="sectionContain" style="width:900px; height:900px; border:1px solid #c0c0c0;">
+		<h2>Slide 4</h2>
+		<button class="prevBtn">Previous</button><button class="nextBtn">Next</button>
+	</div>	
+	
+	
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const sections = Array.from(document.querySelectorAll('.sectionContain'));
+    const offset = 60;
+
+    sections.forEach((section, index) => {
+        // Create and append statNotViewed div
+        let statDiv = document.createElement('div');
+        statDiv.classList.add('statNotViewed');
+        section.appendChild(statDiv);
+
+        const nextButton = section.querySelector('.nextBtn');
+        const previousButton = section.querySelector('.prevBtn');
+
+        if (nextButton) {
+            nextButton.addEventListener('click', () => {
+                if (index < sections.length - 1) {
+                    const targetPosition = sections[index + 1].offsetTop - offset;
+                    window.scrollTo({ top: targetPosition, behavior: 'smooth' });
+
+                    // Change class of stat div in target section to statViewed
+                    let statDiv = sections[index + 1].querySelector('.statNotViewed');
+                    if (statDiv) {
+                        statDiv.classList.remove('statNotViewed');
+                        statDiv.classList.add('statViewed');
+                    }
+                }
+            });
+        }
+
+        if (previousButton) {
+            previousButton.addEventListener('click', () => {
+                if (index > 0) {
+                    const targetPosition = sections[index - 1].offsetTop - offset;
+                    window.scrollTo({ top: targetPosition, behavior: 'smooth' });
+
+                    // Change class of stat div in target section to statViewed
+                    let statDiv = sections[index - 1].querySelector('.statNotViewed');
+                    if (statDiv) {
+                        statDiv.classList.remove('statNotViewed');
+                        statDiv.classList.add('statViewed');
+                    }
+                }
+            });
+        }
+    });
+});
+
+</script>	
+	
+	
+</body>
+</html>

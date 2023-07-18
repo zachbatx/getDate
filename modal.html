@@ -1,0 +1,108 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>modal</title>
+	
+create a script that will trigger a modal dialog div class=modalDialogDiv modal-name="" by clicking on the corresponding class=mdlBtn with the same trigger-modal="" value.
+the script should also give each class=mdlBtn a role=button and a tab-index=0
+	
+here is example css and HTML structure
+	
+	
+<style>
+	.mdlBtn {
+		background-color: #EEEEEE;
+		border:1px solid #c0c0c0;
+		border-radius: 5px;
+		padding:5px;
+		margin:10px;
+		width:70px;
+	}
+	.modalDialogDiv {
+		background-color:#c0c0c0;
+		border:1px solid #808080;
+		border-radius: 5px;
+		width:500px;
+		height:400px;
+		display:none;
+	}
+	
+</style>	
+	
+</head>
+
+<body>
+	
+Create a script that will display a modal based on 	
+	
+	Here is the sample code structure
+	
+	<div class="mdlBtn" trigger-modal="1a">button for 1a</div>
+	
+	<div class="modalDialogDiv" modal-name="1a">This is modal 1a</div>
+	
+	<div class="mdlBtn" trigger-modal="2a">button for 2a</div>
+	
+	<div class="modalDialogDiv" modal-name="2a">This is modal 2a</div>
+	
+	<div class="mdlBtn" trigger-modal="3a">button for 3a</div>
+	
+	<div class="modalDialogDiv" modal-name="3a">This is modal 3a</div>
+	
+	<div class="mdlBtn" trigger-modal="4a">button for 4a</div>
+	
+	<div class="modalDialogDiv" modal-name="4a">This is modal 4a</div>
+	
+	<div class="mdlBtn" trigger-modal="5b">button for 5b</div>
+	
+	<div class="modalDialogDiv" modal-name="5b">This is modal 5b</div>
+	
+	
+	
+	
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const buttons = Array.from(document.querySelectorAll('.mdlBtn'));
+    const modals = Array.from(document.querySelectorAll('.modalDialogDiv'));
+
+    // Add a close button to each modal
+    modals.forEach((modal) => {
+        const closeButton = document.createElement('button');
+        closeButton.textContent = 'Close';
+        closeButton.addEventListener('click', () => {
+            modal.style.display = 'none';
+        });
+        modal.appendChild(closeButton);
+    });
+
+    buttons.forEach((button) => {
+        // Set role and tab index for accessibility
+        button.setAttribute('role', 'button');
+        button.setAttribute('tabindex', '0');
+
+        // Get corresponding modal
+        const triggerModal = button.getAttribute('trigger-modal');
+        const correspondingModal = modals.find(modal => modal.getAttribute('modal-name') === triggerModal);
+
+        // Add event listener
+        button.addEventListener('click', () => {
+            // Close all modals
+            modals.forEach(modal => {
+                modal.style.display = 'none';
+            });
+
+            // Display the corresponding modal
+            if (correspondingModal) {
+                correspondingModal.style.display = 'block';
+            }
+        });
+    });
+});
+
+
+</script>	
+	
+	
+</body>
+</html>

@@ -1,0 +1,120 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>comNotComp</title>
+	
+	<style>
+	.incomp {
+		background-color: #FF0000;
+		width:25px;
+		height:25px;
+	}
+	.comp {
+		background-color:#28FF00;
+		width:25px;
+		height:25px;
+		display: none;
+	}
+	.sectionContain {
+		width:900px; 
+		height:600px; 
+		border:1px solid #c0c0c0;
+	}
+	
+</style>	
+	
+</head>
+
+<body>
+	
+<div class="sectionContain" >
+	<h2>Slide 1</h2> 
+	<div class="sectionComp"><span class="incomp">Not Complete</span><span class="comp">Complete</span></div>
+	<button class="prevBtn">Previous</button><button class="nextBtn">Next</button>
+</div>
+<div class="sectionContain" >
+	<h2>Slide 2</h2> 
+	<div class="sectionComp"><span class="incomp">Not Complete</span><span class="comp">Complete</span></div>
+	<button class="prevBtn">Previous</button><button class="nextBtn">Next</button>
+</div>
+<div class="sectionContain" >
+	<h2>Slide 3</h2> 
+	<div class="sectionComp"><span class="incomp">Not Complete</span><span class="comp">Complete</span></div>
+	<button class="prevBtn">Previous</button><button class="nextBtn">Next</button>
+</div>
+<div class="sectionContain" >
+	<h2>Slide 4</h2> 
+	<div class="sectionComp"><span class="incomp">Not Complete</span><span class="comp">Complete</span></div>
+	<button class="prevBtn">Previous</button><button class="nextBtn">Next</button>
+</div>
+<div class="sectionContain" >
+	<h2>Slide 5</h2> 
+	<div class="sectionComp"><span class="incomp">Not Complete</span><span class="comp">Complete</span></div>
+	<button class="prevBtn">Previous</button><button class="nextBtn">Next</button>
+</div>
+
+<!-- ... more sections ... -->
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const sections = Array.from(document.querySelectorAll('.sectionContain'));
+    const offset = 60;
+
+    sections.forEach((section, index) => {
+        const nextButton = section.querySelector('.nextBtn');
+        const previousButton = section.querySelector('.prevBtn');
+        const incompSpan = section.querySelector('.sectionComp .incomp');
+        const compSpan = section.querySelector('.sectionComp .comp');
+
+        incompSpan.style.display = 'block';
+        compSpan.style.display = 'none';
+
+        if (nextButton) {
+            nextButton.addEventListener('click', () => {
+                if (index < sections.length - 1) {
+                    const targetPosition = sections[index + 1].offsetTop - offset;
+                    window.scrollTo({ top: targetPosition, behavior: 'smooth' });
+
+                    const nextSectionComp = sections[index + 1].querySelector('.sectionComp');
+                    const nextIncompSpan = nextSectionComp.querySelector('.incomp');
+                    const nextCompSpan = nextSectionComp.querySelector('.comp');
+
+                    nextIncompSpan.style.display = 'block';
+                    nextCompSpan.style.display = 'none';
+
+                    setTimeout(() => {
+                        nextIncompSpan.style.display = 'none';
+                        nextCompSpan.style.display = 'block';
+                    }, 5000);
+                }
+            });
+        }
+
+        if (previousButton) {
+            previousButton.addEventListener('click', () => {
+                if (index > 0) {
+                    const targetPosition = sections[index - 1].offsetTop - offset;
+                    window.scrollTo({ top: targetPosition, behavior: 'smooth' });
+
+                    const prevSectionComp = sections[index - 1].querySelector('.sectionComp');
+                    const prevIncompSpan = prevSectionComp.querySelector('.incomp');
+                    const prevCompSpan = prevSectionComp.querySelector('.comp');
+
+                    prevIncompSpan.style.display = 'block';
+                    prevCompSpan.style.display = 'none';
+
+                    setTimeout(() => {
+                        prevIncompSpan.style.display = 'none';
+                        prevCompSpan.style.display = 'block';
+                    }, 5000);
+                }
+            });
+        }
+    });
+});
+</script>
+	
+	
+</body>
+</html>

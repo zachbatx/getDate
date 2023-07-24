@@ -43,33 +43,37 @@
 			<th><div>articleDate</div></th>
 			<th><div>artilceTitle</div></th> 
 			<th><div>articleSummary</div></th>
+			<th><div>articleLink</div></th>
 		</tr>
 	</thead>
 	<thead></thead>
 	<tbody>
 		<tr>
 		<td><time datetime="2023-08-12">12 Jul 2023</time></td>
-		<td>Title for Article 2</td> 
+		<td>Title for Article 2 Goog</td> 
 		<td>
 		<p>Summary of the article 2</p>
 		<p>Can contain paragraphs and other content</p>	
 		 </td>
+		<td><a href="https://www.google.com"</td>	
 	  </tr>
 	  <tr>
 		<td><time datetime="2023-07-8">8 Jul 2023</time></td>
-		<td>Title for Article</td> 
+		<td>Title for Article Apple</td> 
 		<td>
 		<p>Summary of the article</p>
 		<p>Can contain paragraphs and other content</p>	
 		 </td>
+		 <td><a href="https://www.apple.com"</td>
 	  </tr>
 		<tr>
 		<td><time datetime="2023-09-5">5 Sep 2023</time></td>
-		<td>Title for Article 3</td> 
+		<td>Title for Article 3 W3C</td> 
 		<td>
 		<p>Summary of the article 3</p>
 		<p>Can contain paragraphs and other content</p>	
 		 </td>
+		<td><a href="https://www.w3.org"</td>
 	  </tr>
 	</tbody>
  
@@ -120,7 +124,13 @@ document.addEventListener("DOMContentLoaded", function() {
         // Create and append article title
         var title = document.createElement('h3');
         title.className = 'articleTitle';
-        title.textContent = cells[1].innerText;
+        
+        // Create a link for the title and append it to the title
+        var titleLink = document.createElement('a');
+        titleLink.href = cells[3].querySelector('a').href;
+        titleLink.textContent = cells[1].innerText;
+        title.appendChild(titleLink);
+
         newArticle.appendChild(title);
         
         // Create and append article date
@@ -140,7 +150,7 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 });
 
-</script>	
+</script>		
 	
 </body>
 </html>

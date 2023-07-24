@@ -1,0 +1,114 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>importTableTest2</title>
+
+	<style>
+	
+		th, tr, td {
+			border:1px solid #c0c0c0;
+		}
+		td {
+			paddding:5px;
+			text-align: left;
+			vertical-align: top;
+		}
+		
+		.articleContainer {
+			border: 1px solid #c0c0c0;
+			border-radius:5px;
+			margin:10px;
+		}
+	
+	</style>
+	
+	
+	
+</head>
+
+<body>
+	
+
+	
+	
+<table class="confluenceTable">
+	<colgroup></colgroup>
+	<thead>
+		<tr>
+			<th>articleDate</th>
+			<th>artilceTitle</th> 
+			<th>articleSummary</th>
+		</tr>
+	</thead>
+	<thead></thead>
+	<tbody>
+		<tr>
+		<td><time datetime="2023-08-12">14 Jul 2023</time></td>
+		<td>Title for Article 2</td> 
+		<td>
+		<p>Summary of the article 2</p>
+		<p>Can contain paragraphs and other content</p>	
+		 </td>
+	  </tr>
+	  <tr>
+		<td><time datetime="2023-07-12">12 Jul 2023</time></td>
+		<td>Title for Article</td> 
+		<td>
+		<p>Summary of the article</p>
+		<p>Can contain paragraphs and other content</p>	
+		 </td>
+	  </tr>
+	</tbody>
+ 
+</table>	
+	
+<script>
+	// Wait until DOM is loaded
+document.addEventListener("DOMContentLoaded", function() {
+    // Get the table by its class
+    var dataTable = document.querySelector('.confluenceTable');
+
+    // Get the tbody element
+    var tbody = dataTable.querySelector('tbody');
+
+    // Get the table rows in the tbody
+    var dataRows = Array.from(tbody.querySelectorAll('tr'));
+
+    // Loop through each row
+    dataRows.forEach((row) => {
+        // Get the cells in each row
+        var cells = row.querySelectorAll('td');
+        
+        // Create a new article container
+        var newArticle = document.createElement('div');
+        newArticle.className = 'articleContainer';
+        
+        // Create and append article title
+        var title = document.createElement('h3');
+        title.className = 'articleTitle';
+        title.textContent = cells[1].innerText;
+        newArticle.appendChild(title);
+        
+        // Create and append article date
+        var datetime = document.createElement('time');
+        datetime.datetime = cells[0].querySelector('time').dateTime;
+        datetime.textContent = cells[0].innerText;
+        newArticle.appendChild(datetime);
+        
+        // Create and append article summary
+        var summary = document.createElement('div');
+        summary.className = 'articleSummary';
+        summary.innerHTML = cells[2].innerHTML;
+        newArticle.appendChild(summary);
+        
+        // Add the new article to the start of the body, effectively prepending it before all other elements
+        document.body.insertBefore(newArticle, document.body.firstChild);
+    });
+});
+
+
+</script>	
+	
+</body>
+</html>

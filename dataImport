@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>importTableTest2</title>
+<title>importTableTest3</title>
 
 	<style>
 	
@@ -32,6 +32,8 @@
 </head>
 
 <body>
+	
+	<div class="dataImportContainer"></div>
 	
 	
 <table class="confluenceTable">
@@ -63,9 +65,9 @@
 	  </tr>
 		<tr>
 		<td><time datetime="2023-09-5">5 Sep 2023</time></td>
-		<td>Title for Article 2</td> 
+		<td>Title for Article 3</td> 
 		<td>
-		<p>Summary of the article 2</p>
+		<p>Summary of the article 3</p>
 		<p>Can contain paragraphs and other content</p>	
 		 </td>
 	  </tr>
@@ -84,6 +86,9 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Get the table rows in the tbody
     var dataRows = Array.from(tbody.querySelectorAll('tr'));
+
+    // Get the container to which the articles should be appended
+    var articleContainer = document.querySelector('.dataImportContainer');
 
     // Create an array to store our rows and their corresponding dates
     var articles = [];
@@ -130,8 +135,8 @@ document.addEventListener("DOMContentLoaded", function() {
         summary.innerHTML = cells[2].innerHTML;
         newArticle.appendChild(summary);
         
-        // Append the new article to the end of the body
-        document.body.appendChild(newArticle);
+        // Append the new article to the specific container
+        articleContainer.appendChild(newArticle);
     });
 });
 

@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html>
+<head>
+	
+	<style>
+		body {
+			font-family: Gotham, "Helvetica Neue", Helvetica, Arial, "sans-serif";
+		}
+	
+		th, tr, td {
+			border:1px solid #c0c0c0;
+		}
+		td {
+			paddding:5px;
+			text-align: left;
+			vertical-align: top;
+		}
+		
+		.articleContainer {
+			border: 1px solid #c0c0c0;
+			border-radius:5px;
+			margin:10px;
+			padding:15px;
+			width:350px;
+			display: block;
+		}
+		
+		.articleTitle {
+			position: relative;
+			display: block;
+			padding: 0px 0px 0px 0px;
+			margin: 0px;
+		}
+		
+		.confluenceTable {
+			display:none;
+		}
+		
+		/*time {
+			position: relative;
+			display: block;
+			top:-20px;
+			right:0px;
+			float:right;
+		}*/
+	
+	</style>
+	
+  <title>Table with Aria Label</title>
+</head>
+<body>
+  <h2>Table Heading</h2>
+  <table>
+     <tr>
+    <th>articleDate</th>
+    <th>artilceTitle</th> 
+    <th>articleSummary</th>
+  </tr>
+  <tr>
+    <td><time datetime="2023-08-12">14 Jul 2023</time></td>
+    <td>Title for Article 2</td> 
+    <td>
+	<p>Summary of the article 2</p>
+	<p>Can contain paragraphs and other content</p>	
+	 </td>
+  </tr>
+	
+  <tr>
+    <th>articleDate</th>
+    <th>artilceTitle</th> 
+    <th>articleSummary</th>
+  </tr>
+  <tr>
+    <td><time datetime="2023-07-12">12 Jul 2023</time></td>
+    <td>Title for Article</td> 
+    <td>
+	<p>Summary of the article</p>
+	<p>Can contain paragraphs and other content</p>	
+	 </td>
+  </tr>
+  </table>
+
+  <h4>Table Heading2</h4>
+  <table>
+ <tr>
+    <th>articleDate</th>
+    <th>artilceTitle</th> 
+    <th>articleSummary</th>
+  </tr>
+  <tr>
+    <td><time datetime="2023-08-12">14 Jul 2023</time></td>
+    <td>Title for Article 2</td> 
+    <td>
+	<p>Summary of the article 2</p>
+	<p>Can contain paragraphs and other content</p>	
+	 </td>
+  </tr>
+	
+  <tr>
+    <th>articleDate</th>
+    <th>artilceTitle</th> 
+    <th>articleSummary</th>
+  </tr>
+  <tr>
+    <td><time datetime="2023-07-12">12 Jul 2023</time></td>
+    <td>Title for Article</td> 
+    <td>
+	<p>Summary of the article</p>
+	<p>Can contain paragraphs and other content</p>	
+	 </td>
+  </tr>  </table>
+
+  <div>
+    <h4>Table Heading3</h4>
+    <table>
+ <tr>
+    <th>articleDate</th>
+    <th>artilceTitle</th> 
+    <th>articleSummary</th>
+  </tr>
+  <tr>
+    <td><time datetime="2023-08-12">14 Jul 2023</time></td>
+    <td>Title for Article 2</td> 
+    <td>
+	<p>Summary of the article 2</p>
+	<p>Can contain paragraphs and other content</p>	
+	 </td>
+  </tr>
+	
+  <tr>
+    <th>articleDate</th>
+    <th>artilceTitle</th> 
+    <th>articleSummary</th>
+  </tr>
+  <tr>
+    <td><time datetime="2023-07-12">12 Jul 2023</time></td>
+    <td>Title for Article</td> 
+    <td>
+	<p>Summary of the article</p>
+	<p>Can contain paragraphs and other content</p>	
+	 </td>
+  </tr>    </table>
+  </div>
+
+  <div>
+    <div>
+      <h3>Table Heading4</h3>
+    </div>
+    <table>
+ <tr>
+    <th>articleDate</th>
+    <th>artilceTitle</th> 
+    <th>articleSummary</th>
+  </tr>
+  <tr>
+    <td><time datetime="2023-08-12">14 Jul 2023</time></td>
+    <td>Title for Article 2</td> 
+    <td>
+	<p>Summary of the article 2</p>
+	<p>Can contain paragraphs and other content</p>	
+	 </td>
+  </tr>
+	
+  <tr>
+    <th>articleDate</th>
+    <th>artilceTitle</th> 
+    <th>articleSummary</th>
+  </tr>
+  <tr>
+    <td><time datetime="2023-07-12">12 Jul 2023</time></td>
+    <td>Title for Article</td> 
+    <td>
+	<p>Summary of the article</p>
+	<p>Can contain paragraphs and other content</p>	
+	 </td>
+  </tr>    </table>
+  </div>
+	
+	<div>
+      <h3>Table Heading5</h3>
+    
+    <table>
+ <tr>
+    <th>articleDate</th>
+    <th>artilceTitle</th> 
+    <th>articleSummary</th>
+  </tr>
+  <tr>
+    <td><time datetime="2023-08-12">14 Jul 2023</time></td>
+    <td>Title for Article 2</td> 
+    <td>
+	<p>Summary of the article 2</p>
+	<p>Can contain paragraphs and other content</p>	
+	 </td>
+  </tr>
+	
+  <tr>
+    <th>articleDate</th>
+    <th>artilceTitle</th> 
+    <th>articleSummary</th>
+  </tr>
+  <tr>
+    <td><time datetime="2023-07-12">12 Jul 2023</time></td>
+    <td>Title for Article</td> 
+    <td>
+	<p>Summary of the article</p>
+	<p>Can contain paragraphs and other content</p>	
+	 </td>
+  </tr>    </table>
+  </div>
+
+  <!-- Add more tables and headings as needed -->
+
+  <script>
+    // Function to find the nearest preceding heading element
+    function findNearestHeading(table) {
+      let prevElement = table.previousElementSibling;
+
+      while (prevElement) {
+        if (['H1', 'H2', 'H3', 'H4', 'H5', 'H6'].includes(prevElement.tagName)) {
+          return prevElement;
+        }
+        prevElement = prevElement.previousElementSibling;
+      }
+
+      return null; // No heading found
+    }
+
+    // Get all the table elements on the page
+    const tables = document.querySelectorAll('table');
+
+    // Loop through each table and set the aria-label using the nearest heading
+    tables.forEach((table) => {
+      const nearestHeading = findNearestHeading(table);
+      if (nearestHeading) {
+        const label = nearestHeading.textContent.trim();
+        table.setAttribute('aria-label', label);
+      }
+    });
+  </script>
+</body>
+</html>

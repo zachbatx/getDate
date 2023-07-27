@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Table Aria Labeling4</title>
+</head>
+<body>
+  <h4>Table Heading 1</h4>
+  <table>
+    <!-- Table content -->
+  </table>
+	
+  <h4>Table Heading 2</h4>
+  <br><br><br>
+  <table>
+    <!-- Table content -->
+  </table>	
+
+  <div>
+    <h3>Table Heading 3</h3>
+    <p></p><p></p>
+    <div class="confluenceTable">
+      <table>
+        <!-- Table content -->
+      </table>
+    </div>
+  </div>
+
+  <h4>Table Heading 4</h4>
+  <p></p><p></p><br><br>
+  <table>
+    <!-- Table content -->
+  </table>
+
+  <div>
+    <h3>Table Heading 5</h3>
+    <p></p><p></p>
+    <div class="confluenceTable">
+      <table>
+        <!-- Table content -->
+      </table>
+    </div>
+  </div>
+
+  <!-- Add more tables and headings, including embedded ones, as needed -->
+
+  <script>
+    // Function to check if an element contains only empty paragraphs or line breaks
+    function isEmptyContent(element) {
+      if (element.nodeType !== Node.ELEMENT_NODE) {
+        return true;
+      }
+
+      if (element.nodeName === 'BR') {
+        return true;
+      }
+
+      if (element.nodeName === 'P') {
+        const regexEmptyPTag = /^<p\s*><\/p\s*>$/i;
+        return regexEmptyPTag.test(element.outerHTML);
+      }
+
+      return false;
+    }
+
+    // Function to find the nearest non-empty heading element
+    function findNearestNonEmptyHeading(table) {
+      let prevElement = table.previousElementSibling;
+
+      while (prevElement) {
+        if (
+          ['H1', 'H2', 'H3', 'H4', 'H5', 'H6'].includes(prevElement.tagName) &&
+          !isEmptyContent(prevElement)
+        ) {
+          return prevElement;
+        } else if (
+          prevElement &&
+          prevElement.classList.contains('confluenceTable')
+        ) {
+          let headingInSibling = prevElement.previousElementSibling;
+          while (headingInSibling) {
+            if (
+              ['H1', 'H2', 'H3', 'H4', 'H5', 'H6'].includes(headingInSibling.tagName) &&
+              !isEmptyContent(headingInSibling)
+            ) {
+              return headingInSibling;
+            }
+            headingInSibling = headingInSibling.previousElementSibling;
+          }
+        }
+        prevElement = prevElement.previousElementSibling;
+      }
+
+      return null; // No heading found
+    }
+
+    // Get all the table elements on the page and within div with class "confluenceTable"
+    const tables = document.querySelectorAll('table, div.confluenceTable > table');
+
+    // Loop through each table and set the aria-label using the nearest non-empty heading
+    tables.forEach((table) => {
+      const nearestHeading = findNearestNonEmptyHeading(table);
+      if (nearestHeading) {
+        const label = nearestHeading.textContent.trim();
+        table.setAttribute('aria-label', label);
+      }
+    });
+  </script>
+</body>
+</html>

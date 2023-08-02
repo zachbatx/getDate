@@ -1,0 +1,28 @@
+<html>
+<head>
+    <title>Hide Heading Example2</title>
+    <style>
+        .offScreen {
+            display: none;
+        }
+    </style>
+    <script>
+        window.onload = function() {
+            const bodyHTML = document.body.innerHTML;
+            const tagRegex = /\{head:offScreen\}\s*(<h[1-6][^>]*>(.*?)<\/h[1-6]>)/g;
+
+            let newBodyHTML = bodyHTML.replace(tagRegex, function(match, p1) {
+                return p1.replace(/<h([1-6])/, '<h$1 class="offScreen"');
+            });
+
+            document.body.innerHTML = newBodyHTML;
+        }
+    </script>
+</head>
+<body>
+    {head:offScreen}<h2>Heading</h2>
+    {head:offScreen} <h1>Heading</h1>
+    {head:offScreen}
+    <h3>Heading</h3>
+</body>
+</html>

@@ -1,0 +1,26 @@
+<html>
+<head>
+    <title>Hide Heading Example</title>
+    <style>
+        .hideIt {
+            display: none;
+        }
+    </style>
+    <script>
+        window.onload = function() {
+            const bodyHTML = document.body.innerHTML;
+            const searchText = "hideIt:";
+            const tagRegex = /hideIt:<h[1-6][^>]*>(.*?)<\/h[1-6]>/g;
+
+            let newBodyHTML = bodyHTML.replace(tagRegex, function(match) {
+                return match.replace("hideIt:", '').replace(/<h([1-6])/, '<h$1 class="hideIt"');
+            });
+
+            document.body.innerHTML = newBodyHTML;
+        }
+    </script>
+</head>
+<body>
+    hideIt:<h2>Heading</h2>
+</body>
+</html>

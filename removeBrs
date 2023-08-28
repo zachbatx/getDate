@@ -1,0 +1,52 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>remove br</title>
+</head>
+
+<body>
+
+	
+	
+more than 2 
+<br>
+<br>
+<br>
+more than 3 
+<br>
+<br>
+<br>
+<br>
+more than 4
+<br>
+<br>
+<br>
+<br>
+<br>
+more than 5	
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+	
+	
+	
+<script>
+	
+window.onload = function() {
+    function replaceMultipleBreaks(input) {
+        return input.replace(/(<br>\s*){3,}/g, '<br><br>');
+    }
+
+    // Assuming the content is within the body. If you have a specific container, use its id or class.
+    document.body.innerHTML = replaceMultipleBreaks(document.body.innerHTML);
+};
+
+	
+</script>	
+	
+</body>
+</html>

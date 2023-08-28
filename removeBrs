@@ -6,7 +6,11 @@
 </head>
 
 <body>
-
+p tag start
+<p>
+<br>
+</p>	
+p tag end
 	
 	
 more than 2 
@@ -47,6 +51,17 @@ window.onload = function() {
 
 	
 </script>	
+	
+<script>
+window.onload = function() {
+    function replaceEmptyParagraphs(input) {
+        return input.replace(/<p>\s*<br>\s*<\/p>/g, '<br>');
+    }
+
+    // Assuming the content is within the body. If you have a specific container, use its id or class.
+    document.body.innerHTML = replaceEmptyParagraphs(document.body.innerHTML);
+};	
+</script>
 	
 </body>
 </html>

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<style>
+		.slideContainer {
+			border: 1px solid black;
+			padding: 10px;
+			margin: 10px;
+		}
+	</style>
+	
+	<title>focusPrevNext</title>
+	
+</head>
+<body>
+	<div class="slideContainer">
+		Content 1
+		<button class="prevBtn">Previous</button><button class="nextBtn">Next</button>
+	</div>
+
+	<div class="slideContainer">
+		Content 2
+		<button class="prevBtn">Previous</button><button class="nextBtn">Next</button>
+	</div>
+
+	<div class="slideContainer">
+		Content 3
+		<button class="prevBtn">Previous</button><button class="nextBtn">Next</button>
+	</div>
+
+	<script>
+		const slideContainers = document.querySelectorAll('.slideContainer');
+		let currentIndex = 0;
+
+		function scrollToCurrentSlide() {
+			slideContainers[currentIndex].scrollIntoView({ behavior: 'smooth' });
+		}
+
+		function goToNextSlide() {
+			if (currentIndex < slideContainers.length - 1) {
+				currentIndex++;
+				scrollToCurrentSlide();
+			}
+		}
+
+		function goToPrevSlide() {
+			if (currentIndex > 0) {
+				currentIndex--;
+				scrollToCurrentSlide();
+			}
+		}
+
+		document.addEventListener('keydown', (event) => {
+			if (event.ctrlKey && event.key === '>') {
+				goToNextSlide();
+			} else if (event.ctrlKey && event.key === '<') {
+				goToPrevSlide();
+			}
+		});
+
+		const nextBtns = document.querySelectorAll('.nextBtn');
+		const prevBtns = document.querySelectorAll('.prevBtn');
+
+		nextBtns.forEach((btn) => {
+			btn.addEventListener('click', () => {
+				goToNextSlide();
+			});
+		});
+
+		prevBtns.forEach((btn) => {
+			btn.addEventListener('click', () => {
+				goToPrevSlide();
+			});
+		});
+	</script>
+</body>
+</html>

@@ -1,0 +1,30 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>removePbr</title>
+</head>
+
+<body>
+	start
+	<p><br></p><p><br></p><p><br></p><p><br></p><p><br></p><p><br></p><p><br></p><p><br></p><p><br></p><p><br></p><p><br></p><p><br></p><p><br></p><p><br></p><p><br></p><p><br></p><p><br></p><p><br></p><p><br></p><p><br></p><p><br></p><p><br></p><p><br></p><p><br></p><p><br></p><p><br></p><p><br></p>
+	end
+	
+	
+<script>
+// Get all the <p> elements on the page
+const paragraphs = document.querySelectorAll('p');
+
+// Iterate through each <p> element
+paragraphs.forEach(paragraph => {
+    // Check if the <p> contains only a single <br> element and has no other child nodes
+    if (paragraph.childNodes.length === 1 && paragraph.firstChild.nodeName === 'BR') {
+        // Remove the <p> element
+        paragraph.remove();
+    }
+});
+</script>	
+	
+	
+</body>
+</html>

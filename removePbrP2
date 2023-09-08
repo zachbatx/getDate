@@ -1,0 +1,67 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>removePbr2</title>
+</head>
+
+<body>
+	start
+	<p><br>something else</p><p><br></p><p><br></p><p><br></p><p><br></p><p><br></p><p><br></p><p><br></p><p><br></p><p><br></p><p><br></p><p><br></p><p><br></p><p><br></p><p><br>another thing</p><p><br></p><p><br></p><p><br></p><p><br></p><p><br></p><p><br></p><p><br></p><p><br></p><p><br></p><p><br></p><p><br></p><p><br></p>
+	end
+	
+	
+	<table width="200" border="1">
+  <tbody>
+    <tr>
+      <th scope="col">stuff</th>
+      <th scope="col">stuff</th>
+      <th scope="col">stuff</th>
+      <th scope="col">stuff</th>
+      <th scope="col">stuff</th>
+      <th scope="col">stuff</th>
+      <th scope="col">stuff</th>
+    </tr>
+    <tr>
+      <td class="code">start  <p><br>something else</p><p><br></p><p><br></p><p><br></p><p><br></p><p><br></p><p><br></p><p><br></p><p><br></p><p><br></p><p><br></p><p><br></p><p><br></p><p><br></p><p><br>another thing</p>end</td>
+      <td>stuff</td>
+      <td>stuff</td>
+      <td>stuff</td>
+      <td>stuff</td>
+      <td>stuff</td>
+      <td>stuff</td>
+    </tr>
+    <tr>
+      <td>stuff</td>
+      <td>stuff</td>
+      <td>stuff</td>
+      <td>stuff</td>
+      <td>stuff</td>
+      <td>stuff</td>
+      <td>stuff</td>
+    </tr>
+  </tbody>
+</table>
+	
+	
+<script>
+/// Get all the <p> elements on the page
+const paragraphs = document.querySelectorAll('p');
+
+// Iterate through each <p> element
+paragraphs.forEach(paragraph => {
+    // Check if the <p> element is not inside a <td> element with class="code"
+    if (!paragraph.closest('td.code')) {
+        // Check if the <p> contains only a single <br> element and has no other child nodes
+        if (paragraph.childNodes.length === 1 && paragraph.firstChild.nodeName === 'BR') {
+            // Remove the <p> element
+            paragraph.remove();
+        }
+    }
+});
+
+</script>	
+	
+	
+</body>
+</html>

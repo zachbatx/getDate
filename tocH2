@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>tocTitle</title>
+</head>
+<body>
+    <div title="table of contents" class="tHere"></div>
+    <div title="another table of contents" class="tHere"></div>
+    <div title="yet another table of contents" class="tHere"></div>
+
+    <script>
+        // Get all elements with class "tHere"
+        const elementsWithTHereClass = document.querySelectorAll('.tHere');
+
+        // Loop through each element and modify the attributes
+        elementsWithTHereClass.forEach(element => {
+            // Get the value of the "title" attribute
+            const titleValue = element.getAttribute('title');
+
+            // Change "title" attribute to "tocName"
+            element.removeAttribute('title');
+            element.setAttribute('tocName', titleValue);
+
+            // Create an <h2> element
+            const h2Element = document.createElement('h2');
+
+            // Set the inner text of the <h2> element to the "title" value
+            h2Element.innerText = titleValue;
+
+            // Prepend the <h2> element before the current element
+            element.parentNode.insertBefore(h2Element, element);
+        });
+    </script>
+</body>
+</html>

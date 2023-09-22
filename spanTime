@@ -1,0 +1,37 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>spanTime</title>
+</head>
+
+<body>
+
+	<span class="calDate">cal date</span>
+	<span class="calDate">cal date</span>	
+	<span class="calDate">cal date</span>	
+	<span class="calDate">cal date</span>	
+	
+	
+	
+	
+<script>
+	
+	document.addEventListener('DOMContentLoaded', function() {
+  const spanElements = document.querySelectorAll('span.calDate');
+  spanElements.forEach(span => {
+    const timeElement = document.createElement('time');
+    [...span.attributes].forEach(attr => {
+      timeElement.setAttribute(attr.name, attr.value);
+    });
+    timeElement.innerHTML = span.innerHTML;
+    span.replaceWith(timeElement);
+  });
+});
+
+</script>	
+	
+	
+	
+</body>
+</html>

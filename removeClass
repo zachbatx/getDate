@@ -1,0 +1,38 @@
+<!doctype html>
+<html>
+<head>
+	
+	<style>
+		.example {
+			font-weight: bold;
+		}
+	</style>
+	
+<meta charset="UTF-8">
+<title>removeClass</title>
+</head>
+
+<body>
+	
+	<div class="example">this is an example</div>
+	<div class="example">this is an example</div>
+	<div class="example">this is an example</div>
+	<div class="example">this is an example</div>
+	<div class="example">this is an example</div>
+	
+<script>
+
+	document.addEventListener('DOMContentLoaded', function() {
+  // Select all elements with class 'example'
+  const elements = document.querySelectorAll('.example');
+  
+  // Iterate over each element and remove the class 'example'
+  elements.forEach(element => {
+    element.classList.remove('example');
+  });
+});
+	
+</script>	
+	
+</body>
+</html>

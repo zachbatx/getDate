@@ -1,0 +1,30 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>truncateLongLink</title>
+</head>
+
+<body>
+	
+<a href="https:www.zbfoto.com/a;ejirg hpaiehgasenrg;aner;gnae;rgna;erjgna;erjgna;ejrgna;erng;ajerngkajernglasrglksajerg;aheg;aehgaer">https:www.zbfoto.com/a;ejirg hpaiehgasenrg;aner;gnae;rgna;erjgna;erjgna;ejrgna;erng;ajerngkajernglasrglksajerg;aheg;aehgaer</a>	
+	
+	<a href="https:www.zbfoto.com/a;ejirg hpaiehgasenrg;aner;gnae;rgna;erjgna;erjgna;ejrgna;erng;ajerngkajernglasrglksajerg;aheg;aehgaer">https:www.zbfoto.com/a;ejirg hpaiehgasenrg;aner;gnae;rgna;erjgna;erjgna;ejrgna;erng;ajerngkajernglasrglksajerg;aheg;aehgaer</a>	
+	
+	
+	
+	<script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const links = document.querySelectorAll('a');
+      const maxLength = 30;
+      links.forEach(link => {
+        const linkText = link.textContent;
+        if (linkText.length > maxLength) {
+          link.textContent = linkText.substring(0, maxLength) + '...';
+        }
+      });
+    });
+  </script>
+	
+</body>
+</html>

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>truncateLongLink2</title>
+</head>
+<body>
+  
+  <a href="https://www.example.com/long-linkaseurglargbalrglagrbalgrbalgba">https://www.example.com/long-linkaseurglargbalrglagrbalgrbalgba</a><br><br>
+  <a href="https://www.example.com/long-link">This is a very long link that will not be truncated</a>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const links = document.querySelectorAll('a');
+      const maxLength = 30;
+      links.forEach(link => {
+        const href = link.getAttribute('href');
+        if (href && link.textContent === href && href.startsWith('https://')) {
+          if (link.textContent.length > maxLength) {
+            link.textContent = link.textContent.substring(0, maxLength) + '...';
+          }
+        }
+      });
+    });
+  </script>
+  
+</body>
+</html>

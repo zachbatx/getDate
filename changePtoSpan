@@ -1,0 +1,44 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>changePtoSpan</title>
+</head>
+
+<body>
+	<div class="changePspan">
+		<p>this is a p</p>
+		<p>this is a p</p>
+		<p>this is a p</p>
+		<p>this is a p</p>
+		<p>this is a p</p>
+	</div>
+	
+<script>
+// Wait until the DOM is fully loaded
+document.addEventListener('DOMContentLoaded', function () {
+    // Select all <p> elements within elements with class=changePspan
+    var pElements = document.querySelectorAll('.changePspan p');
+
+    // Loop through all selected <p> elements
+    pElements.forEach(function (p) {
+        // Create a new <span> element
+        var span = document.createElement('span');
+
+        // Copy attributes from <p> to <span>
+        for (var i = 0; i < p.attributes.length; i++) {
+            span.setAttribute(p.attributes[i].name, p.attributes[i].value);
+        }
+
+        // Copy content from <p> to <span>
+        span.innerHTML = p.innerHTML;
+
+        // Replace <p> with <span> in the DOM
+        p.parentNode.replaceChild(span, p);
+    });
+});	
+</script>	
+	
+	
+</body>
+</html>

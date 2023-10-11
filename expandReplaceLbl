@@ -1,0 +1,71 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>expandReplaceLbl</title>
+</head>
+
+<body>
+	
+my mistake I had the  incorrect classes. here are the correct classes. please write a javascript that will: 
+	
+- for each instance of div class=expLbl 
+- replace the innerHTML of div class=expand-control-text with the first heading within the div class=expand-content	
+	
+Example HTML structures
+	
+	<div class="expLbl">
+		<div class="expand-container">
+			<div class="expand-control">
+				<div class="expand-control-text">
+					a label 1
+				</div>
+			</div>
+			<div class="expand-content">
+			<h2>This is a heading 1</h2>
+			</div>
+		</div>
+	</div>
+	
+	<div class="expLbl">
+		<div class="expand-container">
+			<div class="expand-control">
+				<div class="expand-control-text">
+					a label 2
+				</div>
+			</div>
+			<div class="expand-content">
+			<h2>This is a heading 2</h2>
+			</div>
+		</div>
+	</div>
+	
+	<script>
+	document.addEventListener('DOMContentLoaded', function () {
+    // Select all div elements with class expLbl
+    var expLblElements = document.querySelectorAll('div.expLbl');
+    
+    // Loop through all selected div elements
+    expLblElements.forEach(function (expLbl) {
+        // Find the div with class expand-control-text within expLbl
+        var expandControlText = expLbl.querySelector('div.expand-control-text');
+        // Find the div with class expand-content within expLbl
+        var expandContent = expLbl.querySelector('div.expand-content');
+        
+        // Ensure both elements are found
+        if(expandControlText && expandContent) {
+            // Find the first heading within expandContent
+            var heading = expandContent.querySelector('h1, h2, h3, h4, h5, h6');
+            
+            // Check if a heading is found
+            if(heading) {
+                // Replace the innerHTML of expandControlText with the text content of the heading
+                expandControlText.innerHTML = heading.innerHTML;
+            }
+        }
+    });
+});
+	</script>
+	
+</body>
+</html>

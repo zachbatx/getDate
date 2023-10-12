@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>linkOpener</title>
+</head>
+
+<body>
+    <div id="content">
+        <a href="https://example.com">Example Link 1</a>
+        <div class="topLink">
+            <a href="https://example.com">Example Link 2 (Exception)</a>
+        </div>
+        <a href="https://example.com">Example Link 3</a>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            let contentContainer = document.getElementById('content');
+            let links = contentContainer.querySelectorAll('a');
+            
+            links.forEach(function(link) {
+                if (!link.closest('.topLink')) {
+                    link.setAttribute('target', '_blank');
+                    link.setAttribute('rel', 'noopener noreferrer'); // Recommended for security reasons
+                }
+            });
+        });
+    </script>
+</body>
+	
+</html>

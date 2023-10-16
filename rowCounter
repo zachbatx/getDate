@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>rowCounter</title>
+</head>
+<body>
+    <div class="countTableRows">
+        <h1>Table 1</h1>
+        <p class="totalRowCount"></p>
+        <table>
+            <thead>
+                <tr>
+                    <th>Header 1</th>
+                    <th>Header 2</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Data 1</td>
+                    <td>Data 2</td>
+                </tr>
+                <tr>
+                    <td>Data 3</td>
+                    <td>Data 4</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="countTableRows">
+        <h1>Table 2</h1>
+        <p class="totalRowCount"></p>
+        <table>
+            <thead>
+                <tr>
+                    <th>Header 1</th>
+                    <th>Header 2</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Data 5</td>
+                    <td>Data 6</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            let containers = document.querySelectorAll('.countTableRows');
+            
+            containers.forEach(function(container) {
+                let rowCount = container.querySelectorAll('table tbody tr').length;
+                let totalRowCountElement = container.querySelector('.totalRowCount');
+                totalRowCountElement.textContent = "Total rows: " + rowCount;
+            });
+        });
+    </script>
+</body>
+</html>

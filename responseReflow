@@ -1,0 +1,43 @@
+<!doctype html>
+
+Review the following CSS and add any missing properties to ensure all parent and chil containers reflow and are responsive. 
+
+<html>
+<head>
+<meta charset="UTF-8">
+<title>reflow</title>
+
+	<style>
+		.divContainer {
+			flex: 1;
+			display: flex;
+			flex-flow: wrap;
+		}
+		
+		.columnMacro {
+			border: 1px solid #c0c0c0;
+			border-radius: 5px;
+			padding: 12px;
+			margin: 12px;
+		}
+		
+	</style>
+	
+</head>
+
+<body>
+	
+	
+	
+	<div class="divContainer">
+		<div class="columnMacro"><img src="img1.jpg"> Sample text  text  text  text  text  text  text text  text  text  text  text  text  text</div>
+		<div class="columnMacro"><img src="img1.jpg"> Sample text  text  text  text  text  text  text text  text  text  text  text  text  text</div>
+		<div class="columnMacro"><img src="img1.jpg"> Sample text  text  text  text  text  text  text text  text  text  text  text  text  text</div>
+		<div class="columnMacro"><img src="img1.jpg"> Sample text  text  text  text  text  text  text text  text  text  text  text  text  text</div>
+		<div class="columnMacro"><img src="img1.jpg"> Sample text  text  text  text  text  text  text text  text  text  text  text  text  text</div>
+	</div>
+	
+	
+	
+</body>
+</html>

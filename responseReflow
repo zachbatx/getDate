@@ -1,33 +1,39 @@
 <!doctype html>
-
-Review the following CSS and add any missing properties to ensure all parent and chil containers reflow and are responsive. 
-
 <html>
 <head>
-<meta charset="UTF-8">
-<title>reflow</title>
-
-	<style>
-		.divContainer {
-			flex: 1;
-			display: flex;
-			flex-flow: wrap;
-		}
-		
-		.columnMacro {
-			border: 1px solid #c0c0c0;
-			border-radius: 5px;
-			padding: 12px;
-			margin: 12px;
-		}
-		
-	</style>
 	
+<style>
+	.divContainer {
+		flex: 1;
+		display: flex;
+		flex-flow: row wrap; /* explicitly specify the direction and wrap */
+		justify-content: space-between; /* To ensure even spacing between the columns */
+	}
+	
+	.columnMacro {
+		flex: 1; /* This allows the column to grow and shrink */
+		flex-basis: calc(20% - 24px); /* Let's assume we want 5 columns in a full row; minus double the margin */
+		max-width: calc(20% - 24px); /* This ensures the max-width respects the margin */
+		border: 1px solid #c0c0c0;
+		border-radius: 5px;
+		padding: 12px;
+		margin: 12px;
+		box-sizing: border-box; /* This ensures that padding and border are included in the element's total width and height */
+	}
+
+	.columnMacro img {
+		max-width: 100%; /* Ensures images are responsive */
+		display: block; /* Removes any unnecessary space below the image */
+	}
+</style>	
+	
+	
+	
+<meta charset="UTF-8">
+<title>responsiveReflow</title>
 </head>
 
 <body>
-	
-	
 	
 	<div class="divContainer">
 		<div class="columnMacro"><img src="img1.jpg"> Sample text  text  text  text  text  text  text text  text  text  text  text  text  text</div>
@@ -38,6 +44,15 @@ Review the following CSS and add any missing properties to ensure all parent and
 	</div>
 	
 	
+<script>
+// Create the viewport meta element
+var metaViewport = document.createElement('meta');
+metaViewport.name = "viewport";
+metaViewport.content = "width=device-width, initial-scale=1.0";
+
+// Append it to the head of the document
+document.getElementsByTagName('head')[0].appendChild(metaViewport);
+</script>	
 	
 </body>
 </html>

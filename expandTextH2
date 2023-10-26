@@ -1,0 +1,52 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>expandTextH2</title>
+</head>
+
+<body>
+	
+Basically every instance of class=expand-control-text inner text should have an <h2></h2> wrapped around it within the parent container with the class=expandTextH2	
+	
+Sorry I had an error in the example HTML structure. here is thr correct structure.
+	
+<div class="expLbl expandTextH2">
+		<div class="expand-container">
+			<div class="expand-control">
+				<div class="expand-control-text">
+					a label 1
+				</div>
+			</div>
+		</div>	
+	<div class="expand-container">
+			<div class="expand-control">
+				<div class="expand-control-text">
+					a label 2
+				</div>
+			</div>
+		</div>	
+	
+<script>
+
+	document.addEventListener('DOMContentLoaded', function() { // Ensure the DOM is fully loaded
+    // Get all elements with the class expandTextH2
+    const expandTextH2Elems = document.querySelectorAll('.expandTextH2');
+
+    expandTextH2Elems.forEach(function(elem) {
+        // For each .expandTextH2 element, get all inner elements with class expand-control-text
+        const expandControlTextElems = elem.querySelectorAll('.expand-control-text');
+        
+        expandControlTextElems.forEach(function(innerElem) {
+            // Wrap the innerText of each expand-control-text with an h2 tag
+            innerElem.innerHTML = `<h2>${innerElem.innerText}</h2>`;
+        });
+    });
+});
+
+	
+</script>
+	
+	
+</body>
+</html>

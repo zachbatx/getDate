@@ -6,10 +6,7 @@
 </head>
 
 <body>
-	
-Basically every instance of class=expand-control-text inner text should have an <h2></h2> wrapped around it within the parent container with the class=expandTextH2	
-	
-Sorry I had an error in the example HTML structure. here is thr correct structure.
+
 	
 <div class="expLbl expandTextH2">
 		<div class="expand-container">

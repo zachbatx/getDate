@@ -1,16 +1,20 @@
-let previousHeight = document.querySelector('.columnMacro').offsetHeight;
+// Initialize an array to store previous heights for all `.columnMacro` elements
+let previousHeights = Array.from(document.querySelectorAll('.columnMacro')).map(el => el.offsetHeight);
 
 window.addEventListener('resize', function() {
-    const columnMacro = document.querySelector('.columnMacro');
-    const currentHeight = columnMacro.offsetHeight;
+    const columnMacros = document.querySelectorAll('.columnMacro');
+    
+    columnMacros.forEach((columnMacro, index) => {
+        const currentHeight = columnMacro.offsetHeight;
 
-    if (currentHeight > previousHeight) {
-        // The content might have wrapped
-        columnMacro.style.display = 'contents';
-    } else {
-        columnMacro.style.display = 'flex';
-    }
+        if (currentHeight > previousHeights[index]) {
+            // The content might have wrapped
+            columnMacro.style.display = 'contents';
+        } else {
+            columnMacro.style.display = 'flex';
+        }
 
-    // Update the previousHeight for the next comparison
-    previousHeight = currentHeight;
+        // Update the height in the previousHeights array for the next comparison
+        previousHeights[index] = currentHeight;
+    });
 });

@@ -1,0 +1,14 @@
+window.addEventListener('resize', function() {
+    if (window.innerWidth === 320) {
+        const columnMacros = document.querySelectorAll('.columnMacro');
+        
+        columnMacros.forEach((columnMacro) => {
+            if (columnMacro.scrollHeight > columnMacro.offsetHeight) {
+                // The content might have wrapped
+                columnMacro.style.display = 'contents';
+            } else {
+                columnMacro.style.display = 'flex';
+            }
+        });
+    }
+});

@@ -72,5 +72,27 @@
 		</div>
 </div>	
 	
+<script>
+	
+function adjustFontSize() {
+  const column = document.querySelector('.column');
+  let originalHeight = column.offsetHeight;
+
+  // Increase the zoom (for demonstration purposes only - in reality, this will be done by the user)
+  document.body.style.zoom = "200%";
+
+  let zoomedHeight = column.offsetHeight;
+
+  while (zoomedHeight > originalHeight) {
+    let style = window.getComputedStyle(column, null).getPropertyValue('font-size');
+    let fontSize = parseFloat(style); 
+    column.style.fontSize = (fontSize - 0.5) + "px"; // reduce by 0.5px or whatever decrement you find suitable
+    zoomedHeight = column.offsetHeight;
+  }
+}
+
+adjustFontSize();	
+</script>	
+	
 </body>
 </html>

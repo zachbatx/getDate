@@ -1,0 +1,16 @@
+let previousHeight = document.querySelector('.columnMacro').offsetHeight;
+
+window.addEventListener('resize', function() {
+    const columnMacro = document.querySelector('.columnMacro');
+    const currentHeight = columnMacro.offsetHeight;
+
+    if (currentHeight > previousHeight) {
+        // The content might have wrapped
+        columnMacro.style.display = 'contents';
+    } else {
+        columnMacro.style.display = 'flex';
+    }
+
+    // Update the previousHeight for the next comparison
+    previousHeight = currentHeight;
+});

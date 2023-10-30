@@ -1,0 +1,71 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>revisedWrap5</title>
+    <style>
+        .main {
+            width: 95%;
+            display: flex;
+            justify-content: center;
+        }
+
+        .columnDiv {
+            display: flex;
+            flex-flow: row wrap;
+            width: 100%;
+        }
+
+        .column {
+            flex: 1;
+            box-sizing: border-box;
+            padding: 15px;
+            margin: 15px;
+            overflow: visible;  /* Ensuring content isn't cut off */
+        }
+
+        .imgType {
+            width: 30vw;
+            height: 30vh;
+            background-color: #c0c0c0;
+        }
+    </style>
+</head>
+
+<body>
+    
+	<div class="main">
+		<div class="columnDiv">
+			<div class="column"> <img src="https://canyonadventurevans.com/wp-content/uploads/2023/07/IMG_0825-1536x1536-1-768x768.jpeg" class="imgType">
+			On The Beach RV Park is located on the beautiful shores of Port Aransas just outside of Corpus Christi, TX. All of our sites are full hookups with high-speed wireless internet. You can’t get any closer to the sandy shore than On the Beach RV Park. All the amenities you look for are present at our family-friendly park with direct trails to the beach, public bathhouses, a fish cleaning house, and award-winning landscaping. If you stay with us, you won’t want to go anywhere else!
+			</div>
+			<div class="column"> <img src="https://canyonadventurevans.com/wp-content/uploads/2023/07/IMG_0825-1536x1536-1-768x768.jpeg" class="imgType">
+			On The Beach RV Park is located on the beautiful shores of Port Aransas just outside of Corpus Christi, TX. All of our sites are full hookups with high-speed wireless internet. You can’t get any closer to the sandy shore than On the Beach RV Park. All the amenities you look for are present at our family-friendly park with direct trails to the beach, public bathhouses, a fish cleaning house, and award-winning landscaping. If you stay with us, you won’t want to go anywhere else!
+			</div>
+		</div>
+</div>
+
+    <script>
+        function adjustFontSize() {
+            // Get the columns
+            const columns = document.querySelectorAll('.column');
+
+            columns.forEach(column => {
+                // Reset font size to default first for accurate calculation
+                column.style.fontSize = '100%';
+
+                while (column.scrollHeight > column.offsetHeight) {
+                    // Reduce font size by 0.5% until the content fits
+                    let currentSize = parseFloat(window.getComputedStyle(column, null).getPropertyValue('font-size'));
+                    column.style.fontSize = (currentSize * 0.995) + 'px';
+                }
+            });
+        }
+
+        // Listen to resize event
+        window.addEventListener('resize', adjustFontSize);
+
+        // Call the function on page load to set initial sizes if needed
+        window.onload = adjustFontSize;
+    </script>
+</body>
+</html>

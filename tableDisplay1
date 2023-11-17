@@ -1,0 +1,82 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>tableDisplay1</title>
+</head>
+
+<body>
+	
+write a javascript that will only display rows containining "foundational" under the "level" table header
+	
+here is example HTML structure 
+
+<div class="devCourses">
+<table class="confluenceTable" width="200" border="1">
+  <caption>Data</caption>
+	<colgroup></colgroup>
+	<thead>
+	 <tr>
+      <th scope="col">name</th>
+      <th scope="col">level</th>
+      <th scope="col">category</th>
+    </tr>
+	</thead>
+  <tbody>
+    <tr>
+      	<td>a1</td>
+		<td>foundational</td>
+		<td>dev</td>
+    </tr>
+	<tr>
+      	<td>a2</td>
+		<td>advanced</td>
+		<td>dev</td>
+    </tr>
+	<tr>
+      	<td>a3</td>
+		<td>foundational</td>
+		<td>dev</td>
+    </tr>
+
+  </tbody>
+</table>	
+</div>	
+	
+<script>
+	
+// Function to filter and display rows containing "foundational" under the "level" header
+function filterRows() {
+  // Get the table element by its class name
+  var table = document.querySelector('div.devCourses .confluenceTable');
+
+  // Get all the table rows in the tbody
+  var rows = table.querySelectorAll('tbody tr');
+
+  // Iterate through the rows
+  for (var i = 0; i < rows.length; i++) {
+    var row = rows[i];
+
+    // Get the cell under the "level" header
+    var levelCell = row.querySelector('td:nth-child(2)'); // 2nd column (index 1)
+
+    // Check if the text in the "level" cell is "foundational"
+    if (levelCell.textContent.trim() !== 'foundational') {
+      // Hide the row if it doesn't contain "foundational" under "level"
+      row.style.display = 'none';
+    } else {
+      // Show the row if it contains "foundational" under "level"
+      row.style.display = '';
+    }
+  }
+}
+
+// Call the filterRows function to initially filter the rows
+filterRows();
+	
+	
+</script>	
+	
+	
+</body>
+</html>

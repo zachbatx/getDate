@@ -49,5 +49,20 @@ Many accessibility requirements extend benefits to individuals beyond disabiliti
 Combining accessibility standards with usability processes ensures technically and functionally usable web design for individuals with disabilities.
 Integrating usability techniques into accessibility practices enhances 'usable accessibility,' improving designs for diverse users in different contexts.
 Addressing accessibility, usability, and inclusion collectively leads to a more accessible, usable, and inclusive web environment for all users.
+
+POUR
+
+The POUR principles of digital accessibility stand for Perceivable, Operable, Understandable, and Robust. These principles are the foundation of creating accessible web content according to the Web Content Accessibility Guidelines (WCAG) 
+
+ Perceivable: This principle emphasizes that information and user interface components must be presented in ways that users can perceive. For instance, providing text alternatives for non-text content like images ensures accessibility for users who rely on screen readers
+
+ Operable: The operable principle focuses on making user interface components and navigation operable for all users. Ensuring keyboard accessibility and avoiding interactions that exclude certain users are key aspects of this principle
+
+ Understandable: Information and user interface operations must be understandable to users. This involves providing clear labels, instructions, and content that is easy to comprehend
+
+ Robust: Content must be robust enough to be interpreted reliably by various user agents and assistive technologies. This principle ensures that content remains accessible as technologies evolve
+
+By adhering to these POUR principles, websites can enhance accessibility for all users, including those with disabilities, creating a more inclusive online environment.
+
 </body>
 </html>

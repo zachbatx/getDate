@@ -1,67 +1,59 @@
 <script>
-async function displayImportedContent(url, importName) {
-    try {
-        // Fetch the content from the specified URL
-        const response = await fetch(url);
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        const text = await response.text();
+document.addEventListener('DOMContentLoaded', () => {
+    // Function to import data from source elements
+    function importData(sourceElements) {
+        let dataMap = {};
 
-        // Parse the fetched content as HTML
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(text, 'text/html');
+        // Extract data from source elements
+        sourceElements.forEach(element => {
+            const dataName = element.getAttribute('importDataName');
+            if (dataName) {
+                dataMap[dataName] = element.innerHTML;
+            }
+        });
 
-        // Find the element with the specified importName attribute
-        const importedElement = doc.querySelector(`[importName="${importName}"]`);
-        if (!importedElement) {
-            throw new Error(`Element with importName="${importName}" not found`);
-        }
-
-        // Find the container with the class contentImp
-        const container = document.querySelector('.contentImp');
-        if (!container) {
-            throw new Error('Container with class "contentImp" not found');
-        }
-
-        // Clear any existing content in the container
-        container.innerHTML = '';
-
-        // Insert the imported element into the container
-        container.appendChild(importedElement);
-    } catch (error) {
-        console.error('Error importing content:', error);
-
-        // Display user-friendly error message in the container
-        const container = document.querySelector('.contentImp');
-        if (container) {
-            container.innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
-        } else {
-            alert(`Error: ${error.message}`);
-        }
+        return dataMap;
     }
-}
+
+    // Function to display data on destination elements
+    function displayData(destinationElements, dataMap) {
+        destinationElements.forEach(element => {
+            const dataName = element.getAttribute('displayImportData');
+            if (dataName && dataMap[dataName]) {
+                element.innerHTML = dataMap[dataName];
+            } else {
+                // Error handling: If data is not found, display an error message
+                element.innerHTML = `<span style="color: red;">Error: Data not found for "${dataName}"</span>`;
+            }
+        });
+    }
+
+    // Fetching the source elements from the source page (assume source page is loaded)
+    const sourceElements = document.querySelectorAll('[importDataName]');
+    const dataMap = importData(sourceElements);
+
+    // Fetching the destination elements from the current page
+    const destinationElements = document.querySelectorAll('[displayImportData]');
+    displayData(destinationElements, dataMap);
+});
 </script>
 
 
-Example
-Assuming the target page has an element like this:
+How to Use This Script
+Source Page Setup:
 
+Add elements with the importDataName attribute and their respective data.
 html
 Copy code
-<div importName="uniqueImportName">
-    This is the content to import.
-</div>
-And your main page has a container like this:
+<div importDataName="example1">This is example data 1</div>
+<div importDataName="example2">This is example data 2</div>
+Destination Page Setup:
 
+Add elements with the displayImportData attribute where you want the data to be displayed.
 html
 Copy code
-<div class="contentImp"></div>
-You can call the function in your main page's script:
+<div displayImportData="example1"></div>
+<div displayImportData="example2"></div>
+Include the JavaScript:
 
-javascript
-Copy code
-document.addEventListener('DOMContentLoaded', () => {
-    displayImportedContent('https://example.com/page.html', 'uniqueImportName');
-});
-This code will fetch the content from https://example.com/page.html, find the element with importName="uniqueImportName", and display it inside the container with the class contentImp on your main page.
+Include the JavaScript on the destination page after ensuring the source page content is loaded.

@@ -1,0 +1,67 @@
+<script>
+async function displayImportedContent(url, importName) {
+    try {
+        // Fetch the content from the specified URL
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        const text = await response.text();
+
+        // Parse the fetched content as HTML
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(text, 'text/html');
+
+        // Find the element with the specified importName attribute
+        const importedElement = doc.querySelector(`[importName="${importName}"]`);
+        if (!importedElement) {
+            throw new Error(`Element with importName="${importName}" not found`);
+        }
+
+        // Find the container with the class contentImp
+        const container = document.querySelector('.contentImp');
+        if (!container) {
+            throw new Error('Container with class "contentImp" not found');
+        }
+
+        // Clear any existing content in the container
+        container.innerHTML = '';
+
+        // Insert the imported element into the container
+        container.appendChild(importedElement);
+    } catch (error) {
+        console.error('Error importing content:', error);
+
+        // Display user-friendly error message in the container
+        const container = document.querySelector('.contentImp');
+        if (container) {
+            container.innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+        } else {
+            alert(`Error: ${error.message}`);
+        }
+    }
+}
+</script>
+
+
+Example
+Assuming the target page has an element like this:
+
+html
+Copy code
+<div importName="uniqueImportName">
+    This is the content to import.
+</div>
+And your main page has a container like this:
+
+html
+Copy code
+<div class="contentImp"></div>
+You can call the function in your main page's script:
+
+javascript
+Copy code
+document.addEventListener('DOMContentLoaded', () => {
+    displayImportedContent('https://example.com/page.html', 'uniqueImportName');
+});
+This code will fetch the content from https://example.com/page.html, find the element with importName="uniqueImportName", and display it inside the container with the class contentImp on your main page.

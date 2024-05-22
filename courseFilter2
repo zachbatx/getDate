@@ -84,7 +84,7 @@
                 }).join(', ');
 
                 const textElement = document.createElement('div');
-                textElement.innerHTML = `<br> Course 1: ${classText}`;
+                textElement.innerHTML = ` ${classText}`;
                 course.appendChild(textElement);
             });
 

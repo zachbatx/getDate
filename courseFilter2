@@ -130,5 +130,17 @@
             }
         });
     </script>
+
+    <script>
+        function replaceUxWithUX(inputString) {
+    // Use a regular expression with the global flag to replace all occurrences
+    return inputString.replace(/Ux/g, 'UX');
+}
+
+// Example usage
+let exampleString = "This is a Ux test string. Ux design is important.";
+let modifiedString = replaceUxWithUX(exampleString);
+console.log(modifiedString); // Output: "This is a UX test string. UX design is important."
+</script>
 </body>
 </html>

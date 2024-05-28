@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Filter 3</title>
+    <style>
+        .filters {
+            margin-bottom: 20px;
+        }
+        .filters div {
+            margin-bottom: 10px;
+        }
+        .course {
+            margin-bottom: 15px;
+            padding: 10px;
+            border: 1px solid #ccc;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="filters">
+        <div class="roles">
+            <h3>Roles</h3>
+            <label><input type="checkbox" value="general"> General</label>
+            <label><input type="checkbox" value="all-product"> All Product</label>
+            <label><input type="checkbox" value="product-owner"> Product Owner</label>
+            <label><input type="checkbox" value="ux-research"> UX Research</label>
+            <label><input type="checkbox" value="ux-content"> UX Content</label>
+            <label><input type="checkbox" value="ux-design"> UX Design</label>
+            <label><input type="checkbox" value="ux-all"> UX All</label>
+            <label><input type="checkbox" value="developer"> Developer</label>
+            <label><input type="checkbox" value="tester"> Tester</label>
+        </div>
+        <div class="learning-levels">
+            <h3>Learning Levels</h3>
+            <label><input type="checkbox" value="foundational"> Foundational</label>
+            <label><input type="checkbox" value="intermediate"> Intermediate</label>
+            <label><input type="checkbox" value="advanced"> Advanced</label>
+        </div>
+        <div class="type">
+            <h3>Type</h3>
+            <label><input type="checkbox" value="instructor-led"> Instructor Led / Bootcamps</label>
+            <label><input type="checkbox" value="self-paced"> Self-Paced eLearning</label>
+        </div>
+        <div class="topic">
+            <h3>Topic</h3>
+            <label><input type="checkbox" value="pdf"> PDF</label>
+            <label><input type="checkbox" value="design"> Design</label>
+            <label><input type="checkbox" value="development"> Development</label>
+            <label><input type="checkbox" value="testing"> Testing</label>
+        </div>
+    </div>
+
+    <div class="courses">
+        <div class="course general foundational instructor-led pdf addOne">
+            <h2>Course 1:</h2>
+			<div>this is content</div>
+			<div>this is more content</div>
+        </div>
+        <div class="course ux-design intermediate self-paced design">
+            <h2>Course 2:</h2>
+        </div>
+        <div class="course developer advanced instructor-led development">
+            <h2>Course 3:</h2>
+        </div>
+        <div class="course tester foundational self-paced testing">
+            <h2>Course 4:</h2>
+        </div>
+        <!-- Add more course elements as needed -->
+    </div>
+
+	
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const checkboxes = document.querySelectorAll('.filters input[type="checkbox"]');
+        const courses = document.querySelectorAll('.course');
+
+        // Define valid classes
+        const validClasses = new Set([
+            'general', 'all-product', 'product-owner', 'ux-research', 'ux-content',
+            'ux-design', 'ux-all', 'developer', 'tester',
+            'foundational', 'intermediate', 'advanced',
+            'instructor-led', 'self-paced',
+            'pdf', 'design', 'development', 'testing'
+        ]);
+
+        // Add text representation of each course's valid classes to its container
+        courses.forEach(course => {
+            const courseClasses = Array.from(course.classList).filter(cls => validClasses.has(cls));
+            const classText = courseClasses.map(cls => {
+                return cls.replace(/-/g, ' ').replace(/\b\w/g, char => char.toUpperCase());
+            }).join(', ');
+
+            const textElement = document.createElement('div');
+            textElement.innerHTML = classText;
+
+            const firstHeading = course.querySelector('h1, h2, h3, h4, h5, h6');
+            if (firstHeading) {
+                firstHeading.insertAdjacentElement('afterend', textElement);
+            } else {
+                course.insertBefore(textElement, course.firstChild);  // Fallback if no heading is found
+            }
+        });
+
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', filterCourses);
+        });
+
+        function filterCourses() {
+            const activeFilters = {
+                roles: getCheckedValues('roles'),
+                learningLevels: getCheckedValues('learning-levels'),
+                type: getCheckedValues('type'),
+                topic: getCheckedValues('topic')
+            };
+
+            courses.forEach(course => {
+                const courseClasses = course.classList;
+                const matchesRole = activeFilters.roles.length === 0 || activeFilters.roles.some(role => courseClasses.contains(role));
+                const matchesLevel = activeFilters.learningLevels.length === 0 || activeFilters.learningLevels.some(level => courseClasses.contains(level));
+                const matchesType = activeFilters.type.length === 0 || activeFilters.type.some(type => courseClasses.contains(type));
+                const matchesTopic = activeFilters.topic.length === 0 || activeFilters.topic.some(topic => courseClasses.contains(topic));
+
+                if (matchesRole && matchesLevel && matchesType && matchesTopic) {
+                    course.classList.remove('hidden');
+                } else {
+                    course.classList.add('hidden');
+                }
+            });
+        }
+
+        function getCheckedValues(category) {
+            return Array.from(document.querySelectorAll(`.${category} input[type="checkbox"]:checked`))
+                .map(checkbox => checkbox.value);
+        }
+    });
+</script>
+
+	
+</body>
+</html>

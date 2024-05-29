@@ -1,0 +1,13 @@
+document.addEventListener("DOMContentLoaded", function() {
+    // Select all <p> elements
+    const paragraphs = document.querySelectorAll('p');
+
+    // Iterate through each <p> element
+    paragraphs.forEach(paragraph => {
+        // Check if the <p> element is empty
+        if (!paragraph.textContent.trim()) {
+            // Remove the empty <p> element
+            paragraph.remove();
+        }
+    });
+});

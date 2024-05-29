@@ -13,17 +13,36 @@
 	
 <script>
 // Get all the <p> elements on the page
-const paragraphs = document.querySelectorAll('p');
+//const paragraphs = document.querySelectorAll('p');
 
 // Iterate through each <p> element
-paragraphs.forEach(paragraph => {
+//paragraphs.forEach(paragraph => {
     // Check if the <p> contains only a single <br> element and has no other child nodes
-    if (paragraph.childNodes.length === 1 && paragraph.firstChild.nodeName === 'BR') {
+ //   if (paragraph.childNodes.length === 1 && paragraph.firstChild.nodeName === 'BR') {
         // Remove the <p> element
-        paragraph.remove();
-    }
+  //      paragraph.remove();
+  //  }
+//});
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    // Select all <p> elements
+    const paragraphs = document.querySelectorAll('p');
+
+    // Iterate through each <p> element
+    paragraphs.forEach(paragraph => {
+        // Check if the <p> element is empty or contains only whitespace
+        if (!paragraph.innerHTML.trim()) {
+            paragraph.remove();
+        } else if (paragraph.children.length === 1 && paragraph.children[0].tagName === 'BR') {
+            // Check if the <p> element contains only a <br> element
+            paragraph.remove();
+        }
+    });
 });
-</script>	
+
+</script>
 	
 	
 </body>

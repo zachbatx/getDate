@@ -4,10 +4,10 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Iterate through each <p> element
     paragraphs.forEach(paragraph => {
-        // Check if the <p> element is empty
-        if (!paragraph.textContent.trim()) {
+        // Check if the <p> element is empty or contains only whitespace
+        if (!paragraph.innerHTML.trim()) {
             // Remove the empty <p> element
             paragraph.remove();
         }
     });
-});
+}); 

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Date Format Changer</title>
+</head>
+<body>
+    <time>01 Apr 2023</time>
+    <time>15 May 2022</time>
+    <time>23 Dec 2021</time>
+
+    <script>
+        // Function to change date format from "dd MMM yyyy" to "MMM dd yyyy"
+        function changeDateFormat() {
+            // Get all <time> elements
+            const timeElements = document.querySelectorAll('time');
+            
+            // Iterate over each <time> element
+            timeElements.forEach(timeElement => {
+                // Get the current date text
+                const dateText = timeElement.textContent;
+                
+                // Split the date text into parts
+                const [day, month, year] = dateText.split(' ');
+                
+                // Reformat the date
+                const newDateText = `${month} ${day} ${year}`;
+                
+                // Set the new formatted date text back to the <time> element
+                timeElement.textContent = newDateText;
+            });
+        }
+
+        // Call the function to change date formats
+        changeDateFormat();
+    </script>
+</body>
+</html>

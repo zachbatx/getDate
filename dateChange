@@ -6,34 +6,41 @@
     <title>Date Format Changer</title>
 </head>
 <body>
-    <time>01 Apr 2023</time>
-    <time>15 May 2022</time>
-    <time>23 Dec 2021</time>
+    <time datetime="2024-08-01">01 Aug 2024</time>
+	<time datetime="2023-02-04">04 Feb 2023</time>
+	<time datetime="2022-05-06">06 May 2022</time>
 
     <script>
-        // Function to change date format from "dd MMM yyyy" to "MMM dd yyyy"
-        function changeDateFormat() {
-            // Get all <time> elements
-            const timeElements = document.querySelectorAll('time');
-            
-            // Iterate over each <time> element
-            timeElements.forEach(timeElement => {
-                // Get the current date text
-                const dateText = timeElement.textContent;
-                
-                // Split the date text into parts
-                const [day, month, year] = dateText.split(' ');
-                
-                // Reformat the date
-                const newDateText = `${month} ${day} ${year}`;
-                
-                // Set the new formatted date text back to the <time> element
-                timeElement.textContent = newDateText;
-            });
-        }
+        document.addEventListener('DOMContentLoaded', function () {
+    // Month names array for formatting
+    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", 
+                        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-        // Call the function to change date formats
-        changeDateFormat();
+    // Function to convert date format
+    function convertDateFormat(timeElement) {
+        // Extract date from datetime attribute
+        const datetime = timeElement.getAttribute('datetime');
+        const [year, month, day] = datetime.split('-');
+
+        // Convert month number to month name
+        const monthName = monthNames[parseInt(month, 10) - 1];
+        
+        // Format new datetime attribute
+        const newDatetime = `${month}-${day}-${year}`;
+
+        // Format new text content
+        const newTextContent = `${monthName} ${day} ${year}`;
+
+        // Update the time element
+        timeElement.setAttribute('datetime', newDatetime);
+        timeElement.textContent = newTextContent;
+    }
+
+    // Select all <time> elements and convert their date formats
+    const timeElements = document.querySelectorAll('time');
+    timeElements.forEach(convertDateFormat);
+});
+
     </script>
 </body>
 </html>

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Date Filter</title>
+</head>
+<body>
+
+<div>
+  <label for="dates">Choose Date</label>
+  <select id="dates">
+    <option value="All">All</option>
+    <option value="Jan">Jan</option>
+    <option value="Feb">Feb</option>
+    <option value="Mar">Mar</option>
+    <option value="Apr">Apr</option>
+    <option value="May">May</option>
+    <option value="Jun">Jun</option>
+    <option value="Jul">Jul</option>
+    <option value="Aug">Aug</option>
+    <option value="Sep">Sep</option>
+    <option value="Oct">Oct</option>
+    <option value="Nov">Nov</option>
+    <option value="Dec">Dec</option>
+  </select>
+
+  <table width="200" border="1">
+    <tbody>
+      <tr>
+        <th scope="col">Date</th>
+        <th scope="col">Name</th>
+      </tr>
+      <tr>
+        <td><time datetime="2024-08-01">01 Aug 2024</time></td>
+        <td>Dan Smith</td>
+      </tr>
+      <tr>
+        <td><time datetime="2022-05-06">06 May 2022</time></td>
+        <td>Jane Jones</td>
+      </tr>
+      <tr>
+        <td><time datetime="2023-02-04">04 Feb 2023</time></td>
+        <td>Don Klause</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<script>
+  document.getElementById('dates').addEventListener('change', function() {
+    const selectedMonth = this.value;
+    const rows = document.querySelectorAll('table tbody tr');
+    
+    rows.forEach(row => {
+      const dateCell = row.querySelector('td time');
+      if (dateCell) {
+        const date = new Date(dateCell.getAttribute('datetime'));
+        const month = date.toLocaleString('default', { month: 'short' });
+
+        if (selectedMonth === 'All' || month === selectedMonth) {
+          row.style.display = '';
+        } else {
+          row.style.display = 'none';
+        }
+      }
+    });
+  });
+</script>
+
+</body>
+</html>

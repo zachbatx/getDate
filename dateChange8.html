@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Anniversary Calculation 8</title>
+</head>
+<body>
+  <div class="calcAnniv">
+    <table width="200" border="1">
+      <colgroup>
+        <col>
+        <col>
+      </colgroup>
+      <thead>
+        <tr class="tablesorter-headerRow">
+          <th scope="col" class="confluenceTh tablesorter-header sortableHeader tablesorter-headUnSorted">Start Date</th>
+          <th scope="col" class="confluenceTh tablesorter-header sortableHeader tablesorter-headUnSorted">Name</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="confluenceTd"><time datetime="2023-05-31">31 May 2023</time></td>
+          <td class="confluenceTd">Dan Smith</td>
+        </tr>
+        <tr>
+          <td class="confluenceTd"><time datetime="2020-05-31">31 May 2020</time></td>
+          <td class="confluenceTd">Joe Bob</td>
+        </tr>
+        <!-- Add more rows as needed -->
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    // Function to add the Anniversary column header
+    function addAnniversaryColumn(table) {
+      const headerRow = table.querySelector('thead tr');
+      const anniversaryHeader = document.createElement('th');
+      anniversaryHeader.scope = 'col';
+      anniversaryHeader.className = 'confluenceTh tablesorter-header sortableHeader tablesorter-headUnSorted';
+      anniversaryHeader.textContent = 'Anniversary';
+      headerRow.insertBefore(anniversaryHeader, headerRow.children[1]);
+
+      // Add an empty column to the colgroup
+      const colgroup = table.querySelector('colgroup');
+      const newCol = document.createElement('col');
+      colgroup.insertBefore(newCol, colgroup.children[1]);
+    }
+
+    // Function to format date as "MMM dd yyyy"
+    function formatDate(date) {
+      const options = { year: 'numeric', month: 'short', day: '2-digit' };
+      return new Intl.DateTimeFormat('en-US', options).format(date);
+    }
+
+    // Function to reformat date from "yyyy-mm-dd" to "MM-dd-yyyy" and update datetime attribute and text
+    function reformatDate(cell) {
+      const date = new Date(cell.getAttribute('datetime'));
+      const formattedDate = formatDate(date);
+      const [month, day, year] = formattedDate.split(' ');
+
+      // Update the datetime attribute to "MM-dd-yyyy"
+      const newDatetime = `${month}-${day}-${year}`;
+      cell.setAttribute('datetime', `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`);
+
+      // Update the rendered text to "MMM dd yyyy"
+      cell.textContent = `${month} ${day} ${year}`;
+    }
+
+    // Function to calculate anniversaries in years
+    function calculateAnniversaries(table) {
+      const rows = table.querySelectorAll('tbody tr');
+      const currentDate = new Date();
+
+      rows.forEach(row => {
+        const dateCell = row.querySelector('td time');
+        const nameCell = row.querySelectorAll('td')[1];
+
+        if (dateCell) {
+          reformatDate(dateCell);
+
+          const startDate = new Date(dateCell.getAttribute('datetime'));
+          const yearsDifference = currentDate.getFullYear() - startDate.getFullYear();
+          const monthsDifference = currentDate.getMonth() - startDate.getMonth();
+          const daysDifference = currentDate.getDate() - startDate.getDate();
+
+          // Adjust if the anniversary date has not occurred this year yet
+          let anniversaryYears = yearsDifference;
+          if (monthsDifference < 0 || (monthsDifference === 0 && daysDifference < 0)) {
+            anniversaryYears -= 1;
+          }
+
+          // Create and insert the Anniversary cell
+          const anniversaryCell = document.createElement('td');
+          anniversaryCell.className = 'confluenceTd';
+          anniversaryCell.textContent = `${anniversaryYears}yr`;
+          row.insertBefore(anniversaryCell, nameCell);
+        }
+      });
+    }
+
+    // Function to initialize the anniversary calculations
+    function initAnniversaryCalculations() {
+      const tables = document.querySelectorAll('div.calcAnniv table');
+      tables.forEach(table => {
+        addAnniversaryColumn(table);
+        calculateAnniversaries(table);
+      });
+    }
+
+    // Call the initialization function after a delay
+    setTimeout(initAnniversaryCalculations, 1200);
+
+    // Existing script for handling month selection
+    document.getElementById('dates').addEventListener('change', function() {
+      const selectedMonth = this.value;
+      const rows = document.querySelectorAll('div.calcAnniv table tbody tr');
+
+      rows.forEach(row => {
+        const dateCell = row.querySelector('td time');
+        if (dateCell) {
+          const date = new Date(dateCell.getAttribute('datetime'));
+          const month = date.toLocaleString('default', { month: 'short' });
+
+          if (selectedMonth === 'All' || month === selectedMonth) {
+            row.style.display = '';
+          } else {
+            row.style.display = 'none';
+          }
+        }
+      });
+    });
+  </script>
+</body>
+</html>

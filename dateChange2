@@ -9,34 +9,40 @@
     <thead>
       <tr>
         <th scope="col">Start Date</th>
-        <th scope="col">Anniversary</th>
         <th scope="col">Name</th>
       </tr>
     </thead>
     <tbody>
       <tr>
         <td><time datetime="2023-05-31">31 May 2023</time></td>
-        <td></td>
         <td>Dan Smith</td>
       </tr>
 		<tr>
         <td><time datetime="2020-05-31">31 May 2020</time></td>
-        <td></td>
-        <td>Jim Bob</td>
+        <td>Joe Bob</td>
       </tr>
       <!-- Add more rows as needed -->
     </tbody>
   </table>
 
   <script>
-    // Function to calculate anniversary in years
+    // Function to add the Anniversary column header
+    function addAnniversaryColumn() {
+      const headerRow = document.querySelector('table thead tr');
+      const anniversaryHeader = document.createElement('th');
+      anniversaryHeader.scope = 'col';
+      anniversaryHeader.textContent = 'Anniversary';
+      headerRow.insertBefore(anniversaryHeader, headerRow.children[1]);
+    }
+
+    // Function to calculate anniversaries in years
     function calculateAnniversaries() {
       const rows = document.querySelectorAll('table tbody tr');
       const currentDate = new Date();
 
       rows.forEach(row => {
         const dateCell = row.querySelector('td time');
-        const anniversaryCell = row.querySelectorAll('td')[1];
+        const nameCell = row.querySelectorAll('td')[1];
 
         if (dateCell) {
           const startDate = new Date(dateCell.getAttribute('datetime'));
@@ -50,12 +56,16 @@
             anniversaryYears -= 1;
           }
 
+          // Create and insert the Anniversary cell
+          const anniversaryCell = document.createElement('td');
           anniversaryCell.textContent = `${anniversaryYears}yr`;
+          row.insertBefore(anniversaryCell, nameCell);
         }
       });
     }
 
-    // Call the function to calculate anniversaries
+    // Call the functions to add the column and calculate anniversaries
+    addAnniversaryColumn();
     calculateAnniversaries();
 
     // Existing script for handling month selection

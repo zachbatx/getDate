@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Anniversary Calculation 6</title>
+</head>
+<body>
+<div class="calcAnniv">
+  <table width="200" border="1">
+    <colgroup>
+      <col>
+      
+      <col> <!-- New column for Anniversary -->
+    </colgroup>
+    <thead>
+      <tr>
+        <th scope="col">Start Date</th>
+        <th scope="col">Name</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><time datetime="2023-05-31">31 May 2023</time></td>
+        <td>Dan Smith</td>
+      </tr>
+      <tr>
+        <td><time datetime="2020-05-31">31 May 2020</time></td>
+        <td>Joe Bob</td>
+      </tr>
+      <!-- Add more rows as needed -->
+    </tbody>
+  </table>
+</div>
+
+  <script>
+    // Function to add the Anniversary column header
+    function addAnniversaryColumn(table) {
+      const headerRow = table.querySelector('thead tr');
+      const anniversaryHeader = document.createElement('th');
+      anniversaryHeader.scope = 'col';
+      anniversaryHeader.textContent = 'Anniversary';
+      headerRow.insertBefore(anniversaryHeader, headerRow.children[1]);
+
+      // Add an empty column to the colgroup
+      const colgroup = table.querySelector('colgroup');
+      const newCol = document.createElement('col');
+      colgroup.insertBefore(newCol, colgroup.children[1]);
+    }
+
+    // Function to calculate anniversaries in years
+    function calculateAnniversaries(table) {
+      const rows = table.querySelectorAll('tbody tr');
+      const currentDate = new Date();
+
+      rows.forEach(row => {
+        const dateCell = row.querySelector('td time');
+        const nameCell = row.querySelectorAll('td')[1];
+
+        if (dateCell) {
+          const startDate = new Date(dateCell.getAttribute('datetime'));
+          const yearsDifference = currentDate.getFullYear() - startDate.getFullYear();
+          const monthsDifference = currentDate.getMonth() - startDate.getMonth();
+          const daysDifference = currentDate.getDate() - startDate.getDate();
+
+          // Adjust if the anniversary date has not occurred this year yet
+          let anniversaryYears = yearsDifference;
+          if (monthsDifference < 0 || (monthsDifference === 0 && daysDifference < 0)) {
+            anniversaryYears -= 1;
+          }
+
+          // Create and insert the Anniversary cell
+          const anniversaryCell = document.createElement('td');
+          anniversaryCell.textContent = `${anniversaryYears}yr`;
+          row.insertBefore(anniversaryCell, nameCell);
+        }
+      });
+    }
+
+    // Function to initialize the anniversary calculations
+    function initAnniversaryCalculations() {
+      const tables = document.querySelectorAll('div.calcAnniv table');
+      tables.forEach(table => {
+        addAnniversaryColumn(table);
+        calculateAnniversaries(table);
+      });
+    }
+
+    // Call the initialization function
+    initAnniversaryCalculations();
+
+    // Existing script for handling month selection
+    document.getElementById('dates').addEventListener('change', function() {
+      const selectedMonth = this.value;
+      const rows = document.querySelectorAll('div.calcAnniv table tbody tr');
+
+      rows.forEach(row => {
+        const dateCell = row.querySelector('td time');
+        if (dateCell) {
+          const date = new Date(dateCell.getAttribute('datetime'));
+          const month = date.toLocaleString('default', { month: 'short' });
+
+          if (selectedMonth === 'All' || month === selectedMonth) {
+            row.style.display = '';
+          } else {
+            row.style.display = 'none';
+          }
+        }
+      });
+    });
+  </script>
+	
+	
+</body>
+</html>

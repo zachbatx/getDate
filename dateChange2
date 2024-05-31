@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Anniversary Calculation 3</title>
+</head>
+<body>
+  <table width="200" border="1">
+    <thead>
+      <tr>
+        <th scope="col">Start Date</th>
+        <th scope="col">Anniversary</th>
+        <th scope="col">Name</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><time datetime="2023-05-31">31 May 2023</time></td>
+        <td></td>
+        <td>Dan Smith</td>
+      </tr>
+		<tr>
+        <td><time datetime="2020-05-31">31 May 2020</time></td>
+        <td></td>
+        <td>Jim Bob</td>
+      </tr>
+      <!-- Add more rows as needed -->
+    </tbody>
+  </table>
+
+  <script>
+    // Function to calculate anniversary in years
+    function calculateAnniversaries() {
+      const rows = document.querySelectorAll('table tbody tr');
+      const currentDate = new Date();
+
+      rows.forEach(row => {
+        const dateCell = row.querySelector('td time');
+        const anniversaryCell = row.querySelectorAll('td')[1];
+
+        if (dateCell) {
+          const startDate = new Date(dateCell.getAttribute('datetime'));
+          const yearsDifference = currentDate.getFullYear() - startDate.getFullYear();
+          const monthsDifference = currentDate.getMonth() - startDate.getMonth();
+          const daysDifference = currentDate.getDate() - startDate.getDate();
+
+          // Adjust if the anniversary date has not occurred this year yet
+          let anniversaryYears = yearsDifference;
+          if (monthsDifference < 0 || (monthsDifference === 0 && daysDifference < 0)) {
+            anniversaryYears -= 1;
+          }
+
+          anniversaryCell.textContent = `${anniversaryYears}yr`;
+        }
+      });
+    }
+
+    // Call the function to calculate anniversaries
+    calculateAnniversaries();
+
+    // Existing script for handling month selection
+    document.getElementById('dates').addEventListener('change', function() {
+      const selectedMonth = this.value;
+      const rows = document.querySelectorAll('table tbody tr');
+
+      rows.forEach(row => {
+        const dateCell = row.querySelector('td time');
+        if (dateCell) {
+          const date = new Date(dateCell.getAttribute('datetime'));
+          const month = date.toLocaleString('default', { month: 'short' });
+
+          if (selectedMonth === 'All' || month === selectedMonth) {
+            row.style.display = '';
+          } else {
+            row.style.display = 'none';
+          }
+        }
+      });
+    });
+  </script>
+</body>
+</html>

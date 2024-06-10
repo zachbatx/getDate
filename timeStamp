@@ -9,7 +9,37 @@
 	
 	<div id="date">Mon Jun 10 2024 125 12315 64351 53</div>
 	
-	
+<script>
+function addDateStamp() {
+    // Function to format the date
+    function formatDate(date) {
+        const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+        const dayName = days[date.getDay()];
+        const monthName = months[date.getMonth()];
+        const day = date.getDate();
+        const year = date.getFullYear();
+
+        return `${dayName} ${monthName} ${day} ${year}`;
+    }
+
+    // Get the current date
+    const currentDate = new Date();
+    const formattedDate = formatDate(currentDate);
+
+    // Select the element where you want to add the date stamp
+    const targetElements = document.querySelectorAll('#date-stamp-target');
+
+    // Iterate through each target element and set the date
+    targetElements.forEach(function(element) {
+        element.innerText = formattedDate;
+    });
+}
+</script>
+
+
+
 <script>
 function dateOnly() {
     // Select all elements with id 'date'

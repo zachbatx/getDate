@@ -28,13 +28,11 @@ function addDateStamp() {
     const currentDate = new Date();
     const formattedDate = formatDate(currentDate);
 
-    // Select the element where you want to add the date stamp
-    const targetElements = document.querySelectorAll('#date-stamp-target');
-
-    // Iterate through each target element and set the date
-    targetElements.forEach(function(element) {
-        element.innerText = formattedDate;
-    });
+    // Select the element with id 'Date' and set its text to the formatted date
+    const dateElement = document.getElementById('Date');
+    if (dateElement) {
+        dateElement.innerText = formattedDate;
+    }
 }
 </script>
 

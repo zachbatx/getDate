@@ -11,7 +11,7 @@
 	
 	
 <script>
-document.addEventListener('DOMContentLoaded', function() {
+function dateOnly() {
     // Select all elements with id 'date'
     const dateElements = document.querySelectorAll('#date');
 
@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', function() {
             element.innerText = match[0];
         }
     });
-});	
+}
 </script>	
 	
 	

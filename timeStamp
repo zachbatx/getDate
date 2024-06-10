@@ -1,0 +1,39 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>timeStamp Test</title>
+</head>
+
+<body>
+	
+	<div id="date">Mon Jun 10 2024 125 12315 64351 53</div>
+	
+	
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Select all elements with id 'date'
+    const dateElements = document.querySelectorAll('#date');
+
+    // Regex to find the date format "Mon Jun 10 2024"
+    const datePattern = /^[A-Za-z]{3}\s[A-Za-z]{3}\s\d{1,2}\s\d{4}/;
+
+    // Iterate through each date element
+    dateElements.forEach(function(element) {
+        // Get the current text of the element
+        const originalText = element.innerText;
+        
+        // Match the date pattern in the text
+        const match = originalText.match(datePattern);
+        
+        // If a match is found, update the text
+        if (match) {
+            element.innerText = match[0];
+        }
+    });
+});	
+</script>	
+	
+	
+</body>
+</html>

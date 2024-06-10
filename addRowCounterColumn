@@ -1,0 +1,28 @@
+function addRowCounter() {
+    // Select the table element
+    const table = document.querySelector('table');
+
+    if (table) {
+        // Add a header for the row counter column
+        const headerRow = table.querySelector('thead tr');
+        if (headerRow) {
+            const counterHeader = document.createElement('th');
+            counterHeader.innerText = 'Row Number';
+            headerRow.insertBefore(counterHeader, headerRow.firstChild);
+        }
+
+        // Iterate through each row in the tbody
+        const rows = table.querySelectorAll('tbody tr');
+        rows.forEach((row, index) => {
+            // Create a new cell for the row counter
+            const counterCell = document.createElement('td');
+            counterCell.innerText = index + 1; // Row index starts from 0, so add 1
+            row.insertBefore(counterCell, row.firstChild);
+        });
+    }
+}
+
+// Example usage: Add a row counter when the DOM content is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    addRowCounter();
+});

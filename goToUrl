@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Button Redirect</title>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Select the button with the class 'submit'
+            const submitButton = document.querySelector('.submit');
+            
+            // Define the URL to redirect to
+            const redirectUrl = 'https://example.com';
+            
+            // Attach a click event listener to the button
+            submitButton.addEventListener('click', function() {
+                // Redirect to the specified URL
+                window.location.href = redirectUrl;
+            });
+        });
+    </script>
+</head>
+<body>
+    <!-- Button with class 'submit' -->
+    <button class="submit">Go to URL</button>
+</body>
+</html>

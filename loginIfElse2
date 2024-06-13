@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conditional Display Example</title>
+    <style>
+        .loginPrompt, .startCourse {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Uncomment the below line to test when login-link is present -->
+
+    <div class="loginPrompt">Please login to continue.</div>
+    <div class="startCourse">Welcome to the course! Click to start.</div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const loginLink = document.getElementById('login-link');
+            const loginPrompts = document.querySelectorAll('.loginPrompt');
+            const startCourses = document.querySelectorAll('.startCourse');
+
+            if (loginLink) {
+                loginPrompts.forEach(function(prompt) {
+                    prompt.style.display = 'block';
+                });
+                startCourses.forEach(function(course) {
+                    course.style.display = 'none';
+                });
+            } else {
+                startCourses.forEach(function(course) {
+                    course.style.display = 'block';
+                });
+            }
+        });
+    </script>
+</body>
+</html>

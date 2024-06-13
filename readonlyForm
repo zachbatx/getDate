@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Mail Input Example</title>
+</head>
+<body>
+    <form>
+        <input type="text" class="formMailInput" value="example1@mail.com">
+        <input type="text" class="formMailInput" value="example2@mail.com">
+        <input type="text" class="otherInput" value="Not an email">
+    </form>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const mailInputs = document.querySelectorAll('.formMailInput');
+
+            mailInputs.forEach(function(input) {
+                input.setAttribute('readonly', true);
+            });
+        });
+    </script>
+</body>
+</html>

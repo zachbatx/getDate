@@ -13,12 +13,12 @@
 </head>
 <body>
     <div class="course">
-        <h1>Course Heading 1</h1>
+        <h3>Course Heading 1</h3>
         <div><span class="expand-control-text">Expand Control 1</span></div>
     </div>
 
     <div class="course">
-        <h2>Course Heading 2</h2>
+        <h3>Course Heading 2</h3>
         <div><span class="expand-control-text">Expand Control 2</span></div>
     </div>
 
@@ -34,14 +34,10 @@
             expandControls.forEach(function(control) {
                 let parentCourse = control.closest('.course');
                 if (parentCourse) {
-                    let precedingElement = control.closest('div').previousElementSibling;
+                    const precedingHeading = parentCourse.querySelector('h3');
                     
-                    while (precedingElement && !/^H[1-6]$/.test(precedingElement.tagName)) {
-                        precedingElement = precedingElement.previousElementSibling;
-                    }
-                    
-                    if (precedingElement) {
-                        const textToAdd = precedingElement.textContent;
+                    if (precedingHeading) {
+                        const textToAdd = precedingHeading.textContent;
                         const offScreenSpan = document.createElement('span');
                         offScreenSpan.classList.add('offScreen');
                         offScreenSpan.textContent = textToAdd;

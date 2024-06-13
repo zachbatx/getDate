@@ -13,6 +13,7 @@
 <body>
     <button class="submitButton">Submit</button>
     <div class="completeInstr">Please follow the instructions above before submitting.</div>
+    <h2 class="courseTitleText">Course Title</h2>
 
     <div class="showContent">
         This content is initially hidden and will be shown when the button is clicked.
@@ -27,6 +28,7 @@
             const submitButton = document.querySelector('.submitButton');
             const completeInstr = document.querySelectorAll('.completeInstr');
             const contentToShow = document.querySelectorAll('.showContent');
+            const courseTitleTexts = document.querySelectorAll('.courseTitleText');
 
             submitButton.addEventListener('click', function() {
                 // Show content
@@ -38,6 +40,11 @@
                 submitButton.style.display = 'none';
                 completeInstr.forEach(function(instr) {
                     instr.style.display = 'none';
+                });
+
+                // Change text for courseTitleText
+                courseTitleTexts.forEach(function(title) {
+                    title.textContent = "You're Done!";
                 });
             });
         });

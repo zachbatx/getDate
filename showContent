@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Show Content Example</title>
+    <style>
+        .showContent {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <button class="submitButton">Submit</button>
+
+    <div class="showContent">
+        This content is initially hidden and will be shown when the button is clicked.
+    </div>
+
+    <div class="showContent">
+        This is another hidden content that will also be shown.
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const submitButton = document.querySelector('.submitButton');
+            const contentToShow = document.querySelectorAll('.showContent');
+
+            submitButton.addEventListener('click', function() {
+                contentToShow.forEach(function(content) {
+                    content.style.display = 'block';
+                });
+            });
+        });
+    </script>
+</body>
+</html>

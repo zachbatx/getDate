@@ -34,6 +34,9 @@
                     const offScreenSpan = document.createElement('span');
                     offScreenSpan.classList.add('offScreen');
                     offScreenSpan.textContent = textToAdd;
+                    
+                    const nbsp = document.createTextNode('\u00A0');
+                    control.appendChild(nbsp);
                     control.appendChild(offScreenSpan);
                 }
             });
@@ -41,4 +44,3 @@
     </script>
 </body>
 </html>
-

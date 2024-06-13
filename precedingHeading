@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expand Control Text Example</title>
+    <style>
+        .offScreen {
+            position: absolute;
+            left: -9999px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Heading 1</h1>
+    <div><span class="expand-control-text">Expand Control 1</span></div>
+
+    <h2>Heading 2</h2>
+    <div><span class="expand-control-text">Expand Control 2</span></div>
+
+    <h3>Heading 3</h3>
+    <div><span class="expand-control-text">Expand Control 3</span></div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const expandControls = document.querySelectorAll('span.expand-control-text');
+
+            expandControls.forEach(function(control) {
+                let precedingElement = control.closest('div').previousElementSibling;
+                
+                while (precedingElement && !/^H[1-6]$/.test(precedingElement.tagName)) {
+                    precedingElement = precedingElement.previousElementSibling;
+                }
+                
+                if (precedingElement) {
+                    const textToAdd = precedingElement.textContent;
+                    const offScreenSpan = document.createElement('span');
+                    offScreenSpan.classList.add('offScreen');
+                    offScreenSpan.textContent = textToAdd;
+
+                    const nbsp = document.createTextNode('\u00A0');
+                    control.appendChild(nbsp);
+                    control.appendChild(offScreenSpan);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

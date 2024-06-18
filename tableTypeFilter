@@ -79,11 +79,13 @@
         function filterTable() {
             const filters = Array.from(document.querySelectorAll('input[name="filter"]:checked')).map(cb => cb.value.toLowerCase());
             const rows = document.querySelectorAll('tbody tr');
+            const typeColumnIndex = getTypeColumnIndex();
+
             if (filters.length === 0) {
                 rows.forEach(row => row.style.display = '');
             } else {
                 rows.forEach(row => {
-                    const type = row.cells[0].textContent.trim().toLowerCase();
+                    const type = row.cells[typeColumnIndex].textContent.trim().toLowerCase();
                     if (filters.includes(type)) {
                         row.style.display = '';
                     } else {
@@ -92,6 +94,16 @@
                 });
             }
         }
-    </script> 
+
+        function getTypeColumnIndex() {
+            const headers = document.querySelectorAll('thead th');
+            for (let i = 0; i < headers.length; i++) {
+                if (headers[i].textContent.trim().toLowerCase() === 'type') {
+                    return i;
+                }
+            }
+            return -1; // Return -1 if the column "Type" is not found
+        }
+    </script>
 </body>
 </html>

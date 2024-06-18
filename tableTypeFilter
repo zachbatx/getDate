@@ -38,32 +38,32 @@
             </tr>
         </thead>
         <tbody>
-            <tr data-type="course">
+            <tr>
                 <td>Course</td>
                 <td>Math 101</td>
                 <td>Introduction to Mathematics</td>
             </tr>
-            <tr data-type="resource">
+            <tr>
                 <td>Resource</td>
                 <td>Math Textbook</td>
                 <td>Comprehensive Math Textbook</td>
             </tr>
-            <tr data-type="project">
+            <tr>
                 <td>Project</td>
                 <td>Math Project</td>
                 <td>Mathematics Research Project</td>
             </tr>
-            <tr data-type="course">
+            <tr>
                 <td>Course</td>
                 <td>Science 101</td>
                 <td>Introduction to Science</td>
             </tr>
-            <tr data-type="resource">
+            <tr>
                 <td>Resource</td>
                 <td>Science Magazine</td>
                 <td>Monthly Science Magazine</td>
             </tr>
-            <tr data-type="project">
+            <tr>
                 <td>Project</td>
                 <td>Science Project</td>
                 <td>Science Research Project</td>
@@ -77,13 +77,13 @@
         });
 
         function filterTable() {
-            const filters = Array.from(document.querySelectorAll('input[name="filter"]:checked')).map(cb => cb.value);
+            const filters = Array.from(document.querySelectorAll('input[name="filter"]:checked')).map(cb => cb.value.toLowerCase());
             const rows = document.querySelectorAll('tbody tr');
             if (filters.length === 0) {
                 rows.forEach(row => row.style.display = '');
             } else {
                 rows.forEach(row => {
-                    const type = row.getAttribute('data-type');
+                    const type = row.cells[0].textContent.trim().toLowerCase();
                     if (filters.includes(type)) {
                         row.style.display = '';
                     } else {

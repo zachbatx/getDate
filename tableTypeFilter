@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Table Filter</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>Filter Table Rows</h1>
+    <div>
+        <input type="checkbox" id="course" name="filter" value="course">
+        <label for="course">Course</label>
+        <input type="checkbox" id="resource" name="filter" value="resource">
+        <label for="resource">Resource</label>
+        <input type="checkbox" id="project" name="filter" value="project">
+        <label for="project">Project</label>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>Type</th>
+                <th>Name</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr data-type="course">
+                <td>Course</td>
+                <td>Math 101</td>
+                <td>Introduction to Mathematics</td>
+            </tr>
+            <tr data-type="resource">
+                <td>Resource</td>
+                <td>Math Textbook</td>
+                <td>Comprehensive Math Textbook</td>
+            </tr>
+            <tr data-type="project">
+                <td>Project</td>
+                <td>Math Project</td>
+                <td>Mathematics Research Project</td>
+            </tr>
+            <tr data-type="course">
+                <td>Course</td>
+                <td>Science 101</td>
+                <td>Introduction to Science</td>
+            </tr>
+            <tr data-type="resource">
+                <td>Resource</td>
+                <td>Science Magazine</td>
+                <td>Monthly Science Magazine</td>
+            </tr>
+            <tr data-type="project">
+                <td>Project</td>
+                <td>Science Project</td>
+                <td>Science Research Project</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <script>
+        document.querySelectorAll('input[name="filter"]').forEach(checkbox => {
+            checkbox.addEventListener('change', filterTable);
+        });
+
+        function filterTable() {
+            const filters = Array.from(document.querySelectorAll('input[name="filter"]:checked')).map(cb => cb.value);
+            const rows = document.querySelectorAll('tbody tr');
+            if (filters.length === 0) {
+                rows.forEach(row => row.style.display = '');
+            } else {
+                rows.forEach(row => {
+                    const type = row.getAttribute('data-type');
+                    if (filters.includes(type)) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            }
+        }
+    </script>
+</body>
+</html>

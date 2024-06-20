@@ -18,22 +18,31 @@
     <div class="loginPrompt">Please login to continue.</div>
     <div class="startCourse">Welcome to the course! Click to start.</div>
 
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const loginLink = document.getElementById('login-link');
-            const loginPrompts = document.querySelectorAll('.loginPrompt');
-            const startCourses = document.querySelectorAll('.startCourse');
+<script>
+        // Wait for the DOM to be fully loaded
+		document.addEventListener('DOMContentLoaded', function() {
+    // Check for the element with id 'login-link'
+    var loginLink = document.getElementById('login-link');
+    var loginPrompt = document.querySelector('.loginPrompt');
+    var startCourse = document.querySelector('.startCourse');
 
-            if (loginLink) {
-                loginPrompts.forEach(function(prompt) {
-                    prompt.style.display = 'block';
-                });
-            } else {
-                startCourses.forEach(function(course) {
-                    course.style.display = 'block';
-                });
-            }
-        });
+    if (loginLink) {
+        // If login-link is detected, display loginPrompt
+        if (loginPrompt) {
+            loginPrompt.style.display = 'block';
+        }
+    } else {
+        // If login-link is not detected, ensure loginPrompt is not displayed
+        if (loginPrompt) {
+            loginPrompt.style.display = 'none';
+        }
+        // Display startCourse
+        if (startCourse) {
+            startCourse.style.display = 'block';
+        }
+    }
+});
+
     </script>
 </body>
 </html>

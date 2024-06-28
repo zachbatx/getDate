@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .tocHere {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 200px;
+            background-color: #f0f0f0;
+            padding: 10px;
+            border: 1px solid #ccc;
+        }
+
+        .tocHere li {
+            list-style: none;
+            padding: 5px;
+            margin: 5px 0;
+        }
+
+        .highlight {
+            font-weight: bold;
+            background-color: #000;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+
+<div class="tocHere">
+    <ul id="tocList">
+        <!-- Table of Contents will be generated here -->
+    </ul>
+</div>
+
+<!-- Example Headings -->
+<h1>Section 1</h1>
+<p>Content...</p>
+<h2>Section 2</h2>
+<p>Content...</p>
+<h3>Section 3</h3>
+<p>Content...</p>
+<h1>Section 4</h1>
+<p>Content...</p>
+<h2>Section 5</h2>
+<p>Content...</p>
+<h3>Section 6</h3>
+<p>Content...</p>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const headings = document.querySelectorAll('h1, h2, h3');
+        const tocList = document.getElementById('tocList');
+
+        headings.forEach(heading => {
+            const listItem = document.createElement('li');
+            listItem.textContent = heading.textContent;
+            listItem.dataset.level = heading.tagName.toLowerCase();
+            tocList.appendChild(listItem);
+        });
+
+        window.addEventListener('scroll', () => {
+            let currentHighlight = null;
+
+            headings.forEach(heading => {
+                const rect = heading.getBoundingClientRect();
+                if (rect.top >= 0 && rect.top <= window.innerHeight / 2) {
+                    currentHighlight = heading;
+                }
+            });
+
+            document.querySelectorAll('.tocHere li').forEach(item => {
+                item.classList.remove('highlight');
+            });
+
+            if (currentHighlight) {
+                const targetItem = [...tocList.children].find(item => item.textContent === currentHighlight.textContent);
+                if (targetItem) {
+                    targetItem.classList.add('highlight');
+                }
+            }
+        });
+    });
+</script>
+
+</body>
+</html>

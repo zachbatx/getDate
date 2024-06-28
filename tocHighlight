@@ -48,38 +48,47 @@
 
 <!-- Example Headings -->
 <h1>Section 1</h1>
-<p>Content...</p><p></p><p></p><p></p><p></p><p></p>
+<p>Content...</p>
 <h2>Section 2</h2>
-<p>Content...</p><p></p><p></p><p></p><p></p><p></p>
+<p>Content...</p>
 <h3>Section 3</h3>
-<p>Content...</p><p></p><p></p><p></p><p></p><p></p>
+<p>Content...</p>
 <h1>Section 4</h1>
-<p>Content...</p><p></p><p></p><p></p><p></p><p></p>
+<p>Content...</p>
 <h2>Section 5</h2>
-<p>Content...</p><p></p><p></p><p></p><p></p><p></p>
+<p>Content...</p>
 <h3>Section 6</h3>
-<p>Content...</p><p></p><p></p><p></p><p></p><p></p>
-	<h2>Section 2</h2>
-<p>Content...</p><p></p><p></p><p></p><p></p><p></p>
+<p>Content...</p>
+<h2>Section 2</h2>
+<p>Content...</p>
 <h3>Section 3</h3>
-<p>Content...</p><p></p><p></p><p></p><p></p><p></p>
+<p>Content...</p>
 <h1>Section 4</h1>
-<p>Content...</p><p></p><p></p><p></p><p></p><p></p>
+<p>Content...</p>
 <h2>Section 5</h2>
-<p>Content...</p><p></p><p></p><p></p><p></p><p></p>
+<p>Content...</p>
 <h3>Section 6</h3>
-<p>Content...</p><p></p><p></p><p></p><p></p><p></p>
-	<h2>Section 2</h2>
-<p>Content...</p><p></p><p></p><p></p><p></p><p></p>
+<p>Content...</p>
+<h2>Section 2</h2>
+<p>Content...</p>
 <h3>Section 3</h3>
-<p>Content...</p><p></p><p></p><p></p><p></p><p></p>
+<p>Content...</p>
 <h1>Section 4</h1>
-<p>Content...</p><p></p><p></p><p></p><p></p><p></p>
+<p>Content...</p>
 <h2>Section 5</h2>
-<p>Content...</p><p></p><p></p><p></p><p></p><p></p>
+<p>Content...</p>
 <h3>Section 6</h3>
-<p>Content...</p><p></p><p></p><p></p><p></p><p></p>
-	
+<p>Content...</p>
+<h2>Section 2</h2>
+<p>Content...</p>
+<h3>Section 3</h3>
+<p>Content...</p>
+<h1>Section 4</h1>
+<p>Content...</p>
+<h2>Section 5</h2>
+<p>Content...</p>
+<h3>Section 6</h3>
+<p>Content...</p>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -105,7 +114,9 @@
             headings.forEach(heading => {
                 const rect = heading.getBoundingClientRect();
                 if (rect.top >= 0 && rect.top <= window.innerHeight / 2) {
-                    currentHighlight = heading;
+                    if (!currentHighlight || rect.top < currentHighlight.getBoundingClientRect().top) {
+                        currentHighlight = heading;
+                    }
                 }
             });
 

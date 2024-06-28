@@ -26,6 +26,11 @@
             margin: 5px 0;
         }
 
+        .tocHere a {
+            text-decoration: none;
+            color: inherit;
+        }
+
         .highlight {
             font-weight: bold;
             background-color: #000;
@@ -43,27 +48,54 @@
 
 <!-- Example Headings -->
 <h1>Section 1</h1>
-<p>Content...</p>
+<p>Content...</p><p></p><p></p><p></p><p></p><p></p>
 <h2>Section 2</h2>
-<p>Content...</p>
+<p>Content...</p><p></p><p></p><p></p><p></p><p></p>
 <h3>Section 3</h3>
-<p>Content...</p>
+<p>Content...</p><p></p><p></p><p></p><p></p><p></p>
 <h1>Section 4</h1>
-<p>Content...</p>
+<p>Content...</p><p></p><p></p><p></p><p></p><p></p>
 <h2>Section 5</h2>
-<p>Content...</p>
+<p>Content...</p><p></p><p></p><p></p><p></p><p></p>
 <h3>Section 6</h3>
-<p>Content...</p>
+<p>Content...</p><p></p><p></p><p></p><p></p><p></p>
+	<h2>Section 2</h2>
+<p>Content...</p><p></p><p></p><p></p><p></p><p></p>
+<h3>Section 3</h3>
+<p>Content...</p><p></p><p></p><p></p><p></p><p></p>
+<h1>Section 4</h1>
+<p>Content...</p><p></p><p></p><p></p><p></p><p></p>
+<h2>Section 5</h2>
+<p>Content...</p><p></p><p></p><p></p><p></p><p></p>
+<h3>Section 6</h3>
+<p>Content...</p><p></p><p></p><p></p><p></p><p></p>
+	<h2>Section 2</h2>
+<p>Content...</p><p></p><p></p><p></p><p></p><p></p>
+<h3>Section 3</h3>
+<p>Content...</p><p></p><p></p><p></p><p></p><p></p>
+<h1>Section 4</h1>
+<p>Content...</p><p></p><p></p><p></p><p></p><p></p>
+<h2>Section 5</h2>
+<p>Content...</p><p></p><p></p><p></p><p></p><p></p>
+<h3>Section 6</h3>
+<p>Content...</p><p></p><p></p><p></p><p></p><p></p>
+	
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const headings = document.querySelectorAll('h1, h2, h3');
         const tocContainer = document.querySelector('.tocHere ul');
 
-        headings.forEach(heading => {
+        headings.forEach((heading, index) => {
+            if (!heading.id) {
+                heading.id = 'heading-' + index;
+            }
+
             const listItem = document.createElement('li');
-            listItem.textContent = heading.textContent;
-            listItem.dataset.level = heading.tagName.toLowerCase();
+            const anchor = document.createElement('a');
+            anchor.href = '#' + heading.id;
+            anchor.textContent = heading.textContent;
+            listItem.appendChild(anchor);
             tocContainer.appendChild(listItem);
         });
 
@@ -82,7 +114,7 @@
             });
 
             if (currentHighlight) {
-                const targetItem = [...tocContainer.children].find(item => item.textContent === currentHighlight.textContent);
+                const targetItem = [...tocContainer.children].find(item => item.querySelector('a').href.endsWith('#' + currentHighlight.id));
                 if (targetItem) {
                     targetItem.classList.add('highlight');
                 }

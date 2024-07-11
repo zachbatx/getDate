@@ -1,0 +1,16 @@
+document.addEventListener("DOMContentLoaded", function() {
+    // Select all elements with the class 'navH'
+    const elements = document.querySelectorAll('.navH');
+
+    // Iterate over each element
+    elements.forEach(element => {
+        // Get the current text content
+        const currentText = element.textContent;
+
+        // Replace any instance of the word 'role'
+        const newText = currentText.replace(/role/g, '');
+
+        // Set the modified text back to the element
+        element.textContent = newText;
+    });
+});

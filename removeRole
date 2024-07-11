@@ -1,16 +1,48 @@
-document.addEventListener("DOMContentLoaded", function() {
-    // Select all elements with the class 'navH'
-    const elements = document.querySelectorAll('.navH');
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Remove Text Script</title>
+</head>
+<body>
+    <div class="navH">
+        <div class="plugin_pagetree_children_content">
+            Designer role
+        </div>
+        <div class="plugin_pagetree_children_content">
+            Developer role
+        </div>
+    </div>
+    <div class="navH">
+        <div class="plugin_pagetree_children_content">
+			<a href="">Manager role</a>
+        </div>
+    </div>
 
-    // Iterate over each element
-    elements.forEach(element => {
-        // Get the current text content
-        const currentText = element.textContent;
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Select all elements with the class 'navH'
+            const navElements = document.querySelectorAll('.navH');
 
-        // Replace any instance of the word 'role'
-        const newText = currentText.replace(/role/g, '');
+            // Iterate over each nav element
+            navElements.forEach(navElement => {
+                // Select child elements with the class 'plugin_pagetree_children_content'
+                const childElements = navElement.querySelectorAll('.plugin_pagetree_children_content > a');
 
-        // Set the modified text back to the element
-        element.textContent = newText;
-    });
-});
+                // Iterate over each child element
+                childElements.forEach(childElement => {
+                    // Get the current text content
+                    const currentText = childElement.textContent;
+
+                    // Replace all instances of the word 'role'
+                    const newText = currentText.replace(/role/g, '');
+
+                    // Set the modified text back to the element
+                    childElement.textContent = newText;
+                });
+            });
+        });
+    </script>
+</body>
+</html>

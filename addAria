@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modify Attributes Example</title>
+</head>
+<body>
+    <div class="navH">
+        <ul class="plugin_pagetree_children_list">
+            <li>Item 1</li>
+            <li>Item 2</li>
+            <li>Item 3</li>
+        </ul>
+    </div>
+    <div class="plugin_pagetree_current">
+        Current Item
+    </div>
+
+    <script>
+        // JavaScript to modify the attributes
+        document.addEventListener("DOMContentLoaded", function() {
+            // Add role="navigation" to ul with class="plugin_pagetree_children_list"
+            const ulElement = document.querySelector(".navH .plugin_pagetree_children_list");
+            if (ulElement) {
+                ulElement.setAttribute("role", "navigation");
+            }
+
+            // Add aria-selected="true" to div with class="plugin_pagetree_current"
+            const currentDiv = document.querySelector(".plugin_pagetree_current");
+            if (currentDiv) {
+                currentDiv.setAttribute("aria-selected", "true");
+            }
+        });
+    </script>
+</body>
+</html>

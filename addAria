@@ -14,7 +14,7 @@
         </ul>
     </div>
     <div class="plugin_pagetree_current">
-        Current Item
+        <a href="#">Current Item</a>
     </div>
 
     <script>
@@ -26,10 +26,10 @@
                 ulElement.setAttribute("role", "navigation");
             }
 
-            // Add aria-selected="true" to div with class="plugin_pagetree_current"
-            const currentDiv = document.querySelector(".plugin_pagetree_current");
-            if (currentDiv) {
-                currentDiv.setAttribute("aria-selected", "true");
+            // Add aria-selected="true" to <a> within div with class="plugin_pagetree_current"
+            const currentLink = document.querySelector(".plugin_pagetree_current a");
+            if (currentLink) {
+                currentLink.setAttribute("aria-selected", "true");
             }
         });
     </script>

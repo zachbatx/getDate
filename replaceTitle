@@ -16,3 +16,32 @@ document.addEventListener("DOMContentLoaded", function() {
         console.error("Element with ID 'title-text' not found.");
     }
 });
+
+
+-----------------
+
+document.addEventListener("DOMContentLoaded", function() {
+    // Select the element with the ID 'title-text'
+    const titleElement = document.getElementById('title-text');
+    
+    // Check if the element exists to avoid errors
+    if (titleElement) {
+        // Retrieve the current text content
+        const currentText = titleElement.textContent;
+        
+        // Create a new hyperlink element
+        const linkElement = document.createElement('a');
+        linkElement.href = 'https://www.google.com';
+        linkElement.textContent = 'Default ';
+        
+        // Combine the hyperlink text with the current text
+        const combinedText = document.createTextNode(currentText);
+        
+        // Clear the existing content and append the new hyperlink and combined text
+        titleElement.textContent = '';  // Clear existing content
+        titleElement.appendChild(linkElement);  // Append the hyperlink
+        titleElement.appendChild(combinedText);  // Append the current text
+    } else {
+        console.error("Element with ID 'title-text' not found.");
+    }
+});

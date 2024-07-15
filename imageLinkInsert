@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", function() {
         
         // Create a new image element with the class 'aHomeImage'
         const imgElement = document.createElement('img');
-        imgElement.src = 'https://temp';
+        imgElement.src = 'https://temp/anImage.png';
         imgElement.className = 'aHomeImage';
         
         // Append the image to the hyperlink element
@@ -37,3 +37,4 @@ document.addEventListener("DOMContentLoaded", function() {
         console.error("Element with class 'navHome' not found.");
     }
 });
+

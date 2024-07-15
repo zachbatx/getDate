@@ -1,0 +1,18 @@
+document.addEventListener("DOMContentLoaded", function() {
+    // Select the element with the ID 'title-text'
+    const titleElement = document.getElementById('title-text');
+    
+    // Check if the element exists to avoid errors
+    if (titleElement) {
+        // Retrieve the current text content
+        const currentText = titleElement.textContent;
+        
+        // Combine the new text with the current text
+        const newText = 'Default ' + currentText;
+        
+        // Replace the text content with the combined text
+        titleElement.textContent = newText;
+    } else {
+        console.error("Element with ID 'title-text' not found.");
+    }
+});

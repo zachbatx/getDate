@@ -1,31 +1,39 @@
 document.addEventListener("DOMContentLoaded", function() {
-    // Select the element with the class 'navHere'
-    const navElement = document.querySelector('.navHere');
+    // Select the element with the class 'navHome'
+    const navHomeElement = document.querySelector('.navHome');
     
     // Check if the element exists to avoid errors
-    if (navElement) {
+    if (navHomeElement) {
+        // Create a new div element with the class 'aHome'
+        const aHomeDiv = document.createElement('div');
+        aHomeDiv.className = 'aHome';
+        
         // Create a new hyperlink element
         const linkElement = document.createElement('a');
-        linkElement.href = 'https://www.google.com';
+        linkElement.href = 'https://temporary';
         
-        // Create a new image element
+        // Create a new image element with the class 'aHomeImage'
         const imgElement = document.createElement('img');
-        imgElement.src = 'home.png';
+        imgElement.src = 'https://temp';
+        imgElement.className = 'aHomeImage';
         
         // Append the image to the hyperlink element
         linkElement.appendChild(imgElement);
         
-        // Select the ul element with the class 'ulHere' within the navHere element
-        const ulElement = navElement.querySelector('.ulHere');
+        // Append the hyperlink element to the div element
+        aHomeDiv.appendChild(linkElement);
         
-        // Check if the ul element exists to avoid errors
-        if (ulElement) {
-            // Insert the hyperlink element (containing the image) before the ul element
-            navElement.insertBefore(linkElement, ulElement);
+        // Select the element with the class 'treeList' within 'navHome'
+        const treeListElement = navHomeElement.querySelector('.treeList');
+        
+        // Check if the treeList element exists to avoid errors
+        if (treeListElement) {
+            // Prepend the div element to the treeList element
+            treeListElement.parentNode.insertBefore(aHomeDiv, treeListElement);
         } else {
-            console.error("Element with class 'ulHere' not found within '.navHere'.");
+            console.error("Element with class 'treeList' not found within '.navHome'.");
         }
     } else {
-        console.error("Element with class 'navHere' not found.");
+        console.error("Element with class 'navHome' not found.");
     }
 });

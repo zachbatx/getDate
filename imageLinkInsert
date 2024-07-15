@@ -1,0 +1,31 @@
+document.addEventListener("DOMContentLoaded", function() {
+    // Select the element with the class 'navHere'
+    const navElement = document.querySelector('.navHere');
+    
+    // Check if the element exists to avoid errors
+    if (navElement) {
+        // Create a new hyperlink element
+        const linkElement = document.createElement('a');
+        linkElement.href = 'https://www.google.com';
+        
+        // Create a new image element
+        const imgElement = document.createElement('img');
+        imgElement.src = 'home.png';
+        
+        // Append the image to the hyperlink element
+        linkElement.appendChild(imgElement);
+        
+        // Select the ul element with the class 'ulHere' within the navHere element
+        const ulElement = navElement.querySelector('.ulHere');
+        
+        // Check if the ul element exists to avoid errors
+        if (ulElement) {
+            // Insert the hyperlink element (containing the image) before the ul element
+            navElement.insertBefore(linkElement, ulElement);
+        } else {
+            console.error("Element with class 'ulHere' not found within '.navHere'.");
+        }
+    } else {
+        console.error("Element with class 'navHere' not found.");
+    }
+});

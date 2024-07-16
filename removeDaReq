@@ -5,6 +5,9 @@
 
         // Iterate over each nav element
         navElements.forEach(navElement => {
+            // Remove any instance of "|" within navElement
+            navElement.innerHTML = navElement.innerHTML.replace(/\|/g, '');
+
             // Select child elements with the class 'plugin_pagetree_children_content'
             const childElements = navElement.querySelectorAll('.plugin_pagetree_children_content > a');
 
@@ -13,8 +16,8 @@
                 // Get the current text content
                 const currentText = childElement.textContent;
 
-                // Replace all instances of ' | My Requirements'
-                const newText = currentText.replace(/ \| My Requirements/g, '');
+                // Replace all instances of 'My Requirements'
+                const newText = currentText.replace(/My Requirements/g, '');
 
                 // Set the modified text back to the element
                 childElement.textContent = newText;

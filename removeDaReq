@@ -1,0 +1,24 @@
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Select all elements with the class 'navH'
+        const navElements = document.querySelectorAll('.navH');
+
+        // Iterate over each nav element
+        navElements.forEach(navElement => {
+            // Select child elements with the class 'plugin_pagetree_children_content'
+            const childElements = navElement.querySelectorAll('.plugin_pagetree_children_content > a');
+
+            // Iterate over each child element
+            childElements.forEach(childElement => {
+                // Get the current text content
+                const currentText = childElement.textContent;
+
+                // Replace all instances of ' | My Requirements'
+                const newText = currentText.replace(/ \| My Requirements/g, '');
+
+                // Set the modified text back to the element
+                childElement.textContent = newText;
+            });
+        });
+    });
+</script>

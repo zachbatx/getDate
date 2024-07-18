@@ -20,13 +20,15 @@
             justify-content: center;
             margin: 5px;
             padding: 10px;
-            background-color: #f4f4f4;
+            /*background-color: #f4f4f4;
             border: 1px solid #ccc;
-            border-radius: 5px;
+           border-radius: 5px;*/
         }
-
+		.plugin_pagetree_children_list li:not(:nth-last-child(1)) {
+			border-right: solid 1px #C0C0C0;
+		}
         /* Responsive styling */
-        @media (max-width: 90%) {
+        @media (max-width: 100%) {
             .plugin_pagetree_children_list {
                 flex-direction: column;
             }
@@ -115,6 +117,7 @@
                         </div>
                     </div>
                 `;
+				newLiElement.style.border = 'none';
 
                 // Select the <ul> element with the class 'plugin_pagetree_children_list' within 'navH'
                 const ulElement = navHElement.querySelector('ul.plugin_pagetree_children_list');

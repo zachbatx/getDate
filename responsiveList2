@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Responsive List Example</title>
+    <style>
+        /* Ensure the ul takes full width and display items horizontally by default */
+        .plugin_pagetree_children_list {
+            display: flex;
+            flex-wrap: wrap;
+            padding: 0;
+            list-style-type: none;
+        }
+
+        /* Style the li elements */
+        .plugin_pagetree_children_list li {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 5px;
+            padding: 10px;
+            background-color: #f4f4f4;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        /* Responsive styling */
+        @media (max-width: 90%) {
+            .plugin_pagetree_children_list {
+                flex-direction: column;
+            }
+
+            .plugin_pagetree_children_list li {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="navHome">
+        <div class="plugin_pagetree">
+                <div class="plugin_pagetree_children">
+                    <ul class="plugin_pagetree_children_list">
+                        
+                        <li>
+                            <div class="plugin_pagetree_children_content">
+								rsgtsrgtw
+                            </div>
+                        </li>
+						<li>
+                            <div class="plugin_pagetree_children_content">
+								rsgtsrgtw
+                            </div>
+                        </li>
+						<li>
+                            <div class="plugin_pagetree_children_content">
+								rsgtsrgtw
+                            </div>
+                        </li>
+						<li>
+                            <div class="plugin_pagetree_children_content">
+								rsgtsrgtw
+                            </div>
+                        </li>
+						<li>
+                            <div class="plugin_pagetree_children_content">
+								rsgtsrgtw
+                            </div>
+                        </li>
+						<li>
+                            <div class="plugin_pagetree_children_content">
+								rsgtsrgtw
+                            </div>
+                        </li>
+						<li>
+                            <div class="plugin_pagetree_children_content">
+								rsgtsrgtw
+                            </div>
+                        </li>
+						<li>
+                            <div class="plugin_pagetree_children_content">
+								rsgtsrgtw
+                            </div>
+                        </li>
+						<li>
+                            <div class="plugin_pagetree_children_content">
+								rsgtsrgtw
+                            </div>
+                        </li>
+                </div>
+            </ul>
+        </div>    
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Select the element with the class 'navHome'
+            const navHomeElement = document.querySelector('.navHome');
+
+            // Check if the element exists to avoid errors
+            if (navHomeElement) {
+                // Create the new <li> element with the specified inner HTML
+                const newLiElement = document.createElement('li');
+                newLiElement.innerHTML = `
+                    <div class="plugin_pagetree_children_content">
+                        <div class="aHome">
+                            <a href="https://temporary">
+                                <img class="aHomeImage" src="https://temp/anImage.png">
+                            </a>
+                        </div>
+                    </div>
+                `;
+
+                // Select the <ul> element with the class 'plugin_pagetree_children_list' within 'navHome'
+                const ulElement = navHomeElement.querySelector('ul.plugin_pagetree_children_list');
+
+                // Check if the ul element exists to avoid errors
+                if (ulElement) {
+                    // Prepend the new <li> element to the <ul> element
+                    ulElement.insertBefore(newLiElement, ulElement.firstChild);
+                } else {
+                    console.error("Element with class 'plugin_pagetree_children_list' not found within '.navHome'.");
+                }
+            } else {
+                console.error("Element with class 'navHome' not found.");
+            }
+        });
+    </script>
+</body>
+</html>

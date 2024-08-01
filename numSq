@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>numSq</title>
+	
+	<style>
+		.numSq {
+			border: 1px solid #c0c0c0;
+			padding:3px;
+		}
+	</style>
+	
+</head>
+<body>
+  <div class="columnsDiv">
+    <div class="columnMacro">
+      <strong>1</strong>
+      <strong>2</strong>
+    </div>
+    <div class="columnMacro">
+      <strong>3</strong>
+      <strong>4</strong>
+    </div>
+  </div>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const columnsDiv = document.querySelector('.columnsDiv');
+      if (columnsDiv) {
+        columnsDiv.setAttribute('role', 'list');
+      }
+
+      const columnMacros = document.querySelectorAll('.columnsDiv .columnMacro');
+      columnMacros.forEach(columnMacro => {
+        const strongElements = columnMacro.querySelectorAll('strong');
+        strongElements.forEach(strong => {
+          if (/\d/.test(strong.textContent)) {
+            strong.setAttribute('role', 'listitem');
+            strong.classList.add('numSq');
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>

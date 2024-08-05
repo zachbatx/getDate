@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	
+<style>
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+.container {
+    display: flex;
+    width: 100%;
+}
+
+.leftTocCol {
+    
+    background-color: #f4f4f4;
+    padding: 20px;
+    position: fixed;
+    height: 100%;
+    overflow: auto;
+}
+
+.rightContentCol {
+    width: 75%;
+    margin-left: 25%;
+    padding: 20px;
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+ul li {
+    margin: 5px 0;
+}
+
+ul li.active {
+    font-weight: bold;
+    color: blue;
+}
+
+.toc-h3 {
+    margin-left: 10px;
+}
+
+.toc-h4 {
+    margin-left: 20px;
+}
+
+@media screen and (max-width: 768px) {
+    .leftTocCol, .rightContentCol {
+        width: 100%;
+        margin-left: 0;
+    }
+    
+    .leftTocCol {
+        position: relative;
+        height: auto;
+    }
+}
+	
+</style>	
+	
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Self-Paced E-Learning Platform</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="leftTocCol" id="toc">
+            <h2>Table of Contents</h2>
+            <ul id="tocList"></ul>
+        </div>
+        <div class="rightContentCol" id="content">
+            <h2>Section 1</h2>
+            <p>Content for section 1...</p><br><br><br>
+            <h3>Subsection 1.1</h3>
+            <p>Content for subsection 1.1...</p><br><br><br>
+            <h4>Subsection 1.1.1</h4>
+            <p>Content for subsection 1.1.1...</p><br><br><br>
+            <h2>Section 2</h2>
+            <p>Content for section 2...</p><br><br><br>
+            <h3>Subsection 2.1</h3>
+            <p>Content for subsection 2.1...</p><br><br><br>
+            <h4>Subsection 2.1.1</h4>
+            <p>Content for subsection 2.1.1...</p><br><br><br>
+            <h2>Section 3</h2>
+            <p>Content for section 3...</p><br><br><br>
+            <h3>Subsection 3.1</h3>
+            <p>Content for subsection 3.1...</p><br><br><br>
+            <h4>Subsection 3.1.1</h4>
+            <p>Content for subsection 3.1.1...</p><br><br><br>
+        </div>
+    </div>
+	
+    <script>
+		
+	document.addEventListener("DOMContentLoaded", function () {
+    var toc = document.getElementById('tocList');
+    var content = document.getElementById('content');
+    var headers = content.querySelectorAll('h2, h3, h4');
+
+    headers.forEach(function(header) {
+        var li = document.createElement('li');
+        li.innerText = header.innerText;
+        li.dataset.target = header.id = header.innerText.replace(/\s+/g, '-').toLowerCase();
+        li.classList.add('toc-' + header.tagName.toLowerCase());
+        toc.appendChild(li);
+    });
+
+    window.addEventListener('scroll', function () {
+        var fromTop = window.scrollY + 20; // Adjust the value to better match the top of the viewport
+        var current;
+
+        headers.forEach(function(header) {
+            if (header.offsetTop <= fromTop && header.offsetTop + header.offsetHeight > fromTop) {
+                current = header;
+            }
+        });
+
+        if (current) {
+            var active = toc.querySelector('.active');
+            if (active) active.classList.remove('active');
+            var newActive = toc.querySelector('[data-target="' + current.id + '"]');
+            if (newActive) newActive.classList.add('active');
+        }
+    });
+});
+
+
+	</script>
+	
+</body>
+</html>

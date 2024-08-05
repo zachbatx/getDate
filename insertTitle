@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>h1Insert</title>
+    <title>Document</title>
 </head>
 <body>
     <!-- Example elements -->
@@ -19,8 +19,12 @@
 
             // Check if both elements exist
             if (titleTextElement && courseHeaderElement) {
-                // Insert the content of title-text into courseHeader
-                courseHeaderElement.innerHTML = titleTextElement.innerHTML;
+                // Create an h1 element
+                var h1Element = document.createElement("h1");
+                // Set the content of the h1 element to the content of title-text
+                h1Element.innerHTML = titleTextElement.innerHTML;
+                // Insert the h1 element into courseHeader
+                courseHeaderElement.appendChild(h1Element);
             } else {
                 console.error("One or both elements not found.");
             }

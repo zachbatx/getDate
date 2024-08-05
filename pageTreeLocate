@@ -1,0 +1,53 @@
+document.addEventListener("DOMContentLoaded", function() {
+    // Locate the element with id=courseTreeNav
+    const courseTreeNav = document.getElementById("courseTreeNav");
+    
+    if (!courseTreeNav) return;
+    
+    // Locate the ul with class=plugin_pagetree_children_list
+    const ulList = courseTreeNav.querySelector("ul.plugin_pagetree_children_list");
+    
+    if (!ulList) return;
+    
+    // Locate the li > div > span with class=plugin_pagetree_current
+    const currentSpan = ulList.querySelector("li > div > span.plugin_pagetree_current");
+    
+    if (!currentSpan) return;
+    
+    // Get the parent li element of the current span
+    const currentLi = currentSpan.closest("li");
+    
+    if (!currentLi) return;
+    
+    // Get the previous and next li siblings
+    const prevLi = currentLi.previousElementSibling;
+    const nextLi = currentLi.nextElementSibling;
+    
+    // Assign the previous a href link to courseBtnBack or hide if none exists
+    const courseBtnBack = document.querySelector(".courseBtnBack");
+    if (prevLi) {
+        const prevLink = prevLi.querySelector("div > span.plugin_pagetree_children_span > a");
+        if (prevLink) {
+            courseBtnBack.href = prevLink.href;
+            courseBtnBack.style.display = "block";
+        } else {
+            courseBtnBack.style.display = "none";
+        }
+    } else {
+        courseBtnBack.style.display = "none";
+    }
+    
+    // Assign the next a href link to courseBtnNext or hide if none exists
+    const courseBtnNext = document.querySelector(".courseBtnNext");
+    if (nextLi) {
+        const nextLink = nextLi.querySelector("div > span.plugin_pagetree_children_span > a");
+        if (nextLink) {
+            courseBtnNext.href = nextLink.href;
+            courseBtnNext.style.display = "block";
+        } else {
+            courseBtnNext.style.display = "none";
+        }
+    } else {
+        courseBtnNext.style.display = "none";
+    }
+});

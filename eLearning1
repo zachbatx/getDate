@@ -101,8 +101,12 @@ ul li.active {
     <script>
 		
 	document.addEventListener("DOMContentLoaded", function () {
-    var toc = document.getElementsByClassName('tocList')[0];
-    var content = document.getElementsByClassName('rightContentCol')[0];
+    var tocContainer = document.querySelector('.leftTocCol');
+    var tocList = document.createElement('ul');
+    tocList.className = 'contentTocList';
+    tocContainer.appendChild(tocList);
+
+    var content = document.querySelector('.rightContentCol');
     var headers = content.querySelectorAll('h2, h3, h4');
 
     headers.forEach(function(header) {
@@ -110,11 +114,11 @@ ul li.active {
         li.innerText = header.innerText;
         li.dataset.target = header.id = header.innerText.replace(/\s+/g, '-').toLowerCase();
         li.classList.add('toc-' + header.tagName.toLowerCase());
-        toc.appendChild(li);
+        tocList.appendChild(li);
     });
 
     window.addEventListener('scroll', function () {
-        var fromTop = window.scrollY + 20; // Adjust the value to better match the top of the viewport
+        var fromTop = window.scrollY + 25; // Adjust the value to 25px from the top of the viewport
         var current;
 
         headers.forEach(function(header) {
@@ -124,13 +128,14 @@ ul li.active {
         });
 
         if (current) {
-            var active = toc.querySelector('.active');
+            var active = tocList.querySelector('.active');
             if (active) active.classList.remove('active');
-            var newActive = toc.querySelector('[data-target="' + current.id + '"]');
+            var newActive = tocList.querySelector('[data-target="' + current.id + '"]');
             if (newActive) newActive.classList.add('active');
         }
     });
 });
+
 
 
 

@@ -14,7 +14,7 @@ body {
 }
 
 .leftTocCol {
-    
+    width: 25%;
     background-color: #f4f4f4;
     padding: 20px;
     position: fixed;
@@ -61,6 +61,7 @@ ul li.active {
         height: auto;
     }
 }
+
 	
 </style>	
 	
@@ -71,11 +72,11 @@ ul li.active {
 </head>
 <body>
     <div class="container">
-        <div class="leftTocCol" id="toc">
+        <div class="leftTocCol">
             <h2>Table of Contents</h2>
-            <ul id="tocList"></ul>
+            <ul class="tocList"></ul>
         </div>
-        <div class="rightContentCol" id="content">
+        <div class="rightContentCol">
             <h2>Section 1</h2>
             <p>Content for section 1...</p><br><br><br>
             <h3>Subsection 1.1</h3>
@@ -100,8 +101,8 @@ ul li.active {
     <script>
 		
 	document.addEventListener("DOMContentLoaded", function () {
-    var toc = document.getElementById('tocList');
-    var content = document.getElementById('content');
+    var toc = document.getElementsByClassName('tocList')[0];
+    var content = document.getElementsByClassName('rightContentCol')[0];
     var headers = content.querySelectorAll('h2, h3, h4');
 
     headers.forEach(function(header) {
@@ -130,6 +131,7 @@ ul li.active {
         }
     });
 });
+
 
 
 	</script>

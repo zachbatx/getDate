@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Self-Paced E-Learning Platform</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            display: flex;
+            width: 100%;
+        }
+
+        .leftTocCol {
+            width: 250px;
+            background-color: #f4f4f4;
+            padding: 20px;
+            position: fixed;
+            height: 100%;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .rightContentCol {
+            width: 75%;
+            margin-left: 250px;
+            padding: 20px;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        ul li {
+            margin: 5px 0;
+        }
+
+        ul li.active {
+            font-weight: bold;
+            color: blue;
+        }
+
+        .toc-h3 {
+            margin-left: 10px;
+        }
+
+        .toc-h4 {
+            margin-left: 20px;
+        }
+
+        @media screen and (max-width: 768px) {
+            .leftTocCol, .rightContentCol {
+                width: 100%;
+                margin-left: 0;
+            }
+
+            .leftTocCol {
+                position: relative;
+                height: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="leftTocCol">
+            <h2>Table of Contents</h2>
+        </div>
+        <div class="rightContentCol">
+            <h2>Section 1</h2>
+            <p>Content for section 1...</p><br><br><br>
+            <h3>Subsection 1.1</h3>
+            <p>Content for subsection 1.1...</p><br><br><br>
+            <h4>Subsection 1.1.1</h4>
+            <p>Content for subsection 1.1.1...</p><br><br><br>
+            <h2>Section 2</h2>
+            <p>Content for section 2...</p><br><br><br>
+            <h3>Subsection 2.1</h3>
+            <p>Content for subsection 2.1...</p><br><br><br>
+            <h4>Subsection 2.1.1</h4>
+            <p>Content for subsection 2.1.1...</p><br><br><br>
+            <h2>Section 3</h2>
+            <p>Content for section 3...</p><br><br><br>
+            <h3>Subsection 3.1</h3>
+            <p>Content for subsection 3.1...</p><br><br><br>
+            <h4>Subsection 3.1.1</h4>
+            <p>Content for subsection 3.1.1...</p><br><br><br>
+        </div>
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var tocContainer = document.querySelector('.leftTocCol');
+            var tocList = document.createElement('ul');
+            tocList.className = 'contentTocList';
+            tocContainer.appendChild(tocList);
+
+            var content = document.querySelector('.rightContentCol');
+            var headers = content.querySelectorAll('h2, h3, h4');
+
+            headers.forEach(function(header) {
+                var li = document.createElement('li');
+                li.innerText = header.innerText;
+                li.dataset.target = header.id = header.innerText.replace(/\s+/g, '-').toLowerCase();
+                li.classList.add('toc-' + header.tagName.toLowerCase());
+                tocList.appendChild(li);
+            });
+
+            var debounce = function(func, wait) {
+                var timeout;
+                return function() {
+                    var context = this, args = arguments;
+                    clearTimeout(timeout);
+                    timeout = setTimeout(function() {
+                        func.apply(context, args);
+                    }, wait);
+                };
+            };
+
+            var onScroll = debounce(function () {
+                var fromTop = window.scrollY + 25; // Adjust the value to better match the top of the viewport
+                var current;
+
+                headers.forEach(function(header) {
+                    if (header.offsetTop <= fromTop && header.offsetTop + header.offsetHeight > fromTop) {
+                        current = header;
+                    }
+                });
+
+                if (current) {
+                    var active = tocList.querySelector('.active');
+                    if (active) active.classList.remove('active');
+                    var newActive = tocList.querySelector('[data-target="' + current.id + '"]');
+                    if (newActive) newActive.classList.add('active');
+                }
+            }, 100);
+
+            window.addEventListener('scroll', onScroll);
+        });
+    </script>
+</body>
+</html>

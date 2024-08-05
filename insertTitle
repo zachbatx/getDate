@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>h1Insert</title>
+</head>
+<body>
+    <!-- Example elements -->
+    <div id="title-text">This is the title text</div>
+    <div id="courseHeader"></div>
+
+    <script>
+        // Wait until the DOM is fully loaded
+        document.addEventListener("DOMContentLoaded", function() {
+            // Get the elements by their IDs
+            var titleTextElement = document.getElementById("title-text");
+            var courseHeaderElement = document.getElementById("courseHeader");
+
+            // Check if both elements exist
+            if (titleTextElement && courseHeaderElement) {
+                // Insert the content of title-text into courseHeader
+                courseHeaderElement.innerHTML = titleTextElement.innerHTML;
+            } else {
+                console.error("One or both elements not found.");
+            }
+        });
+    </script>
+</body>
+</html>

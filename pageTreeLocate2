@@ -1,0 +1,135 @@
+document.addEventListener("DOMContentLoaded", function() {
+    try {
+        // Locate the element with id=courseTreeNav
+        const courseTreeNav = document.getElementById("courseTreeNav");
+        
+        if (!courseTreeNav) throw new Error("Element with id=courseTreeNav not found.");
+        
+        // Locate the ul with class=plugin_pagetree_children_list
+        const ulList = courseTreeNav.querySelector("ul.plugin_pagetree_children_list");
+        
+        if (!ulList) throw new Error("Element with class=plugin_pagetree_children_list not found.");
+        
+        // Locate the li > div > span with class=plugin_pagetree_current
+        const currentSpan = ulList.querySelector("li > div > span.plugin_pagetree_current");
+        
+        if (!currentSpan) throw new Error("Element with class=plugin_pagetree_current not found.");
+        
+        // Get the parent li element of the current span
+        const currentLi = currentSpan.closest("li");
+        
+        if (!currentLi) throw new Error("Parent li element of current span not found.");
+        
+        // Get the previous and next li siblings
+        const prevLi = currentLi.previousElementSibling;
+        const nextLi = currentLi.nextElementSibling;
+        
+        // Ensure the courseBtnBack element exists
+        let courseBtnBack = document.querySelector(".courseBtnBack");
+        if (!courseBtnBack) {
+            courseBtnBack = document.createElement("a");
+            courseBtnBack.classList.add("courseBtnBack");
+            document.body.appendChild(courseBtnBack); // Or append it to a specific parent element
+        }
+
+        // Assign the previous a href link to courseBtnBack or hide if none exists
+        if (prevLi) {
+            const prevLink = prevLi.querySelector("div > span.plugin_pagetree_children_span > a");
+            if (prevLink) {
+                courseBtnBack.href = prevLink.href;
+                courseBtnBack.style.display = "block";
+            } else {
+                courseBtnBack.style.display = "none";
+            }
+        } else {
+            courseBtnBack.style.display = "none";
+        }
+        
+        // Ensure the courseBtnNext element exists
+        let courseBtnNext = document.querySelector(".courseBtnNext");
+        if (!courseBtnNext) {
+            courseBtnNext = document.createElement("a");
+            courseBtnNext.classList.add("courseBtnNext");
+            document.body.appendChild(courseBtnNext); // Or append it to a specific parent element
+        }
+
+        // Assign the next a href link to courseBtnNext or hide if none exists
+        if (nextLi) {
+            const nextLink = nextLi.querySelector("div > span.plugin_pagetree_children_span > a");
+            if (nextLink) {
+                courseBtnNext.href = nextLink.href;
+                courseBtnNext.style.display = "block";
+            } else {
+                courseBtnNext.style.display = "none";
+            }
+        } else {
+            courseBtnNext.style.display = "none";
+        }
+    } catch (error) {
+        console.error(error.message);
+    }
+});
+
+// Unit Tests
+function runTests() {
+    try {
+        // Test case for missing courseTreeNav element
+        let testResult = false;
+        try {
+            document.getElementById("courseTreeNav").remove();
+            document.dispatchEvent(new Event("DOMContentLoaded"));
+        } catch (error) {
+            testResult = error.message === "Element with id=courseTreeNav not found.";
+        }
+        console.assert(testResult, "Test case for missing courseTreeNav element failed.");
+        
+        // Test case for missing ul.plugin_pagetree_children_list element
+        testResult = false;
+        try {
+            document.body.innerHTML = '<div id="courseTreeNav"></div>';
+            document.dispatchEvent(new Event("DOMContentLoaded"));
+        } catch (error) {
+            testResult = error.message === "Element with class=plugin_pagetree_children_list not found.";
+        }
+        console.assert(testResult, "Test case for missing ul.plugin_pagetree_children_list element failed.");
+        
+        // Test case for missing span.plugin_pagetree_current element
+        testResult = false;
+        try {
+            document.body.innerHTML = '<div id="courseTreeNav"><ul class="plugin_pagetree_children_list"></ul></div>';
+            document.dispatchEvent(new Event("DOMContentLoaded"));
+        } catch (error) {
+            testResult = error.message === "Element with class=plugin_pagetree_current not found.";
+        }
+        console.assert(testResult, "Test case for missing span.plugin_pagetree_current element failed.");
+        
+        // Test case for missing courseBtnBack element
+        testResult = false;
+        try {
+            document.body.innerHTML = '<div id="courseTreeNav"><ul class="plugin_pagetree_children_list"><li><div><span class="plugin_pagetree_current"></span></div></li></ul></div>';
+            document.dispatchEvent(new Event("DOMContentLoaded"));
+            testResult = document.querySelector(".courseBtnBack") !== null;
+        } catch (error) {
+            testResult = false;
+        }
+        console.assert(testResult, "Test case for missing courseBtnBack element failed.");
+        
+        // Test case for missing courseBtnNext element
+        testResult = false;
+        try {
+            document.body.innerHTML = '<div id="courseTreeNav"><ul class="plugin_pagetree_children_list"><li><div><span class="plugin_pagetree_current"></span></div></li></ul></div><a class="courseBtnBack"></a>';
+            document.dispatchEvent(new Event("DOMContentLoaded"));
+            testResult = document.querySelector(".courseBtnNext") !== null;
+        } catch (error) {
+            testResult = false;
+        }
+        console.assert(testResult, "Test case for missing courseBtnNext element failed.");
+        
+        console.log("All tests completed.");
+    } catch (error) {
+        console.error("Test suite failed.", error.message);
+    }
+}
+
+// Run tests
+runTests();

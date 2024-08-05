@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>tocHighlight4</title>
+<style>
+.tocHere {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 200px;
+    background-color: #f0f0f0;
+    padding: 10px;
+    border: 1px solid #ccc;
+}
+.tocHere ul {
+    padding: 0;
+    margin: 0;
+}
+.tocHere li {
+    list-style: none;
+    padding: 5px;
+    margin: 5px 0;
+}
+.tocHere a {
+    text-decoration: none;
+    color: inherit;
+}
+.highlightItem {
+    font-weight: bold;
+    background-color: #808080;
+    color: #FFFFFF !important;
+}
+</style>
+</head>
+<body>
+<div class="tocHere">
+  <ul>
+    <!-- Table of Contents will be generated here -->
+  </ul>
+</div>
+<div data-macro-name="toc-zone"> 
+  <!-- Example Headings -->
+  <h1>Section 1</h1>
+  <p>Content...</p>
+  <h2>Section 2</h2>
+  <p>Content...</p>
+  <h3>Section 3</h3>
+  <p>Content...</p>
+  <h1>Section 4</h1>
+  <p>Content...</p>
+  <h2>Section 5</h2>
+  <p>Content...</p>
+  <h3>Section 6</h3>
+  <p>Content...</p>
+  <h2>Section 2</h2>
+  <p>Content...</p>
+  <h3>Section 3</h3>
+  <p>Content...</p>
+  <h1>Section 4</h1>
+  <p>Content...</p>
+  <h2>Section 5</h2>
+  <p>Content...</p>
+  <h3>Section 6</h3>
+  <p>Content...</p>
+  <h2>Section 2</h2>
+  <p>Content...</p>
+  <h3>Section 3</h3>
+  <p>Content...</p>
+  <h1>Section 4</h1>
+  <p>Content...</p>
+  <h2>Section 5</h2>
+  <p>Content...</p>
+  <h3>Section 6</h3>
+  <p>Content...</p>
+  <h2>Section 2</h2>
+  <p>Content...</p>
+  <h3>Section 3</h3>
+  <p>Content...</p>
+  <h1>Section 4</h1>
+  <p>Content...</p>
+  <h2>Section 5</h2>
+  <p>Content...</p>
+  <h3>Section 6</h3>
+  <p>Content...</p>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const tocZone = document.querySelector('[data-macro-name="toc-zone"]');
+        const headings = tocZone.querySelectorAll('h1, h2, h3');
+        const tocContainer = document.querySelector('.tocHere ul');
+
+        headings.forEach((heading, index) => {
+            if (!heading.id) {
+                heading.id = 'heading-' + index;
+            }
+
+            const listItem = document.createElement('li');
+            const anchor = document.createElement('a');
+            anchor.href = '#' + heading.id;
+            anchor.textContent = heading.textContent;
+            listItem.appendChild(anchor);
+            tocContainer.appendChild(listItem);
+        });
+
+        window.addEventListener('scroll', () => {
+            let currentHighlight = null;
+
+            headings.forEach(heading => {
+                const rect = heading.getBoundingClientRect();
+                if (rect.top >= 0 && rect.top <= window.innerHeight / 2) {
+                    if (!currentHighlight || rect.top < currentHighlight.getBoundingClientRect().top) {
+                        currentHighlight = heading;
+                    }
+                }
+            });
+
+            document.querySelectorAll('.tocHere a').forEach(anchor => {
+                anchor.classList.remove('highlightItem');
+            });
+
+            if (currentHighlight) {
+                const targetAnchor = tocContainer.querySelector(`a[href="#${currentHighlight.id}"]`);
+                if (targetAnchor) {
+                    targetAnchor.classList.add('highlightItem');
+                }
+            }
+        });
+    });
+</script>
+</body>
+</html>

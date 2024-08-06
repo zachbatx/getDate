@@ -1,0 +1,106 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>getBackNextLinks</title>
+</head>
+
+<body>
+	
+	
+<div id="courseTreeNav">
+	<ul class="plugin_pagetree_children_list">
+		<li>
+			<div></div>
+			<div>
+				<span class="plugin_pagetree_children_span">
+					<a href="https://randomLink.com">random link</a>
+				</span>
+			</div>	
+		</li>
+		<li>
+			<div></div>
+			<div>
+				<span class="plugin_pagetree_children_span">
+					<a href="https://prevLink.com">previous link</a>
+				</span>
+			</div>	
+		</li>	
+		<li>
+			<div></div>
+			<div>
+				<span class="plugin_pagetree_current">
+					<a href="https://mainLink.com">main link</a>
+				</span>
+			</div>	
+		</li>	
+		<li>
+			<div></div>
+			<div>
+				<span class="plugin_pagetree_children_span">
+					<a href="https://nextLink.com">next link</a>
+				</span>
+			</div>	
+		</li>
+		<li>
+			<div></div>
+			<div>
+				<span class="plugin_pagetree_children_span">
+					<a href="https://anotherRandomLink.com">another random link</a>
+				</span>
+			</div>	
+		</li>
+	</ul>	
+</div>
+	
+<div class="courseBtnBack">Back</div>	
+<div class="courseBtnNext">Next</div>
+	
+	
+	
+<script>
+	
+document.addEventListener("DOMContentLoaded", function() {
+    // Locate the current element
+    var currentElement = document.querySelector(".plugin_pagetree_current");
+
+    if (currentElement) {
+        // Get the parent li element of the current element
+        var currentLi = currentElement.closest("li");
+
+        // Find the previous and next li elements
+        var prevLi = currentLi.previousElementSibling;
+        var nextLi = currentLi.nextElementSibling;
+
+        // Get the href links from the previous and next li elements
+        var prevHref = prevLi ? prevLi.querySelector("span.plugin_pagetree_children_span a")?.getAttribute("href") : null;
+        var nextHref = nextLi ? nextLi.querySelector("span.plugin_pagetree_children_span a")?.getAttribute("href") : null;
+
+        // Wrap the courseBtnBack div with an anchor tag if the previous href is found
+        if (prevHref) {
+            var courseBtnBack = document.querySelector(".courseBtnBack");
+            if (courseBtnBack) {
+                var backLink = document.createElement("a");
+                backLink.setAttribute("href", prevHref);
+                courseBtnBack.parentNode.replaceChild(backLink, courseBtnBack);
+                backLink.appendChild(courseBtnBack);
+            }
+        }
+
+        // Wrap the courseBtnNext div with an anchor tag if the next href is found
+        if (nextHref) {
+            var courseBtnNext = document.querySelector(".courseBtnNext");
+            if (courseBtnNext) {
+                var nextLink = document.createElement("a");
+                nextLink.setAttribute("href", nextHref);
+                courseBtnNext.parentNode.replaceChild(nextLink, courseBtnNext);
+                nextLink.appendChild(courseBtnNext);
+            }
+        }
+    }
+});
+	
+</script>
+	
+</body>
+</html>

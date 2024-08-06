@@ -1,0 +1,114 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>getBackNextLinks2</title>
+</head>
+
+<body>
+	
+	
+<div id="courseTreeNav">
+	<ul class="plugin_pagetree_children_list">
+		<li>
+			<div></div>
+			<div>
+				<span class="plugin_pagetree_children_span">
+					<a href="https://randomLink.com">random link</a>
+				</span>
+			</div>	
+		</li>
+		<li>
+			<div></div>
+			<div>
+				<span class="plugin_pagetree_children_span">
+					previous link
+				</span>
+			</div>	
+		</li>	
+		<li>
+			<div></div>
+			<div>
+				<span class="plugin_pagetree_current">
+					<a href="https://mainLink.com">main link</a>
+				</span>
+			</div>	
+		</li>	
+		<li>
+			<div></div>
+			<div>
+				<span class="plugin_pagetree_children_span">
+					<a href="https://nextLink.com">next link</a>
+				</span>
+			</div>	
+		</li>
+		<li>
+			<div></div>
+			<div>
+				<span class="plugin_pagetree_children_span">
+					<a href="https://anotherRandomLink.com">another random link</a>
+				</span>
+			</div>	
+		</li>
+		<li>
+			<div></div>
+			<div>
+				<span class="plugin_pagetree_children_span">
+					<a href="https://anotherRandomLink.com">another random link</a>
+				</span>
+			</div>	
+		</li>
+	</ul>	
+</div>
+	
+<div class="courseBtnBack">Back</div>	
+<div class="courseBtnNext">Next</div>
+	
+	
+	
+<script>
+	
+document.addEventListener("DOMContentLoaded", function() {
+    function wrapInLink(element, href) {
+        if (element) {
+            if (href) {
+                var link = document.createElement("a");
+                link.setAttribute("href", href);
+                element.parentNode.replaceChild(link, element);
+                link.appendChild(element);
+            } else {
+                element.style.display = "none";
+            }
+        }
+    }
+
+    // Locate the current element
+    var currentElement = document.querySelector(".plugin_pagetree_current");
+
+    if (currentElement) {
+        // Get the parent li element of the current element
+        var currentLi = currentElement.closest("li");
+
+        // Find the previous and next li elements
+        var prevLi = currentLi.previousElementSibling;
+        var nextLi = currentLi.nextElementSibling;
+
+        // Get the href links from the previous and next li elements
+        var prevHref = prevLi ? prevLi.querySelector("span.plugin_pagetree_children_span a")?.getAttribute("href") : null;
+        var nextHref = nextLi ? nextLi.querySelector("span.plugin_pagetree_children_span a")?.getAttribute("href") : null;
+
+        // Wrap the courseBtnBack div with an anchor tag if the previous href is found, otherwise hide it
+        var courseBtnBack = document.querySelector(".courseBtnBack");
+        wrapInLink(courseBtnBack, prevHref);
+
+        // Wrap the courseBtnNext div with an anchor tag if the next href is found, otherwise hide it
+        var courseBtnNext = document.querySelector(".courseBtnNext");
+        wrapInLink(courseBtnNext, nextHref);
+    }
+});
+
+	
+</script>
+	
+</body>
+</html>

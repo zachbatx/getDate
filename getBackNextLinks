@@ -62,7 +62,7 @@
 	
 document.addEventListener("DOMContentLoaded", function() {
     // Locate the current element
-    var currentElement = document.querySelector(".plugin_pagetree_current");
+    var currentElement = document.querySelector("#courseTreeNav .plugin_pagetree_current");
 
     if (currentElement) {
         // Get the parent li element of the current element

@@ -7,3 +7,16 @@ javascript:(function(){
         document.head.appendChild(style);
     }
 })();
+
+-----------
+
+javascript:(function(){
+    var code = prompt('Enter the JavaScript code to inject:');
+    if (code) {
+        try {
+            eval(code);
+        } catch (e) {
+            alert('Error executing code: ' + e.message);
+        }
+    }
+})();

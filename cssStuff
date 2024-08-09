@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Embedded CSS Example</title>
+    <link rel="stylesheet" href="data:text/css;base64,Ym9keSB7IGJhY2tncm91bmQtY29sb3I6IGxpZ2h0Ymx1ZTsgY29sb3I6ICMwMDA7IGZvbnQtZmFtaWx5OiBBcmlhbCwgc2Fucy1zZXJpZjsKfQ==">
+</head>
+<body>
+    <h1>Hello, World!</h1>
+</body>
+</html>

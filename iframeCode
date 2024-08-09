@@ -1,0 +1,21 @@
+(function(){
+    // Access the iframe element by its ID or other selectors
+    var iframe = document.getElementById('your-iframe-id');
+    
+    // Check if iframe and its content are accessible
+    if(iframe && iframe.contentDocument) {
+        // Create a style element
+        var style = iframe.contentDocument.createElement('style');
+        style.type = 'text/css';
+        
+        // Prompt user for CSS to inject
+        var css = prompt('Enter the CSS to inject into the iframe:');
+        if(css) {
+            style.appendChild(iframe.contentDocument.createTextNode(css));
+            // Append the style to the iframe's head or body
+            iframe.contentDocument.head.appendChild(style);
+        }
+    } else {
+        alert('Cannot access the iframe content. Make sure it is on the same domain.');
+    }
+})();

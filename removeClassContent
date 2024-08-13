@@ -1,0 +1,14 @@
+function removeNestedElements() {
+    const parentElements = document.getElementsByClassName('codeContent');
+    
+    for (let i = 0; i < parentElements.length; i++) {
+        const nestedElements = parentElements[i].getElementsByClassName('command_help');
+        
+        while (nestedElements.length > 0) {
+            nestedElements[0].parentNode.removeChild(nestedElements[0]);
+        }
+    }
+}
+
+// Example usage:
+// removeNestedElements();

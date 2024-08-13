@@ -8,23 +8,23 @@
 <body>
 
     <div class="copyBtn">
-        <button>Copy</button>
+        <button class="copyButton">Copy</button>
         <div class="code">code goes here</div>
     </div>
 
     <div class="copyBtn">
-        <button>Copy</button>
+        <button class="copyButton">Copy</button>
         <div class="code">more code goes here</div>
     </div>
 
     <div class="copyBtn">
-        <button>Copy</button>
+        <button class="copyButton">Copy</button>
         <div class="code">even more code goes here</div>
     </div>
 
     <script>
-        // Select all elements with class 'copyBtn'
-        const copyButtons = document.querySelectorAll('.copyBtn button');
+        // Select all elements with class 'copyButton'
+        const copyButtons = document.querySelectorAll('.copyButton');
 
         copyButtons.forEach(button => {
             // Add click event listener to each button

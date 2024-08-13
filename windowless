@@ -1,0 +1,18 @@
+window.onload = function() {
+    // Define the features for the new window
+    const features = "toolbar=no,scrollbars=no,resizable=no,top=100,left=100,width=800,height=600";
+
+    // Open a new window with the same URL as the current page
+    const newWindow = window.open(window.location.href, "_blank", features);
+
+    // Close the original window
+    window.close();
+
+    // Focus the new window
+    if (newWindow) {
+        newWindow.focus();
+    } else {
+        // Fallback: alert the user that the pop-up was blocked
+        alert("Pop-up blocked! Please allow pop-ups for this site.");
+    }
+};

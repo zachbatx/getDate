@@ -16,3 +16,16 @@ window.onload = function() {
         alert("Pop-up blocked! Please allow pop-ups for this site.");
     }
 };
+
+//--------------
+
+function openMinimalWindow(url) {
+    window.open(
+        url,  // URL to be opened
+        "_blank",  // Open in a new window
+        "toolbar=no,scrollbars=no,resizable=no,top=100,left=100,width=800,height=600"
+    );
+}
+
+// Example usage:
+openMinimalWindow("https://example.com");

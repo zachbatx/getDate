@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multiple Copy Buttons</title>
+</head>
+<body>
+
+    <div class="copyBtn">
+        <button>Copy</button>
+        <div class="code">code goes here</div>
+    </div>
+
+    <div class="copyBtn">
+        <button>Copy</button>
+        <div class="code">more code goes here</div>
+    </div>
+
+    <div class="copyBtn">
+        <button>Copy</button>
+        <div class="code">even more code goes here</div>
+    </div>
+
+    <script>
+        // Select all elements with class 'copyBtn'
+        const copyButtons = document.querySelectorAll('.copyBtn button');
+
+        copyButtons.forEach(button => {
+            // Add click event listener to each button
+            button.addEventListener('click', function() {
+                // Find the closest parent with the class 'copyBtn'
+                const parent = this.closest('.copyBtn');
+                // Find the 'code' div inside this parent
+                const codeContent = parent.querySelector('.code').textContent;
+
+                // Create a temporary textarea element
+                const tempTextarea = document.createElement('textarea');
+                // Set the textarea's value to the code content
+                tempTextarea.value = codeContent;
+                // Append the textarea to the body (required for copy command)
+                document.body.appendChild(tempTextarea);
+                // Select the text in the textarea
+                tempTextarea.select();
+                // Execute the copy command
+                document.execCommand('copy');
+                // Remove the temporary textarea
+                document.body.removeChild(tempTextarea);
+                // Optionally, provide feedback to the user
+                alert('Code copied to clipboard!');
+            });
+        });
+    </script>
+
+</body>
+</html>

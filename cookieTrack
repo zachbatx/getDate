@@ -1,167 +1,4 @@
-Here's the complete setup for tracking user visits across four sample pages: start.html, section1.html, section2.html, and end.html. This setup will ensure that the user's visit is tracked across these pages, and on end.html, it will display any pages that the user has not visited.
-
-1. JavaScript Code to Include on All Pages
-First, include this JavaScript code snippet on all four pages (start.html, section1.html, section2.html, and end.html). This code will handle cookie management, page tracking, and checking for unviewed pages.
-
-javascript
-Copy code
-//------------------------------------------------//
-
-
-// List of all expected pages
-const pages = ['start.html', 'section1.html', 'section2.html', 'end.html'];
-
-function getCookie(name) {
-    let cookieArr = document.cookie.split(";");
-    for(let i = 0; i < cookieArr.length; i++) {
-        let cookiePair = cookieArr[i].split("=");
-        if(name == cookiePair[0].trim()) {
-            return decodeURIComponent(cookiePair[1]);
-        }
-    }
-    return null;
-}
-
-function setCookie(name, value, days) {
-    let expires = "";
-    if (days) {
-        let date = new Date();
-        date.setTime(date.getTime() + (days*24*60*60*1000));
-        expires = "; expires=" + date.toUTCString();
-    }
-    document.cookie = name + "=" + (value || "")  + expires + "; path=/";
-}
-
-function trackPageView(pageName) {
-    let viewedPages = getCookie('viewedPages');
-    viewedPages = viewedPages ? viewedPages.split(',') : [];
-    if (!viewedPages.includes(pageName)) {
-        viewedPages.push(pageName);
-        setCookie('viewedPages', viewedPages.join(','), 7);
-    }
-}
-
-function getUnviewedPages() {
-    let viewedPages = getCookie('viewedPages');
-    viewedPages = viewedPages ? viewedPages.split(',') : [];
-    return pages.filter(page => !viewedPages.includes(page));
-}
-
-function displayUnviewedPages() {
-    let unviewedPages = getUnviewedPages();
-    if (unviewedPages.length > 0) {
-        alert('You have not viewed the following pages: ' + unviewedPages.join(', '));
-    } else {
-        alert('You have viewed all pages.');
-    }
-}
-
-// Example usage:
-// On each page load, replace 'currentPage' with the actual page name
-const currentPage = window.location.pathname.split("/").pop(); // Automatically get the current page name
-trackPageView(currentPage);
-
-
-//------------------------------------------------//
-2. Individual HTML Pages
-For each page, you need to include the above JavaScript and handle the specific behavior:
-
-start.html
-
-html
-Copy code
-//------------------------------------------------//
-
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Start</title>
-    <script src="tracking.js"></script> <!-- Link to the JavaScript file -->
-</head>
-<body>
-    <h1>Welcome to the Start Page</h1>
-    <a href="section1.html">Go to Section 1</a>
-</body>
-</html>
-
-//------------------------------------------------//
-section1.html
-
-html
-Copy code
-//------------------------------------------------//
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Section 1</title>
-    <script src="tracking.js"></script> <!-- Link to the JavaScript file -->
-</head>
-<body>
-    <h1>Welcome to Section 1</h1>
-    <a href="section2.html">Go to Section 2</a>
-</body>
-</html>
-
-//------------------------------------------------//
-section2.html
-
-html
-Copy code
-//------------------------------------------------//
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Section 2</title>
-    <script src="tracking.js"></script> <!-- Link to the JavaScript file -->
-</head>
-<body>
-    <h1>Welcome to Section 2</h1>
-    <a href="end.html">Go to End</a>
-</body>
-</html>
-
-//------------------------------------------------//
-end.html
-
-html
-Copy code
-//------------------------------------------------//
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>End</title>
-    <script src="tracking.js"></script> <!-- Link to the JavaScript file -->
-</head>
-<body>
-    <h1>End Page</h1>
-    <p>Thank you for visiting all sections.</p>
-    <script>
-        // On the last page, display unviewed pages
-        displayUnviewedPages();
-    </script>
-</body>
-</html>
-
-//------------------------------------------------//
-3. External JavaScript File (tracking.js)
-You should place the JavaScript code mentioned in step 1 into an external file named tracking.js:
-
-javascript
-Copy code
-//------------------------------------------------//
-
+<script>
 // tracking.js
 
 // List of all expected pages
@@ -212,15 +49,101 @@ function displayUnviewedPages() {
     }
 }
 
-// Example usage:
-// On each page load, replace 'currentPage' with the actual page name
-const currentPage = window.location.pathname.split("/").pop(); // Automatically get the current page name
+// Automatically track the current page
+const currentPage = window.location.pathname.split("/").pop(); // Get the current page name
 trackPageView(currentPage);
+
+</script>
 
 
 //------------------------------------------------//
-Summary
-trackPageView() will track each page the user visits.
-displayUnviewedPages() will be called on end.html to alert the user of any pages they have not visited.
-a. Would you like to secure this code further, such as by using localStorage instead of cookies?
-b. Would you like to extend this with additional functionality, such as a reset button or better UI for displaying unviewed pages?
+
+start.html
+
+html
+Copy code
+//------------------------------------------------//
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Start</title>
+    <script src="tracking.js"></script>
+</head>
+<body>
+    <h1>Welcome to the Start Page</h1>
+    <a href="section1.html">Go to Section 1</a>
+</body>
+</html>
+
+//------------------------------------------------//
+section1.html
+
+html
+Copy code
+//------------------------------------------------//
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Section 1</title>
+    <script src="tracking.js"></script>
+</head>
+<body>
+    <h1>Welcome to Section 1</h1>
+    <a href="section2.html">Go to Section 2</a>
+</body>
+</html>
+
+//------------------------------------------------//
+section2.html
+
+html
+Copy code
+//------------------------------------------------//
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Section 2</title>
+    <script src="tracking.js"></script>
+</head>
+<body>
+    <h1>Welcome to Section 2</h1>
+    <a href="end.html">Go to End</a>
+</body>
+</html>
+
+//------------------------------------------------//
+
+end.html
+
+html
+Copy code
+//------------------------------------------------//
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>End</title>
+    <script src="tracking.js"></script>
+</head>
+<body>
+    <h1>End Page</h1>
+    <p>Thank you for visiting all sections.</p>
+    <script>
+        // On the last page, display unviewed pages
+        displayUnviewedPages();
+    </script>
+</body>
+</html>

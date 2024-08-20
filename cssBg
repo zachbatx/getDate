@@ -1,0 +1,20 @@
+/* Custom properties for background parameters */
+:root {
+    --bg-image: url('your-image-url.jpg'); /* URL of the background image */
+    --bg-size: cover; /* options: cover, contain, auto, or specific size (e.g., 100px 100px) */
+    --bg-position: center; /* options: center, top, bottom, left, right, or specific position (e.g., 50% 50%) */
+    --bg-repeat: no-repeat; /* options: repeat, repeat-x, repeat-y, no-repeat */
+    --bg-width: 100%; /* Width of the background element */
+    --bg-height: 100vh; /* Height of the background element */
+    --bg-attachment: scroll; /* options: scroll, fixed, local */
+}
+
+.background-class {
+    background-image: var(--bg-image);
+    background-size: var(--bg-size);
+    background-position: var(--bg-position);
+    background-repeat: var(--bg-repeat);
+    width: var(--bg-width);
+    height: var(--bg-height);
+    background-attachment: var(--bg-attachment);
+}

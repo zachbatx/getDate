@@ -1,0 +1,38 @@
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    // Select the main content container
+    const mainContent = document.getElementById("main-content");
+    
+    if (mainContent) {
+        // Select all divs with class 'table-wrap' inside the main content
+        const tableWraps = mainContent.querySelectorAll("div.table-wrap");
+        
+        // Iterate through each table-wrap div
+        tableWraps.forEach(function(tableWrap) {
+            // Get the computed styles of the current table-wrap div
+            const style = window.getComputedStyle(tableWrap);
+            
+            // Check if the box-shadow property is applied
+            if (style.boxShadow !== 'none') {
+                // Add the 'hasShadow' class to the parent div
+                tableWrap.classList.add("hasShadow");
+            }
+        });
+    }
+});
+</script>
+
+------------
+
+/* Apply box-shadow to .table-wrap */
+div.table-wrap.has-shadow {
+    box-shadow: 3px 3px 3px #F5F5F5;
+}
+
+/* Apply width: auto to table if the parent .table-wrap has the .has-shadow class */
+div.table-wrap.has-shadow table {
+    width: auto;
+}
+
+
+

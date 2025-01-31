@@ -1,0 +1,1366 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <title>HTML Table and Chart Visualization</title>
+
+</head>
+
+<body>
+
+    <table
+        style="width:100%;border:1px solid #dadce0;border-radius:8px;border-spacing:0;table-layout:fixed;border-collapse:separate"
+        role="presentation">
+        <tbody>
+            <tr>
+                <td style="padding:4.5%" dir="ltr">
+                    <div
+                        style="margin-bottom:32px;font-family:Google Sans,Roboto,Arial,Helvetica,sans-serif;font-style:normal;font-size:28px;line-height:36px;color:#3c4043">
+                        zach b attached a document</div>
+                    <table
+                        style="border-collapse:collapse;font-family:Roboto,Arial,Helvetica,sans-serif;font-size:16px;line-height:24px;color:#202124;letter-spacing:0.1px;table-layout:fixed;width:100%"
+                        role="presentation">
+                        <tbody>
+                            <tr>
+                                <td style="padding:0;vertical-align:top;width:50px">
+                                    <div><img style="border-radius:50%;display:block" width="50" height="50"
+                                            src="https://lh3.googleusercontent.com/a/ACg8ocJAYnpcYzso7M2Gq64edaFJFgl1-opghiBTxzrtL8LskBIJ=s64"
+                                            alt="Header profile photo" class="CToWUd" data-bit="iit"></div>
+                                </td>
+                                <td style="padding:0;vertical-align:top;padding-left:12px">
+                                    <div style="padding-top:12px">zach b (<a href="mailto:zachbatx@gmail.com"
+                                            style="color:inherit;text-decoration:none"
+                                            target="_blank">zachbatx@gmail.com</a>) has attached the following document:
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table style="border-spacing:0 4px;table-layout:fixed;width:100%" role="presentation">
+                        <tbody>
+                            <tr style="height:28px"></tr>
+                            <tr>
+                                <td style="padding:0">
+                                    <div
+                                        style="color:#3c4043;display:inline-block;max-width:100%;text-decoration:none;vertical-align:top;border:1px solid #dadce0;border-radius:16px;white-space:nowrap">
+                                        <div
+                                            style="line-height:18px;overflow:hidden;text-overflow:ellipsis;padding:6px 12px">
+                                            <span
+                                                style="display:inline-block;vertical-align:top;min-width:26px;width:26px"><img
+                                                    src="https://ci3.googleusercontent.com/meips/ADKq_NaoMSOexhQ7sWrqqA4w2k-MMqT69k9paSMQBnPg4SlWThEXVccJ6m8U0dWPmbUXRhox9Td6XFUOZ3JHOaaCgmJ7jDHO1qLMt0AQhbljmbJ7uYi9cTQ1OYwyeYcRKnPhWDt3ew=s0-d-e1-ft#https://ssl.gstatic.com/docs/doclist/images/mediatype/icon_1_document_x64.png"
+                                                    width="18" height="18" style="vertical-align:top"
+                                                    role="presentation" class="CToWUd" data-bit="iit"></span><span
+                                                style="font:500 14px/18px Google Sans,Roboto,Arial,Helvetica,sans-serif;display:inline;letter-spacing:0.2px">Process
+                                                Optimization and Engagement Strategist</span></div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div style="height:16px"></div>
+                    <div style="height:1px;background-color:#eee"></div>
+                    <div style="height:24px"></div>
+                    <div style="font-style:italic">Snapshot of the item below:</div>
+                    <div style="padding:10px 0">
+                        <p
+                            style="padding:0;margin:0;color:#000000;font-size:26pt;font-family:&quot;Arial&quot;;line-height:1.15;page-break-after:avoid;text-align:left">
+                            <span
+                                style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:26pt;font-family:&quot;Arial&quot;;font-style:normal">Role
+                                Description</span></p>
+                        <h1
+                            style="padding-top:24pt;margin:0;color:#000000;padding-left:0;font-size:20pt;padding-bottom:6pt;line-height:1.15;page-break-after:avoid;font-family:&quot;Arial&quot;;text-align:left;padding-right:0">
+                            <span
+                                style="color:#000000;font-weight:700;text-decoration:none;vertical-align:baseline;font-size:23pt;font-family:&quot;Arial&quot;;font-style:normal">Process
+                                Optimization and Engagement Strategist</span></h1>
+                        <h2
+                            style="padding-top:18pt;margin:0;color:#000000;padding-left:0;font-size:16pt;padding-bottom:4pt;line-height:1.15;page-break-after:avoid;font-family:&quot;Arial&quot;;text-align:left;padding-right:0">
+                            <span
+                                style="color:#000000;font-weight:700;text-decoration:none;vertical-align:baseline;font-size:17pt;font-family:&quot;Arial&quot;;font-style:normal">Role
+                                Overview</span></h2>
+                        <p
+                            style="padding-top:12pt;margin:0;color:#000000;padding-left:0;font-size:11pt;padding-bottom:12pt;font-family:&quot;Arial&quot;;line-height:1.15;text-align:left;padding-right:0">
+                            <span
+                                style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">As
+                                the Process Optimization and Engagement Strategist, I will enhance team efficiency,
+                                optimize data utilization, and boost internal engagement with our products, services,
+                                and data. This will demonstrate our value within the organization and potentially expand
+                                our offerings and team scope. My primary goals are to streamline operations, eliminate
+                                inefficiencies, and reduce time spent on manual processes, allowing team members to
+                                focus on critical tasks. Leveraging my expertise in UX design and development, I will
+                                create impactful solutions that drive engagement and productivity.</span></p>
+                        <h2
+                            style="padding-top:18pt;margin:0;color:#000000;padding-left:0;font-size:16pt;padding-bottom:4pt;line-height:1.15;page-break-after:avoid;font-family:&quot;Arial&quot;;text-align:left;padding-right:0">
+                            <span
+                                style="color:#000000;font-weight:700;text-decoration:none;vertical-align:baseline;font-size:17pt;font-family:&quot;Arial&quot;;font-style:normal">Strategic
+                                Impact</span></h2>
+                        <ul style="padding:0;margin:0">
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:36pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">Transform
+                                    data into actionable insights that drive user engagement and business value</span>
+                            </li>
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:36pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">Architect
+                                    seamless, dynamic workflows that eliminate manual processes and free up team
+                                    resources</span></li>
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:36pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">Consolidate
+                                    internal resources to make it easy to update as a single source </span></li>
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:36pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">Design
+                                    and implement customized user experiences that significantly increase product and
+                                    service adoption</span></li>
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:36pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">Increase
+                                    our team's value by showcasing quantifiable improvements with how we interact with
+                                    our internal audience through a customized experience, data, and products and
+                                    services </span></li>
+                        </ul>
+                        <h2
+                            style="padding-top:18pt;margin:0;color:#000000;padding-left:0;font-size:16pt;padding-bottom:4pt;line-height:1.15;page-break-after:avoid;font-family:&quot;Arial&quot;;text-align:left;padding-right:0">
+                            <span
+                                style="color:#000000;font-weight:700;text-decoration:none;vertical-align:baseline;font-size:17pt;font-family:&quot;Arial&quot;;font-style:normal">Core
+                                Initiatives</span></h2>
+                        <h3
+                            style="padding-top:14pt;margin:0;color:#434343;padding-left:0;font-size:14pt;padding-bottom:4pt;line-height:1.15;page-break-after:avoid;font-family:&quot;Arial&quot;;text-align:left;padding-right:0">
+                            <span
+                                style="color:#000000;font-weight:700;text-decoration:none;vertical-align:baseline;font-size:13pt;font-family:&quot;Arial&quot;;font-style:normal">Data
+                                Optimization &amp; Integration</span></h3>
+                        <ul style="padding:0;margin:0">
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:36pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">Identify
+                                    all of our Digital Accessibility team data sources. Identify ways to aggregate this
+                                    data in order to bring more value to this data and ensure this information is in a
+                                    form we can use </span></li>
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:36pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">Address
+                                    cleaning our data and standardizing our data entry process to ensure high-quality
+                                    and reliable information involving creating intuitive data input forms and processes
+                                    to maintain data integrity</span></li>
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:36pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">Identify
+                                    and integrate valuable new data sources to enrich our analytical capabilities</span>
+                            </li>
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:36pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">Ideate
+                                    with Data Scientists to develop innovative LLM use cases using our internal data and
+                                    resources. </span></li>
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:36pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">Additionally
+                                    looking at JPMC’s AI technology roadmap and how our team can benefit.</span></li>
+                        </ul>
+                        <h3
+                            style="padding-top:14pt;margin:0;color:#434343;padding-left:0;font-size:14pt;padding-bottom:4pt;line-height:1.15;page-break-after:avoid;font-family:&quot;Arial&quot;;text-align:left;padding-right:0">
+                            <span
+                                style="color:#000000;font-weight:700;text-decoration:none;vertical-align:baseline;font-size:13pt;font-family:&quot;Arial&quot;;font-style:normal">User
+                                Experience Enhancement</span></h3>
+                        <ul style="padding:0;margin:0">
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:36pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">Research
+                                    initiatives such as focus groups, surveys, and analyses of existing internal data to
+                                    gain a deeper understanding of our internal customers’ needs. In addition, we will
+                                    leverage external industry research to discover how similar teams interact and
+                                    utilize comparable data most effectively.</span></li>
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:36pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">Create
+                                    dynamic, personalized dashboards and visualizations that drive data-informed
+                                    decision-making</span></li>
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:36pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">Implement
+                                    comprehensive input systems to improve our data accuracy for better analytics
+                                </span></li>
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:36pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">Design
+                                    streamlined service request processes for advisory, training, and governance
+                                    consultation</span></li>
+                        </ul>
+                        <h3
+                            style="padding-top:14pt;margin:0;color:#434343;padding-left:0;font-size:14pt;padding-bottom:4pt;line-height:1.15;page-break-after:avoid;font-family:&quot;Arial&quot;;text-align:left;padding-right:0">
+                            <span
+                                style="color:#000000;font-weight:700;text-decoration:none;vertical-align:baseline;font-size:13pt;font-family:&quot;Arial&quot;;font-style:normal">Process
+                                Innovation</span></h3>
+                        <ul style="padding:0;margin:0">
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:36pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">Analyze
+                                    current workflows to identify and eliminate inefficiencies</span></li>
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:36pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">Develop
+                                    dynamic solutions that reduce manual effort and improve efficiency and
+                                    accuracy</span></li>
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:36pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">Create
+                                    scalable processes that can adapt to growing organizational needs</span></li>
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:36pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">Leverage
+                                    our internal LLM to speed up iteration and development of concepts to improve
+                                    complex tasks and create personalized user experiences</span></li>
+                        </ul>
+                        <h3
+                            style="padding-top:14pt;margin:0;color:#434343;padding-left:0;font-size:14pt;padding-bottom:4pt;line-height:1.15;page-break-after:avoid;font-family:&quot;Arial&quot;;text-align:left;padding-right:0">
+                            <span
+                                style="color:#000000;font-weight:700;text-decoration:none;vertical-align:baseline;font-size:13pt;font-family:&quot;Arial&quot;;font-style:normal">Strategic
+                                Growth</span></h3>
+                        <ul style="padding:0;margin:0">
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:36pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">Identify
+                                    new opportunities to apply our team's expertise across the organization in areas
+                                    such as Elderly and Vulnerable Program (EVP) and non-English speaking US citizens.
+                                    &nbsp;</span></li>
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:36pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">Expand
+                                    our service portfolio based on user needs and organizational goals</span></li>
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:36pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">Build
+                                    strategic partnerships with internal stakeholders to drive adoption and
+                                    engagement</span></li>
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:36pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">Measure
+                                    and communicate the value impact of our optimization initiatives</span></li>
+                        </ul>
+                        <h3
+                            style="padding-top:14pt;margin:0;color:#434343;padding-left:0;font-size:14pt;padding-bottom:4pt;line-height:1.15;page-break-after:avoid;font-family:&quot;Arial&quot;;text-align:left;padding-right:0">
+                            <span
+                                style="color:#000000;font-weight:700;text-decoration:none;vertical-align:baseline;font-size:13pt;font-family:&quot;Arial&quot;;font-style:normal">Team
+                                Strategy</span></h3>
+                        <ul style="padding:0;margin:0">
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:36pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">Data</span>
+                            </li>
+                        </ul>
+                        <ul style="padding:0;margin:0">
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:72pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">When
+                                    developing data use models also think about use cases where other teams may be able
+                                    to benefit from our data outside of accessibility</span></li>
+                        </ul>
+                        <ul style="padding:0;margin:0">
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:36pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">Tools</span>
+                            </li>
+                        </ul>
+                        <ul style="padding:0;margin:0">
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:72pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">Create
+                                    innovative tools with broad applications that can be easily reused by other teams
+                                    with their own data and resources </span></li>
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:72pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">That
+                                    can easily integrate with other internal tools and into our audiences workflows and
+                                    processes </span></li>
+                        </ul>
+                        <h2
+                            style="padding-top:18pt;margin:0;color:#000000;padding-left:0;font-size:16pt;padding-bottom:4pt;line-height:1.15;page-break-after:avoid;font-family:&quot;Arial&quot;;text-align:left;padding-right:0">
+                            <span
+                                style="color:#000000;font-weight:700;text-decoration:none;vertical-align:baseline;font-size:17pt;font-family:&quot;Arial&quot;;font-style:normal">Resource
+                                Requirements</span></h2>
+                        <p
+                            style="padding:0;margin:0;color:#000000;font-size:11pt;font-family:&quot;Arial&quot;;line-height:1.15;text-align:left">
+                            <span style="font-weight:700">Note: </span><span
+                                style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">Navigating
+                                the complex processes to gain access to data, applications and platforms can be
+                                extremely time consuming. If we could as a team (training, governance, standards (DAKB))
+                                consolidate and organize our needs and meet with the teams that oversee these processes
+                                to identify a contact we can work with to expedite this process and create a roadmap.
+                            </span></p>
+                        <ul style="padding:0;margin:0">
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:36pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">Dedicated
+                                    Data Scientist collaboration for LLM implementation</span></li>
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:36pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">Enhanced
+                                    database and internal data source access</span></li>
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:36pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">Essential
+                                    tools: Alteryx, Tableau, Lucid for Confluence</span></li>
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:36pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">Internal
+                                    engineering support for data integration</span></li>
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:36pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">Access
+                                    to gain privileges to various applications and platforms</span></li>
+                        </ul>
+                        <h2
+                            style="padding-top:18pt;margin:0;color:#000000;padding-left:0;font-size:16pt;padding-bottom:4pt;line-height:1.15;page-break-after:avoid;font-family:&quot;Arial&quot;;text-align:left;padding-right:0">
+                            <span
+                                style="color:#000000;font-weight:700;text-decoration:none;vertical-align:baseline;font-size:17pt;font-family:&quot;Arial&quot;;font-style:normal">Expected
+                                Outcomes</span></h2>
+                        <ul style="padding:0;margin:0">
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:36pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">Significant
+                                    reduction in manual processing time</span></li>
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:36pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">Increased
+                                    user engagement with products and services</span></li>
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:36pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">Higher
+                                    quality data driving better decision-making</span></li>
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:36pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">Expanded
+                                    team influence and service portfolio</span></li>
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:36pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">Measurable
+                                    improvement in internal customer satisfaction</span></li>
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:36pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">Streamlined,
+                                    efficient processes that scale with organizational growth</span></li>
+                        </ul>
+                        <p
+                            style="padding-top:12pt;margin:0;color:#000000;padding-left:0;font-size:11pt;padding-bottom:12pt;font-family:&quot;Arial&quot;;line-height:1.15;text-align:left;padding-right:0">
+                            <span
+                                style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">This
+                                role will be instrumental in elevating our team's impact by creating data-driven,
+                                user-centric solutions that deliver measurable value to the organization.</span></p>
+                        <p
+                            style="padding:0;margin:0;color:#000000;font-size:11pt;font-family:&quot;Arial&quot;;line-height:1.15;height:11pt;text-align:left">
+                            <span
+                                style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal"></span>
+                        </p>
+                        <p
+                            style="padding:0;margin:0;color:#000000;font-size:11pt;font-family:&quot;Arial&quot;;line-height:1.15;height:11pt;text-align:left">
+                            <span
+                                style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal"></span>
+                        </p>
+                        <p
+                            style="padding:0;margin:0;color:#000000;font-size:11pt;font-family:&quot;Arial&quot;;line-height:1.15;height:11pt;text-align:left">
+                            <span
+                                style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal"></span>
+                        </p>
+                        <p
+                            style="padding-top:12pt;margin:0;color:#000000;padding-left:0;font-size:11pt;padding-bottom:12pt;line-height:1.15;font-family:&quot;Arial&quot;;height:11pt;text-align:left;padding-right:0">
+                            <span
+                                style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal"></span>
+                        </p>
+                        <p
+                            style="padding:0;margin:0;color:#000000;font-size:11pt;font-family:&quot;Arial&quot;;line-height:1.15;height:11pt;text-align:left">
+                            <span
+                                style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal"></span>
+                        </p>
+                        <p
+                            style="padding:0;margin:0;color:#000000;font-size:26pt;font-family:&quot;Arial&quot;;line-height:1.15;page-break-after:avoid;text-align:left">
+                            <span
+                                style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:26pt;font-family:&quot;Arial&quot;;font-style:normal">Strategic
+                                Initiatives</span></p>
+                        <h1
+                            style="padding-top:20pt;margin:0;color:#000000;padding-left:0;font-size:20pt;padding-bottom:4pt;line-height:1.15;page-break-after:avoid;font-family:&quot;Arial&quot;;text-align:left;padding-right:0">
+                            <span
+                                style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:20pt;font-family:&quot;Arial&quot;;font-style:normal">Strategic
+                                Initiatives </span></h1>
+                        <h2
+                            style="padding-top:18pt;margin:0;color:#000000;padding-left:0;font-size:16pt;padding-bottom:4pt;line-height:1.15;page-break-after:avoid;font-family:&quot;Arial&quot;;text-align:left;padding-right:0">
+                            <span
+                                style="color:#000000;font-weight:700;text-decoration:none;vertical-align:baseline;font-size:17pt;font-family:&quot;Arial&quot;;font-style:normal">1.
+                                Data Optimization &amp; Integration</span></h2>
+                        <p
+                            style="padding-top:12pt;margin:0;color:#000000;padding-left:0;font-size:11pt;padding-bottom:12pt;font-family:&quot;Arial&quot;;line-height:1.15;text-align:left;padding-right:0">
+                            <span style="font-weight:700">Objective:<br></span><span
+                                style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">Maximize
+                                the value of all data sources used by the Digital Accessibility team. Improve data
+                                integrity, consistency, and availability to support more robust analytics, reporting,
+                                and informed decision-making.</span></p>
+                        <p
+                            style="padding-top:12pt;margin:0;color:#000000;padding-left:0;font-size:11pt;padding-bottom:12pt;font-family:&quot;Arial&quot;;line-height:1.15;text-align:left;padding-right:0">
+                            <span
+                                style="color:#000000;font-weight:700;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">Initiatives:</span>
+                        </p>
+                        <ol style="padding:0;margin:0">
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:36pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span
+                                    style="color:#000000;font-weight:700;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">Comprehensive
+                                    Data Inventory &amp; Assessment</span></li>
+                        </ol>
+                        <ul style="padding:0;margin:0">
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:72pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span style="font-weight:700">What</span><span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">:
+                                    Catalog all current and potential data sources (e.g., accessibility tool outputs,
+                                    training requests, advisory notes, system logs).</span></li>
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:72pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span style="font-weight:700">How</span><span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">:
+                                    Conduct an internal audit to assess each data source’s format, quality, and
+                                    ownership.</span></li>
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:72pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span style="font-weight:700">Outcome</span><span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">:
+                                    A definitive map of all relevant data, highlighting gaps, overlaps, and integration
+                                    opportunities.</span></li>
+                        </ul>
+                        <ol style="padding:0;margin:0">
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:36pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span
+                                    style="color:#000000;font-weight:700;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">Data
+                                    Cleansing &amp; Standardization</span></li>
+                        </ol>
+                        <ul style="padding:0;margin:0">
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:72pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span style="font-weight:700">What</span><span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">:
+                                    Clean up existing data to remove duplicates, inconsistencies, and incomplete
+                                    fields.</span></li>
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:72pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span style="font-weight:700">How</span><span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">:
+                                    Establish standardized data entry protocols and training for team members. Develop
+                                    intuitive data input forms that reduce user errors.</span></li>
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:72pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span style="font-weight:700">Outcome</span><span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">:
+                                    A consistent, high-integrity dataset that boosts reliability and reduces downstream
+                                    complications.</span></li>
+                        </ul>
+                        <ol style="padding:0;margin:0">
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:36pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span
+                                    style="color:#000000;font-weight:700;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">Data
+                                    Integration &amp; Aggregation</span></li>
+                        </ol>
+                        <ul style="padding:0;margin:0">
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:72pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span style="font-weight:700">What</span><span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">:
+                                    Build or leverage existing platforms to merge disparate data sources into a unified
+                                    data lake or warehouse.</span></li>
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:72pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span style="font-weight:700">How</span><span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">:
+                                    Use ETL (Extract, Transform, Load) processes, APIs, or specialized integration
+                                    tools. Collaborate with JPMC data engineering teams to ensure scalability and
+                                    compliance.</span></li>
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:72pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span style="font-weight:700">Outcome</span><span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">:
+                                    Centralized, easily accessible data that fosters better analytics, trend
+                                    identification, and decision-making.</span></li>
+                        </ul>
+                        <ol style="padding:0;margin:0">
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:36pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span
+                                    style="color:#000000;font-weight:700;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">LLM
+                                    &amp; AI Use Case Development</span></li>
+                        </ol>
+                        <ul style="padding:0;margin:0">
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:72pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span style="font-weight:700">What</span><span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">:
+                                    Collaborate with data scientists to explore innovative LLM applications (e.g.,
+                                    predictive analytics for accessibility issues, automated QA).</span></li>
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:72pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span style="font-weight:700">How</span><span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">:
+                                    Examine JPMC’s AI roadmap and leverage internal resources for prototyping and
+                                    testing.</span></li>
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:72pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span style="font-weight:700">Outcome</span><span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">:
+                                    Groundbreaking use cases that make the most of internal data and position the
+                                    Digital Accessibility team as a leader in AI-driven solutions.</span></li>
+                        </ul>
+                        <hr>
+                        <p
+                            style="padding:0;margin:0;color:#000000;font-size:11pt;font-family:&quot;Arial&quot;;line-height:1.15;height:11pt;text-align:left">
+                            <span
+                                style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal"></span>
+                        </p>
+                        <h2
+                            style="padding-top:18pt;margin:0;color:#000000;padding-left:0;font-size:16pt;padding-bottom:4pt;line-height:1.15;page-break-after:avoid;font-family:&quot;Arial&quot;;text-align:left;padding-right:0">
+                            <span
+                                style="color:#000000;font-weight:700;text-decoration:none;vertical-align:baseline;font-size:17pt;font-family:&quot;Arial&quot;;font-style:normal">2.
+                                User Experience Enhancement</span></h2>
+                        <p
+                            style="padding-top:12pt;margin:0;color:#000000;padding-left:0;font-size:11pt;padding-bottom:12pt;font-family:&quot;Arial&quot;;line-height:1.15;text-align:left;padding-right:0">
+                            <span style="font-weight:700">Objective:<br></span><span
+                                style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">Transform
+                                user interactions—both for the team and our internal stakeholders—into seamless,
+                                insightful, and personalized experiences that bolster engagement and
+                                productivity.</span></p>
+                        <p
+                            style="padding-top:12pt;margin:0;color:#000000;padding-left:0;font-size:11pt;padding-bottom:12pt;font-family:&quot;Arial&quot;;line-height:1.15;text-align:left;padding-right:0">
+                            <span
+                                style="color:#000000;font-weight:700;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">Initiatives:</span>
+                        </p>
+                        <ol style="padding:0;margin:0">
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:36pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span
+                                    style="color:#000000;font-weight:700;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">User
+                                    Research &amp; Discovery</span></li>
+                        </ol>
+                        <ul style="padding:0;margin:0">
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:72pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span style="font-weight:700">What</span><span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">:
+                                    Conduct focus groups, surveys, and in-depth interviews with internal customers and
+                                    stakeholders.</span></li>
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:72pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span style="font-weight:700">How</span><span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">:
+                                    Combine findings from internal usage data with external industry research to
+                                    benchmark best practices.</span></li>
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:72pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span style="font-weight:700">Outcome</span><span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">:
+                                    Concrete insights into user pain points, feature requests, and untapped
+                                    opportunities.</span></li>
+                        </ul>
+                        <ol style="padding:0;margin:0">
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:36pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span
+                                    style="color:#000000;font-weight:700;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">Dynamic
+                                    Dashboards &amp; Visualizations</span></li>
+                        </ol>
+                        <ul style="padding:0;margin:0">
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:72pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span style="font-weight:700">What</span><span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">:
+                                    Develop role-based and personalized dashboards that present actionable insights
+                                    (e.g., project status, compliance gaps).</span></li>
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:72pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span style="font-weight:700">How</span><span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">:
+                                    Use modern visualization tools (e.g., Tableau, Power BI) or internal solutions.
+                                    Integrate real-time data feeds whenever possible.</span></li>
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:72pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span style="font-weight:700">Outcome</span><span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">:
+                                    Increased transparency and faster data-driven decision-making across stakeholder
+                                    groups.</span></li>
+                        </ul>
+                        <ol style="padding:0;margin:0">
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:36pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span
+                                    style="color:#000000;font-weight:700;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">Enhanced
+                                    Data Input &amp; Tracking Systems</span></li>
+                        </ol>
+                        <ul style="padding:0;margin:0">
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:72pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span style="font-weight:700">What</span><span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">:
+                                    Create user-friendly input forms and standardized submission processes for
+                                    accessibility service requests, training enrollments, and advisory needs.</span>
+                            </li>
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:72pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span style="font-weight:700">How</span><span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">:
+                                    Employ form automation and built-in validation (e.g., mandatory fields,
+                                    auto-suggestions, error detection).</span></li>
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:72pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span style="font-weight:700">Outcome</span><span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">:
+                                    Higher data accuracy, streamlined workflows, and reduced manual rework.</span></li>
+                        </ul>
+                        <ol style="padding:0;margin:0">
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:36pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span
+                                    style="color:#000000;font-weight:700;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">Streamlined
+                                    Service Request Processes</span></li>
+                        </ol>
+                        <ul style="padding:0;margin:0">
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:72pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span style="font-weight:700">What</span><span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">:
+                                    Overhaul request channels for advisory, training, and governance support to reduce
+                                    complexity and wait times.</span></li>
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:72pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span style="font-weight:700">How</span><span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">:
+                                    Define service-level agreements (SLAs), automate intake forms, and leverage
+                                    case-management tools for transparency.</span></li>
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:72pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span style="font-weight:700">Outcome</span><span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">:
+                                    Faster response times, better stakeholder satisfaction, and improved internal
+                                    reputation for efficiency.</span></li>
+                        </ul>
+                        <hr>
+                        <p
+                            style="padding:0;margin:0;color:#000000;font-size:11pt;font-family:&quot;Arial&quot;;line-height:1.15;height:11pt;text-align:left">
+                            <span
+                                style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal"></span>
+                        </p>
+                        <h2
+                            style="padding-top:18pt;margin:0;color:#000000;padding-left:0;font-size:16pt;padding-bottom:4pt;line-height:1.15;page-break-after:avoid;font-family:&quot;Arial&quot;;text-align:left;padding-right:0">
+                            <span
+                                style="color:#000000;font-weight:700;text-decoration:none;vertical-align:baseline;font-size:17pt;font-family:&quot;Arial&quot;;font-style:normal">3.
+                                Process Innovation</span></h2>
+                        <p
+                            style="padding-top:12pt;margin:0;color:#000000;padding-left:0;font-size:11pt;padding-bottom:12pt;font-family:&quot;Arial&quot;;line-height:1.15;text-align:left;padding-right:0">
+                            <span style="font-weight:700">Objective:<br></span><span
+                                style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">Continuously
+                                refine and improve internal operations to minimize manual effort, enhance accuracy, and
+                                respond quickly to the team’s evolving scope and organizational demands.</span></p>
+                        <p
+                            style="padding-top:12pt;margin:0;color:#000000;padding-left:0;font-size:11pt;padding-bottom:12pt;font-family:&quot;Arial&quot;;line-height:1.15;text-align:left;padding-right:0">
+                            <span
+                                style="color:#000000;font-weight:700;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">Initiatives:</span>
+                        </p>
+                        <ol style="padding:0;margin:0">
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:36pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span
+                                    style="color:#000000;font-weight:700;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">Workflow
+                                    Analysis &amp; Reengineering</span></li>
+                        </ol>
+                        <ul style="padding:0;margin:0">
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:72pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span style="font-weight:700">What</span><span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">:
+                                    Map current processes end-to-end (e.g., content auditing, training requests,
+                                    advisory channels).</span></li>
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:72pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span style="font-weight:700">How</span><span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">:
+                                    Identify bottlenecks, redundancies, and repetitive manual tasks through lean methods
+                                    or Six Sigma principles.</span></li>
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:72pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span style="font-weight:700">Outcome</span><span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">:
+                                    Lean, optimized processes that cut down on overall cycle times and reduce
+                                    errors.</span></li>
+                        </ul>
+                        <ol style="padding:0;margin:0">
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:36pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span
+                                    style="color:#000000;font-weight:700;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">Dynamic
+                                    Automation Solutions</span></li>
+                        </ol>
+                        <ul style="padding:0;margin:0">
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:72pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span style="font-weight:700">What</span><span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">:
+                                    Replace or augment manual tasks with automated workflows—particularly where
+                                    repetitive data entry or analysis is involved.</span></li>
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:72pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span style="font-weight:700">How</span><span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">:
+                                    Use low-code platforms and RPA (Robotic Process Automation) solutions. Integrate AI
+                                    models to handle more complex tasks.</span></li>
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:72pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span style="font-weight:700">Outcome</span><span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">:
+                                    Freed-up human resources for higher-level strategic work and a lower risk of
+                                    process-related errors.</span></li>
+                        </ul>
+                        <ol style="padding:0;margin:0">
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:36pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span
+                                    style="color:#000000;font-weight:700;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">LLM
+                                    for Rapid Concept Testing &amp; Development</span></li>
+                        </ol>
+                        <ul style="padding:0;margin:0">
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:72pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span style="font-weight:700">What</span><span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">:
+                                    Use the internal LLM to quickly prototype new ideas (e.g., generating user
+                                    documentation, summarizing accessibility guidelines).</span></li>
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:72pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span style="font-weight:700">How</span><span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">:
+                                    Provide fine-tuned training data from internal sources and set up dedicated
+                                    environments for experimentation.</span></li>
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:72pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span style="font-weight:700">Outcome</span><span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">:
+                                    Faster time-to-market for new services or process improvements, plus the ability to
+                                    develop more personalized user experiences.</span></li>
+                        </ul>
+                        <ol style="padding:0;margin:0">
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:36pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span
+                                    style="color:#000000;font-weight:700;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">Scalable
+                                    Frameworks &amp; Governance</span></li>
+                        </ol>
+                        <ul style="padding:0;margin:0">
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:72pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span style="font-weight:700">What</span><span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">:
+                                    Develop modular frameworks that can evolve as the Digital Accessibility scope grows
+                                    (e.g., more lines of business or more complex compliance standards).</span></li>
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:72pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span style="font-weight:700">How</span><span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">:
+                                    Standardize governance models, implement robust change-management protocols, and
+                                    ensure thorough documentation.</span></li>
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:72pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span style="font-weight:700">Outcome</span><span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">:
+                                    Stable yet flexible processes that can handle future organizational expansion
+                                    without compromising quality.</span></li>
+                        </ul>
+                        <hr>
+                        <p
+                            style="padding:0;margin:0;color:#000000;font-size:11pt;font-family:&quot;Arial&quot;;line-height:1.15;height:11pt;text-align:left">
+                            <span
+                                style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal"></span>
+                        </p>
+                        <h2
+                            style="padding-top:18pt;margin:0;color:#000000;padding-left:0;font-size:16pt;padding-bottom:4pt;line-height:1.15;page-break-after:avoid;font-family:&quot;Arial&quot;;text-align:left;padding-right:0">
+                            <span
+                                style="color:#000000;font-weight:700;text-decoration:none;vertical-align:baseline;font-size:17pt;font-family:&quot;Arial&quot;;font-style:normal">4.
+                                Strategic Growth</span></h2>
+                        <p
+                            style="padding-top:12pt;margin:0;color:#000000;padding-left:0;font-size:11pt;padding-bottom:12pt;font-family:&quot;Arial&quot;;line-height:1.15;text-align:left;padding-right:0">
+                            <span style="font-weight:700">Objective:<br></span><span
+                                style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">Expand
+                                the reach and impact of the Digital Accessibility team throughout JPMC while showcasing
+                                the measurable benefits of inclusive design and accessibility best practices.</span></p>
+                        <p
+                            style="padding-top:12pt;margin:0;color:#000000;padding-left:0;font-size:11pt;padding-bottom:12pt;font-family:&quot;Arial&quot;;line-height:1.15;text-align:left;padding-right:0">
+                            <span
+                                style="color:#000000;font-weight:700;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">Initiatives:</span>
+                        </p>
+                        <ol style="padding:0;margin:0">
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:36pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span
+                                    style="color:#000000;font-weight:700;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">Opportunity
+                                    Identification &amp; Program Expansion</span></li>
+                        </ol>
+                        <ul style="padding:0;margin:0">
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:72pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span style="font-weight:700">What</span><span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">:
+                                    Target high-impact areas like Elderly and Vulnerable Program (EVP) and
+                                    non-English-speaking US segments where accessibility needs are paramount.</span>
+                            </li>
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:72pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span style="font-weight:700">How</span><span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">:
+                                    Engage business lines with large, under-served or specialized user populations;
+                                    promote pilot programs to test solutions in these areas.</span></li>
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:72pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span style="font-weight:700">Outcome</span><span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">:
+                                    Broader application of accessibility principles, improved inclusion, and tangible
+                                    benefits for diverse internal and external stakeholders.</span></li>
+                        </ul>
+                        <ol style="padding:0;margin:0">
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:36pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span
+                                    style="color:#000000;font-weight:700;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">Extended
+                                    Service Portfolio</span></li>
+                        </ol>
+                        <ul style="padding:0;margin:0">
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:72pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span style="font-weight:700">What</span><span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">:
+                                    Based on user feedback and future organizational goals, propose new services (e.g.,
+                                    advanced accessibility compliance audits, multi-language training modules).</span>
+                            </li>
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:72pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span style="font-weight:700">How</span><span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">:
+                                    Collaborate closely with product, engineering, and HR teams to design and roll out
+                                    these services systematically.</span></li>
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:72pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span style="font-weight:700">Outcome</span><span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">:
+                                    Enhanced brand reputation as an industry leader in accessibility and higher internal
+                                    adoption of inclusive practices.</span></li>
+                        </ul>
+                        <ol style="padding:0;margin:0">
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:36pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span
+                                    style="color:#000000;font-weight:700;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">Strategic
+                                    Partnerships &amp; Stakeholder Engagement</span></li>
+                        </ol>
+                        <ul style="padding:0;margin:0">
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:72pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span style="font-weight:700">What</span><span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">:
+                                    Form cross-functional working groups with other JPMC departments (e.g., Legal, Risk,
+                                    Corporate Responsibility) to integrate accessibility into major initiatives.</span>
+                            </li>
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:72pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span style="font-weight:700">How</span><span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">:
+                                    Offer dedicated training, joint success metrics, and regular project touchpoints to
+                                    maintain alignment.</span></li>
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:72pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span style="font-weight:700">Outcome</span><span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">:
+                                    Unified organizational efforts around accessibility, stronger influence on
+                                    enterprise-wide policies, and reduced friction in adoption.</span></li>
+                        </ul>
+                        <ol style="padding:0;margin:0">
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:36pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span
+                                    style="color:#000000;font-weight:700;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">Value
+                                    Measurement &amp; Communication</span></li>
+                        </ol>
+                        <ul style="padding:0;margin:0">
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:72pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span style="font-weight:700">What</span><span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">:
+                                    Define clear KPIs (e.g., decreased compliance complaints, increased adoption of
+                                    advisory services, time/cost savings) and measure project outcomes regularly.</span>
+                            </li>
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:72pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span style="font-weight:700">How</span><span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">:
+                                    Develop periodic reports and dashboards showcasing quantitative and qualitative
+                                    successes to senior leadership.</span></li>
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:72pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span style="font-weight:700">Outcome</span><span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">:
+                                    Greater visibility into the ROI of accessibility initiatives, stronger business
+                                    cases for continued or expanded investment, and more consistent stakeholder
+                                    buy-in.</span></li>
+                        </ul>
+                        <hr>
+                        <p
+                            style="padding:0;margin:0;color:#000000;font-size:11pt;font-family:&quot;Arial&quot;;line-height:1.15;height:11pt;text-align:left">
+                            <span
+                                style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal"></span>
+                        </p>
+                        <h3
+                            style="padding-top:14pt;margin:0;color:#434343;padding-left:0;font-size:14pt;padding-bottom:4pt;line-height:1.15;page-break-after:avoid;font-family:&quot;Arial&quot;;text-align:left;padding-right:0">
+                            <span
+                                style="color:#000000;font-weight:700;text-decoration:none;vertical-align:baseline;font-size:13pt;font-family:&quot;Arial&quot;;font-style:normal">Conclusion</span>
+                        </h3>
+                        <p
+                            style="padding-top:12pt;margin:0;color:#000000;padding-left:0;font-size:11pt;padding-bottom:12pt;font-family:&quot;Arial&quot;;line-height:1.15;text-align:left;padding-right:0">
+                            <span
+                                style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">Implementing
+                                these strategic initiatives will position the Digital Accessibility team as a
+                                forward-thinking, data-driven powerhouse within the organization. By optimizing and
+                                integrating data, enhancing the user experience, innovating processes, and strategically
+                                expanding the team’s impact, you will not only address current needs but also anticipate
+                                future challenges—ensuring ongoing relevance and value to JPMC.</span></p>
+                        <p
+                            style="padding:0;margin:0;color:#000000;font-size:11pt;font-family:&quot;Arial&quot;;line-height:1.15;height:11pt;text-align:left">
+                            <span
+                                style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal"></span>
+                        </p>
+                        <p
+                            style="padding:0;margin:0;color:#000000;font-size:26pt;font-family:&quot;Arial&quot;;line-height:1.15;page-break-after:avoid;text-align:left">
+                            <span
+                                style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:26pt;font-family:&quot;Arial&quot;;font-style:normal">Engagement
+                                Projects</span></p>
+                        <h1
+                            style="padding-top:20pt;margin:0;color:#000000;padding-left:0;font-size:20pt;padding-bottom:6pt;line-height:1.15;page-break-after:avoid;font-family:&quot;Arial&quot;;text-align:left;padding-right:0">
+                            <span
+                                style="color:#000000;font-weight:700;text-decoration:none;vertical-align:baseline;font-size:20pt;font-family:&quot;Arial&quot;;font-style:normal">Engagement
+                                Projects</span></h1>
+                        <h3
+                            style="padding-top:16pt;margin:0;color:#434343;padding-left:0;font-size:14pt;padding-bottom:4pt;line-height:1.15;page-break-after:avoid;font-family:&quot;Arial&quot;;text-align:left;padding-right:0">
+                            <span
+                                style="color:#434343;font-weight:700;text-decoration:none;vertical-align:baseline;font-size:13pt;font-family:&quot;Arial&quot;;font-style:normal">Personalized
+                                Dashboard </span></h3>
+                        <ul style="padding:0;margin:0">
+                            <li
+                                style="padding:0;color:#000000;font-size:11pt;line-height:1.15;margin-right:0;margin-left:36pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left">
+                                <span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">Create
+                                    a personalized dashboard experience utilizing our product, services and data to
+                                    increase audience engagement.</span></li>
+                        </ul>
+                        <ul style="padding:0;margin:0">
+                            <li
+                                style="padding:0;color:#000000;font-size:11pt;line-height:1.15;margin-right:0;margin-left:72pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left">
+                                <span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">Support
+                                    Adv info (use CC)</span></li>
+                            <li
+                                style="padding:0;color:#000000;font-size:11pt;line-height:1.15;margin-right:0;margin-left:72pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left">
+                                <span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">GO
+                                    info (use CC)</span></li>
+                        </ul>
+                        <ul style="padding:0;margin:0">
+                            <li
+                                style="padding:0;color:#000000;font-size:11pt;line-height:1.15;margin-right:0;margin-left:108pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left">
+                                <span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">defDash</span>
+                            </li>
+                            <li
+                                style="padding:0;color:#000000;font-size:11pt;line-height:1.15;margin-right:0;margin-left:108pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left">
+                                <span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">ExcR</span>
+                            </li>
+                            <li
+                                style="padding:0;color:#000000;font-size:11pt;line-height:1.15;margin-right:0;margin-left:108pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left">
+                                <span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">roleTask</span>
+                            </li>
+                        </ul>
+                        <ul style="padding:0;margin:0">
+                            <li
+                                style="padding:0;color:#000000;font-size:11pt;line-height:1.15;margin-right:0;margin-left:72pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left">
+                                <span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">Role</span>
+                            </li>
+                        </ul>
+                        <ul style="padding:0;margin:0">
+                            <li
+                                style="padding:0;color:#000000;font-size:11pt;line-height:1.15;margin-right:0;margin-left:108pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left">
+                                <span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">Trn
+                                    info: (access to Lrn)</span></li>
+                        </ul>
+                        <ul style="padding:0;margin:0">
+                            <li
+                                style="padding:0;color:#000000;font-size:11pt;line-height:1.15;margin-right:0;margin-left:144pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left">
+                                <span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">What
+                                    has been taken and not</span></li>
+                            <li
+                                style="padding:0;color:#000000;font-size:11pt;line-height:1.15;margin-right:0;margin-left:144pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left">
+                                <span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">Recommended</span>
+                            </li>
+                            <li
+                                style="padding:0;color:#000000;font-size:11pt;line-height:1.15;margin-right:0;margin-left:144pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left">
+                                <span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">Resources
+                                    &nbsp;</span></li>
+                        </ul>
+                        <ul style="padding:0;margin:0">
+                            <li
+                                style="padding:0;color:#000000;font-size:11pt;line-height:1.15;margin-right:0;margin-left:108pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left">
+                                <span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">Stnd
+                                    info</span></li>
+                        </ul>
+                        <p
+                            style="padding:0;margin:0;color:#000000;font-size:11pt;font-family:&quot;Arial&quot;;line-height:1.15;height:11pt;text-align:left">
+                            <span
+                                style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal"></span>
+                        </p>
+                        <h3
+                            style="padding-top:14pt;margin:0;color:#434343;padding-left:0;font-size:14pt;padding-bottom:4pt;line-height:1.15;page-break-after:avoid;font-family:&quot;Arial&quot;;text-align:left;padding-right:0">
+                            <span style="color:#000000;font-size:13pt;font-weight:700">Process Optimization &amp;
+                                Integration</span></h3>
+                        <p
+                            style="padding:0;margin:0;color:#000000;font-size:11pt;font-family:&quot;Arial&quot;;line-height:1.15;height:11pt;text-align:left">
+                            <span
+                                style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal"></span>
+                        </p>
+                        <p
+                            style="padding:0;margin:0;color:#000000;font-size:11pt;font-family:&quot;Arial&quot;;line-height:1.15;height:11pt;text-align:left">
+                            <span
+                                style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal"></span>
+                        </p>
+                        <p
+                            style="padding:0;margin:0;color:#000000;font-size:26pt;font-family:&quot;Arial&quot;;line-height:1.15;page-break-after:avoid;text-align:left">
+                            <span
+                                style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:26pt;font-family:&quot;Arial&quot;;font-style:normal">Utilizing
+                                AI</span></p>
+                        <h1
+                            style="padding-top:20pt;margin:0;color:#000000;padding-left:0;font-size:20pt;padding-bottom:6pt;line-height:1.15;page-break-after:avoid;font-family:&quot;Arial&quot;;text-align:left;padding-right:0">
+                            <span
+                                style="color:#000000;font-weight:700;text-decoration:none;vertical-align:baseline;font-size:20pt;font-family:&quot;Arial&quot;;font-style:normal">Utilizing
+                                AI</span></h1>
+                        <p
+                            style="padding-top:12pt;margin:0;color:#000000;padding-left:0;font-size:11pt;padding-bottom:12pt;font-family:&quot;Arial&quot;;line-height:1.15;text-align:left;padding-right:0">
+                            <span>Leveraging AI can significantly enhance your role as a </span><span
+                                style="font-weight:700">Process Optimization and Engagement Strategist</span><span
+                                style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">,
+                                aligning with both your current responsibilities and future objectives. Here's how
+                                various aspects of AI can be integrated into your tasks and long-term goals based on the
+                                provided job description:</span></p>
+                        <h3
+                            style="padding-top:14pt;margin:0;color:#434343;padding-left:0;font-size:14pt;padding-bottom:4pt;line-height:1.15;page-break-after:avoid;font-family:&quot;Arial&quot;;text-align:left;padding-right:0">
+                            <span
+                                style="color:#000000;font-weight:700;text-decoration:none;vertical-align:baseline;font-size:13pt;font-family:&quot;Arial&quot;;font-style:normal">Future
+                                Viability &amp; AI</span></h3>
+                        <ul style="padding:0;margin:0">
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:36pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">Establishing
+                                    relationships with our AI team and R&amp;D teams to ensure we are informed of new AI
+                                    technologies, platforms, applications and initiatives. It is paramount we are a part
+                                    of this conversation moving forward. &nbsp; </span></li>
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:36pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">Our
+                                    team has a wealth of knowledge, skill sets, products, services and data. In order
+                                    for us to stay viable in the coming years it would be in our best interest to create
+                                    a DA Team initiative (OKR) to work with our internal LLM team to explore and create
+                                    various LLM use cases to gain access to our own instance. </span></li>
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:36pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">Other
+                                    teams are already looking at ways to utilize AI with accessibility and have created
+                                    LLM use cases. Our team should be leading this effort to ensure proper usage and
+                                    integration with AI/LLMs. </span></li>
+                        </ul>
+                        <p
+                            style="padding-top:12pt;margin:0;color:#000000;padding-left:0;font-size:11pt;padding-bottom:12pt;line-height:1.15;font-family:&quot;Arial&quot;;height:11pt;text-align:left;padding-right:0">
+                            <span
+                                style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal"></span>
+                        </p>
+                        <h3
+                            style="padding-top:14pt;margin:0;color:#434343;padding-left:0;font-size:14pt;padding-bottom:4pt;line-height:1.15;page-break-after:avoid;font-family:&quot;Arial&quot;;text-align:left;padding-right:0">
+                            <span
+                                style="color:#000000;font-weight:700;text-decoration:none;vertical-align:baseline;font-size:13pt;font-family:&quot;Arial&quot;;font-style:normal">1.
+                                Data Optimization &amp; Integration</span></h3>
+                        <ul style="padding:0;margin:0">
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:36pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span style="font-weight:700">Automated Data Cleaning and Standardization</span><span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">:</span>
+                            </li>
+                        </ul>
+                        <ul style="padding:0;margin:0">
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:72pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span style="font-weight:700">AI Tools</span><span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">:
+                                    Utilize machine learning algorithms and AI-powered data cleaning tools (e.g.,
+                                    Trifacta, OpenRefine) to automate the detection and correction of data
+                                    inconsistencies.</span></li>
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:72pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span style="font-weight:700">Benefits</span><span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">:
+                                    Ensures high-quality, reliable data with reduced manual effort, enhancing data
+                                    integrity.</span></li>
+                        </ul>
+                        <ul style="padding:0;margin:0">
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:36pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span style="font-weight:700">Advanced Data Integration</span><span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">:</span>
+                            </li>
+                        </ul>
+                        <ul style="padding:0;margin:0">
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:72pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span style="font-weight:700">AI Techniques</span><span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">:
+                                    Implement AI-driven data integration platforms (e.g., Talend, Informatica) to
+                                    seamlessly combine disparate data sources.</span></li>
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:72pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span style="font-weight:700">Benefits</span><span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">:
+                                    Enriches analytical capabilities by consolidating valuable new data sources
+                                    efficiently.</span></li>
+                        </ul>
+                        <ul style="padding:0;margin:0">
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:36pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span style="font-weight:700">Developing Large Language Model (LLM) Use
+                                    Cases</span><span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">:</span>
+                            </li>
+                        </ul>
+                        <ul style="padding:0;margin:0">
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:72pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span style="font-weight:700">Collaboration</span><span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">:
+                                    Work with data scientists to identify and develop innovative LLM applications using
+                                    internal data.</span></li>
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:72pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span style="font-weight:700">Examples</span><span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">:
+                                    Automating report generation, enhancing data query responses, or creating
+                                    intelligent data summarization tools.</span></li>
+                        </ul>
+                        <ul style="padding:0;margin:0">
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:36pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span style="font-weight:700">AI Roadmap Alignment</span><span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">:</span>
+                            </li>
+                        </ul>
+                        <ul style="padding:0;margin:0">
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:72pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span style="font-weight:700">Strategic Planning</span><span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">:
+                                    Align with JPMC’s AI technology roadmap to identify opportunities where AI can
+                                    benefit your team’s objectives.</span></li>
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:72pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span style="font-weight:700">Benefits</span><span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">:
+                                    Ensures your initiatives are future-proof and leverage cutting-edge AI
+                                    advancements.</span></li>
+                        </ul>
+                        <h3
+                            style="padding-top:14pt;margin:0;color:#434343;padding-left:0;font-size:14pt;padding-bottom:4pt;line-height:1.15;page-break-after:avoid;font-family:&quot;Arial&quot;;text-align:left;padding-right:0">
+                            <span
+                                style="color:#000000;font-weight:700;text-decoration:none;vertical-align:baseline;font-size:13pt;font-family:&quot;Arial&quot;;font-style:normal">2.
+                                User Experience Enhancement</span></h3>
+                        <ul style="padding:0;margin:0">
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:36pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span style="font-weight:700">Personalized Dashboards and Visualizations</span><span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">:</span>
+                            </li>
+                        </ul>
+                        <ul style="padding:0;margin:0">
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:72pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span style="font-weight:700">AI Personalization</span><span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">:
+                                    Use AI to tailor dashboards based on user behavior and preferences, enhancing
+                                    relevance and usability.</span></li>
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:72pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span style="font-weight:700">Tools</span><span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">:
+                                    Platforms like Tableau with AI-driven insights or Power BI with embedded AI
+                                    capabilities.</span></li>
+                        </ul>
+                        <ul style="padding:0;margin:0">
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:36pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span style="font-weight:700">Intelligent Feedback Systems</span><span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">:</span>
+                            </li>
+                        </ul>
+                        <ul style="padding:0;margin:0">
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:72pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span style="font-weight:700">Natural Language Processing (NLP)</span><span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">:
+                                    Implement AI-powered sentiment analysis and feedback categorization to gain deeper
+                                    insights from surveys and focus groups.</span></li>
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:72pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span style="font-weight:700">Benefits</span><span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">:
+                                    Continuously refine offerings based on nuanced user feedback.</span></li>
+                        </ul>
+                        <ul style="padding:0;margin:0">
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:36pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span style="font-weight:700">AI-Powered Service Request Processes</span><span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">:</span>
+                            </li>
+                        </ul>
+                        <ul style="padding:0;margin:0">
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:72pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span style="font-weight:700">Chatbots and Virtual Assistants</span><span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">:
+                                    Deploy AI-driven chatbots (e.g., IBM Watson, Microsoft Azure Bot Service) to handle
+                                    routine service requests, providing instant support and freeing up human resources
+                                    for complex inquiries.</span></li>
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:72pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span style="font-weight:700">Benefits</span><span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">:
+                                    Streamlines service processes and enhances user satisfaction.</span></li>
+                        </ul>
+                        <h3
+                            style="padding-top:14pt;margin:0;color:#434343;padding-left:0;font-size:14pt;padding-bottom:4pt;line-height:1.15;page-break-after:avoid;font-family:&quot;Arial&quot;;text-align:left;padding-right:0">
+                            <span
+                                style="color:#000000;font-weight:700;text-decoration:none;vertical-align:baseline;font-size:13pt;font-family:&quot;Arial&quot;;font-style:normal">3.
+                                Process Innovation</span></h3>
+                        <ul style="padding:0;margin:0">
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:36pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span style="font-weight:700">Workflow Analysis and Optimization</span><span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">:</span>
+                            </li>
+                        </ul>
+                        <ul style="padding:0;margin:0">
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:72pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span style="font-weight:700">Process Mining Tools</span><span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">:
+                                    Utilize AI-based process mining tools (e.g., Celonis, UiPath Process Mining) to
+                                    analyze current workflows, identify bottlenecks, and suggest optimizations.</span>
+                            </li>
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:72pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span style="font-weight:700">Benefits</span><span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">:
+                                    Eliminates inefficiencies and improves overall process accuracy.</span></li>
+                        </ul>
+                        <ul style="padding:0;margin:0">
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:36pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span style="font-weight:700">Robotic Process Automation (RPA)</span><span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">:</span>
+                            </li>
+                        </ul>
+                        <ul style="padding:0;margin:0">
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:72pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span style="font-weight:700">Automation Tools</span><span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">:
+                                    Implement RPA tools (e.g., UiPath, Automation Anywhere) to automate repetitive
+                                    manual tasks.</span></li>
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:72pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span style="font-weight:700">Benefits</span><span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">:
+                                    Reduces manual effort, minimizes errors, and allows team members to focus on
+                                    strategic activities.</span></li>
+                        </ul>
+                        <ul style="padding:0;margin:0">
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:36pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span style="font-weight:700">Scalable AI-Driven Processes</span><span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">:</span>
+                            </li>
+                        </ul>
+                        <ul style="padding:0;margin:0">
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:72pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span style="font-weight:700">Adaptive Systems</span><span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal">:
+                                    Develop AI systems that can adapt to growing organizational needs, using predictive
+                                    analytics to anticipate and respond to changes.</span></li>
+                            <li
+                                style="padding-top:12pt;color:#000000;padding-left:0pt;font-size:11pt;padding-bottom:12pt;line-height:1.15;margin-right:0;margin-left:72pt;font-family:&quot;Arial&quot;;margin-top:0;margin-bottom:0;text-align:left;padding-right:0">
+                                <span style="font-weight:700">Benefits</span><span
+                                    style="color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:&quot;Arial&quot;;font-style:normal"></span>
+                            </li>
+                        </ul>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+
+</body>
+
+</html>

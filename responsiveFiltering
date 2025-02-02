@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Responsive Layout with Filtering</title>
+  <style>
+    /* Global Reset & Base Styles */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f5f5f5;
+      color: #333;
+      padding: 20px;
+    }
+    .container {
+      background-color: #fff;
+      border-radius: 4px;
+      padding: 20px;
+      margin-bottom: 40px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    /* First Container: Two Columns */
+    .first-container {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+    /* Switch to single column on small screens */
+    @media (max-width: 600px) {
+      .first-container {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Second Container: Filterable Grid */
+    .second-container .filter {
+      margin-bottom: 20px;
+    }
+    .second-container .filter label {
+      margin-right: 15px;
+      font-size: 0.9em;
+      cursor: pointer;
+    }
+    .second-container .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 20px;
+    }
+    .grid-item {
+      background-color: #e0e0e0;
+      border-radius: 4px;
+      padding: 20px;
+      text-align: center;
+      transition: transform 0.3s, opacity 0.3s;
+    }
+    .grid-item:hover {
+      transform: scale(1.05);
+    }
+
+    /* Third Container: Three Columns */
+    .third-container {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+    /* Reflow for medium screens */
+    @media (max-width: 800px) {
+      .third-container {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    /* Reflow for small screens */
+    @media (max-width: 500px) {
+      .third-container {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- First Container: 2 Columns -->
+  <div class="container first-container">
+    <div class="column">
+      <h2>Column 1</h2>
+      <p>This is content for column 1.</p>
+    </div>
+    <div class="column">
+      <h2>Column 2</h2>
+      <p>This is content for column 2.</p>
+    </div>
+  </div>
+
+  <!-- Second Container: Filterable Items -->
+  <div class="container second-container">
+    <!-- Filtering Controls -->
+    <div class="filter">
+      <label>
+        <input type="checkbox" value="filter1" checked> Filter 1
+      </label>
+      <label>
+        <input type="checkbox" value="filter2" checked> Filter 2
+      </label>
+      <label>
+        <input type="checkbox" value="filter3" checked> Filter 3
+      </label>
+    </div>
+    <!-- Grid of Items (each item has one or more filter classes) -->
+    <div class="grid">
+      <div class="grid-item filter1">
+        <h3>Item 1</h3>
+        <p>Category: Filter 1</p>
+      </div>
+      <div class="grid-item filter2">
+        <h3>Item 2</h3>
+        <p>Category: Filter 2</p>
+      </div>
+      <div class="grid-item filter3">
+        <h3>Item 3</h3>
+        <p>Category: Filter 3</p>
+      </div>
+      <div class="grid-item filter1 filter2">
+        <h3>Item 4</h3>
+        <p>Categories: Filter 1, Filter 2</p>
+      </div>
+      <div class="grid-item filter2 filter3">
+        <h3>Item 5</h3>
+        <p>Categories: Filter 2, Filter 3</p>
+      </div>
+      <!-- Add more grid items here as needed -->
+    </div>
+  </div>
+
+  <!-- Third Container: 3 Columns -->
+  <div class="container third-container">
+    <div class="column">
+      <h2>Column 1</h2>
+      <p>This is content for column 1 of the third container.</p>
+    </div>
+    <div class="column">
+      <h2>Column 2</h2>
+      <p>This is content for column 2 of the third container.</p>
+    </div>
+    <div class="column">
+      <h2>Column 3</h2>
+      <p>This is content for column 3 of the third container.</p>
+    </div>
+  </div>
+
+  <script>
+    // Filtering functionality for the second container.
+    document.addEventListener('DOMContentLoaded', function() {
+      // Select all checkboxes in the filter controls.
+      const checkboxes = document.querySelectorAll('.second-container .filter input[type="checkbox"]');
+
+      // Add an event listener to each checkbox.
+      checkboxes.forEach(function(checkbox) {
+        checkbox.addEventListener('change', filterGridItems);
+      });
+
+      // Initial filtering on page load.
+      filterGridItems();
+
+      function filterGridItems() {
+        // Get the values of all checked filters.
+        const activeFilters = Array.from(checkboxes)
+          .filter(chk => chk.checked)
+          .map(chk => chk.value);
+
+        // Select all grid items.
+        const gridItems = document.querySelectorAll('.second-container .grid .grid-item');
+
+        gridItems.forEach(function(item) {
+          // Check if the item has at least one of the active filter classes.
+          const shouldDisplay = activeFilters.length === 0 || activeFilters.some(filter => item.classList.contains(filter));
+          item.style.display = shouldDisplay ? '' : 'none';
+        });
+      }
+    });
+  </script>
+</body>
+</html>

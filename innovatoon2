@@ -1,0 +1,33 @@
+<div class="group/conversation-turn relative flex w-full min-w-0 flex-col agent-turn px-4 @xs/thread:px-0 @sm/thread:px-1.5">
+    <div class="flex-col gap-1 md:gap-3">
+        <div class="flex max-w-full flex-col flex-grow">
+            <span class="block first:mt-0 relative text-token-text-secondary">
+                <div class="group left-0 top-0 mr-1.5 overflow-hidden mt-1 text-start">
+                    Reasoned about internal innovation strategy with AI for a second
+                </div>
+            </span>
+            <div data-message-author-role="assistant" 
+                 data-message-id="43ea09c9-d9a1-40dd-939f-c2883d32c7c0" 
+                 dir="auto" 
+                 class="min-h-8 text-message flex w-full flex-col items-end gap-2 whitespace-normal break-words text-start [.text-message+&]:mt-5" 
+                 data-message-model-slug="o3-mini">
+                <div class="flex w-full flex-col gap-1 empty:hidden first:pt-[3px]">
+                    <div class="markdown prose w-full break-words dark:prose-invert dark">
+                        <!-- Content omitted for brevity -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="mb-2 flex gap-3 empty:hidden -ml-2">
+            <div class="items-center justify-start rounded-xl p-1 flex">
+                <div class="flex items-center">
+                    <!-- Button elements omitted for brevity -->
+                </div>
+            </div>
+        </div>
+        <div class="pr-2 lg:pr-0"></div>
+        <div class="mt-3 w-full empty:hidden">
+            <div class="text-center"></div>
+        </div>
+    </div>
+</div>

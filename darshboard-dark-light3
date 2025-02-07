@@ -492,13 +492,15 @@
       });
     });
     
-    // Initialize default visualization charts on page load if not already initialized.
-    if (window.getComputedStyle(document.getElementById("defect-chart")).display !== "none" && !window.defectChartInitialized) {
-      initializeDefectChart();
-    }
-    if (window.getComputedStyle(document.getElementById("training-journey")).display !== "none" && !window.trainingChartInitialized) {
-      initializeTrainingChart();
-    }
+    // Initialize default visualization charts on page load with a 1-second delay.
+    setTimeout(function() {
+      if (window.getComputedStyle(document.getElementById("defect-chart")).display !== "none" && !window.defectChartInitialized) {
+        initializeDefectChart();
+      }
+      if (window.getComputedStyle(document.getElementById("training-journey")).display !== "none" && !window.trainingChartInitialized) {
+        initializeTrainingChart();
+      }
+    }, 1000);
   </script>
 </body>
 </html>

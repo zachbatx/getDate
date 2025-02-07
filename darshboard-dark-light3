@@ -216,17 +216,17 @@
     
     <!-- Container 1: User Profile -->
     <div class="card">
-        <div class="profile">
-          <div class="profile-avatar">
-            <!-- User initials will be inserted dynamically -->
-          </div>
-          <div class="profile-info">
-            <h3 class="lrgTxt">John Doe</h3>
-            <p><strong>Role:</strong> Product Owner</p>
-            <p><strong>Team:</strong> Alpha Team</p>
-            <p><strong>Cost Center:</strong> CC-12345</p>
-          </div>
+      <div class="profile">
+        <div class="profile-avatar">
+          <!-- User initials will be inserted dynamically -->
         </div>
+        <div class="profile-info">
+          <h3 class="lrgTxt">John Doe</h3>
+          <p><strong>Role:</strong> Product Owner</p>
+          <p><strong>Team:</strong> Alpha Team</p>
+          <p><strong>Cost Center:</strong> CC-12345</p>
+        </div>
+      </div>
     </div>
     
     <!-- Container 2: Advisor Information -->
@@ -331,6 +331,7 @@
       this.textContent = document.body.classList.contains('light-mode') 
                          ? "Switch to Dark Mode" 
                          : "Switch to Light Mode";
+      updateChartColors(); // Update chart colors when mode is toggled
     });
     
     /* DYNAMICALLY SET USER INITIALS ON THE PROFILE AVATAR */
@@ -343,10 +344,14 @@
       }
     });
     
+    /* Global variables to store chart instances */
+    window.defectChartInitialized = false;
+    window.trainingChartInitialized = false;
+    
     /* Helper Functions to Initialize Charts */
     function initializeDefectChart() {
       const ctx = document.getElementById("defectChart").getContext("2d");
-      new Chart(ctx, {
+      window.defectChart = new Chart(ctx, {
         type: "doughnut",
         data: {
           labels: ["Open", "In Progress", "Closed"],
@@ -404,7 +409,7 @@
     
     function initializeTrainingChart() {
       const ctx = document.getElementById("trainingChart").getContext("2d");
-      new Chart(ctx, {
+      window.trainingChart = new Chart(ctx, {
         type: "bar",
         data: {
           labels: ["Foundational", "Intermediate", "Advanced"],
@@ -465,6 +470,23 @@
         }
       });
       window.trainingChartInitialized = true;
+    }
+    
+    /* Update chart colors based on current CSS variables */
+    function updateChartColors() {
+      const textColor = getComputedStyle(document.body).getPropertyValue('--text-color');
+      if (window.defectChart) {
+        window.defectChart.options.plugins.title.color = textColor;
+        window.defectChart.options.plugins.legend.labels.color = textColor;
+        window.defectChart.update();
+      }
+      if (window.trainingChart) {
+        window.trainingChart.options.plugins.title.color = textColor;
+        window.trainingChart.options.plugins.legend.labels.color = textColor;
+        window.trainingChart.options.scales.x.ticks.color = textColor;
+        window.trainingChart.options.scales.y.ticks.color = textColor;
+        window.trainingChart.update();
+      }
     }
     
     /* Tab Interface Functionality */

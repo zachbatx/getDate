@@ -1,0 +1,44 @@
+<!-- The Clear Filters Button -->
+<button id="clearFilters">Clear Filters</button>
+
+<script>
+  // When the button is clicked...
+  document.getElementById('clearFilters').addEventListener('click', function() {
+    // Reset all <select> elements to their default option
+    document.querySelectorAll('select').forEach(function(select) {
+      select.selectedIndex = 0;
+    });
+
+    // Display all <div> elements with the class 'dataSetItem'
+    document.querySelectorAll('div.dataSetItem').forEach(function(item) {
+      // Reset display style; change to 'block' if that's the desired default
+      item.style.display = 'block';
+    });
+  });
+</script>
+
+
+<script>
+  // Wait until the DOM is fully loaded
+  document.addEventListener("DOMContentLoaded", function() {
+    // Select all elements with the class 'dataLink'
+    const dataLinkElements = document.querySelectorAll('.dataLink');
+
+    dataLinkElements.forEach(element => {
+      // Get and trim the text content
+      const text = element.textContent.trim();
+
+      // Check if the text contains "https"
+      if (text.includes('https')) {
+        // Create an anchor element
+        const anchor = document.createElement('a');
+        anchor.href = text;
+        anchor.textContent = text;
+
+        // Clear the element's current content and append the anchor
+        element.innerHTML = '';
+        element.appendChild(anchor);
+      }
+    });
+  });
+</script>

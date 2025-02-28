@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PDF Accessibility Evaluator Pre-Prompt Generator</title>
+  <style>
+    :root {
+      --primary-color: #4a6fa5;
+      --secondary-color: #6c757d;
+      --success-color: #28a745;
+      --light-color: #f8f9fa;
+      --dark-color: #343a40;
+      --warning-color: #ffc107;
+      --info-color: #17a2b8;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.6;
+      color: var(--dark-color);
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    
+    header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    
+    h1 {
+      color: var(--primary-color);
+    }
+    
+    .container {
+      background-color: var(--light-color);
+      border-radius: 8px;
+      padding: 25px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+    
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ced4da;
+      border-radius: 4px;
+      font-size: 16px;
+    }
+    
+    .drop-area {
+      border: 2px dashed #ced4da;
+      border-radius: 4px;
+      padding: 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s;
+      margin-bottom: 20px;
+    }
+    
+    .drop-area.highlight {
+      border-color: var(--primary-color);
+      background-color: rgba(74, 111, 165, 0.1);
+    }
+    
+    .drop-area p {
+      margin: 0;
+    }
+    
+    .file-info {
+      margin-top: 10px;
+      font-style: italic;
+      color: var(--secondary-color);
+    }
+    
+    button {
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: background-color 0.3s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    button:hover {
+      background-color: #3a5a8c;
+    }
+    
+    .checkbox-container {
+      display: flex;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+    
+    .checkbox-container input {
+      margin-right: 10px;
+    }
+    
+    .output-container {
+      margin-top: 30px;
+    }
+    
+    .output-area {
+      background-color: white;
+      border: 1px solid #ced4da;
+      border-radius: 4px;
+      padding: 15px;
+      min-height: 200px;
+      margin-bottom: 15px;
+      white-space: pre-wrap;
+      overflow-y: auto;
+      max-height: 400px;
+    }
+    
+    .copy-btn {
+      background-color: var(--secondary-color);
+    }
+    
+    .copy-btn:hover {
+      background-color: #5a6268;
+    }
+    
+    .success-message {
+      color: var(--success-color);
+      display: none;
+      margin-left: 10px;
+    }
+    
+    .reference-details {
+      margin-top: 10px;
+      font-size: 0.9em;
+      border-left: 3px solid var(--primary-color);
+      padding-left: 10px;
+      color: var(--secondary-color);
+    }
+    
+    .loader {
+      display: none;
+      border: 3px solid #f3f3f3;
+      border-radius: 50%;
+      border-top: 3px solid var(--primary-color);
+      width: 20px;
+      height: 20px;
+      animation: spin 1s linear infinite;
+      margin-left: 10px;
+      display: inline-block;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    .hidden {
+      display: none;
+    }
+    
+    .button-container {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+    
+    .info-box {
+      background-color: rgba(23, 162, 184, 0.1);
+      border-left: 4px solid var(--info-color);
+      padding: 15px;
+      margin: 20px 0;
+      border-radius: 0 4px 4px 0;
+    }
+    
+    .info-box h3 {
+      margin-top: 0;
+      color: var(--info-color);
+    }
+    
+    .info-box p {
+      margin-bottom: 0;
+    }
+    
+    .info-box ol {
+      margin-bottom: 0;
+      padding-left: 20px;
+    }
+    
+    .info-icon, .copy-icon, .download-icon {
+      width: 18px;
+      height: 18px;
+      margin-right: 8px;
+    }
+    
+    .step {
+      font-weight: bold;
+    }
+    
+    .accordion {
+      background-color: #f1f1f1;
+      color: #444;
+      cursor: pointer;
+      padding: 18px;
+      width: 100%;
+      text-align: left;
+      border: none;
+      outline: none;
+      transition: 0.4s;
+      border-radius: 4px;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    
+    .active, .accordion:hover {
+      background-color: #ddd;
+    }
+    
+    .panel {
+      padding: 0 18px;
+      background-color: white;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.2s ease-out;
+      border-radius: 0 0 4px 4px;
+      border: 1px solid #ddd;
+      border-top: none;
+      margin-bottom: 10px;
+    }
+    
+    .more-info {
+      margin-top: 15px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>PDF Accessibility Evaluator</h1>
+    <p>Generate a pre-prompt to evaluate PDF accessibility</p>
+  </header>
+
+  <div class="container">
+    <div class="form-group">
+      <label for="pdfName">PDF Document Name:</label>
+      <input type="text" id="pdfName" placeholder="Enter the name of the PDF document">
+    </div>
+    
+    <div class="form-group">
+      <label for="dropArea">Upload PDF:</label>
+      <div id="dropArea" class="drop-area">
+        <p>Drag & drop a PDF file here or <span style="color: var(--primary-color);">click to browse</span></p>
+        <input type="file" id="fileInput" accept=".pdf" style="display: none;">
+        <div id="fileInfo" class="file-info"></div>
+      </div>
+    </div>
+    
+    <div class="form-group">
+      <div class="checkbox-container">
+        <input type="checkbox" id="includeReference" checked>
+        <label for="includeReference" style="display: inline; font-weight: normal;">Include W3C PDF Techniques Reference</label>
+      </div>
+      <div id="referenceDetails" class="reference-details">
+        This will include a compressed version of the WCAG 2.0 PDF Techniques (from w3.org/TR/WCAG20-TECHS/pdf) as part of the prompt.
+      </div>
+    </div>
+    
+    <div class="form-group">
+      <button id="generateBtn">
+        <svg class="info-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+        </svg>
+        Generate Pre-Prompt
+      </button>
+      <span id="loadingIndicator" class="loader hidden"></span>
+    </div>
+    
+    <div class="output-container hidden" id="outputContainer">
+      <h2>Generated Pre-Prompt:</h2>
+      <div id="outputArea" class="output-area"></div>
+      
+      <div class="button-container">
+        <button id="copyBtn" class="copy-btn">
+          <svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+            <path d="M8 2a1 1 0 000 2h2a1 1 0 100-2H8z" />
+            <path d="M3 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v6h-4.586l1.293-1.293a1 1 0 00-1.414-1.414l-3 3a1 1 0 000 1.414l3 3a1 1 0 001.414-1.414L10.414 13H15v3a2 2 0 01-2 2H5a2 2 0 01-2-2V5zM15 11h2a1 1 0 110 2h-2v-2z" />
+          </svg>
+          Copy Pre-Prompt
+        </button>
+        <span id="copySuccess" class="success-message">Copied!</span>
+      </div>
+      
+      <div class="info-box">
+        <h3>How to Use This Pre-Prompt</h3>
+        <ol>
+          <li><span class="step">Step 1:</span> Copy the generated pre-prompt using the button above.</li>
+          <li><span class="step">Step 2:</span> Paste the pre-prompt into your AI conversation.</li>
+          <li><span class="step">Step 3:</span> Upload your PDF file "<span id="selectedFileName"></span>" directly to the AI tool when prompted.</li>
+        </ol>
+        <div class="more-info">
+          <button class="accordion">Need more help?</button>
+          <div class="panel">
+            <p>Note: Due to browser security limitations, we cannot automatically copy your PDF file to the clipboard. You'll need to upload it separately in your AI conversation after pasting the pre-prompt.</p>
+            <p>The pre-prompt contains instructions for the AI to analyze your PDF. After pasting the pre-prompt, you'll be able to upload the PDF file "<span id="selectedFileName2"></span>" directly to the AI tool.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Elements
+      const pdfNameInput = document.getElementById('pdfName');
+      const dropArea = document.getElementById('dropArea');
+      const fileInput = document.getElementById('fileInput');
+      const fileInfo = document.getElementById('fileInfo');
+      const generateBtn = document.getElementById('generateBtn');
+      const outputArea = document.getElementById('outputArea');
+      const outputContainer = document.getElementById('outputContainer');
+      const copyBtn = document.getElementById('copyBtn');
+      const copySuccess = document.getElementById('copySuccess');
+      const includeReference = document.getElementById('includeReference');
+      const loadingIndicator = document.getElementById('loadingIndicator');
+      const selectedFileName = document.getElementById('selectedFileName');
+      const selectedFileName2 = document.getElementById('selectedFileName2');
+      
+      // Save selected file
+      let selectedFile = null;
+      
+      // Event listeners for drag and drop
+      ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        dropArea.addEventListener(eventName, preventDefaults, false);
+      });
+      
+      function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+      
+      ['dragenter', 'dragover'].forEach(eventName => {
+        dropArea.addEventListener(eventName, highlight, false);
+      });
+      
+      ['dragleave', 'drop'].forEach(eventName => {
+        dropArea.addEventListener(eventName, unhighlight, false);
+      });
+      
+      function highlight() {
+        dropArea.classList.add('highlight');
+      }
+      
+      function unhighlight() {
+        dropArea.classList.remove('highlight');
+      }
+      
+      // Handle file drop
+      dropArea.addEventListener('drop', handleDrop, false);
+      
+      function handleDrop(e) {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        handleFiles(files);
+      }
+      
+      // Handle file selection
+      dropArea.addEventListener('click', () => {
+        fileInput.click();
+      });
+      
+      fileInput.addEventListener('change', () => {
+        handleFiles(fileInput.files);
+      });
+      
+      function handleFiles(files) {
+        if (files.length > 0) {
+          const file = files[0];
+          if (file.type === 'application/pdf') {
+            selectedFile = file;
+            pdfNameInput.value = file.name;
+            fileInfo.textContent = `Selected file: ${file.name} (${formatFileSize(file.size)})`;
+          } else {
+            fileInfo.textContent = 'Please select a PDF file.';
+            selectedFile = null;
+          }
+        }
+      }
+      
+      function formatFileSize(bytes) {
+        if (bytes < 1024) return bytes + ' bytes';
+        else if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+        else return (bytes / 1048576).toFixed(1) + ' MB';
+      }
+      
+      // Generate pre-prompt
+      generateBtn.addEventListener('click', async () => {
+        const pdfName = pdfNameInput.value.trim();
+        
+        if (!pdfName) {
+          alert('Please enter a PDF document name.');
+          return;
+        }
+        
+        // Show loading indicator
+        loadingIndicator.classList.remove('hidden');
+        generateBtn.disabled = true;
+        
+        let referenceContent = "";
+        
+        if (includeReference.checked) {
+          referenceContent = getCompressedWCAGPDFReference();
+        }
+        
+        const basePrompt = `I need you to analyze the attached PDF "${pdfName}" for accessibility issues.
+
+Your evaluation must be extremely prescriptive and include the following:
+* Must list every instance and provide reference to the specific item being referenced with an issue
+* Itemized List of Issues: Identify every specific accessibility problem in the document (e.g., missing alternative text for images, improper document structure, insufficient color contrast, non-descriptive link texts, etc.).
+* WCAG Violations: For each identified issue, specify exactly which WCAG 2.0 guidelines or success criteria it violates (for example, 'WCAG 2.0 Guideline 1.1.1: Non-text Content' or 'WCAG 2.0 Guideline 1.4.3: Contrast').
+* Remediation Steps: Provide detailed, step-by-step instructions on how to correct each issue. Explain what changes are required, including any technical or design modifications.
+* Comprehensive Coverage: Ensure that all aspects of accessibility are covered, including navigation, structural elements, and embedded media.
+* Forward-Thinking Suggestions: If applicable, offer additional improvements that not only meet current guidelines but also enhance future accessibility.
+* Be direct, technical, and thorough in your analysis so that every accessibility deficiency is clearly documented along with how to fix it and which specific WCAG guidelines are violated.`;
+
+        let finalPrompt = referenceContent ? 
+          `${basePrompt}\n\nUse the following condensed reference of PDF accessibility techniques from WCAG 2.0 to inform your analysis:\n\n${referenceContent}` : 
+          basePrompt;
+        
+        outputArea.textContent = finalPrompt;
+        selectedFileName.textContent = pdfName;
+        selectedFileName2.textContent = pdfName;
+        outputContainer.classList.remove('hidden');
+        
+        // Hide loading indicator
+        loadingIndicator.classList.add('hidden');
+        generateBtn.disabled = false;
+      });
+      
+      // Copy to clipboard
+      copyBtn.addEventListener('click', () => {
+        const text = outputArea.textContent;
+        if (!text) return;
+        
+        navigator.clipboard.writeText(text).then(() => {
+          copySuccess.style.display = 'inline';
+          setTimeout(() => {
+            copySuccess.style.display = 'none';
+          }, 2000);
+        }).catch(err => {
+          console.error('Could not copy text: ', err);
+        });
+      });
+      
+      // Accordion functionality
+      const acc = document.getElementsByClassName("accordion");
+      for (let i = 0; i < acc.length; i++) {
+        acc[i].addEventListener("click", function() {
+          this.classList.toggle("active");
+          const panel = this.nextElementSibling;
+          if (panel.style.maxHeight) {
+            panel.style.maxHeight = null;
+          } else {
+            panel.style.maxHeight = panel.scrollHeight + "px";
+          }
+        });
+      }
+      
+      // Compressed WCAG PDF Reference
+      function getCompressedWCAGPDFReference() {
+        return `PDF ACCESSIBILITY TECHNIQUES REFERENCE:
+
+PDF1: Applying text alternatives to images with the Alt entry in PDF documents
+- All meaningful images must have alt text
+- Use /Alt entry in the property dictionary
+
+PDF2: Creating bookmarks in PDF documents
+- Create bookmarks for document structure and navigation
+- Bookmarks should match heading structure
+- Bookmarks can be created with bookmark tools or programmatically
+
+PDF3: Ensuring correct tab and reading order in PDF documents
+- Tab order should follow logical document structure
+- Use tags and tab order settings to control navigation
+
+PDF4: Hiding decorative images with the Artifact tag in PDF documents
+- Mark decorative images as artifacts
+- Artifacts are ignored by assistive technologies
+
+PDF5: Providing captions for audio in PDF documents
+- Audio content needs captions
+- Use /Alt or synchronized text alternatives
+
+PDF6: Using table elements for table markup in PDF documents
+- Use proper table structure (TH, TD, etc.)
+- Specify header cells, use table summary if needed
+
+PDF7: Performing OCR on a scanned PDF document to provide actual text
+- Scanned documents need OCR
+- OCR results should be verified for accuracy
+
+PDF8: Providing definitions for abbreviations via expansion or explanation in PDF documents
+- Define abbreviations at first use
+- Use /E (expansion) entry
+
+PDF9: Providing headings by marking content with heading tags in PDF documents
+- Use proper heading structure (H1-H6)
+- Headings should form a logical outline
+
+PDF10: Providing labels for interactive form controls in PDF documents
+- All form fields need labels
+- Use /TU (tooltip) entry and proper form field structure
+
+PDF11: Providing links and link text using the /Link structure element in PDF documents
+- Links need descriptive text
+- Use /Link tag and proper structure
+
+PDF12: Providing name, role, value information for form fields in PDF documents
+- Form controls need name, role, value
+- Use proper PDF form field structure
+
+PDF13: Providing replacement text using the /Alt entry for links in PDF documents
+- Links need descriptive text
+- Use /Alt entry for link purpose
+
+PDF14: Providing running headers and footers in PDF documents
+- Headers/footers should be marked as artifacts
+- Use proper pagination techniques
+
+PDF15: Providing submit buttons with the submit-form action in PDF forms
+- Form submission needs proper controls
+- Use JavaScript actions or buttons with submit action
+
+PDF16: Setting the default language using the /Lang entry in the document catalog of a PDF document
+- Set document language
+- Use /Lang entry in document catalog
+
+PDF17: Specifying consistent page numbering for PDF documents
+- Page numbers should match document page numbers
+- Use proper page labeling
+
+PDF18: Specifying the document title using the Title entry in the document information dictionary of a PDF document
+- Set document title
+- Use Title entry in document properties
+
+PDF19: Specifying the language for a passage or phrase with the Lang entry in PDF documents
+- Mark language changes
+- Use /Lang entry for text spans with different languages
+
+PDF20: Using Adobe Acrobat Pro's Accessibility Checker to identify and fix accessibility issues in PDF documents
+- Run accessibility checker
+- Fix issues systematically
+
+PDF21: Using List tags for lists in PDF documents
+- Use proper list structure (L, LI, LBody)
+- Lists should be properly nested
+
+PDF22: Ensuring that PDF documents are not image-only PDF
+- PDFs should have actual text
+- Use OCR or create accessible PDFs from source
+
+PDF23: Providing interactive form controls in PDF documents
+- Forms should be fillable electronically
+- Use proper form controls with labels
+
+PDF24: Providing alternative text for marked content items in PDF documents
+- Tag content requiring alternative text
+- Use /Alt entry for non-text elements
+
+PDF25: Providing alternative text for elements that cannot be accessed by assistive technology
+- Provide text alternatives for complex elements
+- Use /Alt or structure elements
+
+PDF26: Providing metadata in PDF documents
+- Include document metadata
+- Use XMP metadata
+
+PDF27: Providing page numbering that is consistent with the logical structure in PDF documents
+- Page numbers should follow logical structure
+- Use logical page numbers
+
+PDF28: Providing definitions for abbreviations via an entry in the structure tree in PDF documents
+- Define abbreviations
+- Use /E entry for expansion
+
+PDF29: Adding a document outline to PDF documents
+- Create document outline
+- Outline should match document structure
+
+PDF30: Providing descriptive captions for figures in PDF documents
+- Figures need captions
+- Use Figure/Caption structure elements
+
+PDF31: Using PDF's built-in accessibility features to expose table header information
+- Mark table headers
+- Use TH tags for header cells
+
+PDF32: Providing tab order navigation in PDF documents
+- Set proper tab order
+- Follow logical reading order`;
+      }
+    });
+  </script>
+</body>
+</html>

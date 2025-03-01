@@ -14,6 +14,7 @@
       --highlight-color: #e9ecef;
       --info-color: #17a2b8;
       --warning-color: #ffc107;
+      --error-color: #dc3545;
     }
     
     body {
@@ -104,11 +105,17 @@
       cursor: pointer;
       transition: all 0.3s;
       margin-top: 15px;
+      position: relative;
     }
     
     .drop-area.highlight {
       border-color: var(--primary-color);
       background-color: rgba(74, 111, 165, 0.1);
+    }
+    
+    .drop-area.error {
+      border-color: var(--error-color);
+      background-color: rgba(220, 53, 69, 0.1);
     }
     
     .drop-area p {
@@ -119,6 +126,12 @@
       margin-top: 10px;
       font-style: italic;
       color: var(--secondary-color);
+    }
+    
+    .file-error {
+      margin-top: 10px;
+      color: var(--error-color);
+      font-weight: bold;
     }
     
     .button-wrapper {
@@ -296,6 +309,7 @@
           <p>Drag & drop a PDF file here or <span style="color: var(--primary-color);">click to browse</span></p>
           <input type="file" id="fileInput" accept=".pdf" style="display: none;">
           <div id="fileInfo" class="file-info"></div>
+          <div id="fileError" class="file-error hidden"></div>
         </div>
       </div>
     </div>
@@ -356,11 +370,12 @@
         <p>The evaluation will include numbered issues, WCAG violations, and a detailed validation assessment table.</p>
       </div>
     </div>
+
   </div>
 
   <script>
     document.addEventListener('DOMContentLoaded', function() {
-      // Elements
+      // Elements from the original script
       const step1 = document.getElementById('step1');
       const step2 = document.getElementById('step2');
       const step3 = document.getElementById('step3');
@@ -369,6 +384,7 @@
       const dropArea = document.getElementById('dropArea');
       const fileInput = document.getElementById('fileInput');
       const fileInfo = document.getElementById('fileInfo');
+      const fileError = document.getElementById('fileError');
       const generateBtn = document.getElementById('generateBtn');
       const outputArea = document.getElementById('outputArea');
       const copyBtn = document.getElementById('copyBtn');
@@ -376,193 +392,197 @@
       const postInstructions = document.getElementById('postInstructions');
       const toggleReferenceBtn = document.getElementById('toggleReferenceBtn');
       const referenceContent = document.getElementById('referenceContent');
-      
-      // WCAG PDF techniques reference content
+  
+      // WCAG PDF techniques reference content (as in the original)
       const wcagReferenceContent = `# PDF Accessibility Techniques Reference
-# Based on WCAG 2.0 PDF Techniques
-
-## Document Structure Techniques
-PDF1: Apply text alternatives to images with the Alt entry in PDF documents
-PDF2: Create bookmarks in PDF documents
-PDF3: Ensure correct tab and reading order in PDF documents
-PDF4: Hide decorative images with the Artifact tag in PDF documents
-PDF5: Provide headings by using PDF tags
-PDF6: Use table elements for table markup in PDF documents
-PDF7: Perform OCR on scanned documents to provide actual text
-PDF8: Provide definitions for abbreviations via expansion text
-PDF9: Provide headings by marking content with heading tags
-PDF10: Provide labels for interactive form controls in PDF documents
-PDF11: Provide links and link text using the /Link structure element
-PDF12: Provide name, role, value information for form fields
-PDF13: Provide replacement text using the /Alt entry for links
-PDF14: Providing running headers and footers in PDF documents
-PDF15: Providing submit buttons with the submit-form action in PDF forms
-PDF16: Setting the default language using the /Lang entry in the document catalog
-
-## Text Alternatives
-PDF1: Apply text alternatives to images
-PDF4: Hide decorative images as artifacts
-PDF13: Provide replacement text for links
-
-## Time-based Media Techniques
-- Provide text transcripts for audio/video content
-- Include captions for multimedia
-
-## Adaptable Content
-PDF3: Ensure correct tab and reading order
-PDF5: Provide headings by using PDF tags
-PDF6: Use table elements for table markup
-PDF9: Provide headings by marking content with heading tags
-PDF14: Providing running headers and footers
-PDF17: Specifying consistent page numbering for PDF documents
-PDF20: Using Adobe Acrobat Pro's Table Editor to repair mistagged tables
-
-## Distinguishable Content
-PDF7: Perform OCR on scanned documents to provide actual text
-PDF23: Providing interactive form controls in PDF documents
-PDF24: Providing spacing between lines and paragraphs
-PDF25: Specifying expansion text for abbreviations
-PDF26: Providing metadata using the PDF /Info dictionary
-
-## Keyboard Accessible
-PDF3: Ensure correct tab and reading order
-PDF10: Provide labels for interactive form controls
-PDF11: Provide links and link text using /Link
-PDF23: Providing interactive form controls
-
-## Enough Time
-PDF15: Providing submit buttons with the submit-form action
-PDF22: Indicating required form controls in PDF forms
-
-## Seizures and Physical Reactions
-- Avoid content that flashes more than three times per second
-
-## Navigable
-PDF2: Create bookmarks
-PDF9: Provide headings
-PDF11: Provide links and link text
-PDF13: Provide replacement text for links
-PDF17: Specifying consistent page numbering
-PDF18: Specifying the document title using the Title entry in the document information dictionary
-PDF19: Specifying the language for a passage or phrase
-
-## Readable
-PDF8: Provide definitions for abbreviations
-PDF16: Setting the default language
-PDF19: Specifying the language for a passage or phrase
-PDF25: Specifying expansion text for abbreviations
-
-## Predictable
-PDF14: Providing running headers and footers
-PDF17: Specifying consistent page numbering
-
-## Input Assistance
-PDF10: Provide labels for interactive form controls
-PDF12: Provide name, role, value information for form fields
-PDF15: Providing submit buttons with the submit-form action
-PDF22: Indicating required form controls
-
-## Compatible
-PDF1-PDF32: All techniques aim to improve compatibility
-
-## Common Accessibility Issues in PDFs
-1. Missing document structure tags
-2. Missing alternative text for images
-3. Improper heading structure
-4. Improperly tagged tables
-5. Inaccessible form fields
-6. Missing document language specification
-7. Untagged text rendered as images
-8. Poor color contrast
-9. Missing bookmarks for navigation
-10. Missing document title
-11. Improper reading order
-12. Improperly tagged links
-13. No keyboard accessibility for interactive elements
-14. Missing metadata
-15. Security settings that prohibit accessibility`;
-      
+  # Based on WCAG 2.0 PDF Techniques
+  
+  ## Document Structure Techniques
+  PDF1: Apply text alternatives to images with the Alt entry in PDF documents
+  PDF2: Create bookmarks in PDF documents
+  PDF3: Ensure correct tab and reading order in PDF documents
+  PDF4: Hide decorative images with the Artifact tag in PDF documents
+  PDF5: Provide headings by using PDF tags
+  PDF6: Use table elements for table markup in PDF documents
+  PDF7: Perform OCR on scanned documents to provide actual text
+  PDF8: Provide definitions for abbreviations via expansion text
+  PDF9: Provide headings by marking content with heading tags
+  PDF10: Provide labels for interactive form controls in PDF documents
+  PDF11: Provide links and link text using the /Link structure element
+  PDF12: Provide name, role, value information for form fields
+  PDF13: Provide replacement text using the /Alt entry for links
+  PDF14: Providing running headers and footers in PDF documents
+  PDF15: Providing submit buttons with the submit-form action in PDF forms
+  PDF16: Setting the default language using the /Lang entry in the document catalog
+  
+  ## Text Alternatives
+  PDF1: Apply text alternatives to images
+  PDF4: Hide decorative images as artifacts
+  PDF13: Provide replacement text for links
+  
+  ## Time-based Media Techniques
+  - Provide text transcripts for audio/video content
+  - Include captions for multimedia
+  
+  ## Adaptable Content
+  PDF3: Ensure correct tab and reading order
+  PDF5: Provide headings by using PDF tags
+  PDF6: Use table elements for table markup
+  PDF9: Provide headings by marking content with heading tags
+  PDF14: Providing running headers and footers
+  PDF17: Specifying consistent page numbering for PDF documents
+  PDF20: Using Adobe Acrobat Pro's Table Editor to repair mistagged tables
+  
+  ## Distinguishable Content
+  PDF7: Perform OCR on scanned documents to provide actual text
+  PDF23: Providing interactive form controls in PDF documents
+  PDF24: Providing spacing between lines and paragraphs
+  PDF25: Specifying expansion text for abbreviations
+  PDF26: Providing metadata using the PDF /Info dictionary
+  
+  ## Keyboard Accessible
+  PDF3: Ensure correct tab and reading order
+  PDF10: Provide labels for interactive form controls
+  PDF11: Provide links and link text using /Link
+  PDF23: Providing interactive form controls
+  
+  ## Enough Time
+  PDF15: Providing submit buttons with the submit-form action
+  PDF22: Indicating required form controls in PDF forms
+  
+  ## Seizures and Physical Reactions
+  - Avoid content that flashes more than three times per second
+  
+  ## Navigable
+  PDF2: Create bookmarks
+  PDF9: Provide headings
+  PDF11: Provide links and link text
+  PDF13: Provide replacement text for links
+  PDF17: Specifying consistent page numbering
+  PDF18: Specifying the document title using the Title entry in the document information dictionary
+  PDF19: Specifying the language for a passage or phrase
+  
+  ## Readable
+  PDF8: Provide definitions for abbreviations
+  PDF16: Setting the default language
+  PDF19: Specifying the language for a passage or phrase
+  PDF25: Specifying expansion text for abbreviations
+  
+  ## Predictable
+  PDF14: Providing running headers and footers
+  PDF17: Specifying consistent page numbering
+  
+  ## Input Assistance
+  PDF10: Provide labels for interactive form controls
+  PDF12: Provide name, role, value information for form fields
+  PDF15: Providing submit buttons with the submit-form action
+  PDF22: Indicating required form controls
+  
+  ## Compatible
+  PDF1-PDF32: All techniques aim to improve compatibility
+  
+  ## Common Accessibility Issues in PDFs
+  1. Missing document structure tags
+  2. Missing alternative text for images
+  3. Improper heading structure
+  4. Improperly tagged tables
+  5. Inaccessible form fields
+  6. Missing document language specification
+  7. Untagged text rendered as images
+  8. Poor color contrast
+  9. Missing bookmarks for navigation
+  10. Missing document title
+  11. Improper reading order
+  12. Improperly tagged links
+  13. No keyboard accessibility for interactive elements
+  14. Missing metadata
+  15. Security settings that prohibit accessibility`;
+  
+      // Set the reference content if applicable
+      if (referenceContent) {
+        referenceContent.textContent = wcagReferenceContent;
+      }
+  
       // Initially activate step 1
       step1.classList.add('step-active');
-      
-      // Toggle reference content
-      toggleReferenceBtn.addEventListener('click', () => {
-        referenceContent.classList.toggle('hidden');
-        toggleReferenceBtn.textContent = referenceContent.classList.contains('hidden') 
-          ? 'Show WCAG PDF Reference Content' 
-          : 'Hide WCAG PDF Reference Content';
-      });
-      
-      // Event listeners for drag and drop
+  
+      // Toggle reference content (if the toggle button exists)
+      if (toggleReferenceBtn && referenceContent) {
+        toggleReferenceBtn.addEventListener('click', () => {
+          referenceContent.classList.toggle('hidden');
+          toggleReferenceBtn.textContent = referenceContent.classList.contains('hidden') 
+            ? 'Show WCAG PDF Reference Content' 
+            : 'Hide WCAG PDF Reference Content';
+        });
+      }
+  
+      // --- PDF Upload Functionality (Proven Version) ---
+      let selectedFile = null;
+  
+      // Set up drag and drop event listeners
       ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
         dropArea.addEventListener(eventName, preventDefaults, false);
       });
-      
+  
       function preventDefaults(e) {
         e.preventDefault();
         e.stopPropagation();
       }
-      
+  
       ['dragenter', 'dragover'].forEach(eventName => {
-        dropArea.addEventListener(eventName, highlight, false);
+        dropArea.addEventListener(eventName, () => dropArea.classList.add('highlight'), false);
       });
-      
+  
       ['dragleave', 'drop'].forEach(eventName => {
-        dropArea.addEventListener(eventName, unhighlight, false);
+        dropArea.addEventListener(eventName, () => dropArea.classList.remove('highlight'), false);
       });
-      
-      function highlight() {
-        dropArea.classList.add('highlight');
-      }
-      
-      function unhighlight() {
-        dropArea.classList.remove('highlight');
-      }
-      
+  
       // Handle file drop
       dropArea.addEventListener('drop', handleDrop, false);
-      
+  
       function handleDrop(e) {
         const dt = e.dataTransfer;
         const files = dt.files;
         handleFiles(files);
       }
-      
-      // Handle file selection
+  
+      // Handle file selection via click
       dropArea.addEventListener('click', () => {
         fileInput.click();
       });
-      
+  
       fileInput.addEventListener('change', () => {
         handleFiles(fileInput.files);
       });
-      
+  
       function handleFiles(files) {
         if (files.length > 0) {
           const file = files[0];
-          if (file.type === 'application/pdf') {
+          if (file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf')) {
+            selectedFile = file;
             pdfNameInput.value = file.name;
             fileInfo.textContent = `Selected file: ${file.name} (${formatFileSize(file.size)})`;
-            
-            // Highlight step 2 when file is selected
+            // Activate step 2 when a valid file is selected
             step1.classList.add('step-active');
             step2.classList.add('step-active');
-            
-            // Scroll to step 2
             step2.scrollIntoView({ behavior: 'smooth' });
           } else {
-            fileInfo.textContent = 'Please select a PDF file.';
+            fileError.textContent = 'Error: Please select a PDF file only.';
+            fileError.classList.remove('hidden');
+            dropArea.classList.add('error');
+            fileInfo.textContent = '';
+            selectedFile = null;
           }
         }
       }
-      
+  
       function formatFileSize(bytes) {
         if (bytes < 1024) return bytes + ' bytes';
         else if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
         else return (bytes / 1048576).toFixed(1) + ' MB';
       }
-
-      // Input event for PDF name
+  
+      // When the PDF name input is modified, activate step 2 accordingly
       pdfNameInput.addEventListener('input', () => {
         if (pdfNameInput.value.trim()) {
           step2.classList.add('step-active');
@@ -570,85 +590,72 @@ PDF1-PDF32: All techniques aim to improve compatibility
           step2.classList.remove('step-active');
         }
       });
-      
-      // Generate pre-prompt
+  
+      // --- Pre-Prompt Generation ---
       generateBtn.addEventListener('click', () => {
         const pdfName = pdfNameInput.value.trim();
-        
         if (!pdfName) {
           alert('Please enter a PDF document name.');
           return;
         }
-        
         const prePrompt = `Please analyze the attached PDF "${pdfName}" for accessibility issues according to W3C WCAG PDF techniques. Use the following reference information for your evaluation:
-
-${wcagReferenceContent}
-
-Your evaluation must include:
-
-1. Numbered Issues List: Identify and number each specific accessibility problem found in the document.
-   * For each issue, provide the exact location/reference in the PDF (page number, section, element)
-   * Describe the accessibility barrier it creates for users with disabilities
-   * Specify which WCAG 2.0 guideline it violates (e.g., 'WCAG 2.0 1.1.1: Non-text Content')
-   * Provide detailed step-by-step remediation instructions that a PDF editor could follow
-
-2. Validation Assessment Table with the following columns:
-   | # | Issue Description | Location | WCAG Violation | Severity (High/Medium/Low) | Remediation Steps |
-   
-3. The evaluation should comprehensively cover:
-   * Document structure and tags (headings, reading order, bookmarks)
-   * Alternative text for images and graphics
-   * Color contrast and use of color
-   * Form fields and interactive elements
-   * Tables structure and header cells
-   * Language specification
-   * Links and navigation
-   * Text alternatives for non-text content
-   * Document title and metadata
-   * Security settings that might impact accessibility
-
-4. Forward-thinking suggestions that enhance overall accessibility beyond minimum compliance.
-
-Be technical, precise, and comprehensive in your analysis. Number each issue to make tracking and remediation easier. The evaluation should help document owners efficiently address all accessibility deficiencies.`;
-        
+  
+  ${wcagReferenceContent}
+  
+  Your evaluation must include:
+  
+  1. Numbered Issues List: Identify and number each specific accessibility problem found in the document.
+     * For each issue, provide the exact location/reference in the PDF (page number, section, element)
+     * Describe the accessibility barrier it creates for users with disabilities
+     * Specify which WCAG 2.0 guideline it violates (e.g., 'WCAG 2.0 1.1.1: Non-text Content')
+     * Provide detailed step-by-step remediation instructions that a PDF editor could follow
+  
+  2. Validation Assessment Table with the following columns:
+     | # | Issue Description | Location | WCAG Violation | Severity (High/Medium/Low) | Remediation Steps |
+     
+  3. The evaluation should comprehensively cover:
+     * Document structure and tags (headings, reading order, bookmarks)
+     * Alternative text for images and graphics
+     * Color contrast and use of color
+     * Form fields and interactive elements
+     * Tables structure and header cells
+     * Language specification
+     * Links and navigation
+     * Text alternatives for non-text content
+     * Document title and metadata
+     * Security settings that might impact accessibility
+  
+  4. Forward-thinking suggestions that enhance overall accessibility beyond minimum compliance.
+  
+  Be technical, precise, and comprehensive in your analysis. Number each issue to make tracking and remediation easier. The evaluation should help document owners efficiently address all accessibility deficiencies.`;
+  
         outputArea.textContent = prePrompt;
-        
-        // Activate step 3
         step3.classList.add('step-active');
-        
-        // Scroll to step 3
         step3.scrollIntoView({ behavior: 'smooth' });
       });
-      
-      // Copy to clipboard
+  
+      // --- Copy to Clipboard ---
       copyBtn.addEventListener('click', () => {
         const text = outputArea.textContent;
         if (!text) return;
-        
         navigator.clipboard.writeText(text).then(() => {
           copySuccess.style.display = 'inline';
-          
-          // Show post instructions
+          // Show post-instructions and step 4
           postInstructions.style.display = 'block';
-          
-          // Show step 4
           step4.style.display = 'block';
           step4.classList.add('step-active');
-          
-          // Scroll to step 4
           setTimeout(() => {
             step4.scrollIntoView({ behavior: 'smooth' });
-            
             setTimeout(() => {
               copySuccess.style.display = 'none';
             }, 2000);
           }, 300);
-          
         }).catch(err => {
           console.error('Could not copy text: ', err);
         });
       });
     });
   </script>
+  
 </body>
 </html>

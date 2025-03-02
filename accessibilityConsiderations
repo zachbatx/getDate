@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Digital Accessibility Considerations Tool</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      line-height: 1.5;
+      color: #333;
+      margin: 0;
+      padding: 20px;
+      background-color: #f5f5f5;
+    }
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 24px;
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    h1 {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 24px;
+      color: #1e40af;
+    }
+    h2 {
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 16px;
+    }
+    h3 {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 8px;
+      color: #1e40af;
+      display: flex;
+      align-items: center;
+    }
+    .form-group {
+      margin-bottom: 16px;
+    }
+    label {
+      display: block;
+      font-size: 18px;
+      font-weight: 500;
+      margin-bottom: 8px;
+    }
+    select {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 16px;
+    }
+    select:focus {
+      outline: none;
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
+    }
+    button {
+      background-color: #2563eb;
+      color: white;
+      border: none;
+      padding: 8px 24px;
+      border-radius: 4px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-bottom: 32px;
+      font-size: .9em;
+      padding: 6px 8px;
+    }
+    button:hover {
+      background-color: #1d4ed8;
+    }
+    button:disabled {
+      background-color: #93c5fd;
+      cursor: not-allowed;
+    }
+    .results {
+      background-color: #eff6ff;
+      padding: 24px;
+      border-radius: 8px;
+    }
+    .results ul {
+      background-color: #fff;
+      border-radius: 6px;
+      padding: 15px 15px 15px 30px !important;
+      margin: 5px 0px 8px 0px;
+    }
+    .section {
+      background-color: white;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 32px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    ul {
+      margin-bottom: 16px;
+      padding-left: 24px;
+    }
+    li {
+      margin-bottom: 8px;
+    }
+    .impairments {
+      margin-top: 16px;
+      display: flex;
+      align-items: flex-start;
+    }
+    .icon {
+      margin-right: 8px;
+      min-width: 20px;
+    }
+    .impAdd {
+      background-color: #FAFDFF;
+      padding: 20px;
+      border-radius: 6px;
+      margin: 0px;
+    }
+    .hidden {
+      display: none;
+    }
+    button#copyAllBtn {
+    position: relative;
+    float: right;
+    margin: 10px;
+    top: -60px;
+    right: 0px;
+    }
+    .copyBtn {
+        margin-left: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Digital Accessibility Considerations Tool</h1>
+    
+    <div class="form-group">
+      <label for="feature-select">Select a digital product feature:</label>
+      <select id="feature-select">
+        <option value="">-- Select a feature --</option>
+        <option value="navigation">Navigation Menu</option>
+        <option value="forms">Form Elements</option>
+        <option value="buttons">Buttons and CTAs</option>
+        <option value="images">Images and Graphics</option>
+        <option value="video">Video Content</option>
+        <option value="audio">Audio Content</option>
+        <option value="typography">Typography and Text</option>
+        <option value="colors">Color Usage</option>
+        <option value="layout">Page Layout</option>
+        <option value="notification">Notifications and Alerts</option>
+        <option value="datavis">Data Visualization</option>
+        <option value="motion">Animations and Motion</option>
+        <option value="touch">Touch Interfaces</option>
+        <option value="search">Search Functionality</option>
+        <option value="error">Error Handling</option>
+      </select>
+    </div>
+    
+    <button id="submit-btn" disabled>View Accessibility Considerations</button>
+    
+    <div id="results" class="results hidden"></div>
+  </div>
+
+  <script>
+    // Comprehensive data structure for accessibility considerations
+    const accessibilityConsiderations = {
+      navigation: [
+        { 
+          principle: 'Keyboard Accessibility', 
+          considerations: [
+            'Ensure all menu items can be accessed using keyboard-only navigation',
+            'Provide visible focus indicators',
+            'Use logical tab order',
+            'Implement keyboard shortcuts for common actions'
+          ],
+          impairments: ['Motor disabilities', 'Visual impairments', 'Situational limitations (e.g., broken mouse/trackpad)']
+        },
+        {
+          principle: 'Screen Reader Compatibility',
+          considerations: [
+            'Use proper semantic HTML elements for menus (nav, ul, li)',
+            'Provide ARIA landmarks and labels when necessary',
+            'Ensure dropdown menus announce their expanded/collapsed state',
+            'Test with popular screen readers (NVDA, JAWS, VoiceOver)'
+          ],
+          impairments: ['Blindness', 'Low vision', 'Cognitive disabilities']
+        },
+        {
+          principle: 'Visual Clarity',
+          considerations: [
+            'Use sufficient color contrast for menu items (4.5:1 minimum)',
+            'Provide clear visual indicators for current location',
+            'Ensure text is resizable without breaking layouts',
+            'Avoid relying solely on color to convey information'
+          ],
+          impairments: ['Low vision', 'Color blindness', 'Cognitive disabilities', 'Environmental factors (bright sunlight)']
+        },
+        {
+          principle: 'Cognitive Considerations',
+          considerations: [
+            'Keep navigation structure consistent throughout the site',
+            'Limit the number of choices to prevent cognitive overload',
+            'Use clear, descriptive labels for navigation items',
+            'Provide multiple ways to find content (search, sitemap, breadcrumbs)'
+          ],
+          impairments: ['Cognitive disabilities', 'Memory impairments', 'Learning disabilities', 'Attention deficits']
+        }
+      ],
+      forms: [
+        {
+          principle: 'Proper Labeling',
+          considerations: [
+            'Use explicit <label> elements associated with form controls',
+            'Provide clear, descriptive labels for each form field',
+            'Include placeholder text as supplementary (not as replacement for labels)',
+            'Use fieldset and legend for grouping related form elements'
+          ],
+          impairments: ['Visual impairments', 'Cognitive disabilities', 'Memory impairments']
+        },
+        {
+          principle: 'Error Handling',
+          considerations: [
+            'Provide clear error messages that suggest corrections',
+            'Use multiple cues (color, icon, text) to indicate errors',
+            'Allow users to resubmit forms without re-entering all information',
+            'Provide inline validation where appropriate'
+          ],
+          impairments: ['Cognitive disabilities', 'Visual impairments', 'Anxiety disorders', 'Situational stress']
+        },
+        {
+          principle: 'Keyboard Accessibility',
+          considerations: [
+            'Ensure all form controls can be accessed and operated via keyboard',
+            'Maintain a logical tab order that follows visual layout',
+            'Provide keyboard accessibility for custom form elements',
+            'Avoid keyboard traps in modals or complex widgets'
+          ],
+          impairments: ['Motor disabilities', 'Temporary physical injuries', 'Environmental limitations']
+        },
+        {
+          principle: 'Flexible Input',
+          considerations: [
+            'Accept multiple input formats where possible (e.g., phone numbers, dates)',
+            'Support autocomplete attributes for common fields',
+            'Provide sufficient time to complete forms',
+            'Allow copying and pasting in all fields including password fields'
+          ],
+          impairments: ['Motor disabilities', 'Cognitive disabilities', 'Dyslexia', 'Situational distractions']
+        }
+      ],
+      buttons: [
+        {
+          principle: 'Clear Purpose',
+          considerations: [
+            'Use descriptive text that clearly indicates the action',
+            'Avoid generic text like "Click Here" or "Learn More"',
+            'Include additional context for screen readers if needed (aria-label)',
+            'Maintain consistency in button labeling across the product'
+          ],
+          impairments: ['Cognitive disabilities', 'Visual impairments', 'Learning disabilities']
+        },
+        {
+          principle: 'Visual Design',
+          considerations: [
+            'Ensure sufficient color contrast (4.5:1 minimum)',
+            'Make buttons large enough for easy targeting (minimum 44x44px touch target)',
+            'Provide visual feedback for hover, focus, and active states',
+            'Do not rely solely on color to indicate button purpose or state'
+          ],
+          impairments: ['Low vision', 'Color blindness', 'Motor disabilities', 'Environmental limitations (bright light)']
+        },
+        {
+          principle: 'Keyboard and Touch Accessibility',
+          considerations: [
+            'Ensure all buttons are keyboard accessible',
+            'Provide visible focus indicators',
+            'Space buttons appropriately to prevent accidental activation on touch devices',
+            'Ensure buttons remain accessible when zoomed'
+          ],
+          impairments: ['Motor disabilities', 'Tremors', 'Situational limitations (one-handed use)']
+        },
+        {
+          principle: 'State Communication',
+          considerations: [
+            'Clearly communicate when buttons are disabled',
+            'Provide loading indicators for actions that take time',
+            'Confirm successful actions',
+            'Use ARIA attributes to communicate state changes to screen readers'
+          ],
+          impairments: ['Cognitive disabilities', 'Visual impairments', 'Anxiety disorders']
+        }
+      ],
+      images: [
+        {
+          principle: 'Alternative Text',
+          considerations: [
+            'Provide meaningful alt text for all informative images',
+            'Use empty alt attributes (alt="") for decorative images',
+            'Include detailed descriptions for complex images (charts, diagrams)',
+            'Ensure alt text conveys the purpose and content of the image'
+          ],
+          impairments: ['Blindness', 'Low vision', 'Cognitive disabilities', 'Situational limitations (images disabled)']
+        },
+        {
+          principle: 'Visual Clarity',
+          considerations: [
+            'Ensure text within images has sufficient contrast',
+            'Avoid using images of text when possible',
+            'Provide high-resolution images for clarity on zoom',
+            'Consider how images appear to users with color vision deficiencies'
+          ],
+          impairments: ['Low vision', 'Color blindness', 'Cognitive disabilities']
+        },
+        {
+          principle: 'Responsive Behavior',
+          considerations: [
+            'Ensure images scale appropriately on different screen sizes',
+            'Provide appropriate image alternatives for small screens',
+            'Consider bandwidth limitations with image loading',
+            'Use appropriate image formats for optimal loading'
+          ],
+          impairments: ['Situational limitations (mobile usage)', 'Environmental factors (limited bandwidth)']
+        },
+        {
+          principle: 'Context and Placement',
+          considerations: [
+            'Place images near relevant text when they support content',
+            'Avoid placing essential information only within images',
+            'Consider reading order for screen reader users',
+            'Provide captions for images where appropriate'
+          ],
+          impairments: ['Cognitive disabilities', 'Visual impairments', 'Learning disabilities']
+        }
+      ],
+      video: [
+        {
+          principle: 'Captions and Transcripts',
+          considerations: [
+            'Provide accurate, synchronized captions for all video content',
+            'Include speaker identification in captions',
+            'Provide full transcripts for videos',
+            'Consider providing sign language interpretation for important content'
+          ],
+          impairments: ['Deafness', 'Hard of hearing', 'Cognitive disabilities', 'Environmental limitations (noisy environment)']
+        },
+        {
+          principle: 'Audio Description',
+          considerations: [
+            'Provide audio descriptions of visual content',
+            'Consider extended audio descriptions for complex visual content',
+            'Ensure key visual information is conveyed verbally',
+            'Test with users who rely on audio descriptions'
+          ],
+          impairments: ['Blindness', 'Low vision', 'Situational limitations (cannot view screen)']
+        },
+        {
+          principle: 'Player Accessibility',
+          considerations: [
+            'Ensure video player controls are keyboard accessible',
+            'Provide clearly labeled controls with sufficient contrast',
+            'Allow users to control playback speed',
+            'Include options to disable autoplay'
+          ],
+          impairments: ['Motor disabilities', 'Visual impairments', 'Cognitive disabilities', 'Vestibular disorders']
+        },
+        {
+          principle: 'Content Considerations',
+          considerations: [
+            'Avoid content that can trigger seizures (no rapid flashing)',
+            'Provide warnings for potentially triggering content',
+            'Ensure sufficient viewing time for important information',
+            'Consider cognitive load when presenting complex information'
+          ],
+          impairments: ['Photosensitive epilepsy', 'Cognitive disabilities', 'Anxiety disorders', 'PTSD']
+        }
+      ],
+      audio: [
+        {
+          principle: 'Transcripts',
+          considerations: [
+            'Provide accurate text transcripts for all audio content',
+            'Include speaker identification in transcripts',
+            'Indicate non-speech audio information in transcripts',
+            'Make transcripts easily discoverable and available'
+          ],
+          impairments: ['Deafness', 'Hard of hearing', 'Cognitive disabilities', 'Environmental limitations (noisy places)']
+        },
+        {
+          principle: 'Player Controls',
+          considerations: [
+            'Ensure audio player controls are keyboard accessible',
+            'Provide clearly labeled controls with sufficient contrast',
+            'Allow users to control volume and playback speed',
+            'Include options to disable autoplay'
+          ],
+          impairments: ['Motor disabilities', 'Visual impairments', 'Auditory processing disorders']
+        },
+        {
+          principle: 'Audio Quality',
+          considerations: [
+            'Ensure clear audio quality with minimal background noise',
+            'Maintain consistent volume levels',
+            'Consider providing adjustable equalization for different hearing needs',
+            'Ensure narration is at an appropriate pace'
+          ],
+          impairments: ['Hard of hearing', 'Auditory processing disorders', 'Cognitive disabilities']
+        },
+        {
+          principle: 'Content Alternatives',
+          considerations: [
+            'Provide visual alternatives for audio-only content where appropriate',
+            'Consider adding visualizations for important audio information',
+            'Ensure critical information is not conveyed solely through audio',
+            'Test with users who cannot hear audio content'
+          ],
+          impairments: ['Deafness', 'Hard of hearing', 'Environmental limitations (silent environments)']
+        }
+      ],
+      typography: [
+        {
+          principle: 'Readability',
+          considerations: [
+            'Use readable font families (sans-serif fonts often work well)',
+            'Maintain minimum text size (at least 16px for body text)',
+            'Ensure sufficient line height (1.5 for body text)',
+            'Limit line length (65-75 characters per line)'
+          ],
+          impairments: ['Low vision', 'Dyslexia', 'Cognitive disabilities', 'Environmental factors (reading on the move)']
+        },
+        {
+          principle: 'Text Customization',
+          considerations: [
+            'Allow users to resize text without breaking layouts',
+            'Support browser text zoom up to 200%',
+            'Consider offering text customization options (font, size, spacing)',
+            'Ensure text remains readable when customized'
+          ],
+          impairments: ['Low vision', 'Reading disabilities', 'Cognitive disabilities']
+        },
+        {
+          principle: 'Text Structure',
+          considerations: [
+            'Use proper heading hierarchy (h1-h6) to structure content',
+            'Break content into manageable chunks with subheadings',
+            'Use lists and other formatting to organize information',
+            'Maintain consistent formatting throughout the product'
+          ],
+          impairments: ['Cognitive disabilities', 'Learning disabilities', 'Attention deficits']
+        },
+        {
+          principle: 'Text Contrast',
+          considerations: [
+            'Ensure sufficient contrast between text and background (4.5:1 minimum, 7:1 for enhanced)',
+            'Avoid placing text over busy backgrounds',
+            'Test text readability in different lighting conditions',
+            'Consider how text appears to users with color vision deficiencies'
+          ],
+          impairments: ['Low vision', 'Color blindness', 'Environmental factors (bright sunlight)']
+        }
+      ],
+      colors: [
+        {
+          principle: 'Contrast Ratio',
+          considerations: [
+            'Ensure text meets WCAG contrast requirements (4.5:1 for normal text, 3:1 for large text)',
+            'Maintain 3:1 minimum contrast for UI components and graphical objects',
+            'Test contrast in different viewing conditions',
+            'Consider providing high contrast mode'
+          ],
+          impairments: ['Low vision', 'Color blindness', 'Environmental factors (bright sunlight, glare)']
+        },
+        {
+          principle: 'Color Independence',
+          considerations: [
+            'Never use color as the only means of conveying information',
+            'Add text labels, patterns, or icons to supplement color coding',
+            'Test designs in grayscale to ensure information is still conveyed',
+            'Consider how designs appear to users with different types of color blindness'
+          ],
+          impairments: ['Color blindness', 'Low vision', 'Cognitive disabilities']
+        },
+        {
+          principle: 'Color Combinations',
+          considerations: [
+            'Avoid problematic color combinations (e.g., red/green, blue/yellow)',
+            'Use color combinations that work for different types of color blindness',
+            'Limit the number of colors used to reduce cognitive load',
+            'Consider cultural implications of color choices'
+          ],
+          impairments: ['Color blindness', 'Cognitive disabilities', 'Cultural differences']
+        },
+        {
+          principle: 'User Preferences',
+          considerations: [
+            'Respect user color preference settings (browser, OS)',
+            'Consider supporting dark mode and other color themes',
+            'Allow users to customize color schemes where appropriate',
+            'Test with color preference settings enabled'
+          ],
+          impairments: ['Light sensitivity', 'Migraines', 'Visual stress', 'Environmental factors (night usage)']
+        }
+      ],
+      layout: [
+        {
+          principle: 'Responsive Design',
+          considerations: [
+            'Ensure content is usable at all viewport sizes',
+            'Maintain logical reading order in responsive layouts',
+            'Avoid horizontal scrolling on mobile devices',
+            'Test layouts at different zoom levels (up to 400%)'
+          ],
+          impairments: ['Visual impairments', 'Motor disabilities', 'Situational limitations (mobile usage)']
+        },
+        {
+          principle: 'White Space and Readability',
+          considerations: [
+            'Use sufficient space between interactive elements',
+            'Provide adequate space between lines and paragraphs',
+            'Use margins to separate content sections',
+            'Avoid cluttered layouts that increase cognitive load'
+          ],
+          impairments: ['Cognitive disabilities', 'Attention deficits', 'Low vision', 'Motor disabilities']
+        },
+        {
+          principle: 'Consistent Patterns',
+          considerations: [
+            'Maintain consistent layout patterns throughout the product',
+            'Place recurring elements (navigation, search) in consistent locations',
+            'Follow established design patterns when possible',
+            'Provide clear visual boundaries between different sections'
+          ],
+          impairments: ['Cognitive disabilities', 'Memory impairments', 'Learning disabilities']
+        },
+        {
+          principle: 'Content Prioritization',
+          considerations: [
+            'Place the most important content before scroll when possible',
+            'Ensure critical functionality is easily discoverable',
+            'Allow users to skip repeated content (skip links)',
+            'Consider reading order for screen reader users'
+          ],
+          impairments: ['Visual impairments', 'Cognitive disabilities', 'Motor disabilities', 'Attention deficits']
+        }
+      ],
+      notification: [
+        {
+          principle: 'Multiple Sensory Channels',
+          considerations: [
+            'Provide notifications through multiple channels (visual, auditory, haptic)',
+            'Ensure critical alerts do not rely solely on a single sense',
+            'Allow users to choose their preferred notification method',
+            'Test notifications with assistive technologies'
+          ],
+          impairments: ['Visual impairments', 'Hearing impairments', 'Situational limitations (device on silent)']
+        },
+        {
+          principle: 'Clear Communication',
+          considerations: [
+            'Use clear, concise language for notification content',
+            'Clearly indicate the purpose and importance of the notification',
+            'Provide sufficient context within the notification',
+            'Include clear instructions for any required actions'
+          ],
+          impairments: ['Cognitive disabilities', 'Learning disabilities', 'Anxiety disorders']
+        },
+        {
+          principle: 'Timing and Control',
+          considerations: [
+            'Allow users to control notification timing and frequency',
+            'Provide sufficient time to read and respond to notifications',
+            'Allow users to review missed notifications',
+            'Include options to snooze or dismiss notifications'
+          ],
+          impairments: ['Cognitive disabilities', 'Motor disabilities', 'Attention deficits', 'Anxiety disorders']
+        },
+        {
+          principle: 'Non-disruptive Design',
+          considerations: [
+            'Design notifications to minimize disruption to current tasks',
+            'Avoid sudden, large movements or sounds that may startle users',
+            'Consider the potential for notification fatigue',
+            'Prioritize notifications based on importance'
+          ],
+          impairments: ['Anxiety disorders', 'PTSD', 'Vestibular disorders', 'Attention deficits']
+        }
+      ],
+      datavis: [
+        {
+          principle: 'Multiple Representations',
+          considerations: [
+            'Provide multiple ways to access the data (charts, tables, text summaries)',
+            'Include text alternatives for complex visualizations',
+            'Consider sonification for data when appropriate',
+            'Allow users to choose their preferred data representation'
+          ],
+          impairments: ['Visual impairments', 'Cognitive disabilities', 'Learning disabilities']
+        },
+        {
+          principle: 'Color Independence',
+          considerations: [
+            'Do not rely solely on color to convey data distinctions',
+            'Use patterns, shapes, or labels in addition to color',
+            'Test visualizations in grayscale',
+            'Choose color palettes that work for color blind users'
+          ],
+          impairments: ['Color blindness', 'Low vision', 'Situational limitations (monochrome displays)']
+        },
+        {
+          principle: 'Clarity and Simplicity',
+          considerations: [
+            'Avoid unnecessary complexity in data visualizations',
+            'Provide clear titles and labels for all elements',
+            'Include legends that are easy to reference',
+            'Allow users to focus on specific data points or segments'
+          ],
+          impairments: ['Cognitive disabilities', 'Learning disabilities', 'Attention deficits']
+        },
+        {
+          principle: 'Interactive Accessibility',
+          considerations: [
+            'Ensure all interactive elements are keyboard accessible',
+            'Provide screen reader access to data points',
+            'Include clear instructions for interacting with visualizations',
+            'Ensure hover/tooltip information is also available via keyboard'
+          ],
+          impairments: ['Motor disabilities', 'Visual impairments', 'Cognitive disabilities']
+        }
+      ],
+      motion: [
+        {
+          principle: 'Reduced Motion Support',
+          considerations: [
+            'Respect prefers-reduced-motion media query',
+            'Provide static alternatives to animations',
+            'Allow users to pause, stop, or hide animations',
+            'Ensure functionality works without animation'
+          ],
+          impairments: ['Vestibular disorders', 'Motion sensitivity', 'Attention deficits', 'Migraines']
+        },
+        {
+          principle: 'Safe Animation',
+          considerations: [
+            'Avoid animation known to trigger seizures (no flashing 3+ times/second)',
+            'Use subtle animations that do not distract from content',
+            'Limit the area of the screen affected by animation',
+            'Avoid auto-playing animations when possible'
+          ],
+          impairments: ['Photosensitive epilepsy', 'Attention deficits', 'Cognitive disabilities']
+        },
+        {
+          principle: 'Purpose and Context',
+          considerations: [
+            'Use animation purposefully to enhance understanding',
+            'Provide context before animations begin',
+            'Ensure animations complete in a reasonable timeframe',
+            'Consider cognitive load when designing animations'
+          ],
+          impairments: ['Cognitive disabilities', 'Attention deficits', 'Learning disabilities']
+        },
+        {
+          principle: 'Control and Predictability',
+          considerations: [
+            'Give users control over when animations start',
+            'Provide clear indications of what will animate',
+            'Allow users to replay animations if needed',
+            'Ensure animations behave predictably'
+          ],
+          impairments: ['Cognitive disabilities', 'Anxiety disorders', 'Attention deficits']
+        }
+      ],
+      touch: [
+        {
+          principle: 'Target Size',
+          considerations: [
+            'Make touch targets sufficiently large (minimum 44x44px)',
+            'Provide adequate spacing between touch targets',
+            'Ensure touch targets expand to the closest interactive element',
+            'Consider users with limited precision'
+          ],
+          impairments: ['Motor disabilities', 'Tremors', 'Situational limitations (moving vehicle, cold weather)']
+        },
+        {
+          principle: 'Touch Alternatives',
+          considerations: [
+            'Provide alternatives to complex touch gestures',
+            'Ensure all functionality works with single taps',
+            'Support keyboard and external input devices',
+            'Consider voice input for key functions'
+          ],
+          impairments: ['Motor disabilities', 'Limited hand mobility', 'Situational limitations (one-handed use)']
+        },
+        {
+          principle: 'Feedback and Confirmation',
+          considerations: [
+            'Provide clear visual feedback for touch interactions',
+            'Include haptic feedback when available',
+            'Confirm important actions before executing',
+            'Allow users to undo accidental touches'
+          ],
+          impairments: ['Visual impairments', 'Cognitive disabilities', 'Motor disabilities']
+        },
+        {
+          principle: 'Touch Accommodation',
+          considerations: [
+            'Account for different touch patterns (tap, hold, slide)',
+            'Accommodate unintended touches (touch stabilization)',
+            'Allow adjustable touch sensitivity',
+            'Provide sufficient time for multi-touch gestures'
+          ],
+          impairments: ['Tremors', 'Motor disabilities', 'Coordination difficulties', 'Situational limitations']
+        }
+      ],
+      search: [
+        {
+          principle: 'Input Flexibility',
+          considerations: [
+            'Accept alternative spellings and common misspellings',
+            'Support keyword and natural language queries',
+            'Provide voice input options when possible',
+            'Accommodate different search behaviors and strategies'
+          ],
+          impairments: ['Dyslexia', 'Learning disabilities', 'Motor disabilities', 'Cognitive disabilities']
+        },
+        {
+          principle: 'Search UI Accessibility',
+          considerations: [
+            'Make search fields easily identifiable',
+            'Provide clear labels and instructions',
+            'Ensure keyboard accessibility for search and results',
+            'Support screen readers in search interactions'
+          ],
+          impairments: ['Visual impairments', 'Cognitive disabilities', 'Motor disabilities']
+        },
+        {
+          principle: 'Results Presentation',
+          considerations: [
+            'Present results in a clear, structured format',
+            'Highlight search terms in results',
+            'Provide sufficient information to evaluate relevance',
+            'Allow sorting and filtering of results'
+          ],
+          impairments: ['Cognitive disabilities', 'Visual impairments', 'Attention deficits']
+        },
+        {
+          principle: 'Search Assistance',
+          considerations: [
+            'Offer autocomplete/predictive suggestions',
+            'Provide "Did you mean" corrections',
+            'Show related searches',
+            'Remember recent searches for easy reference'
+          ],
+          impairments: ['Dyslexia', 'Learning disabilities', 'Memory impairments', 'Cognitive disabilities']
+        }
+      ],
+      error: [
+        {
+          principle: 'Clear Identification',
+          considerations: [
+            'Clearly identify errors using multiple cues (color, icon, text)',
+            'Provide descriptive error messages near the relevant fields',
+            'Use plain language to explain what went wrong',
+            'Ensure errors are announced to screen readers'
+          ],
+          impairments: ['Visual impairments', 'Cognitive disabilities', 'Learning disabilities']
+        },
+        {
+          principle: 'Helpful Guidance',
+          considerations: [
+            'Explain how to fix the error',
+            'Provide examples of correct input where appropriate',
+            'Offer direct links to help resources',
+            'Consider providing automatic correction options'
+          ],
+          impairments: ['Cognitive disabilities', 'Learning disabilities', 'Anxiety disorders']
+        }
+      ]
+    };
+
+    // Get references to DOM elements
+    const featureSelect = document.getElementById('feature-select');
+    const submitBtn = document.getElementById('submit-btn');
+    const resultsDiv = document.getElementById('results');
+
+    // Enable the button when a valid feature is selected
+    featureSelect.addEventListener('change', () => {
+      submitBtn.disabled = featureSelect.value === "";
+      // Hide previous results when changing the selection
+      resultsDiv.classList.add('hidden');
+      resultsDiv.innerHTML = '';
+    });
+
+    // Display the accessibility considerations on button click
+    submitBtn.addEventListener('click', () => {
+      const feature = featureSelect.value;
+      if (!feature) return;
+      
+      const considerations = accessibilityConsiderations[feature];
+      if (!considerations) {
+        resultsDiv.innerHTML = 'No accessibility considerations available for this feature.';
+        resultsDiv.classList.remove('hidden');
+        return;
+      }
+      
+      let html = '';
+      // Create a heading for the results using the selected feature’s name
+      const featureName = featureSelect.options[featureSelect.selectedIndex].text;
+      html += `<h2>Accessibility Considerations for ${featureName}</h2>`;
+      
+      // Create a button to copy ALL considerations for the product feature
+      html += `<button id="copyAllBtn" style="margin-bottom:16px;">Copy all</button>`;
+      
+      // Render each principle section
+      considerations.forEach(item => {
+        html += `<div class="section">`;
+        html += `<h3>${item.principle}</h3>`;
+        html += '<ul>';
+        item.considerations.forEach(concern => {
+          html += `<li>${concern}</li>`;
+        });
+        html += '</ul>';
+        if (item.impairments && item.impairments.length > 0) {
+          html += `<p class="impAdd"><strong>Impairments Addressed:</strong> ${item.impairments.join(', ')}</p>`;
+        }
+        // Create a copy button for this principle’s considerations
+        html += `<button class="copyBtn">Copy ${item.principle}</button>`;
+        html += `</div>`;
+      });
+      
+      resultsDiv.innerHTML = html;
+      resultsDiv.classList.remove('hidden');
+
+      // Copy all considerations event listener
+      document.getElementById('copyAllBtn').addEventListener('click', () => {
+        let content = `<div><h2>Accessibility Considerations for ${featureName}</h2>`;
+        considerations.forEach(item => {
+          content += `<h3>${item.principle}</h3><ul>`;
+          item.considerations.forEach(concern => {
+            content += `<li>${concern}</li>`;
+          });
+          content += '</ul>';
+        });
+        content += '</div>';
+        const blob = new Blob([content], { type: 'text/html' });
+        const clipboardItem = new ClipboardItem({ 'text/html': blob });
+        navigator.clipboard.write([clipboardItem])
+          .then(() => {
+            const copyAllBtn = document.getElementById('copyAllBtn');
+            const originalText = copyAllBtn.textContent;
+            copyAllBtn.textContent = "Copied!";
+            setTimeout(() => { copyAllBtn.textContent = originalText; }, 2000);
+          })
+          .catch(err => console.error("Failed to copy: ", err));
+      });
+
+      // Add event listeners for individual copy buttons
+      const copyButtons = document.querySelectorAll('.copyBtn');
+      copyButtons.forEach((btn, index) => {
+        btn.addEventListener('click', () => {
+          let content = `<div><h2>Accessibility Considerations for ${featureName}</h2>`;
+          const item = considerations[index];
+          content += `<h3>${item.principle}</h3><ul>`;
+          item.considerations.forEach(concern => {
+            content += `<li>${concern}</li>`;
+          });
+          content += '</ul></div>';
+          const blob = new Blob([content], { type: 'text/html' });
+          const clipboardItem = new ClipboardItem({ 'text/html': blob });
+          navigator.clipboard.write([clipboardItem])
+            .then(() => {
+              const originalText = btn.textContent;
+              btn.textContent = "Copied!";
+              setTimeout(() => { btn.textContent = originalText; }, 2000);
+            })
+            .catch(err => console.error("Failed to copy: ", err));
+        });
+      });
+    });
+  </script>
+</body>
+</html>

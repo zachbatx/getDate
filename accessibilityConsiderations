@@ -147,6 +147,9 @@
       height: 24px;
       margin-right: 8px;
     }
+    #submit-btn {
+        display: none;
+    }
   </style>
 </head>
 <body>
@@ -175,7 +178,7 @@
       </select>
     </div>
     
-    <button id="submit-btn" disabled>View Accessibility Considerations</button>
+    <button id="submit-btn">View Accessibility Considerations</button>
     
     <div id="results" class="results hidden"></div>
   </div>
@@ -973,7 +976,8 @@
 
     // Enable the button when a valid feature is selected
     featureSelect.addEventListener('change', () => {
-      submitBtn.disabled = featureSelect.value === "";
+      //submitBtn.disabled = featureSelect.value === "";
+      submitBtn.style.display = 'block';
       // Hide previous results when changing the selection
       resultsDiv.classList.add('hidden');
       resultsDiv.innerHTML = '';

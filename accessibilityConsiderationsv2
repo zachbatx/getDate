@@ -93,7 +93,7 @@
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
     .section-content {
-      /* This wrapper holds the section content so the copy button is excluded */
+      /* Content wrapper for rich text copy (excludes the copy button) */
       margin-bottom: 10px;
     }
     ul {
@@ -226,7 +226,7 @@
 
   <script>
     /* Accessibility considerations data.
-       Content and WCAG references are inspired by:
+       WCAG references are now included for every principle. References are inspired by:
        - https://www.w3.org/WAI/EO/wiki/Accessibility_Checkpoint_Full_List
        - https://www.w3.org/WAI/WCAG22/quickref/
     */
@@ -296,6 +296,11 @@
             'Avoid relying solely on color to convey information'
           ],
           impairments: ['Low vision', 'Color blindness', 'Cognitive disabilities', 'Environmental factors (bright sunlight)'],
+          wcag: {
+            references: [
+              { id: '1.4.3', level: 'AA', description: 'Visual elements have a contrast ratio of at least 4.5:1.' }
+            ]
+          },
           roles: {
             developer: {
               responsibilities: [
@@ -318,6 +323,11 @@
             'Provide multiple ways to find content (search, sitemap, breadcrumbs)'
           ],
           impairments: ['Cognitive disabilities', 'Memory impairments', 'Learning disabilities', 'Attention deficits'],
+          wcag: {
+            references: [
+              { id: '3.2.3', level: 'AA', description: 'Navigational mechanisms that are repeated on multiple Web pages occur in the same relative order each time they are repeated.' }
+            ]
+          },
           roles: {
             developer: {
               responsibilities: [
@@ -342,6 +352,11 @@
             'Use fieldset and legend for grouping related form elements'
           ],
           impairments: ['Visual impairments', 'Cognitive disabilities', 'Memory impairments'],
+          wcag: {
+            references: [
+              { id: '3.3.2', level: 'A', description: 'Labels or instructions are provided when content requires user input.' }
+            ]
+          },
           roles: {
             developer: {
               responsibilities: [
@@ -364,6 +379,11 @@
             'Provide inline validation where appropriate'
           ],
           impairments: ['Cognitive disabilities', 'Visual impairments', 'Anxiety disorders', 'Situational stress'],
+          wcag: {
+            references: [
+              { id: '3.3.1', level: 'A', description: 'Input errors are identified and described in text.' }
+            ]
+          },
           roles: {
             developer: {
               responsibilities: [
@@ -386,6 +406,11 @@
             'Avoid keyboard traps in modals or complex widgets'
           ],
           impairments: ['Motor disabilities', 'Temporary physical injuries', 'Environmental limitations'],
+          wcag: {
+            references: [
+              { id: '2.1.1', level: 'A', description: 'All functionality is operable through a keyboard interface.' }
+            ]
+          },
           roles: {
             developer: {
               responsibilities: [
@@ -408,6 +433,11 @@
             'Allow copying and pasting in all fields including password fields'
           ],
           impairments: ['Motor disabilities', 'Cognitive disabilities', 'Dyslexia', 'Situational distractions'],
+          wcag: {
+            references: [
+              { id: '1.3.1', level: 'A', description: 'Information, structure, and relationships can be programmatically determined.' }
+            ]
+          },
           roles: {
             developer: {
               responsibilities: [
@@ -853,7 +883,6 @@
     function formatFeatureName(feature) {
       return feature.charAt(0).toUpperCase() + feature.slice(1);
     }
-
     function displayConsiderations() {
       const selectedFeature = featureSelect.value;
       if (!selectedFeature) return;
@@ -921,7 +950,6 @@
       resultsContainer.classList.remove('hidden');
       copyAllBtn.classList.remove('hidden');
     }
-
     function copySection(contentId) {
       const elem = document.getElementById(contentId);
       if (!elem) return;
@@ -946,7 +974,6 @@
         });
       }
     }
-
     function copyAll() {
       const text = resultsContainer.innerText;
       navigator.clipboard.writeText(text).then(() => {

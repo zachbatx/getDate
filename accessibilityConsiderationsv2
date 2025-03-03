@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Digital Accessibility Considerations Tool v1</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      line-height: 1.5;
+      color: #333;
+      margin: 0;
+      padding: 20px;
+      background-color: #f5f5f5;
+    }
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 24px;
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      position: relative;
+    }
+    h1 {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 24px;
+      color: #1e40af;
+    }
+    h2 {
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 16px;
+    }
+    h3 {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 8px;
+      color: #1e40af;
+      display: flex;
+      align-items: center;
+    }
+    .form-group {
+      margin-bottom: 16px;
+    }
+    label {
+      display: block;
+      font-size: 18px;
+      font-weight: 500;
+      margin-bottom: 8px;
+    }
+    select {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 16px;
+    }
+    select:focus {
+      outline: none;
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
+    }
+    button {
+      background-color: #1e40af;
+      color: white;
+      border: none;
+      padding: 8px 24px;
+      border-radius: 4px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-bottom: 20px;
+    }
+    button:hover {
+      background-color: #1d4ed8;
+    }
+    button:disabled {
+      background-color: #93c5fd;
+      cursor: not-allowed;
+    }
+    .results {
+      background-color: #eff6ff;
+      padding: 24px;
+      border-radius: 8px;
+      margin-top: 20px;
+    }
+    .section {
+      background-color: white;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 32px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    .section-content {
+      /* This wrapper holds the section content so the copy button is excluded */
+      margin-bottom: 10px;
+    }
+    ul {
+      margin-bottom: 16px;
+      padding-left: 24px;
+    }
+    li {
+      margin-bottom: 8px;
+    }
+    .impairments {
+      margin-top: 16px;
+      display: flex;
+      align-items: flex-start;
+    }
+    .icon {
+      margin-right: 12px;
+      min-width: 32px;
+      height: 32px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: #1e40af;
+    }
+    .hidden {
+      display: none;
+    }
+    /* Global copy-all button */
+    button#copyAllBtn {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background-color: #1e40af;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.9em;
+    }
+    button#copyAllBtn:hover {
+      background-color: #1d4ed8;
+    }
+    /* Section-specific copy buttons */
+    .section-copy-btn {
+      background-color: #1e40af;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.9em;
+    }
+    .section-copy-btn:hover {
+      background-color: #1d4ed8;
+    }
+    /* Priority and difficulty styles */
+    .priority-indicator {
+      display: inline-flex;
+      align-items: center;
+      margin-left: 10px;
+      font-size: 12px;
+      font-weight: bold;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+    .priority-high {
+      background-color: #fecaca;
+      color: #991b1b;
+    }
+    .priority-medium {
+      background-color: #fed7aa;
+      color: #9a3412;
+    }
+    .priority-low {
+      background-color: #e0f2fe;
+      color: #0369a1;
+    }
+    .difficulty {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      margin-left: 12px;
+    }
+    .easy {
+      background-color: #dcfce7;
+      color: #166534;
+    }
+    .medium {
+      background-color: #fef9c3;
+      color: #854d0e;
+    }
+    .hard {
+      background-color: #fee2e2;
+      color: #b91c1c;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Digital Accessibility Considerations Tool v1</h1>
+    <div class="form-group">
+      <label for="feature-select">Select a digital product feature:</label>
+      <select id="feature-select">
+        <option value="">-- Select a feature --</option>
+        <option value="navigation">Navigation Menu</option>
+        <option value="forms">Form Elements</option>
+        <option value="buttons">Buttons and CTAs</option>
+        <option value="images">Images and Graphics</option>
+        <option value="video">Video Content</option>
+        <option value="audio">Audio Content</option>
+        <option value="typography">Typography and Text</option>
+        <option value="colors">Color Usage</option>
+        <option value="layout">Page Layout</option>
+        <option value="notification">Notifications and Alerts</option>
+        <option value="datavis">Data Visualization</option>
+        <option value="motion">Animations and Motion</option>
+        <option value="touch">Touch Interfaces</option>
+        <option value="search">Search Functionality</option>
+        <option value="error">Error Handling</option>
+      </select>
+    </div>
+    
+    <button id="submit-btn">View Accessibility Considerations</button>
+    <!-- Global copy-all button remains -->
+    <button id="copyAllBtn" class="hidden">Copy to Clipboard</button>
+    
+    <div id="results" class="results hidden"></div>
+  </div>
+
+  <script>
+    /* Accessibility considerations data.
+       Content and WCAG references are inspired by:
+       - https://www.w3.org/WAI/EO/wiki/Accessibility_Checkpoint_Full_List
+       - https://www.w3.org/WAI/WCAG22/quickref/
+    */
+    const accessibilityConsiderations = {
+      navigation: [
+        { 
+          principle: 'Keyboard Accessibility', 
+          considerations: [
+            'Ensure all menu items can be accessed using keyboard-only navigation',
+            'Provide visible focus indicators',
+            'Use logical tab order',
+            'Implement keyboard shortcuts for common actions'
+          ],
+          impairments: ['Motor disabilities', 'Visual impairments', 'Situational limitations (e.g., broken mouse/trackpad)'],
+          wcag: {
+            references: [
+              { id: '2.1.1', level: 'A', description: 'All functionality is operable through a keyboard interface.' },
+              { id: '2.4.7', level: 'AA', description: 'Any keyboard operable user interface has a visible focus indicator.' }
+            ]
+          },
+          roles: {
+            developer: {
+              responsibilities: [
+                'Implement keyboard event handlers and logical focus management.'
+              ]
+            },
+            designer: {
+              responsibilities: [
+                'Design visible focus states and a clear tab order in wireframes.'
+              ]
+            }
+          },
+          difficulty: 'medium',
+          priority: 'high'
+        },
+        {
+          principle: 'Screen Reader Compatibility',
+          considerations: [
+            'Use proper semantic HTML elements for menus (nav, ul, li)',
+            'Provide ARIA landmarks and labels when necessary',
+            'Ensure dropdown menus announce their expanded/collapsed state',
+            'Test with popular screen readers (NVDA, JAWS, VoiceOver)'
+          ],
+          impairments: ['Blindness', 'Low vision', 'Cognitive disabilities'],
+          wcag: {
+            references: [
+              { id: '1.3.1', level: 'A', description: 'Information, structure, and relationships can be programmatically determined.' },
+              { id: '4.1.2', level: 'A', description: 'For all UI components, name and role can be programmatically determined.' }
+            ]
+          },
+          roles: {
+            developer: {
+              responsibilities: [
+                'Implement semantic HTML and proper ARIA attributes for navigation.'
+              ]
+            }
+          },
+          difficulty: 'hard',
+          priority: 'high'
+        },
+        {
+          principle: 'Visual Clarity',
+          considerations: [
+            'Use sufficient color contrast for menu items (4.5:1 minimum)',
+            'Provide clear visual indicators for current location',
+            'Ensure text is resizable without breaking layouts',
+            'Avoid relying solely on color to convey information'
+          ],
+          impairments: ['Low vision', 'Color blindness', 'Cognitive disabilities', 'Environmental factors (bright sunlight)'],
+          roles: {
+            developer: {
+              responsibilities: [
+                'Implement accessible visual components that adhere to contrast and scaling guidelines.'
+              ]
+            },
+            designer: {
+              responsibilities: [
+                'Design clear, high-contrast visual elements ensuring legibility.'
+              ]
+            }
+          }
+        },
+        {
+          principle: 'Cognitive Considerations',
+          considerations: [
+            'Keep navigation structure consistent throughout the site',
+            'Limit the number of choices to prevent cognitive overload',
+            'Use clear, descriptive labels for navigation items',
+            'Provide multiple ways to find content (search, sitemap, breadcrumbs)'
+          ],
+          impairments: ['Cognitive disabilities', 'Memory impairments', 'Learning disabilities', 'Attention deficits'],
+          roles: {
+            developer: {
+              responsibilities: [
+                'Ensure consistent UI patterns to minimize cognitive load.'
+              ]
+            },
+            designer: {
+              responsibilities: [
+                'Design intuitive navigation with clear, descriptive labeling.'
+              ]
+            }
+          }
+        }
+      ],
+      forms: [
+        {
+          principle: 'Proper Labeling',
+          considerations: [
+            'Use explicit <label> elements associated with form controls',
+            'Provide clear, descriptive labels for each form field',
+            'Include placeholder text as supplementary (not as replacement for labels)',
+            'Use fieldset and legend for grouping related form elements'
+          ],
+          impairments: ['Visual impairments', 'Cognitive disabilities', 'Memory impairments'],
+          roles: {
+            developer: {
+              responsibilities: [
+                'Implement proper labeling using semantic HTML and ARIA attributes.'
+              ]
+            },
+            designer: {
+              responsibilities: [
+                'Design forms with clear label placement and user guidance.'
+              ]
+            }
+          }
+        },
+        {
+          principle: 'Error Handling',
+          considerations: [
+            'Provide clear error messages that suggest corrections',
+            'Use multiple cues (color, icon, text) to indicate errors',
+            'Allow users to resubmit forms without re-entering all information',
+            'Provide inline validation where appropriate'
+          ],
+          impairments: ['Cognitive disabilities', 'Visual impairments', 'Anxiety disorders', 'Situational stress'],
+          roles: {
+            developer: {
+              responsibilities: [
+                'Implement accessible error messages with ARIA live regions.'
+              ]
+            },
+            designer: {
+              responsibilities: [
+                'Design error states with clear visual cues and inline guidance.'
+              ]
+            }
+          }
+        },
+        {
+          principle: 'Keyboard Accessibility',
+          considerations: [
+            'Ensure all form controls can be accessed and operated via keyboard',
+            'Maintain a logical tab order that follows visual layout',
+            'Provide keyboard accessibility for custom form elements',
+            'Avoid keyboard traps in modals or complex widgets'
+          ],
+          impairments: ['Motor disabilities', 'Temporary physical injuries', 'Environmental limitations'],
+          roles: {
+            developer: {
+              responsibilities: [
+                'Ensure full keyboard operability and logical tab order in forms.'
+              ]
+            },
+            designer: {
+              responsibilities: [
+                'Design form elements that are easily navigable via keyboard.'
+              ]
+            }
+          }
+        },
+        {
+          principle: 'Flexible Input',
+          considerations: [
+            'Accept multiple input formats where possible (e.g., phone numbers, dates)',
+            'Support autocomplete attributes for common fields',
+            'Provide sufficient time to complete forms',
+            'Allow copying and pasting in all fields including password fields'
+          ],
+          impairments: ['Motor disabilities', 'Cognitive disabilities', 'Dyslexia', 'Situational distractions'],
+          roles: {
+            developer: {
+              responsibilities: [
+                'Support multiple input formats and accessibility features like autocomplete.'
+              ]
+            },
+            designer: {
+              responsibilities: [
+                'Design input fields that accommodate various data entry methods.'
+              ]
+            }
+          }
+        }
+      ],
+      buttons: [
+        {
+          principle: 'Clear Purpose',
+          considerations: [
+            'Use descriptive text that clearly indicates the action',
+            'Avoid generic text like "Click Here" or "Learn More"',
+            'Include additional context for screen readers if needed (aria-label)',
+            'Maintain consistency in button labeling across the product'
+          ],
+          impairments: ['Cognitive disabilities', 'Visual impairments', 'Learning disabilities'],
+          wcag: {
+            references: [
+              { id: '2.4.4', level: 'A', description: 'The purpose of each link can be determined from the link text or its context.' }
+            ]
+          },
+          roles: {
+            content: {
+              responsibilities: [
+                'Write clear, action-oriented button text.'
+              ]
+            },
+            developer: {
+              responsibilities: [
+                'Implement clear button labels and add aria-labels when necessary.'
+              ]
+            }
+          },
+          difficulty: 'easy',
+          priority: 'high'
+        }
+      ],
+      images: [
+        {
+          principle: 'Alternative Text',
+          considerations: [
+            'Provide meaningful alt text for all informative images',
+            'Use empty alt attributes (alt="") for decorative images',
+            'Include detailed descriptions for complex images (charts, diagrams)',
+            'Ensure alt text conveys the purpose and content of the image'
+          ],
+          impairments: ['Blindness', 'Low vision', 'Cognitive disabilities', 'Situational limitations (images disabled)'],
+          wcag: {
+            references: [
+              { id: '1.1.1', level: 'A', description: 'All non-text content has a text alternative.' }
+            ]
+          },
+          roles: {
+            content: {
+              responsibilities: [
+                'Write descriptive alt text and determine which images are decorative.'
+              ]
+            },
+            developer: {
+              responsibilities: [
+                'Implement alt attributes correctly in code.'
+              ]
+            }
+          },
+          difficulty: 'easy',
+          priority: 'high'
+        }
+      ],
+      video: [
+        {
+          principle: 'Captions and Transcripts',
+          considerations: [
+            'Provide accurate captions for all video content',
+            'Offer transcripts for audio portions',
+            'Ensure captions are synchronized with video',
+            'Allow users to toggle captions on and off'
+          ],
+          impairments: ['Hearing impairments', 'Cognitive disabilities'],
+          wcag: {
+            references: [
+              { id: '1.2.2', level: 'A', description: 'Captions are provided for live audio content.' }
+            ]
+          },
+          roles: {
+            developer: {
+              responsibilities: [
+                'Integrate caption and transcript functionality into video players.'
+              ]
+            },
+            designer: {
+              responsibilities: [
+                'Design video interfaces that clearly display captions and offer transcript access.'
+              ]
+            }
+          }
+        }
+      ],
+      audio: [
+        {
+          principle: 'Audio Description',
+          considerations: [
+            'Provide audio descriptions for essential visual information',
+            'Ensure audio descriptions do not conflict with the primary audio',
+            'Offer an option to turn audio descriptions on or off'
+          ],
+          impairments: ['Visual impairments'],
+          wcag: {
+            references: [
+              { id: '1.2.5', level: 'AA', description: 'Audio description is provided for pre-recorded video content.' }
+            ]
+          },
+          roles: {
+            developer: {
+              responsibilities: [
+                'Implement audio description tracks and controls for toggling.'
+              ]
+            },
+            designer: {
+              responsibilities: [
+                'Design interfaces that present audio descriptions clearly alongside content.'
+              ]
+            }
+          }
+        }
+      ],
+      typography: [
+        {
+          principle: 'Readable Typography',
+          considerations: [
+            'Use legible fonts and ensure adequate font size',
+            'Allow text resizing without loss of content or functionality',
+            'Ensure sufficient line spacing and contrast between text and background'
+          ],
+          impairments: ['Low vision', 'Dyslexia'],
+          wcag: {
+            references: [
+              { id: '1.4.4', level: 'AA', description: 'Text can be resized up to 200% without loss of content or functionality.' }
+            ]
+          },
+          roles: {
+            developer: {
+              responsibilities: [
+                'Implement scalable typography using responsive design techniques.'
+              ]
+            },
+            designer: {
+              responsibilities: [
+                'Select legible fonts and design typographic scales for readability.'
+              ]
+            }
+          },
+          difficulty: 'medium',
+          priority: 'high'
+        }
+      ],
+      colors: [
+        {
+          principle: 'Color Contrast and Use',
+          considerations: [
+            'Ensure text and interactive elements meet minimum contrast ratios',
+            'Do not rely solely on color to convey information',
+            'Provide alternatives for users with color blindness'
+          ],
+          impairments: ['Color blindness', 'Low vision'],
+          wcag: {
+            references: [
+              { id: '1.4.3', level: 'AA', description: 'Visual elements have a contrast ratio of at least 4.5:1.' }
+            ]
+          },
+          roles: {
+            developer: {
+              responsibilities: [
+                'Ensure CSS and dynamic content meet contrast standards.'
+              ]
+            },
+            designer: {
+              responsibilities: [
+                'Choose accessible color palettes and provide non–color alternatives.'
+              ]
+            }
+          },
+          difficulty: 'medium',
+          priority: 'high'
+        }
+      ],
+      layout: [
+        {
+          principle: 'Consistent and Predictable Layout',
+          considerations: [
+            'Maintain a consistent layout throughout the site',
+            'Use clear headings and landmarks to define regions',
+            'Ensure responsive design for various screen sizes'
+          ],
+          impairments: ['Cognitive disabilities', 'Low vision'],
+          wcag: {
+            references: [
+              { id: '2.4.1', level: 'A', description: 'A mechanism is available to bypass blocks of repeated content.' }
+            ]
+          },
+          roles: {
+            developer: {
+              responsibilities: [
+                'Develop consistent HTML structures and responsive layouts with proper landmarks.'
+              ]
+            },
+            designer: {
+              responsibilities: [
+                'Design predictable layouts that facilitate easy navigation.'
+              ]
+            }
+          },
+          difficulty: 'medium',
+          priority: 'medium'
+        }
+      ],
+      notification: [
+        {
+          principle: 'Accessible Notifications',
+          considerations: [
+            'Ensure that notifications are announced to screen readers',
+            'Provide both visual and auditory cues',
+            'Allow users to dismiss or review notifications at their own pace'
+          ],
+          impairments: ['Hearing impairments', 'Visual impairments'],
+          wcag: {
+            references: [
+              { id: '4.1.3', level: 'A', description: 'Status messages can be programmatically determined.' }
+            ]
+          },
+          roles: {
+            developer: {
+              responsibilities: [
+                'Implement notification systems using ARIA live regions and dismissible alerts.'
+              ]
+            },
+            designer: {
+              responsibilities: [
+                'Design notifications with clear visual and auditory cues.'
+              ]
+            }
+          },
+          difficulty: 'easy',
+          priority: 'medium'
+        }
+      ],
+      datavis: [
+        {
+          principle: 'Accessible Data Visualization',
+          considerations: [
+            'Provide text alternatives for charts and graphs',
+            'Ensure interactive data visualizations are keyboard accessible',
+            'Offer detailed descriptions or transcripts of visual data'
+          ],
+          impairments: ['Low vision', 'Cognitive disabilities'],
+          wcag: {
+            references: [
+              { id: '1.1.1', level: 'A', description: 'Non-text content has a text alternative.' }
+            ]
+          },
+          roles: {
+            developer: {
+              responsibilities: [
+                'Implement accessible data visualizations with ARIA and text alternatives.'
+              ]
+            },
+            designer: {
+              responsibilities: [
+                'Design charts with clear labels and include detailed descriptions.'
+              ]
+            }
+          },
+          difficulty: 'hard',
+          priority: 'medium'
+        }
+      ],
+      motion: [
+        {
+          principle: 'Reduced Motion and Animation',
+          considerations: [
+            'Provide an option to reduce or disable animations',
+            'Ensure animations do not trigger seizures or cause discomfort',
+            'Offer static alternatives for essential information'
+          ],
+          impairments: ['Vestibular disorders'],
+          wcag: {
+            references: [
+              { id: '2.3.3', level: 'AA', description: 'Animation from interactions can be minimized or disabled.' }
+            ]
+          },
+          roles: {
+            developer: {
+              responsibilities: [
+                'Provide options in code to reduce or disable animations per user settings.'
+              ]
+            },
+            designer: {
+              responsibilities: [
+                'Design animations that can be easily reduced or replaced with static alternatives.'
+              ]
+            }
+          },
+          difficulty: 'medium',
+          priority: 'medium'
+        }
+      ],
+      touch: [
+        {
+          principle: 'Touch Target Size and Spacing',
+          considerations: [
+            'Ensure touch targets are large enough to be easily activated',
+            'Provide sufficient spacing between interactive elements',
+            'Support accessible gestures for users with motor impairments'
+          ],
+          impairments: ['Motor disabilities', 'Temporary injuries'],
+          wcag: {
+            references: [
+              { id: '2.5.5', level: 'AA', description: 'Touch targets meet minimum size requirements.' }
+            ]
+          },
+          roles: {
+            developer: {
+              responsibilities: [
+                'Ensure interactive elements are implemented with adequate size and spacing.'
+              ]
+            },
+            designer: {
+              responsibilities: [
+                'Design touch interfaces with ample target sizes and clear spacing.'
+              ]
+            }
+          },
+          difficulty: 'easy',
+          priority: 'high'
+        }
+      ],
+      search: [
+        {
+          principle: 'Accessible Search Functionality',
+          considerations: [
+            'Ensure search input fields are clearly labeled',
+            'Provide suggestions and error feedback in accessible formats',
+            'Allow keyboard navigation and screen reader access for search results'
+          ],
+          impairments: ['Cognitive disabilities', 'Motor disabilities'],
+          wcag: {
+            references: [
+              { id: '2.4.7', level: 'AA', description: 'Keyboard focus is visible on all interactive elements.' }
+            ]
+          },
+          roles: {
+            developer: {
+              responsibilities: [
+                'Implement accessible search input and navigation with proper ARIA roles.'
+              ]
+            },
+            designer: {
+              responsibilities: [
+                'Design intuitive search interfaces that offer clear feedback and suggestions.'
+              ]
+            }
+          },
+          difficulty: 'medium',
+          priority: 'medium'
+        }
+      ],
+      error: [
+        {
+          principle: 'Clear Identification',
+          considerations: [
+            'Clearly identify errors using multiple cues (color, icon, text)',
+            'Provide descriptive error messages near the relevant fields',
+            'Use plain language to explain what went wrong',
+            'Ensure errors are announced to screen readers'
+          ],
+          impairments: ['Visual impairments', 'Cognitive disabilities', 'Learning disabilities'],
+          wcag: {
+            references: [
+              { id: '3.3.1', level: 'A', description: 'Input errors are identified and described in text.' },
+              { id: '1.4.1', level: 'A', description: 'Color is not the only means of conveying information.' }
+            ]
+          },
+          roles: {
+            developer: {
+              responsibilities: [
+                'Implement error messages with appropriate ARIA and multiple visual cues.'
+              ]
+            },
+            designer: {
+              responsibilities: [
+                'Design consistent error states with clear guidance for users.'
+              ]
+            }
+          },
+          difficulty: 'medium',
+          priority: 'high'
+        }
+      ]
+    };
+
+    // ----- Icon definitions -----
+    const principleIcons = {
+      "Keyboard Accessibility": `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"></rect><line x1="6" y1="8" x2="6" y2="8"></line><line x1="10" y1="8" x2="10" y2="8"></line><line x1="14" y1="8" x2="14" y2="8"></line><line x1="18" y1="8" x2="18" y2="8"></line><line x1="6" y1="12" x2="6" y2="12"></line><line x1="10" y1="12" x2="10" y2="12"></line><line x1="14" y1="12" x2="14" y2="12"></line><line x1="18" y1="12" x2="18" y2="12"></line><line x1="6" y1="16" x2="6" y2="16"></line><line x1="10" y1="16" x2="10" y2="16"></line><line x1="14" y1="16" x2="14" y2="16"></line><line x1="18" y1="16" x2="18" y2="16"></line></svg>`,
+      "Screen Reader Compatibility": `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="18" x2="12" y2="22"></line></svg>`,
+      "Visual Clarity": `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"></path><circle cx="12" cy="12" r="3"></circle></svg>`,
+      "Cognitive Considerations": `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>`,
+      "Proper Labeling": `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>`,
+      "Error Handling": `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>`,
+      "Alternative Text": `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>`,
+      "Captions and Transcripts": `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"></rect><line x1="7" y1="15" x2="10" y2="15"></line><line x1="14" y1="15" x2="17" y2="15"></line><line x1="7" y1="8" x2="17" y2="8"></line><line x1="7" y1="11" x2="17" y2="11"></line></svg>`,
+      "Audio Description": `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path><path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path></svg>`
+      // Additional icons for new features can be added here.
+    };
+    const defaultIcon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>`;
+
+    // ----- UI Elements -----
+    const featureSelect = document.getElementById('feature-select');
+    const submitBtn = document.getElementById('submit-btn');
+    const copyAllBtn = document.getElementById('copyAllBtn');
+    const resultsContainer = document.getElementById('results');
+
+    // ----- Event Listeners -----
+    featureSelect.addEventListener('change', () => {
+      if (featureSelect.value) {
+        submitBtn.disabled = false;
+      } else {
+        submitBtn.disabled = true;
+        resultsContainer.classList.add('hidden');
+        copyAllBtn.classList.add('hidden');
+      }
+    });
+    submitBtn.addEventListener('click', displayConsiderations);
+    copyAllBtn.addEventListener('click', copyAll);
+
+    // ----- Functions -----
+    function formatFeatureName(feature) {
+      return feature.charAt(0).toUpperCase() + feature.slice(1);
+    }
+
+    function displayConsiderations() {
+      const selectedFeature = featureSelect.value;
+      if (!selectedFeature) return;
+      
+      const considerations = accessibilityConsiderations[selectedFeature];
+      if (!considerations || considerations.length === 0) {
+        resultsContainer.innerHTML = '<p>No considerations found for this feature.</p>';
+        resultsContainer.classList.remove('hidden');
+        copyAllBtn.classList.add('hidden');
+        return;
+      }
+      
+      let html = `<h2>Accessibility Considerations for ${formatFeatureName(selectedFeature)}</h2>`;
+      considerations.forEach(item => {
+        // Create a sanitized id for the section content (excluding copy button)
+        const sectionId = "section-" + item.principle.toLowerCase().replace(/\s+/g, '-');
+        const contentId = sectionId + "-content";
+        const icon = principleIcons[item.principle] || defaultIcon;
+        
+        html += `
+          <div class="section" id="${sectionId}">
+            <div class="section-content" id="${contentId}">
+              <h3 class="principle-header">
+                <span class="icon">${icon}</span>
+                ${item.principle}
+                ${item.priority ? `<span class="priority-indicator priority-${item.priority}">${item.priority.toUpperCase()}</span>` : ''}
+                ${item.difficulty ? `<span class="difficulty ${item.difficulty}">${item.difficulty}</span>` : ''}
+              </h3>
+              <ul>
+                ${item.considerations.map(consideration => `<li>${consideration}</li>`).join('')}
+              </ul>
+              ${item.impairments && item.impairments.length > 0 ? `
+                <div class="impairments">
+                  <strong>Impairments Addressed:</strong> ${item.impairments.join(', ')}
+                </div>
+              ` : ''}
+              ${item.wcag && item.wcag.references ? `
+                <div class="wcag-reference">
+                  <strong>WCAG References:</strong>
+                  <ul>
+                    ${item.wcag.references.map(ref => `<li>${ref.id} (${ref.level}): ${ref.description}</li>`).join('')}
+                  </ul>
+                </div>
+              ` : ''}
+              ${item.roles ? `
+                <div class="role-section">
+                  <strong>Roles & Responsibilities:</strong>
+                  ${Object.keys(item.roles).map(role => `
+                    <div class="role">
+                      <em>${role}:</em>
+                      <ul>
+                        ${item.roles[role].responsibilities.map(resp => `<li>${resp}</li>`).join('')}
+                      </ul>
+                    </div>
+                  `).join('')}
+                </div>
+              ` : ''}
+            </div>
+            <button class="section-copy-btn" onclick="copySection('${contentId}')">Copy ${item.principle}</button>
+          </div>
+        `;
+      });
+      
+      resultsContainer.innerHTML = html;
+      resultsContainer.classList.remove('hidden');
+      copyAllBtn.classList.remove('hidden');
+    }
+
+    function copySection(contentId) {
+      const elem = document.getElementById(contentId);
+      if (!elem) return;
+      const htmlContent = elem.innerHTML;
+      // Use the Clipboard API to copy rich text (HTML)
+      if (navigator.clipboard && navigator.clipboard.write) {
+        const blob = new Blob([htmlContent], { type: "text/html" });
+        const data = [new ClipboardItem({ "text/html": blob })];
+        navigator.clipboard.write(data).then(() => {
+          const sectionTitle = elem.querySelector('.principle-header').innerText;
+          alert('Copied ' + sectionTitle + ' content to clipboard!');
+        }).catch(err => {
+          alert('Failed to copy section: ' + err);
+        });
+      } else {
+        // Fallback: copy plain text
+        navigator.clipboard.writeText(elem.innerText).then(() => {
+          const sectionTitle = elem.querySelector('.principle-header').innerText;
+          alert('Copied ' + sectionTitle + ' content to clipboard!');
+        }).catch(err => {
+          alert('Failed to copy section: ' + err);
+        });
+      }
+    }
+
+    function copyAll() {
+      const text = resultsContainer.innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        alert('All content copied to clipboard!');
+      }).catch(err => {
+        alert('Failed to copy all content: ' + err);
+      });
+    }
+  </script>
+</body>
+</html>

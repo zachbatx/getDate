@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PDF to XML Converter</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.7.107/pdf.min.js"></script>
+  <script>
+    // Set worker source path for PDF.js
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.7.107/pdf.worker.min.js';
+  </script>
+  <style>
+    :root {
+      --primary-color: #4a6fa5;
+      --secondary-color: #166088;
+      --accent-color: #00a8e8;
+      --light-color: #f8f9fa;
+      --dark-color: #343a40;
+      --border-radius: 5px;
+      --shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.6;
+      color: var(--dark-color);
+      background-color: #f0f4f8;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      background-color: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    header {
+      background-color: var(--primary-color);
+      color: white;
+      padding: 1.5rem;
+      text-align: center;
+      border-bottom: 4px solid var(--secondary-color);
+    }
+
+    h1 {
+      margin-bottom: 0.5rem;
+    }
+
+    .subtitle {
+      font-weight: 300;
+      opacity: 0.9;
+    }
+
+    .main-content {
+      padding: 2rem;
+    }
+
+    .upload-section {
+      background-color: var(--light-color);
+      padding: 2rem;
+      border-radius: var(--border-radius);
+      text-align: center;
+      margin-bottom: 2rem;
+      border: 2px dashed #ccc;
+      transition: all 0.3s;
+    }
+
+    .upload-section.dragover {
+      background-color: rgba(0, 168, 232, 0.1);
+      border-color: var(--accent-color);
+    }
+
+    .upload-section h2 {
+      margin-bottom: 1rem;
+      color: var(--secondary-color);
+    }
+
+    .file-input-wrapper {
+      position: relative;
+      display: inline-block;
+      margin-bottom: 1rem;
+    }
+
+    .file-input {
+      position: absolute;
+      left: 0;
+      top: 0;
+      opacity: 0;
+      width: 100%;
+      height: 100%;
+      cursor: pointer;
+    }
+
+    .btn {
+      display: inline-block;
+      background-color: var(--primary-color);
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      font-size: 1rem;
+      transition: all 0.3s;
+    }
+
+    .btn:hover {
+      background-color: var(--secondary-color);
+      transform: translateY(-2px);
+    }
+
+    .btn:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-accent {
+      background-color: var(--accent-color);
+    }
+
+    .btn-accent:hover {
+      background-color: #0084b8;
+    }
+
+    .file-info {
+      margin-top: 1rem;
+      font-size: 0.9rem;
+      color: #666;
+    }
+
+    .preview-section {
+      display: none;
+      margin-bottom: 2rem;
+    }
+
+    .xml-output {
+      width: 100%;
+      height: 300px;
+      padding: 1rem;
+      border: 1px solid #ddd;
+      border-radius: var(--border-radius);
+      background-color: #f8f9fa;
+      resize: vertical;
+      font-family: 'Courier New', Courier, monospace;
+    }
+
+    .buttons-row {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 1rem;
+    }
+
+    .loading-indicator {
+      display: none;
+      margin: 1rem auto;
+      text-align: center;
+    }
+
+    .spinner {
+      border: 5px solid #f3f3f3;
+      border-top: 5px solid var(--accent-color);
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 1rem;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .error-message {
+      color: #dc3545;
+      background-color: #f8d7da;
+      border: 1px solid #f5c6cb;
+      padding: 0.75rem 1.25rem;
+      margin-bottom: 1rem;
+      border-radius: var(--border-radius);
+      display: none;
+    }
+
+    .progress-bar-container {
+      width: 100%;
+      height: 20px;
+      background-color: #e0e0e0;
+      border-radius: 10px;
+      margin: 10px 0;
+      overflow: hidden;
+      display: none;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background-color: var(--accent-color);
+      transition: width 0.3s ease;
+    }
+
+    footer {
+      text-align: center;
+      padding: 1rem;
+      background-color: var(--light-color);
+      border-top: 1px solid #ddd;
+      font-size: 0.9rem;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>PDF to XML Converter</h1>
+      <p class="subtitle">Upload your PDF and convert it to XML format</p>
+    </header>
+
+    <div class="main-content">
+      <div class="error-message" id="errorMessage"></div>
+
+      <div class="upload-section" id="uploadSection">
+        <h2>Upload PDF File</h2>
+        <p>Drag and drop a PDF file here or click to browse</p>
+        <div class="file-input-wrapper">
+          <button class="btn">Choose File</button>
+          <input type="file" class="file-input" id="pdfFile" accept=".pdf" />
+        </div>
+        <div class="file-info" id="fileInfo">No file selected</div>
+      </div>
+
+      <div class="loading-indicator" id="loadingIndicator">
+        <div class="spinner"></div>
+        <p>Processing your PDF file...</p>
+        <div class="progress-bar-container" id="progressBarContainer">
+          <div class="progress-bar" id="progressBar"></div>
+        </div>
+      </div>
+
+      <div class="preview-section" id="previewSection">
+        <h2>XML Output</h2>
+        <textarea class="xml-output" id="xmlOutput" readonly></textarea>
+        <div class="buttons-row">
+          <button class="btn" id="newFileBtn">Convert Another File</button>
+          <button class="btn btn-accent" id="downloadBtn">Download XML</button>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      <p>This tool works entirely in your browser. Your files are not uploaded to any server.</p>
+    </footer>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // DOM elements
+      const pdfFileInput = document.getElementById('pdfFile');
+      const fileInfo = document.getElementById('fileInfo');
+      const uploadSection = document.getElementById('uploadSection');
+      const loadingIndicator = document.getElementById('loadingIndicator');
+      const previewSection = document.getElementById('previewSection');
+      const xmlOutput = document.getElementById('xmlOutput');
+      const newFileBtn = document.getElementById('newFileBtn');
+      const downloadBtn = document.getElementById('downloadBtn');
+      const errorMessage = document.getElementById('errorMessage');
+      const progressBarContainer = document.getElementById('progressBarContainer');
+      const progressBar = document.getElementById('progressBar');
+
+      // File object
+      let selectedFile = null;
+
+      // Set up drag and drop
+      uploadSection.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        uploadSection.classList.add('dragover');
+      });
+
+      uploadSection.addEventListener('dragleave', () => {
+        uploadSection.classList.remove('dragover');
+      });
+
+      uploadSection.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadSection.classList.remove('dragover');
+        
+        if (e.dataTransfer.files.length) {
+          handleFileSelect(e.dataTransfer.files[0]);
+        }
+      });
+
+      // File input change handler
+      pdfFileInput.addEventListener('change', (e) => {
+        if (e.target.files.length) {
+          handleFileSelect(e.target.files[0]);
+        }
+      });
+
+      // Handle file selection
+      function handleFileSelect(file) {
+        // Check if it's a PDF
+        if (file.type !== 'application/pdf') {
+          showError('Please select a valid PDF file.');
+          return;
+        }
+
+        // Reset states
+        hideError();
+        selectedFile = file;
+        fileInfo.textContent = `Selected: ${file.name} (${formatFileSize(file.size)})`;
+        
+        // Start processing
+        processPdfToXml(file);
+      }
+
+      // Process PDF to XML
+      function processPdfToXml(pdfFile) {
+        // Show loading indicator
+        uploadSection.style.display = 'none';
+        loadingIndicator.style.display = 'block';
+        progressBarContainer.style.display = 'block';
+        progressBar.style.width = '0%';
+
+        const reader = new FileReader();
+        
+        reader.onload = async function(event) {
+          try {
+            const typedArray = new Uint8Array(event.target.result);
+            
+            // Load PDF document using PDF.js
+            const loadingTask = pdfjsLib.getDocument({ data: typedArray });
+            
+            loadingTask.onProgress = function(progressData) {
+              if (progressData.total) {
+                const percentage = (progressData.loaded / progressData.total) * 50; // First 50% for loading
+                progressBar.style.width = percentage + '%';
+              }
+            };
+            
+            const pdf = await loadingTask.promise;
+            const numPages = pdf.numPages;
+            
+            // Start building XML
+            let xmlContent = '<?xml version="1.0" encoding="UTF-8"?>\n';
+            xmlContent += '<document>\n';
+            xmlContent += `  <metadata>\n`;
+            xmlContent += `    <filename>${escapeXml(pdfFile.name)}</filename>\n`;
+            xmlContent += `    <filesize>${pdfFile.size}</filesize>\n`;
+            xmlContent += `    <pages>${numPages}</pages>\n`;
+            xmlContent += `  </metadata>\n`;
+            
+            // Process each page
+            for (let i = 1; i <= numPages; i++) {
+              // Update progress (remaining 50% for page processing)
+              const percentage = 50 + (i / numPages) * 50;
+              progressBar.style.width = percentage + '%';
+              
+              // Get page
+              const page = await pdf.getPage(i);
+              const textContent = await page.getTextContent();
+              
+              // Extract page data
+              xmlContent += `  <page number="${i}">\n`;
+              
+              // Group text items by their vertical position to approximate paragraphs
+              const textItems = textContent.items;
+              const paragraphs = groupTextItemsIntoParagraphs(textItems);
+              
+              // Add paragraphs to XML
+              paragraphs.forEach((paragraph, paraIndex) => {
+                xmlContent += `    <paragraph id="p${i}_${paraIndex + 1}">\n`;
+                xmlContent += `      <content>${escapeXml(paragraph.join(' '))}</content>\n`;
+                xmlContent += `    </paragraph>\n`;
+              });
+              
+              xmlContent += `  </page>\n`;
+            }
+            
+            // Close XML document
+            xmlContent += '</document>';
+            
+            // Show XML output
+            xmlOutput.value = xmlContent;
+            loadingIndicator.style.display = 'none';
+            previewSection.style.display = 'block';
+            
+          } catch (error) {
+            console.error('Error processing PDF:', error);
+            showError('Error processing PDF: ' + error.message);
+            uploadSection.style.display = 'block';
+            loadingIndicator.style.display = 'none';
+          }
+        };
+        
+        reader.onerror = function() {
+          showError('Error reading file.');
+          uploadSection.style.display = 'block';
+          loadingIndicator.style.display = 'none';
+        };
+        
+        // Read the file as an array buffer
+        reader.readAsArrayBuffer(pdfFile);
+      }
+
+      // Group text items into paragraphs based on their positions
+      function groupTextItemsIntoParagraphs(textItems) {
+        if (!textItems.length) return [];
+        
+        const paragraphs = [];
+        let currentParagraph = [];
+        let lastY = null;
+        let lastX = 0;
+        
+        for (let i = 0; i < textItems.length; i++) {
+          const item = textItems[i];
+          const text = item.str.trim();
+          
+          if (text === '') continue;
+          
+          const y = Math.round(item.transform[5]);
+          const x = Math.round(item.transform[4]);
+          
+          // Check if this is a new paragraph based on vertical position
+          if (lastY !== null && (Math.abs(y - lastY) > 5 || x < lastX)) {
+            if (currentParagraph.length > 0) {
+              paragraphs.push(currentParagraph);
+              currentParagraph = [];
+            }
+          }
+          
+          currentParagraph.push(text);
+          lastY = y;
+          lastX = x;
+        }
+        
+        // Add the last paragraph
+        if (currentParagraph.length > 0) {
+          paragraphs.push(currentParagraph);
+        }
+        
+        return paragraphs;
+      }
+
+      // Handle new file button
+      newFileBtn.addEventListener('click', () => {
+        // Reset states
+        xmlOutput.value = '';
+        fileInfo.textContent = 'No file selected';
+        selectedFile = null;
+        pdfFileInput.value = '';
+        
+        // Show upload section, hide preview
+        previewSection.style.display = 'none';
+        uploadSection.style.display = 'block';
+      });
+
+      // Handle download button
+      downloadBtn.addEventListener('click', () => {
+        if (!xmlOutput.value) return;
+        
+        const xmlBlob = new Blob([xmlOutput.value], { type: 'application/xml' });
+        const url = URL.createObjectURL(xmlBlob);
+        
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = selectedFile ? selectedFile.name.replace('.pdf', '.xml') : 'document.xml';
+        document.body.appendChild(a);
+        a.click();
+        
+        // Clean up
+        setTimeout(() => {
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+        }, 100);
+      });
+
+      // Utility functions
+      function formatFileSize(bytes) {
+        if (bytes < 1024) return bytes + ' bytes';
+        else if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+        else return (bytes / 1048576).toFixed(1) + ' MB';
+      }
+
+      function escapeXml(unsafe) {
+        return unsafe.replace(/[<>&'"]/g, function(c) {
+          switch (c) {
+            case '<': return '&lt;';
+            case '>': return '&gt;';
+            case '&': return '&amp;';
+            case '\'': return '&apos;';
+            case '"': return '&quot;';
+          }
+          return c;
+        });
+      }
+
+      function showError(message) {
+        errorMessage.textContent = message;
+        errorMessage.style.display = 'block';
+      }
+
+      function hideError() {
+        errorMessage.style.display = 'none';
+      }
+    });
+  </script>
+</body>
+</html>

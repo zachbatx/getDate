@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>JavaScript Code Minifier</title>
+  <title>Advanced Code Minifier</title>
   <style>
     * {
       box-sizing: border-box;
@@ -161,6 +161,23 @@
       background-color: #27ae60;
     }
     
+    .options-group {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 15px;
+      flex-wrap: wrap;
+    }
+    
+    .checkbox-option {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    
+    .checkbox-option input {
+      margin-right: 5px;
+    }
+    
     @media (max-width: 768px) {
       .editor-container {
         flex-direction: column;
@@ -174,7 +191,7 @@
 </head>
 <body>
   <div class="container">
-    <h1>JavaScript Code Minifier</h1>
+    <h1>Advanced Code Minifier</h1>
     
     <div class="drop-zone" id="dropZone">
       <p>Drag and drop a file here</p>
@@ -191,8 +208,50 @@
           <option value="html">HTML</option>
         </select>
       </div>
+      
       <div class="action-button">
         <button id="minifyButton">Minify Code</button>
+      </div>
+    </div>
+    
+    <div class="options-group" id="jsOptions" style="display:block;">
+      <div class="checkbox-option">
+        <input type="checkbox" id="removeComments" checked>
+        <label for="removeComments">Remove comments</label>
+      </div>
+      <div class="checkbox-option">
+        <input type="checkbox" id="removeWhitespace" checked>
+        <label for="removeWhitespace">Remove whitespace</label>
+      </div>
+      <div class="checkbox-option">
+        <input type="checkbox" id="shortenVariables">
+        <label for="shortenVariables">Shorten variable names (experimental)</label>
+      </div>
+    </div>
+    
+    <div class="options-group" id="cssOptions" style="display:none;">
+      <div class="checkbox-option">
+        <input type="checkbox" id="removeCommentsCss" checked>
+        <label for="removeCommentsCss">Remove comments</label>
+      </div>
+      <div class="checkbox-option">
+        <input type="checkbox" id="removeWhitespaceCss" checked>
+        <label for="removeWhitespaceCss">Remove whitespace</label>
+      </div>
+    </div>
+    
+    <div class="options-group" id="htmlOptions" style="display:none;">
+      <div class="checkbox-option">
+        <input type="checkbox" id="removeCommentsHtml" checked>
+        <label for="removeCommentsHtml">Remove comments</label>
+      </div>
+      <div class="checkbox-option">
+        <input type="checkbox" id="removeWhitespaceHtml" checked>
+        <label for="removeWhitespaceHtml">Remove whitespace</label>
+      </div>
+      <div class="checkbox-option">
+        <input type="checkbox" id="preserveLineBreaks">
+        <label for="preserveLineBreaks">Preserve important line breaks</label>
       </div>
     </div>
     
@@ -214,41 +273,154 @@
   </div>
 
   <script>
-    // Minifier Library
+    // Advanced Minifier Library
     const CodeMinifier = (function() {
-      // JavaScript minification
-      function minifyJS(code) {
+      // Advanced JavaScript minification with token parsing
+      function minifyJS(code, options = {}) {
         if (!code || typeof code !== 'string') return '';
         
+        const {
+          removeComments = true,
+          removeWhitespace = true,
+          shortenVariables = false
+        } = options;
+        
         try {
-          // Remove comments (both single-line and multi-line)
-          let minified = code.replace(/\/\/.*$/gm, '')
-                            .replace(/\/\*[\s\S]*?\*\//g, '')
-                            .replace(/^\s*\n/gm, '');
+          let minified = code;
           
-          // Remove unnecessary whitespace
-          minified = minified.replace(/\s+/g, ' ');
+          // Store string literals and regular expressions to protect them during minification
+          const literals = [];
+          let literalCounter = 0;
           
-          // Remove whitespace around operators and brackets
-          minified = minified.replace(/\s*([{}:;,=+\-*/<>()&|!])\s*/g, '$1');
+          // Replace string literals with placeholders
+          function preserveStringLiterals(input) {
+            return input.replace(/(['"`])(?:\\[\s\S]|(?!\1)[^\\])*\1/g, match => {
+              const placeholder = `__STRING_LITERAL_${literalCounter++}__`;
+              literals.push(match);
+              return placeholder;
+            });
+          }
           
-          // Fix spacing issues caused by previous replacements
-          minified = minified.replace(/}else/g, '} else');
-          minified = minified.replace(/else{/g, 'else {');
-          minified = minified.replace(/if\(/g, 'if (');
-          minified = minified.replace(/for\(/g, 'for (');
-          minified = minified.replace(/while\(/g, 'while (');
-          minified = minified.replace(/function\(/g, 'function(');
+          // Replace regex literals with placeholders
+          function preserveRegExLiterals(input) {
+            // Basic regex pattern matching - may need refinement for edge cases
+            return input.replace(/\/(?![*+?])(?:[^\r\n\[/\\]|\\.|\[(?:[^\r\n\]\\]|\\.)*\])+\/(?:g|m|i|y|u|s)*(?=\s*[$\w\xA0-\uFFFF.({[\s,;:]|$)/g, match => {
+              const placeholder = `__REGEX_LITERAL_${literalCounter++}__`;
+              literals.push(match);
+              return placeholder;
+            });
+          }
           
-          // Restore necessary spaces
-          minified = minified.replace(/([+\-*/<>])\(/g, '$1 (');
-          minified = minified.replace(/return\(/g, 'return (');
+          // Restore literals from placeholders
+          function restoreLiterals(input) {
+            let result = input;
+            for (let i = 0; i < literalCounter; i++) {
+              const stringPlaceholder = `__STRING_LITERAL_${i}__`;
+              const regexPlaceholder = `__REGEX_LITERAL_${i}__`;
+              if (result.includes(stringPlaceholder)) {
+                result = result.replace(stringPlaceholder, literals[i]);
+              } else if (result.includes(regexPlaceholder)) {
+                result = result.replace(regexPlaceholder, literals[i]);
+              }
+            }
+            return result;
+          }
           
-          // Handle special cases
-          minified = minified.replace(/\s*;\s*/g, ';');
+          // Preserve literals first
+          minified = preserveStringLiterals(minified);
+          minified = preserveRegExLiterals(minified);
           
-          // Final cleanup
-          minified = minified.trim();
+          // Remove comments if enabled
+          if (removeComments) {
+            minified = minified
+              // Remove single line comments
+              .replace(/\/\/.*$/gm, '')
+              // Remove multi-line comments
+              .replace(/\/\*[\s\S]*?\*\//g, '')
+              // Remove empty lines
+              .replace(/^\s*\n/gm, '');
+          }
+          
+          // Remove unnecessary whitespace if enabled
+          if (removeWhitespace) {
+            // Replace carriage returns and line feeds with spaces
+            minified = minified.replace(/[\r\n]+/g, ' ');
+            
+            // Collapse multiple spaces into a single space
+            minified = minified.replace(/\s+/g, ' ');
+            
+            // Remove spaces around operators and brackets
+            minified = minified.replace(/\s*([{}:;,=+\-*/<>()&|!])\s*/g, '$1');
+            
+            // Fix spacing issues for reserved words and constructs
+            const reservedWords = [
+              'if', 'else', 'for', 'while', 'do', 'try', 'catch', 'finally',
+              'switch', 'case', 'default', 'return', 'function', 'typeof', 'instanceof'
+            ];
+            
+            reservedWords.forEach(word => {
+              // Add space after reserved word, e.g., "if(" to "if ("
+              const re = new RegExp(`(^|[^\\w$])${word}\\(`, 'g');
+              minified = minified.replace(re, `$1${word} (`);
+              
+              // Add space between '}' and reserved word, e.g., "}else" to "} else"
+              const re2 = new RegExp(`}${word}(?![\\w$])`, 'g');
+              minified = minified.replace(re2, `} ${word}`);
+              
+              // Add space between reserved word and '{', e.g., "else{" to "else {"
+              const re3 = new RegExp(`${word}{`, 'g');
+              minified = minified.replace(re3, `${word} {`);
+            });
+            
+            // Restore necessary spaces
+            minified = minified.replace(/([+\-*/<>])\(/g, '$1 (');
+            minified = minified.replace(/return\(/g, 'return (');
+            
+            // Special handling for operators that need spaces
+            minified = minified.replace(/([+\-*/<>&|!])==/g, '$1 ==');
+            minified = minified.replace(/==([+\-*/<>&|!])/g, '== $1');
+            
+            // Handle special cases for increment/decrement
+            minified = minified.replace(/([+-]{2})(\w)/g, '$1 $2');
+            minified = minified.replace(/(\w)([+-]{2})/g, '$1 $2');
+            
+            // Remove unnecessary semicolons
+            minified = minified.replace(/;}/g, '}');
+            
+            // Final cleanup
+            minified = minified.trim();
+          }
+          
+          // Shorten variable names (EXPERIMENTAL)
+          if (shortenVariables) {
+            // This is a simplified implementation and has limitations
+            // A proper implementation would require a full JavaScript parser
+            const varNames = {};
+            let nextVarId = 0;
+            
+            // Find variable declarations
+            const varRegex = /\b(?:var|let|const)\s+([a-zA-Z_$][\w$]*)\b/g;
+            let match;
+            
+            while ((match = varRegex.exec(minified)) !== null) {
+              const varName = match[1];
+              // Skip already processed variables and common names
+              if (!varNames[varName] && !['i', 'j', 'k', 'x', 'y', 'z'].includes(varName)) {
+                // Generate a short name
+                varNames[varName] = getNextVarName(nextVarId++);
+              }
+            }
+            
+            // Replace variable names
+            for (const [oldName, newName] of Object.entries(varNames)) {
+              // Use word boundary to prevent partial replacements
+              const regex = new RegExp(`\\b${oldName}\\b`, 'g');
+              minified = minified.replace(regex, newName);
+            }
+          }
+          
+          // Restore literals
+          minified = restoreLiterals(minified);
           
           return minified;
         } catch (error) {
@@ -257,28 +429,118 @@
         }
       }
       
-      // CSS minification
-      function minifyCSS(code) {
+      // Variable name generator for experimental minification
+      function getNextVarName(id) {
+        // Use a-z for first 26 variables, then aa, ab, ac, etc.
+        const alphabet = 'abcdefghijklmnopqrstuvwxyz';
+        
+        if (id < alphabet.length) {
+          return alphabet[id];
+        }
+        
+        let name = '';
+        let remaining = id;
+        
+        while (true) {
+          name = alphabet[remaining % alphabet.length] + name;
+          remaining = Math.floor(remaining / alphabet.length) - 1;
+          if (remaining < 0) break;
+        }
+        
+        return name;
+      }
+      
+      // Advanced CSS minification
+      function minifyCSS(code, options = {}) {
         if (!code || typeof code !== 'string') return '';
         
+        const {
+          removeComments = true,
+          removeWhitespace = true
+        } = options;
+        
         try {
-          // Remove comments
-          let minified = code.replace(/\/\*[\s\S]*?\*\//g, '');
+          let minified = code;
           
-          // Remove whitespace around brackets, colons, semicolons
-          minified = minified.replace(/\s*([{}:;,])\s*/g, '$1');
+          // Store string literals to protect them during minification
+          const literals = [];
+          let literalCounter = 0;
           
-          // Replace multiple whitespaces with single space
-          minified = minified.replace(/\s+/g, ' ');
+          // Replace string literals with placeholders
+          function preserveStringLiterals(input) {
+            return input.replace(/(['"])(?:\\[\s\S]|(?!\1)[^\\])*\1/g, match => {
+              const placeholder = `__STRING_LITERAL_${literalCounter++}__`;
+              literals.push(match);
+              return placeholder;
+            });
+          }
           
-          // Remove spaces after and before brackets
-          minified = minified.replace(/\s*{\s*/g, '{');
-          minified = minified.replace(/\s*}\s*/g, '}');
+          // Restore literals from placeholders
+          function restoreLiterals(input) {
+            let result = input;
+            for (let i = 0; i < literalCounter; i++) {
+              const placeholder = `__STRING_LITERAL_${i}__`;
+              if (result.includes(placeholder)) {
+                result = result.replace(placeholder, literals[i]);
+              }
+            }
+            return result;
+          }
           
-          // Remove semicolons before closing bracket
-          minified = minified.replace(/;\}/g, '}');
+          // Preserve string literals first
+          minified = preserveStringLiterals(minified);
           
-          // Remove leading and trailing whitespace
+          // Remove comments if enabled
+          if (removeComments) {
+            minified = minified.replace(/\/\*[\s\S]*?\*\//g, '');
+          }
+          
+          if (removeWhitespace) {
+            // Remove whitespace around brackets, colons, semicolons
+            minified = minified.replace(/\s*([{}:;,])\s*/g, '$1');
+            
+            // Replace multiple whitespaces with single space
+            minified = minified.replace(/\s+/g, ' ');
+            
+            // Remove spaces after and before brackets
+            minified = minified.replace(/\s*{\s*/g, '{');
+            minified = minified.replace(/\s*}\s*/g, '}');
+            
+            // Remove spaces around combinators
+            minified = minified.replace(/\s*([+>~])\s*/g, '$1');
+            
+            // Remove unnecessary whitespace in selectors but keep spaces between selectors
+            minified = minified.replace(/([^,])\s+\./g, '$1.');
+            minified = minified.replace(/([^,])\s+#/g, '$1#');
+            minified = minified.replace(/([^,])\s+:/g, '$1:');
+            minified = minified.replace(/([^,])\s+\[/g, '$1[');
+            
+            // Handle comma-separated selectors properly
+            minified = minified.replace(/,\s*/g, ',');
+            
+            // Remove semicolons before closing bracket
+            minified = minified.replace(/;}/g, '}');
+            
+            // Compress hexadecimal colors
+            minified = minified.replace(/#([0-9a-f])\1([0-9a-f])\2([0-9a-f])\3(?![0-9a-f])/gi, '#$1$2$3');
+            
+            // Remove units from zero values
+            minified = minified.replace(/(?<![0-9]|-)0(?:px|em|rem|ex|ch|vw|vh|vmin|vmax|cm|mm|in|pt|pc|%)/g, '0');
+            
+            // Remove leading zeros from decimal numbers
+            minified = minified.replace(/:\s*0\.([0-9]+)/g, ':.$1');
+            
+            // Remove unnecessary decimal zeros
+            minified = minified.replace(/([0-9])\.0+(?=px|em|rem|ex|ch|vw|vh|vmin|vmax|cm|mm|in|pt|pc|%|;|}|:)/g, '$1');
+            
+            // Remove leading zeros
+            minified = minified.replace(/(?<![0-9])0+([0-9]+(\.[0-9]+)?)/g, '$1');
+          }
+          
+          // Restore string literals
+          minified = restoreLiterals(minified);
+          
+          // Final cleanup
           minified = minified.trim();
           
           return minified;
@@ -288,54 +550,129 @@
         }
       }
       
-      // HTML minification
-      function minifyHTML(code) {
+      // Advanced HTML minification
+      function minifyHTML(code, options = {}) {
         if (!code || typeof code !== 'string') return '';
         
+        const {
+          removeComments = true,
+          removeWhitespace = true,
+          preserveLineBreaks = false
+        } = options;
+        
         try {
+          // Store script and style content to protect them during minification
+          const scripts = [];
+          const styles = [];
+          let scriptCounter = 0;
+          let styleCounter = 0;
+          
+          // Extract script tags and replace with placeholders
+          function preserveScripts(html) {
+            return html.replace(/<script\b[^>]*>([\s\S]*?)<\/script>/gi, (match, content) => {
+              const placeholder = `__SCRIPT_${scriptCounter++}__`;
+              scripts.push({tag: match, content});
+              return placeholder;
+            });
+          }
+          
+          // Extract style tags and replace with placeholders
+          function preserveStyles(html) {
+            return html.replace(/<style\b[^>]*>([\s\S]*?)<\/style>/gi, (match, content) => {
+              const placeholder = `__STYLE_${styleCounter++}__`;
+              styles.push({tag: match, content});
+              return placeholder;
+            });
+          }
+          
+          // Restore scripts and styles
+          function restoreScriptsAndStyles(html) {
+            let result = html;
+            
+            // Restore scripts
+            for (let i = 0; i < scriptCounter; i++) {
+              const placeholder = `__SCRIPT_${i}__`;
+              const script = scripts[i];
+              
+              let processedScript = script.tag;
+              if (script.content.trim()) {
+                // If it's a JS script tag, minify its content
+                if (/type\s*=\s*["']?(?:text\/javascript|application\/javascript|module)["']?/i.test(script.tag) || 
+                    !/type\s*=\s*["']/.test(script.tag)) {
+                  const minifiedContent = minifyJS(script.content, {
+                    removeComments: true,
+                    removeWhitespace: true
+                  });
+                  processedScript = script.tag.replace(script.content, minifiedContent);
+                }
+              }
+              
+              result = result.replace(placeholder, processedScript);
+            }
+            
+            // Restore styles
+            for (let i = 0; i < styleCounter; i++) {
+              const placeholder = `__STYLE_${i}__`;
+              const style = styles[i];
+              
+              let processedStyle = style.tag;
+              if (style.content.trim()) {
+                const minifiedContent = minifyCSS(style.content, {
+                  removeComments: true,
+                  removeWhitespace: true
+                });
+                processedStyle = style.tag.replace(style.content, minifiedContent);
+              }
+              
+              result = result.replace(placeholder, processedStyle);
+            }
+            
+            return result;
+          }
+          
+          // First preserve script and style tags
+          let minified = preserveScripts(code);
+          minified = preserveStyles(minified);
+          
           // Remove comments (except conditional comments for IE)
-          let minified = code.replace(/<!--(?!\[if\s)[\s\S]*?-->/g, '');
+          if (removeComments) {
+            minified = minified.replace(/<!--(?!\[if\s)[\s\S]*?-->/g, '');
+          }
           
-          // Remove whitespace between tags
-          minified = minified.replace(/>\s+</g, '><');
+          if (removeWhitespace) {
+            if (preserveLineBreaks) {
+              // Preserve line breaks in text nodes to maintain readability
+              // Remove whitespace between tags
+              minified = minified.replace(/>\s+</g, '><');
+              
+              // Remove leading whitespace in lines
+              minified = minified.replace(/^\s+/gm, '');
+              
+              // Remove trailing whitespace in lines
+              minified = minified.replace(/\s+$/gm, '');
+            } else {
+              // Aggressive whitespace removal
+              // Remove all newlines and excessive whitespace
+              minified = minified.replace(/[\n\r\t]/g, ' ');
+              minified = minified.replace(/\s+/g, ' ');
+              
+              // Remove whitespace between tags
+              minified = minified.replace(/>\s+</g, '><');
+            }
+            
+            // Remove leading and trailing whitespace in elements
+            minified = minified.replace(/\s+>/g, '>');
+            minified = minified.replace(/<\s+/g, '<');
+            
+            // Remove whitespace around attributes
+            minified = minified.replace(/\s*=\s*/g, '=');
+            
+            // Collapse boolean attributes
+            minified = minified.replace(/(\s)(checked|selected|disabled|readonly|multiple|ismap|defer|async)="(checked|selected|disabled|readonly|multiple|ismap|defer|async)"/gi, '$1$2');
+          }
           
-          // Remove leading and trailing whitespace in elements
-          minified = minified.replace(/\s+>/g, '>');
-          minified = minified.replace(/<\s+/g, '<');
-          
-          // Remove unnecessary whitespace
-          minified = minified.replace(/\s{2,}/g, ' ');
-          
-          // Remove whitespace around attributes
-          minified = minified.replace(/\s*=\s*/g, '=');
-          
-          // Preserve script and style tags content
-          const preserveTags = (html, tagName) => {
-            const regex = new RegExp(`<${tagName}[^>]*>([\\s\\S]*?)<\\/${tagName}>`, 'gi');
-            return html.replace(regex, (match, content) => {
-              // Replace the content with a placeholder
-              const placeholder = `###${tagName}-${Math.random().toString(36).substring(2, 15)}###`;
-              window[placeholder] = content;
-              return `<${tagName}>${placeholder}</${tagName}>`;
-            });
-          };
-          
-          // Restore script and style tags content
-          const restoreTags = (html, tagName) => {
-            const regex = new RegExp(`<${tagName}>###${tagName}-([a-z0-9]+)###<\\/${tagName}>`, 'gi');
-            return html.replace(regex, (match, id) => {
-              const placeholder = `###${tagName}-${id}###`;
-              const content = window[placeholder];
-              delete window[placeholder];
-              return `<${tagName}>${content}</${tagName}>`;
-            });
-          };
-          
-          // Preserve and restore script and style content
-          minified = preserveTags(minified, 'script');
-          minified = preserveTags(minified, 'style');
-          minified = restoreTags(minified, 'script');
-          minified = restoreTags(minified, 'style');
+          // Restore script and style tags
+          minified = restoreScriptsAndStyles(minified);
           
           // Final cleanup
           minified = minified.trim();
@@ -349,15 +686,15 @@
       
       // Public API
       return {
-        minify: function(code, language) {
+        minify: function(code, language, options = {}) {
           switch (language.toLowerCase()) {
             case 'javascript':
             case 'js':
-              return minifyJS(code);
+              return minifyJS(code, options);
             case 'css':
-              return minifyCSS(code);
+              return minifyCSS(code, options);
             case 'html':
-              return minifyHTML(code);
+              return minifyHTML(code, options);
             default:
               // Basic minification for unknown types
               return code.replace(/\s+/g, ' ').trim();
@@ -377,13 +714,13 @@
           const originalSize = new Blob([original]).size;
           const minifiedSize = new Blob([minified]).size;
           const reduction = originalSize > 0 ? ((originalSize - minifiedSize) / originalSize * 100) : 0;
-          const compressionRatio = originalSize > 0 ? (originalSize / minifiedSize).toFixed(2) : 0;
+          const compressionRatio = originalSize > 0 ? (originalSize / minifiedSize) : 0;
           
           return {
             originalSize,
             minifiedSize,
             reduction,
-            compressionRatio
+            compressionRatio: compressionRatio.toFixed(2)
           };
         }
       };
@@ -401,7 +738,26 @@
         languageSelect: document.getElementById('languageSelect'),
         minifyButton: document.getElementById('minifyButton'),
         copyButton: document.getElementById('copyButton'),
-        stats: document.getElementById('stats')
+        stats: document.getElementById('stats'),
+        
+        // Options
+        jsOptions: document.getElementById('jsOptions'),
+        cssOptions: document.getElementById('cssOptions'),
+        htmlOptions: document.getElementById('htmlOptions'),
+        
+        // JS Options
+        removeComments: document.getElementById('removeComments'),
+        removeWhitespace: document.getElementById('removeWhitespace'),
+        shortenVariables: document.getElementById('shortenVariables'),
+        
+        // CSS Options
+        removeCommentsCss: document.getElementById('removeCommentsCss'),
+        removeWhitespaceCss: document.getElementById('removeWhitespaceCss'),
+        
+        // HTML Options
+        removeCommentsHtml: document.getElementById('removeCommentsHtml'),
+        removeWhitespaceHtml: document.getElementById('removeWhitespaceHtml'),
+        preserveLineBreaks: document.getElementById('preserveLineBreaks')
       };
       
       // Setup event listeners
@@ -451,10 +807,38 @@
           copyToClipboard();
         });
         
-        // Auto-detect language from file extension
+        // Language select change
+        elements.languageSelect.addEventListener('change', () => {
+          updateLanguageOptions();
+        });
+        
+        // Input text change
         elements.originalCode.addEventListener('input', () => {
           updateUI();
         });
+      }
+      
+      // Update language-specific options
+      function updateLanguageOptions() {
+        const language = elements.languageSelect.value;
+        
+        // Hide all option groups
+        elements.jsOptions.style.display = 'none';
+        elements.cssOptions.style.display = 'none';
+        elements.htmlOptions.style.display = 'none';
+        
+        // Show the relevant option group
+        switch (language) {
+          case 'javascript':
+            elements.jsOptions.style.display = 'flex';
+            break;
+          case 'css':
+            elements.cssOptions.style.display = 'flex';
+            break;
+          case 'html':
+            elements.htmlOptions.style.display = 'flex';
+            break;
+        }
       }
       
       // Handle file upload
@@ -474,6 +858,7 @@
             elements.languageSelect.value = 'html';
           }
           
+          updateLanguageOptions();
           updateUI();
         };
         
@@ -491,7 +876,33 @@
         }
         
         try {
-          const minified = CodeMinifier.minify(code, language);
+          // Get options based on language
+          let options = {};
+          
+          switch (language) {
+            case 'javascript':
+              options = {
+                removeComments: elements.removeComments.checked,
+                removeWhitespace: elements.removeWhitespace.checked,
+                shortenVariables: elements.shortenVariables.checked
+              };
+              break;
+            case 'css':
+              options = {
+                removeComments: elements.removeCommentsCss.checked,
+                removeWhitespace: elements.removeWhitespaceCss.checked
+              };
+              break;
+            case 'html':
+              options = {
+                removeComments: elements.removeCommentsHtml.checked,
+                removeWhitespace: elements.removeWhitespaceHtml.checked,
+                preserveLineBreaks: elements.preserveLineBreaks.checked
+              };
+              break;
+          }
+          
+          const minified = CodeMinifier.minify(code, language, options);
           elements.minifiedCode.value = minified;
           
           // Update stats
@@ -558,8 +969,9 @@
       return {
         init: function() {
           setupEventListeners();
+          updateLanguageOptions();
           updateUI();
-          console.log('Minifier initialized');
+          console.log('Advanced Minifier initialized');
         }
       };
     })();

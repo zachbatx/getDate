@@ -1,0 +1,101 @@
+<div><div class="grid-cols-1 grid gap-2.5 [&amp;_>_*]:min-w-0 !gap-3.5"><h1 class="text-2xl font-bold mt-1 text-text-200" level="1">Project Summary: Digital Product Team Advisory Dashboard</h1>
+<h2 class="text-xl font-bold text-text-200 mt-1 -mb-0.5" level="2">Project Overview</h2>
+<p class="whitespace-pre-wrap break-words">A comprehensive dashboard solution designed for consultants who advise multiple digital product teams across organizations. This tool centralizes critical data points, visualizes team performance metrics, and provides actionable insights to improve product development efficiency and outcomes.</p>
+<h2 class="text-xl font-bold text-text-200 mt-1 -mb-0.5" level="2">Problem Statement</h2>
+<p class="whitespace-pre-wrap break-words">Product consultants currently face challenges including:</p>
+<ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7" depth="0">
+<li class="whitespace-normal break-words" index="0">Fragmented data across multiple teams and platforms</li>
+<li class="whitespace-normal break-words" index="1">Difficulty identifying patterns across projects</li>
+<li class="whitespace-normal break-words" index="2">Time-consuming manual reporting processes</li>
+<li class="whitespace-normal break-words" index="3">Delayed identification of project risks and bottlenecks</li>
+<li class="whitespace-normal break-words" index="4">Inconsistent metrics for measuring team performance</li>
+<li class="whitespace-normal break-words" index="5">Challenge of providing data-backed recommendations</li>
+</ul>
+<h2 class="text-xl font-bold text-text-200 mt-1 -mb-0.5" level="2">Goals &amp; Objectives</h2>
+<ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7" depth="0">
+<li class="whitespace-normal break-words" index="0">Create a unified view of all product team activities and metrics</li>
+<li class="whitespace-normal break-words" index="1">Reduce reporting time by 75%</li>
+<li class="whitespace-normal break-words" index="2">Enable real-time identification of development bottlenecks</li>
+<li class="whitespace-normal break-words" index="3">Provide predictive analytics for project timelines and outcomes</li>
+<li class="whitespace-normal break-words" index="4">Support evidence-based coaching and team improvement strategies</li>
+<li class="whitespace-normal break-words" index="5">Standardize KPIs across different teams and projects</li>
+</ul>
+<h2 class="text-xl font-bold text-text-200 mt-1 -mb-0.5" level="2">Solution Approach</h2>
+<p class="whitespace-pre-wrap break-words">The dashboard will integrate with existing project management, version control, and analytics tools to create a single source of truth for product development activities. Machine learning algorithms will analyze patterns to provide predictive insights and recommendations.</p>
+<h2 class="text-xl font-bold text-text-200 mt-1 -mb-0.5" level="2">Key Features</h2>
+<h3 class="text-lg font-bold text-text-200 mt-1 -mb-1.5" level="3">Data Integration Hub</h3>
+<ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7" depth="0">
+<li class="whitespace-normal break-words" index="0">API connections to Jira, GitHub, Trello, Asana, and other popular tools</li>
+<li class="whitespace-normal break-words" index="1">Automated data collection and normalization</li>
+<li class="whitespace-normal break-words" index="2">Historical data importing capabilities</li>
+</ul>
+<h3 class="text-lg font-bold text-text-200 mt-1 -mb-1.5" level="3">Performance Visualization</h3>
+<ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7" depth="0">
+<li class="whitespace-normal break-words" index="0">Team velocity tracking</li>
+<li class="whitespace-normal break-words" index="1">Sprint completion rates</li>
+<li class="whitespace-normal break-words" index="2">Code quality metrics</li>
+<li class="whitespace-normal break-words" index="3">Feature delivery timelines</li>
+</ul>
+<h3 class="text-lg font-bold text-text-200 mt-1 -mb-1.5" level="3">Resource Management</h3>
+<ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7" depth="0">
+<li class="whitespace-normal break-words" index="0">Team capacity planning</li>
+<li class="whitespace-normal break-words" index="1">Skill gap analysis</li>
+<li class="whitespace-normal break-words" index="2">Allocation optimization recommendations</li>
+</ul>
+<h3 class="text-lg font-bold text-text-200 mt-1 -mb-1.5" level="3">Risk Management</h3>
+<ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7" depth="0">
+<li class="whitespace-normal break-words" index="0">Early warning system for delayed milestones</li>
+<li class="whitespace-normal break-words" index="1">Technical debt indicators</li>
+<li class="whitespace-normal break-words" index="2">Scope creep detection</li>
+<li class="whitespace-normal break-words" index="3">Dependency management alerts</li>
+</ul>
+<h3 class="text-lg font-bold text-text-200 mt-1 -mb-1.5" level="3">Recommendation Engine</h3>
+<ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7" depth="0">
+<li class="whitespace-normal break-words" index="0">AI-powered insights for process improvements</li>
+<li class="whitespace-normal break-words" index="1">Team composition suggestions</li>
+<li class="whitespace-normal break-words" index="2">Meeting efficiency recommendations</li>
+<li class="whitespace-normal break-words" index="3">Best practice sharing across teams</li>
+</ul>
+<h3 class="text-lg font-bold text-text-200 mt-1 -mb-1.5" level="3">Customizable Reporting</h3>
+<ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7" depth="0">
+<li class="whitespace-normal break-words" index="0">Executive summaries</li>
+<li class="whitespace-normal break-words" index="1">Team performance reviews</li>
+<li class="whitespace-normal break-words" index="2">Client-ready presentations</li>
+<li class="whitespace-normal break-words" index="3">Custom metric tracking</li>
+</ul>
+<h2 class="text-xl font-bold text-text-200 mt-1 -mb-0.5" level="2">Implementation Timeline</h2>
+<ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7" depth="0">
+<li class="whitespace-normal break-words" index="0"><strong>Phase 1 (Weeks 1-4)</strong>: Requirements gathering and system design</li>
+<li class="whitespace-normal break-words" index="1"><strong>Phase 2 (Weeks 5-8)</strong>: Core dashboard development and initial integrations</li>
+<li class="whitespace-normal break-words" index="2"><strong>Phase 3 (Weeks 9-12)</strong>: Advanced analytics implementation</li>
+<li class="whitespace-normal break-words" index="3"><strong>Phase 4 (Weeks 13-16)</strong>: User testing and refinement</li>
+<li class="whitespace-normal break-words" index="4"><strong>Phase 5 (Weeks 17-20)</strong>: Full deployment and training</li>
+</ul>
+<h2 class="text-xl font-bold text-text-200 mt-1 -mb-0.5" level="2">Team Structure</h2>
+<ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7" depth="0">
+<li class="whitespace-normal break-words" index="0">Project Manager (1)</li>
+<li class="whitespace-normal break-words" index="1">UX/UI Designer (1)</li>
+<li class="whitespace-normal break-words" index="2">Frontend Developers (2)</li>
+<li class="whitespace-normal break-words" index="3">Backend Developers (2)</li>
+<li class="whitespace-normal break-words" index="4">Data Engineers (2)</li>
+<li class="whitespace-normal break-words" index="5">QA Specialists (1)</li>
+<li class="whitespace-normal break-words" index="6">Technical Writer (1)</li>
+</ul>
+<h2 class="text-xl font-bold text-text-200 mt-1 -mb-0.5" level="2">Success Metrics</h2>
+<ul class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-disc space-y-1.5 pl-7" depth="0">
+<li class="whitespace-normal break-words" index="0">90% user adoption rate among consultants</li>
+<li class="whitespace-normal break-words" index="1">75% reduction in reporting time</li>
+<li class="whitespace-normal break-words" index="2">50% improvement in early risk identification</li>
+<li class="whitespace-normal break-words" index="3">30% increase in successful project deliveries</li>
+<li class="whitespace-normal break-words" index="4">25% reduction in project timeline extensions</li>
+<li class="whitespace-normal break-words" index="5">Positive ROI within 6 months of implementation</li>
+</ul>
+<h2 class="text-xl font-bold text-text-200 mt-1 -mb-0.5" level="2">Risks &amp; Mitigation Strategies</h2>
+<pre class="font-styrene border-border-100/50 overflow-x-scroll w-full rounded border-[0.5px] shadow-[0_2px_12px_hsl(var(--always-black)/5%)]"><table class="bg-bg-100 min-w-full border-separate border-spacing-0 text-sm leading-[1.88888] whitespace-normal"><thead class="border-b-border-100/50 border-b-[0.5px] text-left"><tr class="[tbody>&amp;]:odd:bg-bg-500/10"><th class="text-text-000 [&amp;:not(:first-child)]:-x-[hsla(var(--border-100) / 0.5)] font-400 px-2 [&amp;:not(:first-child)]:border-l-[0.5px]">Risk</th><th class="text-text-000 [&amp;:not(:first-child)]:-x-[hsla(var(--border-100) / 0.5)] font-400 px-2 [&amp;:not(:first-child)]:border-l-[0.5px]">Impact</th><th class="text-text-000 [&amp;:not(:first-child)]:-x-[hsla(var(--border-100) / 0.5)] font-400 px-2 [&amp;:not(:first-child)]:border-l-[0.5px]">Probability</th><th class="text-text-000 [&amp;:not(:first-child)]:-x-[hsla(var(--border-100) / 0.5)] font-400 px-2 [&amp;:not(:first-child)]:border-l-[0.5px]">Mitigation Strategy</th></tr></thead><tbody><tr class="[tbody>&amp;]:odd:bg-bg-500/10"><td class="border-t-border-100/50 [&amp;:not(:first-child)]:-x-[hsla(var(--border-100) / 0.5)] border-t-[0.5px] px-2 [&amp;:not(:first-child)]:border-l-[0.5px]">Integration challenges with legacy systems</td><td class="border-t-border-100/50 [&amp;:not(:first-child)]:-x-[hsla(var(--border-100) / 0.5)] border-t-[0.5px] px-2 [&amp;:not(:first-child)]:border-l-[0.5px]">High</td><td class="border-t-border-100/50 [&amp;:not(:first-child)]:-x-[hsla(var(--border-100) / 0.5)] border-t-[0.5px] px-2 [&amp;:not(:first-child)]:border-l-[0.5px]">Medium</td><td class="border-t-border-100/50 [&amp;:not(:first-child)]:-x-[hsla(var(--border-100) / 0.5)] border-t-[0.5px] px-2 [&amp;:not(:first-child)]:border-l-[0.5px]">Develop custom adapters and provide alternative manual input methods</td></tr><tr class="[tbody>&amp;]:odd:bg-bg-500/10"><td class="border-t-border-100/50 [&amp;:not(:first-child)]:-x-[hsla(var(--border-100) / 0.5)] border-t-[0.5px] px-2 [&amp;:not(:first-child)]:border-l-[0.5px]">Data privacy concerns</td><td class="border-t-border-100/50 [&amp;:not(:first-child)]:-x-[hsla(var(--border-100) / 0.5)] border-t-[0.5px] px-2 [&amp;:not(:first-child)]:border-l-[0.5px]">High</td><td class="border-t-border-100/50 [&amp;:not(:first-child)]:-x-[hsla(var(--border-100) / 0.5)] border-t-[0.5px] px-2 [&amp;:not(:first-child)]:border-l-[0.5px]">Medium</td><td class="border-t-border-100/50 [&amp;:not(:first-child)]:-x-[hsla(var(--border-100) / 0.5)] border-t-[0.5px] px-2 [&amp;:not(:first-child)]:border-l-[0.5px]">Implement robust security protocols and anonymization options</td></tr><tr class="[tbody>&amp;]:odd:bg-bg-500/10"><td class="border-t-border-100/50 [&amp;:not(:first-child)]:-x-[hsla(var(--border-100) / 0.5)] border-t-[0.5px] px-2 [&amp;:not(:first-child)]:border-l-[0.5px]">User adoption resistance</td><td class="border-t-border-100/50 [&amp;:not(:first-child)]:-x-[hsla(var(--border-100) / 0.5)] border-t-[0.5px] px-2 [&amp;:not(:first-child)]:border-l-[0.5px]">Medium</td><td class="border-t-border-100/50 [&amp;:not(:first-child)]:-x-[hsla(var(--border-100) / 0.5)] border-t-[0.5px] px-2 [&amp;:not(:first-child)]:border-l-[0.5px]">High</td><td class="border-t-border-100/50 [&amp;:not(:first-child)]:-x-[hsla(var(--border-100) / 0.5)] border-t-[0.5px] px-2 [&amp;:not(:first-child)]:border-l-[0.5px]">Create intuitive UX and provide comprehensive training</td></tr><tr class="[tbody>&amp;]:odd:bg-bg-500/10"><td class="border-t-border-100/50 [&amp;:not(:first-child)]:-x-[hsla(var(--border-100) / 0.5)] border-t-[0.5px] px-2 [&amp;:not(:first-child)]:border-l-[0.5px]">Data accuracy issues</td><td class="border-t-border-100/50 [&amp;:not(:first-child)]:-x-[hsla(var(--border-100) / 0.5)] border-t-[0.5px] px-2 [&amp;:not(:first-child)]:border-l-[0.5px]">High</td><td class="border-t-border-100/50 [&amp;:not(:first-child)]:-x-[hsla(var(--border-100) / 0.5)] border-t-[0.5px] px-2 [&amp;:not(:first-child)]:border-l-[0.5px]">Medium</td><td class="border-t-border-100/50 [&amp;:not(:first-child)]:-x-[hsla(var(--border-100) / 0.5)] border-t-[0.5px] px-2 [&amp;:not(:first-child)]:border-l-[0.5px]">Implement validation rules and regular auditing processes</td></tr><tr class="[tbody>&amp;]:odd:bg-bg-500/10"><td class="border-t-border-100/50 [&amp;:not(:first-child)]:-x-[hsla(var(--border-100) / 0.5)] border-t-[0.5px] px-2 [&amp;:not(:first-child)]:border-l-[0.5px]">Scope creep</td><td class="border-t-border-100/50 [&amp;:not(:first-child)]:-x-[hsla(var(--border-100) / 0.5)] border-t-[0.5px] px-2 [&amp;:not(:first-child)]:border-l-[0.5px]">Medium</td><td class="border-t-border-100/50 [&amp;:not(:first-child)]:-x-[hsla(var(--border-100) / 0.5)] border-t-[0.5px] px-2 [&amp;:not(:first-child)]:border-l-[0.5px]">High</td><td class="border-t-border-100/50 [&amp;:not(:first-child)]:-x-[hsla(var(--border-100) / 0.5)] border-t-[0.5px] px-2 [&amp;:not(:first-child)]:border-l-[0.5px]">Establish clear MVP requirements and phase-based approach</td></tr></tbody></table></pre>
+<h2 class="text-xl font-bold text-text-200 mt-1 -mb-0.5" level="2">Next Steps</h2>
+<ol class="[&amp;:not(:last-child)_ul]:pb-1 [&amp;:not(:last-child)_ol]:pb-1 list-decimal space-y-1.5 pl-7" depth="0">
+<li class="whitespace-normal break-words" index="0">Stakeholder interviews and requirements validation</li>
+<li class="whitespace-normal break-words" index="1">Vendor selection for implementation</li>
+<li class="whitespace-normal break-words" index="2">Detailed project planning and resource allocation</li>
+<li class="whitespace-normal break-words" index="3">Initial prototype development</li>
+</ol></div></div>

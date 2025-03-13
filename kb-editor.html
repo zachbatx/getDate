@@ -1,0 +1,2417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Knowledge Base Editor</title>
+    <style>
+        :root {
+            --primary: #4a6ee0;
+            --primary-light: #eef1fd;
+            --secondary: #6c757d;
+            --success: #28a745;
+            --danger: #dc3545;
+            --warning: #ffc107;
+            --light: #f8f9fa;
+            --dark: #343a40;
+            --white: #ffffff;
+            --sidebar-width: 280px;
+            --header-height: 60px;
+            --border-color: #e9ecef;
+            --hover-bg: #f7f9fc;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        }
+
+        body {
+            background-color: #f7f9fc;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+        }
+
+        .container {
+            display: grid;
+            grid-template-areas:
+                "header header"
+                "sidebar main";
+            grid-template-columns: var(--sidebar-width) 1fr;
+            grid-template-rows: var(--header-height) 1fr;
+            height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            grid-area: header;
+            background-color: var(--white);
+            border-bottom: 1px solid var(--border-color);
+            padding: 0 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+        }
+
+        .header h1 {
+            font-size: 1.25rem;
+            margin: 0;
+            color: var(--primary);
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            grid-area: sidebar;
+            background-color: var(--white);
+            border-right: 1px solid var(--border-color);
+            padding: 1.5rem;
+            overflow-y: auto;
+            box-shadow: 2px 0 4px rgba(0, 0, 0, 0.04);
+        }
+
+        .sidebar-heading {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .sidebar-heading h2 {
+            font-size: 1rem;
+            margin: 0;
+        }
+
+        .tree-view {
+            list-style: none;
+        }
+
+        .tree-item {
+            margin-bottom: 0.5rem;
+        }
+
+        .tree-item-header {
+            display: flex;
+            align-items: center;
+            padding: 0.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            user-select: none;
+        }
+        
+        /* Tree item that maintains highlight */
+        .tree-item-header.selected {
+            background-color: var(--primary-light);
+            color: var(--primary);
+            font-weight: 500;
+        }
+
+        .tree-item-header:hover {
+            background-color: var(--hover-bg);
+        }
+
+        .tree-item-header.active {
+            background-color: var(--primary-light);
+            color: var(--primary);
+            font-weight: 500;
+        }
+
+        .tree-item-header .icon {
+            margin-right: 0.5rem;
+            transition: transform 0.2s;
+        }
+
+        .tree-item-header .icon.expanded {
+            transform: rotate(90deg);
+        }
+
+        .tree-item-children {
+            list-style: none;
+            margin-left: 1.5rem;
+            display: none;
+        }
+
+        .tree-item-children.expanded {
+            display: block;
+        }
+
+        /* Main Content */
+        .main {
+            grid-area: main;
+            padding: 1.5rem;
+            overflow-y: auto;
+        }
+
+        .content-header {
+            margin-bottom: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .content-header h2 {
+            margin: 0;
+        }
+
+        .breadcrumb {
+            margin-bottom: 1rem;
+            color: var(--secondary);
+            font-size: 0.875rem;
+        }
+
+        .breadcrumb a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .breadcrumb span {
+            margin: 0 0.25rem;
+        }
+
+        /* Forms */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            font-size: 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            background-color: var(--white);
+            transition: border-color 0.15s ease-in-out;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(74, 110, 224, 0.1);
+        }
+
+        textarea.form-control {
+            min-height: 100px;
+        }
+
+        /* Array Editor */
+        .array-editor {
+            margin-bottom: 1rem;
+        }
+
+        .array-item {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .array-item .form-control {
+            flex-grow: 1;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.15s ease-in-out;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-icon {
+            padding: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background-color: #3a5dcc;
+        }
+
+        .btn-secondary {
+            background-color: var(--secondary);
+            color: var(--white);
+        }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+
+        .btn-success {
+            background-color: var(--success);
+            color: var(--white);
+        }
+
+        .btn-success:hover {
+            background-color: #218838;
+        }
+
+        .btn-danger {
+            background-color: var(--danger);
+            color: var(--white);
+        }
+
+        .btn-danger:hover {
+            background-color: #c82333;
+        }
+
+        .btn-link {
+            background-color: transparent;
+            color: var(--primary);
+            text-decoration: none;
+            padding: 0;
+        }
+
+        .btn-link:hover {
+            text-decoration: underline;
+        }
+
+        /* Cards */
+        .card {
+            background-color: var(--white);
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 1rem 1.5rem;
+            background-color: var(--white);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .card-header h3 {
+            margin: 0;
+            font-size: 1.125rem;
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        /* Dropzone */
+        .dropzone {
+            border: 2px dashed var(--border-color);
+            border-radius: 8px;
+            padding: 3rem 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color 0.15s ease-in-out;
+        }
+
+        .dropzone:hover, .dropzone.dragover {
+            border-color: var(--primary);
+            background-color: var(--primary-light);
+        }
+
+        .dropzone h3 {
+            margin-bottom: 1rem;
+        }
+
+        .dropzone p {
+            color: var(--secondary);
+            margin-bottom: 1rem;
+        }
+
+        /* Notifications */
+        .notifications {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .notification {
+            padding: 1rem;
+            border-radius: 4px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            animation: slideIn 0.3s ease-out forwards;
+        }
+
+        .notification.success {
+            background-color: #d4edda;
+            color: #155724;
+            border-left: 4px solid #28a745;
+        }
+
+        .notification.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border-left: 4px solid #dc3545;
+        }
+
+        .notification.info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border-left: 4px solid #17a2b8;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* Loading */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(255, 255, 255, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(74, 110, 224, 0.1);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal {
+            background-color: var(--white);
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .modal-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 0.5rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                grid-template-areas:
+                    "header"
+                    "main";
+                grid-template-columns: 1fr;
+                grid-template-rows: var(--header-height) 1fr;
+            }
+
+            .sidebar {
+                position: fixed;
+                left: -100%;
+                top: var(--header-height);
+                width: 100%;
+                height: calc(100vh - var(--header-height));
+                z-index: 100;
+                transition: left 0.3s ease-in-out;
+            }
+
+            .sidebar.show {
+                left: 0;
+            }
+
+            .sidebar-toggle {
+                display: block !important;
+            }
+        }
+
+        .sidebar-toggle {
+            display: none;
+            background: transparent;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.25rem;
+        }
+
+        /* Code Editor */
+        .code-editor {
+            font-family: 'Courier New', Courier, monospace;
+            height: 500px;
+            overflow-y: auto;
+            white-space: pre;
+            font-size: 14px;
+            line-height: 1.5;
+            tab-size: 2;
+        }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+
+        .empty-state h3 {
+            margin-bottom: 1rem;
+        }
+
+        .empty-state p {
+            color: var(--secondary);
+            margin-bottom: 1.5rem;
+        }
+
+        /* Hidden */
+        .hidden {
+            display: none !important;
+        }
+
+        /* Alert */
+        .alert {
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 4px;
+        }
+
+        .alert-warning {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeeba;
+        }
+        
+        .alert-info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        
+        /* List View Styles */
+        .list-view-toggle {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            border-radius: 4px;
+            background-color: #e9ecef;
+            color: #495057;
+            cursor: pointer;
+            user-select: none;
+            margin-right: 8px;
+            transition: background-color 0.2s, color 0.2s;
+            font-size: 12px;
+        }
+        
+        .list-view-toggle:hover {
+            background-color: #4a6ee0;
+            color: white;
+        }
+        
+        .list-view-item {
+            margin: 10px 0;
+            padding: 8px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .list-view-section {
+            margin: 16px 0;
+            padding: 6px 0;
+        }
+        
+        .list-view-content {
+            margin-left: 30px;
+            border-left: 2px solid #eef1fd;
+            padding-left: 18px;
+            padding-top: 8px;
+            padding-bottom: 4px;
+        }
+        
+        .list-view-label {
+            font-weight: 500;
+            color: #212529;
+        }
+        
+        .list-view-value {
+            font-family: 'Courier New', monospace;
+            color: #0366d6;
+            margin-left: 8px;
+            background-color: #f8f9fa;
+            padding: 2px 6px;
+            border-radius: 3px;
+            display: inline-block;
+        }
+        
+        .list-view-function {
+            color: #6f42c1;
+        }
+        
+        .list-view-array {
+            color: #e36209;
+        }
+        
+        .list-view-object {
+            color: #22863a;
+        }
+        
+        .list-view-boolean {
+            color: #032f62;
+        }
+        
+        .list-view-number {
+            color: #005cc5;
+        }
+        
+        .list-view-string {
+            color: #d73a49;
+        }
+        
+        .view-toggle-btn {
+            transition: background-color 0.2s, color 0.2s;
+        }
+        
+        .view-toggle-btn.active {
+            background-color: var(--primary-light) !important;
+            color: var(--primary) !important;
+            font-weight: 500;
+        }
+        
+        .collapsible-content {
+            overflow: hidden;
+            max-height: 0;
+            transition: max-height 0.3s ease-out, opacity 0.3s ease-out;
+            opacity: 0;
+        }
+        
+        .collapsible-content.expanded {
+            max-height: 10000px; /* A large value to accommodate content */
+            opacity: 1;
+        }
+
+        /* Tooltip */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+
+        .tooltip .tooltip-text {
+            visibility: hidden;
+            width: 120px;
+            background-color: var(--dark);
+            color: var(--white);
+            text-align: center;
+            border-radius: 4px;
+            padding: 5px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -60px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.75rem;
+        }
+
+        .tooltip:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-left">
+                <button id="sidebar-toggle" class="sidebar-toggle">
+                    ☰
+                </button>
+                <h1>Knowledge Base Editor</h1>
+            </div>
+            <div class="header-actions">
+                <div class="view-toggle-container" style="margin-right: 15px; display: inline-flex; align-items: center; border: 1px solid #ddd; border-radius: 4px; overflow: hidden; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
+                    <button id="tree-view-btn" class="view-toggle-btn active" style="border: none; background: var(--primary-light); color: var(--primary); padding: 8px 12px; cursor: pointer; font-weight: 500; min-width: 100px;">
+                        <span>Tree View</span>
+                    </button>
+                    <button id="list-view-btn" class="view-toggle-btn" style="border: none; background: var(--white); color: var(--secondary); padding: 8px 12px; cursor: pointer; font-weight: 500; min-width: 100px;">
+                        <span>List View</span>
+                    </button>
+                </div>
+                <button id="import-btn" class="btn btn-primary">
+                    <span>Import</span>
+                </button>
+                <button id="export-btn" class="btn btn-success" disabled>
+                    <span>Export</span>
+                </button>
+            </div>
+        </header>
+
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-heading">
+                <h2>Navigation</h2>
+                <button id="add-section-btn" class="btn btn-icon btn-link" disabled title="Add new section">
+                    +
+                </button>
+            </div>
+            <ul id="tree-view" class="tree-view">
+                <!-- Tree view items will be generated here -->
+            </ul>
+        </aside>
+
+        <main class="main" id="main">
+            <div id="empty-state" class="empty-state">
+                <h3>Welcome to the Knowledge Base Editor</h3>
+                <p>Import a knowledge base file to get started</p>
+                <div class="dropzone" id="dropzone">
+                    <h3>Drop file here or click to upload</h3>
+                    <p>Select a JavaScript knowledge base file to import</p>
+                    <button class="btn btn-primary">Select File</button>
+                    <input type="file" id="file-input" accept=".js" style="display: none;">
+                </div>
+            </div>
+
+            <div id="editor-container" class="hidden">
+                <div class="breadcrumb" id="breadcrumb">
+                    <!-- Breadcrumb will be generated here -->
+                </div>
+                <div class="content-header">
+                    <h2 id="editor-title">Edit Item</h2>
+                    <div class="content-actions">
+                        <button id="save-btn" class="btn btn-success">
+                            <span>Save Changes</span>
+                        </button>
+                    </div>
+                </div>
+                <div id="editor-content">
+                    <!-- Editor content will be generated here -->
+                </div>
+            </div>
+            
+            <div id="list-view-container" class="hidden" style="padding: 20px;">
+                <div class="content-header" style="margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between;">
+                    <h2 style="margin: 0; color: #333; font-size: 24px; font-weight: 500;">Complete Knowledge Base Structure</h2>
+                    <div class="content-actions" style="display: flex; gap: 10px;">
+                        <button id="list-view-expand-all" class="btn" style="background-color: #f0f2f5; color: #495057; border: none; padding: 8px 16px; border-radius: 4px; font-weight: 500; display: flex; align-items: center;">
+                            <span>Expand All</span>
+                        </button>
+                        <button id="list-view-collapse-all" class="btn" style="background-color: #f0f2f5; color: #495057; border: none; padding: 8px 16px; border-radius: 4px; font-weight: 500; display: flex; align-items: center;">
+                            <span>Collapse All</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="alert alert-info" style="margin: 16px 0 24px; background-color: #e3f2fd; color: #0c5460; border: none; border-left: 4px solid #4a6ee0; border-radius: 4px; padding: 16px;">
+                    <p style="margin: 0; font-size: 14px;">This view shows the entire structure of your knowledge base. Click on any item to edit it directly.</p>
+                </div>
+                <div id="list-view-content" style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+                    <!-- Bulleted list view will be generated here -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div id="modal-container"></div>
+    <div id="notifications" class="notifications"></div>
+
+    <script>
+        // Main application state
+        const app = {
+            state: {
+                originalContent: null,
+                knowledgeBase: null,
+                currentPath: [],
+                currentNode: null,
+                hasChanges: false,
+                isEditing: false
+            },
+            init() {
+                this.bindEvents();
+                this.notifications.init();
+            },
+            bindEvents() {
+                // File import handlers
+                document.getElementById('import-btn').addEventListener('click', () => {
+                    document.getElementById('file-input').click();
+                });
+                
+                document.getElementById('file-input').addEventListener('change', (e) => {
+                    if (e.target.files.length > 0) {
+                        this.importFile(e.target.files[0]);
+                    }
+                });
+
+                // Dropzone handlers
+                const dropzone = document.getElementById('dropzone');
+                dropzone.addEventListener('click', () => {
+                    document.getElementById('file-input').click();
+                });
+
+                dropzone.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    dropzone.classList.add('dragover');
+                });
+
+                dropzone.addEventListener('dragleave', () => {
+                    dropzone.classList.remove('dragover');
+                });
+
+                dropzone.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    dropzone.classList.remove('dragover');
+                    if (e.dataTransfer.files.length > 0) {
+                        this.importFile(e.dataTransfer.files[0]);
+                    }
+                });
+
+                // Export button
+                document.getElementById('export-btn').addEventListener('click', () => {
+                    this.exportFile();
+                });
+
+                // Save button
+                document.getElementById('save-btn').addEventListener('click', () => {
+                    this.saveCurrentNode();
+                });
+
+                // Sidebar toggle (for mobile)
+                document.getElementById('sidebar-toggle').addEventListener('click', () => {
+                    document.getElementById('sidebar').classList.toggle('show');
+                });
+
+                // Add section button
+                document.getElementById('add-section-btn').addEventListener('click', () => {
+                    this.showAddSectionModal();
+                });
+                
+                // View toggle buttons
+                document.getElementById('tree-view-btn').addEventListener('click', () => {
+                    this.switchView('tree');
+                });
+                
+                document.getElementById('list-view-btn').addEventListener('click', () => {
+                    this.switchView('list');
+                });
+                
+                // List view expand/collapse buttons
+                document.getElementById('list-view-expand-all').addEventListener('click', () => {
+                    document.querySelectorAll('.collapsible-content').forEach(el => {
+                        el.classList.add('expanded');
+                    });
+                    document.querySelectorAll('.list-view-toggle').forEach(el => {
+                        el.textContent = '▼';
+                        el.style.backgroundColor = '#4a6ee0';
+                        el.style.color = 'white';
+                    });
+                });
+                
+                document.getElementById('list-view-collapse-all').addEventListener('click', () => {
+                    document.querySelectorAll('.collapsible-content').forEach(el => {
+                        el.classList.remove('expanded');
+                    });
+                    document.querySelectorAll('.list-view-toggle').forEach(el => {
+                        el.textContent = '▶';
+                        el.style.backgroundColor = '#e9ecef';
+                        el.style.color = '#495057';
+                    });
+                });
+            },
+            
+            switchView(viewType) {
+                if (viewType === 'tree') {
+                    // Show tree view
+                    document.getElementById('editor-container').classList.remove('hidden');
+                    document.getElementById('list-view-container').classList.add('hidden');
+                    document.getElementById('sidebar').classList.remove('hidden');
+                    
+                    // Update button states
+                    document.getElementById('tree-view-btn').classList.add('active');
+                    document.getElementById('list-view-btn').classList.remove('active');
+                } else if (viewType === 'list') {
+                    // Show list view
+                    document.getElementById('editor-container').classList.add('hidden');
+                    document.getElementById('list-view-container').classList.remove('hidden');
+                    document.getElementById('sidebar').classList.add('hidden');
+                    
+                    // Update button states
+                    document.getElementById('tree-view-btn').classList.remove('active');
+                    document.getElementById('list-view-btn').classList.add('active');
+                    
+                    // Render the list view
+                    this.renderListView();
+                }
+            },
+            async importFile(file) {
+                try {
+                    this.showLoading();
+                    
+                    // Read file content
+                    const content = await this.readFileAsync(file);
+                    this.state.originalContent = content;
+                    
+                    // Parse the file
+                    const knowledgeBase = this.parseKnowledgeBaseFile(content);
+                    
+                    if (!knowledgeBase) {
+                        throw new Error('Could not parse the knowledge base file');
+                    }
+                    
+                    // Update state
+                    this.state.knowledgeBase = knowledgeBase;
+                    this.state.currentPath = [];
+                    this.state.currentNode = null;
+                    this.state.hasChanges = false;
+                    
+                    // Update UI
+                    this.renderTreeView();
+                    this.showEditor(false);
+                    document.getElementById('export-btn').disabled = false;
+                    document.getElementById('add-section-btn').disabled = false;
+                    
+                    // Show success notification
+                    this.notifications.show('success', 'Knowledge base imported successfully');
+                } catch (error) {
+                    console.error('Import error:', error);
+                    this.notifications.show('error', `Import failed: ${error.message}`);
+                } finally {
+                    this.hideLoading();
+                }
+            },
+            readFileAsync(file) {
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = (e) => resolve(e.target.result);
+                    reader.onerror = (e) => reject(new Error('File read error'));
+                    reader.readAsText(file);
+                });
+            },
+            parseKnowledgeBaseFile(content) {
+                try {
+                    // This is a basic parser for the knowledge base format
+                    // It extracts the object definition between window.kbXXX = { ... };
+
+                    // Find the object assignment
+                    const regex = /window\.([a-zA-Z0-9_]+)\s*=\s*(\{[\s\S]*\});/;
+                    const match = content.match(regex);
+                    
+                    if (!match) {
+                        throw new Error('Could not identify knowledge base object in file');
+                    }
+                    
+                    const varName = match[1];
+                    const objectContent = match[2];
+                    
+                    // Safely evaluate the object content
+                    // Note: This approach has security implications in a production environment
+                    // A better approach would be to use a proper parser
+                    const obj = new Function(`return ${objectContent}`)();
+                    
+                    return {
+                        varName,
+                        data: obj
+                    };
+                } catch (error) {
+                    console.error('Parse error:', error);
+                    return null;
+                }
+            },
+            renderTreeView() {
+                const treeView = document.getElementById('tree-view');
+                treeView.innerHTML = '';
+                
+                if (!this.state.knowledgeBase) return;
+                
+                const kb = this.state.knowledgeBase.data;
+                
+                // Store expanded state before rebuilding
+                const expandedNodes = {};
+                document.querySelectorAll('.tree-item-children.expanded').forEach(el => {
+                    const parentItem = el.closest('.tree-item');
+                    if (parentItem && parentItem.dataset.id) {
+                        expandedNodes[parentItem.dataset.id] = true;
+                    }
+                });
+                
+                // Add root item
+                const rootItem = this.createTreeItem('root', this.state.knowledgeBase.varName, true);
+                treeView.appendChild(rootItem);
+                
+                // Add main properties
+                const childrenList = document.createElement('ul');
+                childrenList.className = 'tree-item-children expanded';
+                
+                for (const key in kb) {
+                    if (typeof kb[key] === 'object' && kb[key] !== null) {
+                        // This is a nested object or array
+                        const item = this.createTreeItem(key, key, expandedNodes[key] || false);
+                        childrenList.appendChild(item);
+                        
+                        // Recursively add children
+                        if (Object.keys(kb[key]).length > 0) {
+                            this.addChildrenToTreeItem(item, kb[key], [key], expandedNodes);
+                        }
+                    } else {
+                        // This is a simple property
+                        const displayValue = typeof kb[key] === 'function' ? 'Custom Code' : 
+                                           typeof kb[key] === 'boolean' ? (kb[key] ? 'Yes' : 'No') :
+                                           this.getShortValue(kb[key]);
+                        const item = this.createTreeItem(key, `${key}: ${displayValue}`, false);
+                        childrenList.appendChild(item);
+                    }
+                }
+                
+                rootItem.appendChild(childrenList);
+                
+                // Restore selection if we have a current path
+                if (this.state.currentPath && this.state.currentPath.length > 0) {
+                    const pathId = this.state.currentPath.join('.');
+                    const header = document.querySelector(`.tree-item-header[data-id="${pathId}"]`);
+                    if (header) {
+                        header.classList.add('selected');
+                    }
+                }
+            },
+            createTreeItem(id, label, isExpanded = false) {
+                const item = document.createElement('li');
+                item.className = 'tree-item';
+                item.dataset.id = id;
+                
+                const header = document.createElement('div');
+                header.className = 'tree-item-header';
+                header.dataset.id = id;
+                
+                // If this is the currently selected item, add the selected class
+                if (this.state.currentPath && this.state.currentPath.join('.') === id) {
+                    header.classList.add('selected');
+                }
+                
+                const icon = document.createElement('span');
+                icon.className = `icon ${isExpanded ? 'expanded' : ''}`;
+                icon.innerHTML = '▶';
+                header.appendChild(icon);
+                
+                const labelEl = document.createElement('span');
+                labelEl.className = 'label';
+                labelEl.textContent = label;
+                header.appendChild(labelEl);
+                
+                item.appendChild(header);
+                
+                // Add event listeners
+                header.addEventListener('click', (e) => {
+                    // Toggle expansion
+                    const childrenList = item.querySelector('.tree-item-children');
+                    if (childrenList) {
+                        childrenList.classList.toggle('expanded');
+                        icon.classList.toggle('expanded');
+                    }
+                    
+                    // Select the item
+                    this.selectTreeItem(header.dataset.id);
+                    
+                    // Prevent event from bubbling to parent tree items
+                    e.stopPropagation();
+                });
+                
+                return item;
+            },
+            addChildrenToTreeItem(parentItem, obj, path, expandedNodes = {}) {
+                const childrenList = document.createElement('ul');
+                childrenList.className = 'tree-item-children';
+                
+                // Check if this path was expanded
+                const pathId = path.join('.');
+                if (expandedNodes[pathId]) {
+                    childrenList.classList.add('expanded');
+                }
+                
+                for (const key in obj) {
+                    // Generate a unique ID for this path
+                    const childPath = [...path, key];
+                    const childId = childPath.join('.');
+                    
+                    if (typeof obj[key] === 'object' && obj[key] !== null) {
+                        // This is a nested object or array
+                        const isArray = Array.isArray(obj[key]);
+                        let label = key;
+                        
+                        if (isArray) {
+                            label = `${key} (${obj[key].length} items)`;
+                        }
+                        
+                        const item = this.createTreeItem(childId, label, expandedNodes[childId] || false);
+                        childrenList.appendChild(item);
+                        
+                        // Recursively add children
+                        if (Object.keys(obj[key]).length > 0) {
+                            this.addChildrenToTreeItem(item, obj[key], childPath, expandedNodes);
+                        }
+                    } else {
+                        // This is a simple property
+                        const displayValue = typeof obj[key] === 'function' ? 'Custom Code' : 
+                                           typeof obj[key] === 'boolean' ? (obj[key] ? 'Yes' : 'No') :
+                                           this.getShortValue(obj[key]);
+                        const item = this.createTreeItem(childId, `${key}: ${displayValue}`, false);
+                        childrenList.appendChild(item);
+                    }
+                }
+                
+                parentItem.appendChild(childrenList);
+            },
+            getShortValue(value) {
+                if (typeof value === 'function') {
+                    return 'function() { ... }';
+                } else if (typeof value === 'string') {
+                    return value.length > 30 ? value.substring(0, 27) + '...' : value;
+                } else {
+                    return String(value);
+                }
+            },
+            selectTreeItem(id) {
+                // Remove selected class from all items
+                document.querySelectorAll('.tree-item-header').forEach(el => {
+                    el.classList.remove('selected');
+                    el.classList.remove('active');
+                });
+                
+                // Add selected class to selected item
+                const selectedItem = document.querySelector(`.tree-item-header[data-id="${id}"]`);
+                if (selectedItem) {
+                    selectedItem.classList.add('selected');
+                    selectedItem.classList.add('active');
+                    
+                    // Ensure parent folders are expanded
+                    let parent = selectedItem.closest('.tree-item-children');
+                    while (parent) {
+                        parent.classList.add('expanded');
+                        const parentIcon = parent.previousElementSibling?.querySelector('.icon');
+                        if (parentIcon) {
+                            parentIcon.classList.add('expanded');
+                        }
+                        parent = parent.parentElement.closest('.tree-item-children');
+                    }
+                }
+                
+                // Update path and node
+                if (id === 'root') {
+                    this.state.currentPath = [];
+                    this.state.currentNode = this.state.knowledgeBase.data;
+                } else {
+                    const path = id.split('.');
+                    this.state.currentPath = path;
+                    
+                    // Navigate to the node
+                    let node = this.state.knowledgeBase.data;
+                    for (const key of path) {
+                        node = node[key];
+                    }
+                    this.state.currentNode = node;
+                }
+                
+                // Show the editor
+                this.showEditor(true);
+                this.renderEditor();
+            },
+            showEditor(show) {
+                document.getElementById('empty-state').classList.toggle('hidden', show);
+                
+                // Check which view is active
+                const isTreeViewActive = document.getElementById('tree-view-btn').classList.contains('active');
+                
+                if (isTreeViewActive) {
+                    document.getElementById('editor-container').classList.toggle('hidden', !show);
+                    document.getElementById('list-view-container').classList.add('hidden');
+                } else {
+                    document.getElementById('list-view-container').classList.toggle('hidden', !show);
+                    document.getElementById('editor-container').classList.add('hidden');
+                    
+                    if (show) {
+                        this.renderListView();
+                    }
+                }
+            },
+            
+            renderListView() {
+                if (!this.state.knowledgeBase) return;
+                
+                const container = document.getElementById('list-view-content');
+                container.innerHTML = '';
+                
+                const kb = this.state.knowledgeBase.data;
+                
+                // Create a list wrapper
+                const list = document.createElement('div');
+                list.className = 'list-view-wrapper';
+                
+                // Add title
+                const title = document.createElement('h3');
+                title.textContent = this.state.knowledgeBase.varName;
+                title.className = 'list-view-title';
+                list.appendChild(title);
+                
+                // Add top-level content
+                this.addListViewItems(list, kb, []);
+                
+                container.appendChild(list);
+                
+                // Add event listeners for collapsible sections
+                this.setupListViewCollapsibles();
+            },
+            
+            setupListViewCollapsibles() {
+                document.querySelectorAll('.list-view-toggle').forEach(toggle => {
+                    // Initialize toggle appearance based on initial state
+                    const content = toggle.closest('.list-view-section').querySelector('.collapsible-content');
+                    if (content && content.classList.contains('expanded')) {
+                        toggle.textContent = '▼';
+                        toggle.style.backgroundColor = '#4a6ee0';
+                        toggle.style.color = 'white';
+                    } else {
+                        toggle.textContent = '▶';
+                        toggle.style.backgroundColor = '#e9ecef';
+                        toggle.style.color = '#495057';
+                    }
+                    
+                    // Click handler
+                    toggle.addEventListener('click', (e) => {
+                        e.stopPropagation(); // Prevent event bubbling
+                        const section = toggle.closest('.list-view-section');
+                        const content = section.querySelector('.collapsible-content');
+                        
+                        if (content) {
+                            content.classList.toggle('expanded');
+                            
+                            // Update toggle appearance
+                            if (content.classList.contains('expanded')) {
+                                toggle.textContent = '▼';
+                                toggle.style.backgroundColor = '#4a6ee0';
+                                toggle.style.color = 'white';
+                            } else {
+                                toggle.textContent = '▶';
+                                toggle.style.backgroundColor = '#e9ecef';
+                                toggle.style.color = '#495057';
+                            }
+                        }
+                    });
+                    
+                    // Also handle keyboard interaction
+                    toggle.addEventListener('keydown', (e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            toggle.click();
+                        }
+                    });
+                });
+                
+                // Add click handlers for editable items
+                document.querySelectorAll('.list-view-editable').forEach(item => {
+                    item.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const path = item.dataset.path;
+                        if (path) {
+                            this.switchView('tree');
+                            this.selectTreeItem(path);
+                        }
+                    });
+                });
+            },
+            
+            addListViewItems(container, obj, path) {
+                for (const key in obj) {
+                    const currentPath = [...path, key];
+                    const pathString = currentPath.join('.');
+                    
+                    const item = document.createElement('div');
+                    item.className = 'list-view-item';
+                    
+                    const value = obj[key];
+                    const valueType = typeof value;
+                    
+                    if (valueType === 'object' && value !== null) {
+                        // This is an object or array
+                        const isArray = Array.isArray(value);
+                        
+                        const section = document.createElement('div');
+                        section.className = 'list-view-section';
+                        
+                        const toggleContainer = document.createElement('div');
+                        toggleContainer.style.display = 'flex';
+                        toggleContainer.style.alignItems = 'center';
+                        toggleContainer.style.gap = '8px';
+                        
+                        const toggle = document.createElement('span');
+                        toggle.className = 'list-view-toggle';
+                        toggle.textContent = '▶'; // Default to collapsed
+                        toggle.setAttribute('role', 'button');
+                        toggle.setAttribute('aria-label', 'Toggle section');
+                        toggle.setAttribute('tabindex', '0');
+                        toggleContainer.appendChild(toggle);
+                        
+                        const label = document.createElement('span');
+                        label.className = 'list-view-label list-view-editable';
+                        label.dataset.path = pathString;
+                        label.style.cursor = 'pointer';
+                        
+                        if (isArray) {
+                            label.innerHTML = `<strong>${key}</strong> <span class="list-view-array" style="color: #e36209; background-color: #fff5e8; padding: 2px 8px; border-radius: 12px; font-size: 12px; margin-left: 6px;">(List with ${value.length} items)</span>`;
+                        } else {
+                            label.innerHTML = `<strong>${key}</strong> <span class="list-view-object" style="color: #22863a; background-color: #f0fff4; padding: 2px 8px; border-radius: 12px; font-size: 12px; margin-left: 6px;">(Section with ${Object.keys(value).length} entries)</span>`;
+                        }
+                        
+                        toggleContainer.appendChild(label);
+                        
+                        // Add edit button
+                        const editBtn = document.createElement('button');
+                        editBtn.className = 'btn btn-primary btn-sm';
+                        editBtn.textContent = 'Edit';
+                        editBtn.style.marginLeft = '10px';
+                        editBtn.style.padding = '4px 10px';
+                        editBtn.style.fontSize = '0.75rem';
+                        editBtn.style.backgroundColor = '#4a6ee0';
+                        editBtn.style.color = 'white';
+                        editBtn.style.border = 'none';
+                        editBtn.style.borderRadius = '4px';
+                        editBtn.style.cursor = 'pointer';
+                        editBtn.style.fontWeight = '500';
+                        editBtn.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            this.switchView('tree');
+                            this.selectTreeItem(pathString);
+                        });
+                        toggleContainer.appendChild(editBtn);
+                        
+                        section.appendChild(toggleContainer);
+                        
+                        const content = document.createElement('div');
+                        content.className = 'list-view-content collapsible-content';
+                        
+                        // Recursively add children
+                        this.addListViewItems(content, value, currentPath);
+                        
+                        section.appendChild(content);
+                        item.appendChild(section);
+                    } else {
+                        // This is a simple value
+                        const valueItem = document.createElement('div');
+                        valueItem.className = 'list-view-item list-view-editable';
+                        valueItem.dataset.path = pathString;
+                        valueItem.style.cursor = 'pointer';
+                        valueItem.style.display = 'flex';
+                        valueItem.style.alignItems = 'center';
+                        valueItem.style.padding = '8px 0';
+                        
+                        let displayValue;
+                        let valueClass;
+                        
+                        if (valueType === 'function') {
+                            displayValue = 'Custom Code';
+                            valueClass = 'list-view-function';
+                        } else if (valueType === 'boolean') {
+                            displayValue = value ? 'Yes' : 'No';
+                            valueClass = 'list-view-boolean';
+                        } else if (valueType === 'number') {
+                            displayValue = value;
+                            valueClass = 'list-view-number';
+                        } else if (valueType === 'string') {
+                            // Format multi-line strings
+                            if (value.includes('\n')) {
+                                displayValue = '[Multi-line text]';
+                            } else {
+                                displayValue = `"${this.getShortValue(value)}"`;
+                            }
+                            valueClass = 'list-view-string';
+                        } else {
+                            displayValue = String(value);
+                            valueClass = '';
+                        }
+                        
+                        const labelWrapper = document.createElement('div');
+                        labelWrapper.style.flex = '1';
+                        labelWrapper.innerHTML = `<strong>${key}:</strong> <span class="list-view-value ${valueClass}">${displayValue}</span>`;
+                        valueItem.appendChild(labelWrapper);
+                        
+                        // Add edit button
+                        const editBtn = document.createElement('button');
+                        editBtn.className = 'btn btn-primary btn-sm';
+                        editBtn.textContent = 'Edit';
+                        editBtn.style.marginLeft = '10px';
+                        editBtn.style.padding = '4px 10px';
+                        editBtn.style.fontSize = '0.75rem';
+                        editBtn.style.backgroundColor = '#4a6ee0';
+                        editBtn.style.color = 'white';
+                        editBtn.style.border = 'none';
+                        editBtn.style.borderRadius = '4px';
+                        editBtn.style.cursor = 'pointer';
+                        editBtn.style.fontWeight = '500';
+                        editBtn.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            this.switchView('tree');
+                            this.selectTreeItem(pathString);
+                        });
+                        valueItem.appendChild(editBtn);
+                        
+                        item.appendChild(valueItem);
+                    }
+                    
+                    container.appendChild(item);
+                }
+            },
+            renderEditor() {
+                const node = this.state.currentNode;
+                const path = this.state.currentPath;
+                
+                // Set editor title
+                const title = path.length > 0 ? path[path.length - 1] : this.state.knowledgeBase.varName;
+                document.getElementById('editor-title').textContent = title;
+                
+                // Render breadcrumb
+                this.renderBreadcrumb();
+                
+                // Clear editor content
+                const editorContent = document.getElementById('editor-content');
+                editorContent.innerHTML = '';
+                
+                // Render the appropriate editor based on the node type
+                if (path.length === 0) {
+                    // Root node
+                    this.renderRootEditor(editorContent);
+                } else if (typeof node === 'object' && node !== null) {
+                    // Object or array
+                    this.renderObjectEditor(editorContent, node);
+                } else if (typeof node === 'function') {
+                    // Function
+                    this.renderFunctionEditor(editorContent, node);
+                } else {
+                    // Simple value
+                    this.renderValueEditor(editorContent, node);
+                }
+            },
+            renderBreadcrumb() {
+                const breadcrumb = document.getElementById('breadcrumb');
+                breadcrumb.innerHTML = '';
+                
+                // Add root item
+                const rootLink = document.createElement('a');
+                rootLink.href = '#';
+                rootLink.textContent = this.state.knowledgeBase.varName;
+                rootLink.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    this.selectTreeItem('root');
+                });
+                breadcrumb.appendChild(rootLink);
+                
+                // Add path items
+                let currentPath = '';
+                for (let i = 0; i < this.state.currentPath.length; i++) {
+                    const segment = this.state.currentPath[i];
+                    
+                    // Add separator
+                    const separator = document.createElement('span');
+                    separator.textContent = ' / ';
+                    breadcrumb.appendChild(separator);
+                    
+                    // Build path
+                    currentPath = currentPath ? `${currentPath}.${segment}` : segment;
+                    
+                    // Add link
+                    const link = document.createElement('a');
+                    link.href = '#';
+                    link.textContent = segment;
+                    
+                    if (i === this.state.currentPath.length - 1) {
+                        // Last item (current)
+                        link.style.fontWeight = 'bold';
+                        link.style.pointerEvents = 'none';
+                    } else {
+                        // Parent item
+                        link.dataset.path = currentPath;
+                        link.addEventListener('click', (e) => {
+                            e.preventDefault();
+                            this.selectTreeItem(e.target.dataset.path);
+                        });
+                    }
+                    
+                    breadcrumb.appendChild(link);
+                }
+            },
+            renderRootEditor(container) {
+                const kb = this.state.knowledgeBase.data;
+                
+                // Name editor
+                const nameGroup = document.createElement('div');
+                nameGroup.className = 'form-group';
+                
+                const nameLabel = document.createElement('label');
+                nameLabel.textContent = 'Knowledge Base Name';
+                nameGroup.appendChild(nameLabel);
+                
+                const nameInput = document.createElement('input');
+                nameInput.type = 'text';
+                nameInput.className = 'form-control';
+                nameInput.value = kb.name || '';
+                nameInput.addEventListener('input', () => {
+                    this.state.hasChanges = true;
+                });
+                nameGroup.appendChild(nameInput);
+                
+                container.appendChild(nameGroup);
+                
+                // Add sections for each main object
+                const sectionsCard = document.createElement('div');
+                sectionsCard.className = 'card';
+                
+                const cardHeader = document.createElement('div');
+                cardHeader.className = 'card-header';
+                
+                const headerTitle = document.createElement('h3');
+                headerTitle.textContent = 'Sections';
+                cardHeader.appendChild(headerTitle);
+                
+                sectionsCard.appendChild(cardHeader);
+                
+                const cardBody = document.createElement('div');
+                cardBody.className = 'card-body';
+                
+                // List the main sections
+                for (const key in kb) {
+                    if (key === 'name') continue;
+                    
+                    const sectionRow = document.createElement('div');
+                    sectionRow.className = 'form-group';
+                    sectionRow.style.display = 'flex';
+                    sectionRow.style.alignItems = 'center';
+                    sectionRow.style.justifyContent = 'space-between';
+                    
+                    const sectionLabel = document.createElement('div');
+                    sectionLabel.style.fontWeight = '500';
+                    
+                    if (typeof kb[key] === 'object' && kb[key] !== null) {
+                        sectionLabel.textContent = `${key} (${Array.isArray(kb[key]) ? 'Array' : 'Object'})`;
+                    } else if (typeof kb[key] === 'function') {
+                        sectionLabel.textContent = `${key} (Function)`;
+                    } else {
+                        sectionLabel.textContent = `${key} (${typeof kb[key]})`;
+                    }
+                    
+                    sectionRow.appendChild(sectionLabel);
+                    
+                    const actionButtons = document.createElement('div');
+                    actionButtons.style.display = 'flex';
+                    actionButtons.style.gap = '0.5rem';
+                    
+                    const editBtn = document.createElement('button');
+                    editBtn.className = 'btn btn-primary btn-sm';
+                    editBtn.textContent = 'Edit';
+                    editBtn.addEventListener('click', () => {
+                        this.selectTreeItem(key);
+                    });
+                    actionButtons.appendChild(editBtn);
+                    
+                    const deleteBtn = document.createElement('button');
+                    deleteBtn.className = 'btn btn-danger btn-sm';
+                    deleteBtn.textContent = 'Delete';
+                    deleteBtn.addEventListener('click', () => {
+                        if (confirm(`Are you sure you want to delete the "${key}" section?`)) {
+                            delete kb[key];
+                            this.state.hasChanges = true;
+                            this.renderTreeView();
+                            this.renderEditor();
+                        }
+                    });
+                    actionButtons.appendChild(deleteBtn);
+                    
+                    sectionRow.appendChild(actionButtons);
+                    cardBody.appendChild(sectionRow);
+                }
+                
+                sectionsCard.appendChild(cardBody);
+                container.appendChild(sectionsCard);
+                
+                // Save handler
+                document.getElementById('save-btn').onclick = () => {
+                    kb.name = nameInput.value;
+                    this.state.hasChanges = true;
+                    this.notifications.show('success', 'Changes saved');
+                    this.renderTreeView();
+                };
+            },
+            renderObjectEditor(container, obj) {
+                const isArray = Array.isArray(obj);
+                
+                // Create a card for the object properties
+                const card = document.createElement('div');
+                card.className = 'card';
+                
+                const cardHeader = document.createElement('div');
+                cardHeader.className = 'card-header';
+                
+                const headerTitle = document.createElement('h3');
+                headerTitle.textContent = isArray ? 'List Items' : 'Section Content';
+                cardHeader.appendChild(headerTitle);
+                
+                // Add actions for the object
+                const headerActions = document.createElement('div');
+                
+                const addBtn = document.createElement('button');
+                addBtn.className = 'btn btn-primary btn-sm';
+                addBtn.textContent = isArray ? 'Add Item' : 'Add Entry';
+                addBtn.addEventListener('click', () => {
+                    this.showAddPropertyModal(obj, isArray);
+                });
+                headerActions.appendChild(addBtn);
+                
+                cardHeader.appendChild(headerActions);
+                card.appendChild(cardHeader);
+                
+                const cardBody = document.createElement('div');
+                cardBody.className = 'card-body';
+                
+                // Render each property or item
+                for (const key in obj) {
+                    const propRow = document.createElement('div');
+                    propRow.className = 'form-group';
+                    propRow.style.display = 'flex';
+                    propRow.style.alignItems = 'center';
+                    propRow.style.justifyContent = 'space-between';
+                    propRow.style.padding = '0.5rem';
+                    propRow.style.borderBottom = '1px solid #eee';
+                    
+                    const propLabel = document.createElement('div');
+                    propLabel.style.fontWeight = '500';
+                    
+                    const value = obj[key];
+                    if (typeof value === 'object' && value !== null) {
+                        propLabel.textContent = `${key}: ${Array.isArray(value) ? `List (${value.length} items)` : 'Section'}`;
+                    } else if (typeof value === 'function') {
+                        propLabel.textContent = `${key}: Custom Code`;
+                    } else if (typeof value === 'boolean') {
+                        propLabel.textContent = `${key}: ${value ? 'Yes' : 'No'}`;
+                    } else {
+                        propLabel.textContent = `${key}: ${this.getShortValue(value)}`;
+                    }
+                    
+                    propRow.appendChild(propLabel);
+                    
+                    const actionButtons = document.createElement('div');
+                    actionButtons.style.display = 'flex';
+                    actionButtons.style.gap = '0.5rem';
+                    
+                    const editBtn = document.createElement('button');
+                    editBtn.className = 'btn btn-primary btn-sm';
+                    editBtn.textContent = 'Edit';
+                    editBtn.addEventListener('click', () => {
+                        const path = [...this.state.currentPath, key].join('.');
+                        this.selectTreeItem(path);
+                    });
+                    actionButtons.appendChild(editBtn);
+                    
+                    const deleteBtn = document.createElement('button');
+                    deleteBtn.className = 'btn btn-danger btn-sm';
+                    deleteBtn.textContent = 'Delete';
+                    deleteBtn.addEventListener('click', () => {
+                        if (confirm(`Are you sure you want to delete "${key}"?`)) {
+                            if (isArray) {
+                                obj.splice(key, 1);
+                            } else {
+                                delete obj[key];
+                            }
+                            this.state.hasChanges = true;
+                            this.renderTreeView();
+                            this.renderEditor();
+                        }
+                    });
+                    actionButtons.appendChild(deleteBtn);
+                    
+                    propRow.appendChild(actionButtons);
+                    cardBody.appendChild(propRow);
+                }
+                
+                card.appendChild(cardBody);
+                container.appendChild(card);
+                
+                // Save handler
+                document.getElementById('save-btn').onclick = () => {
+                    this.notifications.show('success', 'Changes saved');
+                };
+            },
+            renderFunctionEditor(container, func) {
+                // Create a form group for the function
+                const formGroup = document.createElement('div');
+                formGroup.className = 'form-group';
+                
+                const label = document.createElement('label');
+                label.textContent = 'Custom Code';
+                formGroup.appendChild(label);
+                
+                // Add a warning about function editing
+                const warning = document.createElement('div');
+                warning.className = 'alert alert-warning';
+                warning.textContent = 'This is advanced code. Be careful when editing to ensure your changes work correctly.';
+                formGroup.appendChild(warning);
+                
+                // Create a textarea for the function
+                const textarea = document.createElement('textarea');
+                textarea.className = 'form-control code-editor';
+                textarea.value = func.toString();
+                textarea.addEventListener('input', () => {
+                    this.state.hasChanges = true;
+                });
+                formGroup.appendChild(textarea);
+                
+                container.appendChild(formGroup);
+                
+                // Save handler
+                document.getElementById('save-btn').onclick = () => {
+                    try {
+                        // This is a simplified approach to update a function
+                        // A more robust solution would use a proper parser
+                        const newFunc = new Function(`return ${textarea.value}`)();
+                        
+                        // Update the function in the parent object
+                        const parentPath = this.state.currentPath.slice(0, -1);
+                        const propName = this.state.currentPath[this.state.currentPath.length - 1];
+                        
+                        let parentObj = this.state.knowledgeBase.data;
+                        for (const key of parentPath) {
+                            parentObj = parentObj[key];
+                        }
+                        
+                        parentObj[propName] = newFunc;
+                        this.state.hasChanges = true;
+                        this.notifications.show('success', 'Custom code updated');
+                        
+                        // Return to previous screen if we're deep in the hierarchy
+                        if (this.state.currentPath.length > 1) {
+                            const parentPath = this.state.currentPath.slice(0, -1).join('.');
+                            this.selectTreeItem(parentPath);
+                        }
+                    } catch (error) {
+                        console.error('Function update error:', error);
+                        this.notifications.show('error', `Code update failed: ${error.message}`);
+                    }
+                };
+            },
+            renderValueEditor(container, value) {
+                // Create a form group for the value
+                const formGroup = document.createElement('div');
+                formGroup.className = 'form-group';
+                
+                const label = document.createElement('label');
+                label.textContent = 'Value';
+                formGroup.appendChild(label);
+                
+                let input;
+                
+                if (typeof value === 'boolean') {
+                    // Boolean select
+                    input = document.createElement('select');
+                    input.className = 'form-control';
+                    
+                    const trueOption = document.createElement('option');
+                    trueOption.value = 'true';
+                    trueOption.textContent = 'true';
+                    trueOption.selected = value === true;
+                    input.appendChild(trueOption);
+                    
+                    const falseOption = document.createElement('option');
+                    falseOption.value = 'false';
+                    falseOption.textContent = 'false';
+                    falseOption.selected = value === false;
+                    input.appendChild(falseOption);
+                } else if (typeof value === 'number') {
+                    // Number input
+                    input = document.createElement('input');
+                    input.type = 'number';
+                    input.className = 'form-control';
+                    input.value = value;
+                } else if (typeof value === 'string') {
+                    // String textarea
+                    input = document.createElement('textarea');
+                    input.className = 'form-control';
+                    input.value = value;
+                    input.rows = value.split('\n').length + 2;
+                } else {
+                    // Fallback to text input
+                    input = document.createElement('input');
+                    input.type = 'text';
+                    input.className = 'form-control';
+                    input.value = String(value);
+                }
+                
+                input.addEventListener('input', () => {
+                    this.state.hasChanges = true;
+                });
+                
+                formGroup.appendChild(input);
+                container.appendChild(formGroup);
+                
+                // Save handler
+                document.getElementById('save-btn').onclick = () => {
+                    try {
+                        // Get the updated value
+                        let newValue;
+                        
+                        if (typeof value === 'boolean') {
+                            newValue = input.value === 'true';
+                        } else if (typeof value === 'number') {
+                            newValue = parseFloat(input.value);
+                        } else {
+                            newValue = input.value;
+                        }
+                        
+                        // Update the value in the parent object
+                        const parentPath = this.state.currentPath.slice(0, -1);
+                        const propName = this.state.currentPath[this.state.currentPath.length - 1];
+                        
+                        let parentObj = this.state.knowledgeBase.data;
+                        for (const key of parentPath) {
+                            parentObj = parentObj[key];
+                        }
+                        
+                        parentObj[propName] = newValue;
+                        this.state.hasChanges = true;
+                        this.notifications.show('success', 'Value updated');
+                        
+                        // Update the tree view
+                        this.renderTreeView();
+                        
+                        // Return to previous screen if we're deep in the hierarchy
+                        if (this.state.currentPath.length > 1) {
+                            const parentPath = this.state.currentPath.slice(0, -1).join('.');
+                            this.selectTreeItem(parentPath);
+                        } else {
+                            // Reselect the current path
+                            this.selectTreeItem(this.state.currentPath.join('.'));
+                        }
+                    } catch (error) {
+                        console.error('Value update error:', error);
+                        this.notifications.show('error', `Update failed: ${error.message}`);
+                    }
+                };
+            },
+            saveCurrentNode() {
+                // This function is replaced by specific save handlers in the render functions
+            },
+            showAddPropertyModal(obj, isArray) {
+                const modal = document.createElement('div');
+                modal.className = 'modal-overlay';
+                
+                const modalContent = document.createElement('div');
+                modalContent.className = 'modal';
+                
+                const modalHeader = document.createElement('div');
+                modalHeader.className = 'modal-header';
+                
+                const modalTitle = document.createElement('h3');
+                modalTitle.textContent = isArray ? 'Add New Item' : 'Add New Entry';
+                modalHeader.appendChild(modalTitle);
+                
+                const closeButton = document.createElement('button');
+                closeButton.className = 'btn btn-icon btn-link';
+                closeButton.textContent = '✕';
+                closeButton.addEventListener('click', () => {
+                    modal.remove();
+                });
+                modalHeader.appendChild(closeButton);
+                
+                modalContent.appendChild(modalHeader);
+                
+                const modalBody = document.createElement('div');
+                modalBody.className = 'modal-body';
+                
+                // Form for adding a property
+                const form = document.createElement('form');
+                
+                if (!isArray) {
+                    // Property name field (only for objects)
+                    const nameGroup = document.createElement('div');
+                    nameGroup.className = 'form-group';
+                    
+                    const nameLabel = document.createElement('label');
+                    nameLabel.textContent = 'Entry Name';
+                    nameLabel.setAttribute('for', 'property-name');
+                    nameGroup.appendChild(nameLabel);
+                    
+                    const nameInput = document.createElement('input');
+                    nameInput.type = 'text';
+                    nameInput.className = 'form-control';
+                    nameInput.id = 'property-name';
+                    nameInput.required = true;
+                    nameGroup.appendChild(nameInput);
+                    
+                    form.appendChild(nameGroup);
+                }
+                
+                // Property type field
+                const typeGroup = document.createElement('div');
+                typeGroup.className = 'form-group';
+                
+                const typeLabel = document.createElement('label');
+                typeLabel.textContent = 'Type';
+                typeLabel.setAttribute('for', 'property-type');
+                typeGroup.appendChild(typeLabel);
+                
+                const typeSelect = document.createElement('select');
+                typeSelect.className = 'form-control';
+                typeSelect.id = 'property-type';
+                
+                const types = [
+                    { value: 'string', label: 'Text' },
+                    { value: 'number', label: 'Number' },
+                    { value: 'boolean', label: 'Yes/No Value' },
+                    { value: 'object', label: 'Section (contains other entries)' },
+                    { value: 'array', label: 'List (collection of items)' },
+                    { value: 'function', label: 'Custom Code' }
+                ];
+                
+                types.forEach(type => {
+                    const option = document.createElement('option');
+                    option.value = type.value;
+                    option.textContent = type.label;
+                    typeSelect.appendChild(option);
+                });
+                
+                typeSelect.addEventListener('change', () => {
+                    // Show/hide value field based on type
+                    const type = typeSelect.value;
+                    valueGroup.style.display = ['object', 'array', 'function'].includes(type) ? 'none' : 'block';
+                    
+                    // Update value input based on type
+                    if (type === 'boolean') {
+                        valueInput.innerHTML = '';
+                        
+                        const trueOption = document.createElement('option');
+                        trueOption.value = 'true';
+                        trueOption.textContent = 'true';
+                        valueInput.appendChild(trueOption);
+                        
+                        const falseOption = document.createElement('option');
+                        falseOption.value = 'false';
+                        falseOption.textContent = 'false';
+                        valueInput.appendChild(falseOption);
+                    } else {
+                        valueInput.innerHTML = '';
+                    }
+                });
+                
+                typeGroup.appendChild(typeSelect);
+                form.appendChild(typeGroup);
+                
+                // Value field
+                const valueGroup = document.createElement('div');
+                valueGroup.className = 'form-group';
+                
+                const valueLabel = document.createElement('label');
+                valueLabel.textContent = 'Value';
+                valueLabel.setAttribute('for', 'property-value');
+                valueGroup.appendChild(valueLabel);
+                
+                const valueInput = document.createElement('input');
+                valueInput.className = 'form-control';
+                valueInput.id = 'property-value';
+                valueGroup.appendChild(valueInput);
+                
+                form.appendChild(valueGroup);
+                
+                modalBody.appendChild(form);
+                modalContent.appendChild(modalBody);
+                
+                const modalFooter = document.createElement('div');
+                modalFooter.className = 'modal-footer';
+                
+                const cancelButton = document.createElement('button');
+                cancelButton.className = 'btn btn-secondary';
+                cancelButton.textContent = 'Cancel';
+                cancelButton.addEventListener('click', () => {
+                    modal.remove();
+                });
+                modalFooter.appendChild(cancelButton);
+                
+                const addButton = document.createElement('button');
+                addButton.className = 'btn btn-primary';
+                addButton.textContent = 'Add';
+                addButton.addEventListener('click', () => {
+                    const type = typeSelect.value;
+                    const name = isArray ? obj.length : document.getElementById('property-name').value;
+                    
+                    let value;
+                    
+                    switch (type) {
+                        case 'string':
+                            value = valueInput.value;
+                            break;
+                        case 'number':
+                            value = parseFloat(valueInput.value) || 0;
+                            break;
+                        case 'boolean':
+                            value = valueInput.value === 'true';
+                            break;
+                        case 'object':
+                            value = {};
+                            break;
+                        case 'array':
+                            value = [];
+                            break;
+                        case 'function':
+                            value = new Function('return function() {}')();
+                            break;
+                    }
+                    
+                    // Add the property
+                    obj[name] = value;
+                    
+                    // Update UI
+                    this.state.hasChanges = true;
+                    this.renderTreeView();
+                    this.renderEditor();
+                    
+                    // Close modal
+                    modal.remove();
+                    
+                    // Show notification
+                    this.notifications.show('success', isArray ? 'Item added' : 'Entry added');
+                    
+                    // Refresh list view if it's active
+                    if (document.getElementById('list-view-btn').classList.contains('active')) {
+                        this.renderListView();
+                    }
+                });
+                modalFooter.appendChild(addButton);
+                
+                modalContent.appendChild(modalFooter);
+                
+                modal.appendChild(modalContent);
+                document.getElementById('modal-container').appendChild(modal);
+            },
+            showAddSectionModal() {
+                const modal = document.createElement('div');
+                modal.className = 'modal-overlay';
+                
+                const modalContent = document.createElement('div');
+                modalContent.className = 'modal';
+                
+                const modalHeader = document.createElement('div');
+                modalHeader.className = 'modal-header';
+                
+                const modalTitle = document.createElement('h3');
+                modalTitle.textContent = 'Add New Section';
+                modalHeader.appendChild(modalTitle);
+                
+                const closeButton = document.createElement('button');
+                closeButton.className = 'btn btn-icon btn-link';
+                closeButton.textContent = '✕';
+                closeButton.addEventListener('click', () => {
+                    modal.remove();
+                });
+                modalHeader.appendChild(closeButton);
+                
+                modalContent.appendChild(modalHeader);
+                
+                const modalBody = document.createElement('div');
+                modalBody.className = 'modal-body';
+                
+                // Form for adding a section
+                const form = document.createElement('form');
+                
+                // Section name field
+                const nameGroup = document.createElement('div');
+                nameGroup.className = 'form-group';
+                
+                const nameLabel = document.createElement('label');
+                nameLabel.textContent = 'Section Name';
+                nameLabel.setAttribute('for', 'section-name');
+                nameGroup.appendChild(nameLabel);
+                
+                const nameInput = document.createElement('input');
+                nameInput.type = 'text';
+                nameInput.className = 'form-control';
+                nameInput.id = 'section-name';
+                nameInput.required = true;
+                nameGroup.appendChild(nameInput);
+                
+                form.appendChild(nameGroup);
+                
+                // Section type field
+                const typeGroup = document.createElement('div');
+                typeGroup.className = 'form-group';
+                
+                const typeLabel = document.createElement('label');
+                typeLabel.textContent = 'Type';
+                typeLabel.setAttribute('for', 'section-type');
+                typeGroup.appendChild(typeLabel);
+                
+                const typeSelect = document.createElement('select');
+                typeSelect.className = 'form-control';
+                typeSelect.id = 'section-type';
+                
+                const types = [
+                    { value: 'object', label: 'Section (contains other entries)' },
+                    { value: 'array', label: 'List (collection of items)' },
+                    { value: 'string', label: 'Text' },
+                    { value: 'number', label: 'Number' },
+                    { value: 'boolean', label: 'Yes/No Value' },
+                    { value: 'function', label: 'Custom Code' }
+                ];
+                
+                types.forEach(type => {
+                    const option = document.createElement('option');
+                    option.value = type.value;
+                    option.textContent = type.label;
+                    typeSelect.appendChild(option);
+                });
+                
+                typeGroup.appendChild(typeSelect);
+                form.appendChild(typeGroup);
+                
+                modalBody.appendChild(form);
+                modalContent.appendChild(modalBody);
+                
+                const modalFooter = document.createElement('div');
+                modalFooter.className = 'modal-footer';
+                
+                const cancelButton = document.createElement('button');
+                cancelButton.className = 'btn btn-secondary';
+                cancelButton.textContent = 'Cancel';
+                cancelButton.addEventListener('click', () => {
+                    modal.remove();
+                });
+                modalFooter.appendChild(cancelButton);
+                
+                const addButton = document.createElement('button');
+                addButton.className = 'btn btn-primary';
+                addButton.textContent = 'Add';
+                addButton.addEventListener('click', () => {
+                    const type = typeSelect.value;
+                    const name = document.getElementById('section-name').value;
+                    
+                    if (!name) {
+                        this.notifications.show('error', 'Section name is required');
+                        return;
+                    }
+                    
+                    // Validate name (no spaces, special chars)
+                    if (!/^[a-zA-Z0-9_]+$/.test(name)) {
+                        this.notifications.show('error', 'Section name must contain only letters, numbers, and underscores');
+                        return;
+                    }
+                    
+                    // Check if name already exists
+                    if (this.state.knowledgeBase.data[name] !== undefined) {
+                        this.notifications.show('error', `Section "${name}" already exists`);
+                        return;
+                    }
+                    
+                    let value;
+                    
+                    switch (type) {
+                        case 'object':
+                            value = {};
+                            break;
+                        case 'array':
+                            value = [];
+                            break;
+                        case 'string':
+                            value = '';
+                            break;
+                        case 'number':
+                            value = 0;
+                            break;
+                        case 'boolean':
+                            value = false;
+                            break;
+                        case 'function':
+                            value = new Function('return function() {}')();
+                            break;
+                    }
+                    
+                    // Add the section
+                    this.state.knowledgeBase.data[name] = value;
+                    
+                    // Update UI
+                    this.state.hasChanges = true;
+                    this.renderTreeView();
+                    
+                    // Close modal
+                    modal.remove();
+                    
+                    // Show notification
+                    this.notifications.show('success', `Section "${name}" added`);
+                    
+                    // Refresh list view if it's active
+                    if (document.getElementById('list-view-btn').classList.contains('active')) {
+                        this.renderListView();
+                    }
+                });
+                modalFooter.appendChild(addButton);
+                
+                modalContent.appendChild(modalFooter);
+                
+                modal.appendChild(modalContent);
+                document.getElementById('modal-container').appendChild(modal);
+            },
+            exportFile() {
+                if (!this.state.knowledgeBase) {
+                    this.notifications.show('error', 'No knowledge base to export');
+                    return;
+                }
+                
+                try {
+                    // Generate the JS file content
+                    const content = this.generateFileContent();
+                    
+                    // Create a blob
+                    const blob = new Blob([content], { type: 'application/javascript' });
+                    
+                    // Create a download link
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `${this.state.knowledgeBase.varName}.js`;
+                    document.body.appendChild(a);
+                    a.click();
+                    
+                    // Clean up
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                    
+                    // Show notification
+                    this.notifications.show('success', 'Knowledge base exported successfully');
+                } catch (error) {
+                    console.error('Export error:', error);
+                    this.notifications.show('error', `Export failed: ${error.message}`);
+                }
+            },
+            generateFileContent() {
+                const varName = this.state.knowledgeBase.varName;
+                
+                // Convert the knowledge base object to string
+                // This is a simplified approach that may not handle all edge cases
+                // A production solution would use a proper code generator
+                
+                const objectString = this.stringifyObject(this.state.knowledgeBase.data);
+                
+                return `window.${varName}=${objectString};`;
+            },
+            stringifyObject(obj, indent = 0) {
+                if (obj === null) return 'null';
+                if (obj === undefined) return 'undefined';
+                
+                const type = typeof obj;
+                
+                if (type === 'number' || type === 'boolean') {
+                    return String(obj);
+                }
+                
+                if (type === 'string') {
+                    return JSON.stringify(obj);
+                }
+                
+                if (type === 'function') {
+                    return obj.toString();
+                }
+                
+                if (Array.isArray(obj)) {
+                    if (obj.length === 0) return '[]';
+                    
+                    let result = '[';
+                    
+                    for (let i = 0; i < obj.length; i++) {
+                        result += this.stringifyObject(obj[i]);
+                        if (i < obj.length - 1) result += ',';
+                    }
+                    
+                    result += ']';
+                    return result;
+                }
+                
+                if (type === 'object') {
+                    const keys = Object.keys(obj);
+                    if (keys.length === 0) return '{}';
+                    
+                    let result = '{';
+                    
+                    for (let i = 0; i < keys.length; i++) {
+                        const key = keys[i];
+                        result += key + ':' + this.stringifyObject(obj[key]);
+                        if (i < keys.length - 1) result += ',';
+                    }
+                    
+                    result += '}';
+                    return result;
+                }
+                
+                // Fallback
+                return JSON.stringify(obj);
+            },
+            showLoading() {
+                const overlay = document.createElement('div');
+                overlay.className = 'loading-overlay';
+                overlay.id = 'loading-overlay';
+                
+                const spinner = document.createElement('div');
+                spinner.className = 'loading-spinner';
+                
+                overlay.appendChild(spinner);
+                document.body.appendChild(overlay);
+            },
+            hideLoading() {
+                const overlay = document.getElementById('loading-overlay');
+                if (overlay) {
+                    overlay.remove();
+                }
+            },
+            renderInstructionsEditor(container, functionObj) {
+                // Create a form group
+                const formGroup = document.createElement('div');
+                formGroup.className = 'form-group';
+                
+                // Instructions header
+                const instructionsHeader = document.createElement('h3');
+                instructionsHeader.textContent = 'Instructions / Template Settings';
+                instructionsHeader.style.marginBottom = '1rem';
+                formGroup.appendChild(instructionsHeader);
+                
+                // Instructions description
+                const instructionsDescription = document.createElement('p');
+                instructionsDescription.textContent = 'Edit the instructions and template that will be used when generating content. This defines how the knowledge base information will be presented to users.';
+                instructionsDescription.style.marginBottom = '1.5rem';
+                formGroup.appendChild(instructionsDescription);
+                
+                // Create a textarea for the function
+                const textarea = document.createElement('textarea');
+                textarea.className = 'form-control code-editor';
+                textarea.style.height = '600px';
+                textarea.value = functionObj.toString();
+                textarea.addEventListener('input', () => {
+                    this.state.hasChanges = true;
+                });
+                formGroup.appendChild(textarea);
+                
+                container.appendChild(formGroup);
+                
+                // Save handler
+                document.getElementById('save-btn').onclick = () => {
+                    try {
+                        // This is a simplified approach to update a function
+                        const newFunc = new Function(`return ${textarea.value}`)();
+                        
+                        // Update the function in the parent object
+                        const parentPath = this.state.currentPath.slice(0, -1);
+                        const propName = this.state.currentPath[this.state.currentPath.length - 1];
+                        
+                        let parentObj = this.state.knowledgeBase.data;
+                        for (const key of parentPath) {
+                            parentObj = parentObj[key];
+                        }
+                        
+                        parentObj[propName] = newFunc;
+                        this.state.hasChanges = true;
+                        this.notifications.show('success', 'Instructions updated successfully');
+                        
+                        // Return to the main view
+                        this.selectTreeItem('root');
+                    } catch (error) {
+                        console.error('Instructions update error:', error);
+                        this.notifications.show('error', `Update failed: ${error.message}`);
+                    }
+                };
+            },
+            
+            notifications: {
+                container: null,
+                init() {
+                    this.container = document.getElementById('notifications');
+                },
+                show(type, message) {
+                    const notification = document.createElement('div');
+                    notification.className = `notification ${type}`;
+                    notification.textContent = message;
+                    
+                    this.container.appendChild(notification);
+                    
+                    // Auto-remove after 3 seconds
+                    setTimeout(() => {
+                        notification.remove();
+                    }, 3000);
+                }
+            }
+        };
+        
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', () => {
+            app.init();
+        });
+    </script>
+</body>
+</html>

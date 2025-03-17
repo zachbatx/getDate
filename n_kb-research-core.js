@@ -46,15 +46,8 @@ const kbResearchModule = (darkPatternsData, usabilityHeuristicsData) => {
                 }
             };
             
-            // Register with the bookmarklet loader if available
-            if (window.KnowledgeBaseLoader) {
-                window.KnowledgeBaseLoader.registerBase(
-                    "researchKB", 
-                    "Research Best Practices",
-                    "n_kb-research-core.js",
-                    "kbResearch"
-                );
-            }
+            // REMOVED: Registration with the bookmarklet loader
+            // This is now handled directly in the bookmarklet itself
             
             utils.log("Research Knowledge Base initialized successfully");
         },

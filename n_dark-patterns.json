@@ -1,0 +1,292 @@
+{
+  "title": "Dark and Deceptive Patterns",
+  "name": "Dark Patterns Knowledge Base",
+  "taxonomy": {
+    "highLevel": [
+      {
+        "name": "Manipulation of Choice Architecture",
+        "description": "Designs that structure and present choices in ways that lead users toward certain decisions",
+        "examples": ["Comparison prevention", "Default biasing", "Choice overloading"]
+      },
+      {
+        "name": "Coercive Design",
+        "description": "Interface elements that pressure or force users into taking certain actions",
+        "examples": ["Forced action", "False urgency", "Confirmshaming"]
+      }
+    ],
+    "mesoLevel": [
+      {
+        "name": "Emotional Manipulation",
+        "description": "Design that exploits emotional responses to guide user behavior",
+        "examples": ["Confirmshaming", "Guilt appeals", "FOMO generation"]
+      },
+      {
+        "name": "Obstruction",
+        "description": "Deliberately making certain actions difficult to accomplish",
+        "examples": ["Roach motel", "Hard-to-cancel", "Interface interference"]
+      }
+    ],
+    "financialSpecific": [
+      {
+        "name": "Fee Obfuscation",
+        "description": "Deliberately making fees difficult to understand or discover",
+        "examples": ["Hidden account fees", "Complex fee structures", "Deceptive free trial terms"]
+      },
+      {
+        "name": "Risk Downplaying",
+        "description": "Minimizing or hiding financial risk information",
+        "examples": ["Buried risk disclosures", "Emphasizing returns over risks", "Misrepresenting historical performance"]
+      },
+      {
+        "name": "Commitment Escalation",
+        "description": "Gradually increasing financial commitments through incremental steps",
+        "examples": ["Low initial deposit requirements that increase", "Teaser rates that expire", "Gradual subscription price increases"]
+      }
+    ]
+  },
+  "patterns": {
+    "common": [
+      {
+        "name": "Nagging",
+        "description": "Repeated, intrusive prompts pressuring user actions",
+        "examples": ["Persistent subscription prompts", "Recurring permission requests", "Repeated promotional messages"]
+      },
+      {
+        "name": "Sneaking",
+        "description": "Automatically adding items without clear consent",
+        "examples": ["Hidden additional products", "Pre-selected upgrades", "Undisclosed recurring charges"]
+      },
+      {
+        "name": "Privacy Zuckering",
+        "description": "Deceptively extracting additional personal information",
+        "examples": ["Misleading privacy controls", "Obfuscated data sharing permissions", "Hidden data collection"]
+      },
+      {
+        "name": "Confirmshaming",
+        "description": "Using negative emotion to shame users into actions",
+        "examples": ["Decline buttons with guilt-inducing text", "Dismissive opt-out language", "Belittling user choices"]
+      },
+      {
+        "name": "Disguised Ads",
+        "description": "Ads mimicking non-advertisement content",
+        "examples": ["Native advertising without clear labeling", "Sponsored content appearing as regular posts", "Interactive elements disguised as content"]
+      },
+      {
+        "name": "Hidden Costs",
+        "description": "Concealed fees revealed late in transactions",
+        "examples": ["Last-minute mandatory fees", "Charges revealed after user investment", "Unclear pricing structures"]
+      },
+      {
+        "name": "Bait and Switch",
+        "description": "Offering something appealing but delivering another",
+        "examples": ["False discount advertising", "Product substitution", "Misrepresented features"]
+      },
+      {
+        "name": "Roach Motel",
+        "description": "Easy entry, difficult exit from commitments",
+        "examples": ["Complex cancellation processes", "Hidden account deletion options", "Multi-step unsubscribe flows"]
+      },
+      {
+        "name": "Forced Continuity",
+        "description": "Unclear automatic subscription renewals",
+        "examples": ["Auto-renewal without clear notice", "Difficult cancellation before trial end", "Obscured renewal terms"]
+      },
+      {
+        "name": "False Hierarchy",
+        "description": "Misleading prominence given to less beneficial choices",
+        "examples": ["Premium options visually emphasized", "Beneficial options de-emphasized", "Manipulative visual hierarchies"]
+      },
+      {
+        "name": "Trick Questions",
+        "description": "Misleading questions causing unintended choices",
+        "examples": ["Double negatives in confirmations", "Confusing option phrasing", "Misdirective questioning"]
+      }
+    ],
+    "financial": [
+      {
+        "name": "Deceptive Comparison",
+        "description": "Presenting financial product comparisons in a misleading way",
+        "examples": ["Cherry-picked time periods for returns", "Omitting important comparison criteria", "Comparing dissimilar financial products"]
+      },
+      {
+        "name": "Fine Print Overload",
+        "description": "Burying important financial terms in excessive text",
+        "examples": ["Lengthy terms and conditions", "Important fee information in densely packed text", "Key restrictions in tiny footnotes"]
+      },
+      {
+        "name": "Scarcity Framing",
+        "description": "Creating false impressions of limited availability for financial products",
+        "examples": ["Limited-time offers that aren't actually limited", "Countdown timers on investment opportunities", "Artificial limits on financial service availability"]
+      },
+      {
+        "name": "Cross-selling Pressure",
+        "description": "Using aggressive techniques to push additional financial products",
+        "examples": ["Required navigation through upsell screens", "Persistent account upgrade prompts", "Pre-selected add-on financial services"]
+      },
+      {
+        "name": "Identity-Based Manipulation",
+        "description": "Using identity or status to pressure financial decisions",
+        "examples": ["'Exclusive' investment opportunities", "Status-based account tiers with subtle pressure to upgrade", "Flattery to encourage larger investments"]
+      }
+    ]
+  },
+  "attributes": [
+    {
+      "attribute": "Asymmetry",
+      "description": "Imbalance in burden between different user choices"
+    },
+    {
+      "attribute": "Restriction",
+      "description": "Elimination or obscuring of choices"
+    },
+    {
+      "attribute": "Information Hidden",
+      "description": "Deliberately concealed or obscured information"
+    },
+    {
+      "attribute": "Covert Influence",
+      "description": "Hidden manipulation mechanisms"
+    },
+    {
+      "attribute": "Deception",
+      "description": "Affirmatively misleading content or important omissions"
+    },
+    {
+      "attribute": "Disparate Treatment",
+      "description": "Differential treatment among user groups"
+    },
+    {
+      "attribute": "Complexity",
+      "description": "Unnecessary cognitive load placed on the user"
+    }
+  ],
+  "regulations": [
+    {
+      "name": "Regulation Best Interest (Reg BI)",
+      "description": "Requires broker-dealers to act in the best interest of retail customers",
+      "relevance": "Prohibits interfaces that prioritize firm interests over client interests"
+    },
+    {
+      "name": "Truth in Lending Act (TILA)",
+      "description": "Requires clear disclosure of loan terms and costs",
+      "relevance": "Prohibits hidden fees or misleading presentation of loan terms"
+    },
+    {
+      "name": "Consumer Financial Protection Bureau (CFPB) Guidelines",
+      "description": "Protects consumers from unfair, deceptive, or abusive acts and practices",
+      "relevance": "Addresses dark patterns in financial service interfaces"
+    },
+    {
+      "name": "FINRA Rules",
+      "description": "Governs broker-dealers and investment communications",
+      "relevance": "Requires fair and balanced presentation of investment information"
+    },
+    {
+      "name": "SEC Regulation",
+      "description": "Regulates securities markets and protects investors",
+      "relevance": "Prohibits misleading communications about investments"
+    }
+  ],
+  "personas": {
+    "professionalCategories": [
+      "UX Auditors",
+      "Regulatory Analysts",
+      "Design Teams",
+      "Researchers",
+      "Compliance Officers",
+      "UX Teams",
+      "Financial Regulators",
+      "Banking UX Specialists",
+      "Financial UX Designers",
+      "Banking Product Managers"
+    ],
+    "examples": [
+      {
+        "category": "UX Auditors",
+        "name": "Raj",
+        "age": 41,
+        "context": "Consumer protection agency",
+        "tools": "Pattern recognition algorithms, regulatory frameworks, case documentation systems",
+        "challenges": "Proving intent behind patterns, measuring harm, keeping up with pattern evolution",
+        "description": "Raj identifies and documents dark patterns to support regulatory action. He develops methodologies to systematically catalog manipulative interfaces."
+      },
+      {
+        "category": "UX Auditors",
+        "name": "Camila",
+        "age": 42,
+        "context": "Consumer protection authority",
+        "tools": "Regulatory frameworks, enforcement case management, investigative methodologies",
+        "challenges": "Building evidence for enforcement, keeping pace with pattern evolution, coordinating across jurisdictions",
+        "description": "Camila investigates reported dark patterns and prepares enforcement actions. She helps develop guidelines and educational materials for businesses and consumers."
+      },
+      {
+        "category": "Financial Regulators",
+        "name": "Morgan",
+        "age": 45,
+        "context": "Financial consumer protection bureau",
+        "tools": "Regulatory compliance frameworks, case management systems, documentation tools",
+        "challenges": "Identifying subtle manipulation in complex financial interfaces, keeping pace with rapid fintech innovation, balancing innovation with consumer protection",
+        "description": "Morgan evaluates financial service platforms for regulatory compliance. She specializes in identifying dark patterns in investment platforms, loan applications, and banking interfaces that may lead consumers to make uninformed financial decisions."
+      },
+      {
+        "category": "Financial Regulators",
+        "name": "Victor",
+        "age": 39,
+        "context": "Investment regulatory authority",
+        "tools": "Dark pattern evaluation frameworks, risk assessment models, compliance checklists",
+        "challenges": "Proving harm from subtle manipulative patterns, addressing cross-border regulatory differences, communicating technical findings to legal teams",
+        "description": "Victor investigates trading platforms and investment apps for patterns that might mislead investors. He works to develop standards that protect consumers while allowing for innovation in financial services."
+      },
+      {
+        "category": "Banking UX Specialists",
+        "name": "Sophie",
+        "age": 37,
+        "context": "Large international bank",
+        "tools": "Banking UX guidelines, prototype testing software, accessibility compliance tools",
+        "challenges": "Balancing security requirements with usability, navigating complex regulatory environments, adapting to rapid changes in mobile banking technology",
+        "description": "Sophie leads UX design for mobile banking applications. She ensures that financial interfaces are both user-friendly and compliant with banking regulations, while avoiding dark patterns that might mislead customers about fees or terms."
+      },
+      {
+        "category": "Banking UX Specialists",
+        "name": "Jamal",
+        "age": 33,
+        "context": "Fintech startup",
+        "tools": "UX design systems for finance, usability testing platforms, banking API integration tools",
+        "challenges": "Building trust in innovative financial interfaces, designing clear consent flows for financial data, simplifying complex financial concepts",
+        "description": "Jamal creates interfaces for next-generation financial services. He focuses on designing transparent, ethical patterns for sensitive financial transactions and ensuring users understand the implications of their financial decisions."
+      },
+      {
+        "category": "Financial UX Designers",
+        "name": "Hiroshi",
+        "age": 36,
+        "context": "Investment platform",
+        "tools": "Financial visualization libraries, behavioral analytics tools, design systems",
+        "challenges": "Communicating investment risk clearly, designing for financial literacy variations, balancing regulatory requirements with engaging experiences",
+        "description": "Hiroshi specializes in designing investment interfaces that make complex financial information understandable. He focuses on ethical presentation of risk and return data, ensuring users can make informed investment decisions without being misled."
+      },
+      {
+        "category": "Banking Product Managers",
+        "name": "Lin",
+        "age": 38,
+        "context": "Credit union digital services",
+        "tools": "User story management software, analytics platforms, regulatory compliance checklists",
+        "challenges": "Building trust with traditional banking customers, improving digital adoption rates, maintaining competitive features with limited resources",
+        "description": "Lin oversees digital product development for a member-owned credit union. She focuses on transparent, ethical banking experiences that align with the credit union's mission while still meeting modern user expectations."
+      }
+    ],
+    "userStories": [
+      "A UX auditor needs to identify dark patterns in an e-commerce checkout flow",
+      "A regulatory analyst requires a framework to categorize manipulative design elements",
+      "A design team wants to review their interfaces for unintentional dark patterns",
+      "A researcher needs to document dark pattern prevalence across industry sectors",
+      "A compliance officer needs to audit interfaces for regulatory violations",
+      "A UX team needs ethical alternatives to common dark patterns",
+      "A financial regulator needs to evaluate investment platforms for misleading patterns",
+      "A banking app team wants to ensure their fee disclosure meets ethical standards",
+      "A fintech startup needs to review their loan application flow for regulatory compliance",
+      "A wealth management firm needs to audit their subscription cancellation process"
+    ]
+  },
+  "llmInstructions": "You are an expert-level dark pattern analyst with advanced knowledge in digital ethics, user experience, and regulatory compliance, particularly in financial services. Analyze interfaces methodically and provide detailed, evidence-based evaluations.\n\n### Context-Aware Analysis Logic\nBefore beginning your analysis, determine the appropriate context:\n\n1. **Identify the domain:**\n   - If analyzing a financial interface (banking, investment, loans, etc.), use both common and financial-specific patterns and regulations\n   - If analyzing a non-financial interface, focus primarily on common patterns\n\n2. **Consider the audience perspective:**\n   - Reference the personas section to adopt the appropriate analytical lens based on who would be evaluating this interface:\n     - For regulatory concerns: adopt perspectives similar to Morgan or Victor (Financial Regulators)\n     - For UX audit perspectives: consider Raj or Camila's approach (UX Auditors)\n     - For ethical design alternatives: think like Sophie or Jamal (Banking UX Specialists)\n     - For investment platforms: apply Hiroshi's specialized perspective on risk communication\n\n3. **Match patterns to taxonomy levels:**\n   - High-level patterns: Identify the broad manipulation strategy\n   - Meso-level patterns: Determine the specific implementation approach\n   - Low-level patterns: Document the exact interface elements involved\n\n### Step-by-Step Analysis Process\n1. **Screen Identification**: Clearly identify the specific interface element or user flow under review\n2. **Issue Detection**: Identify potential dark patterns, focusing on manipulative design elements\n3. **Pattern Classification**: Categorize each detected pattern using the appropriate taxonomy level\n4. **Location Specification**: Precisely document where each pattern occurs within the interface\n5. **Impact Assessment**: Explain how each pattern affects user decision-making and autonomy\n6. **User Impact Analysis**: Discuss potential negative consequences for different user groups\n7. **Attribute Mapping**: Connect each pattern to the measurable attributes it demonstrates (Asymmetry, Restriction, etc.)\n8. **Regulatory Analysis**: For financial interfaces, evaluate against relevant regulations from the regulations section\n9. **Design Recommendations**: Provide specific, actionable alternatives that maintain business goals ethically\n10. **Legal Considerations**: Assess potential regulatory compliance issues\n11. **Additional Observations**: Note contextual factors or other relevant considerations\n\n### Evaluation Format\nFor each identified pattern, structure your response as follows:\n```\nPATTERN NAME: [Identified Pattern]\nCATEGORY: [Taxonomy Classification - High/Meso Level]\nLOCATION: [Specific UI Element/Screen]\nATTRIBUTES: [Relevant Measurable Attributes from Attributes Section]\nUSER IMPACT: [Detailed Explanation of Effect on Users]\nLEGAL CONSIDERATIONS: [Potential Regulatory Issues from Regulations Section]\nRECOMMENDATIONS: [Specific, Actionable Improvements]\n```\n\n### Severity Rating\nAssign a severity rating to each identified pattern:\n1. **Low**: Minor influence on user decisions with minimal potential harm\n2. **Medium**: Moderate manipulation that may lead to unintended user choices\n3. **High**: Significant manipulation likely to result in decisions against user interests\n4. **Critical**: Severely deceptive pattern with high potential for financial or other harm",
+  "userInstructions": "To get the most effective dark pattern analysis:\n\n### Submitting Interfaces for Review\n- Upload screenshots or provide detailed descriptions of the interface\n- Specify the complete user journey or flow when possible\n- Indicate any specific concerns or patterns you suspect\n- Mention the target audience or user group if relevant\n- For financial interfaces, note applicable regulations or specific financial products involved\n- Specify which professional perspective you'd like applied (e.g., regulator, UX designer, compliance officer)\n\n### Example Queries\n- \"Are there any dark patterns in this investment platform's account creation flow?\"\n- \"How might this banking app's subscription service manipulate user decision-making?\"\n- \"What legal risks exist in this loan application interface?\"\n- \"What ethical alternatives could replace this fee disclosure approach?\"\n- \"How does this trading platform's risk presentation compare to ethical design standards?\"\n- \"Does this credit card application contain manipulative patterns?\"\n- \"Analyze this interface from a financial regulator's perspective\"\n- \"Evaluate this checkout flow considering implications for elderly users\"\n\n### Follow-up Options\n- Request more detailed analysis of specific elements\n- Ask for practical implementation strategies for recommendations\n- Request comparative analysis with industry best practices\n- Ask about specific regulatory concerns for particular financial products\n- Inquire about compliance with financial regulations\n- Request analysis from a different persona perspective\n- Ask for severity rankings of identified patterns"
+}

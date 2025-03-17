@@ -1,0 +1,883 @@
+{
+  "_processingSequence": {
+    "_instructions": "Follow these steps in order when processing a document into this knowledge base structure:",
+    "steps": [
+      "1. Document Analysis: Scan the entire document to understand its overall structure, purpose, and domain",
+      "2. Section Identification: Break the document into logical sections based on headings and content breaks",
+      "3. Content Type Classification: Identify the type of each content block (text, list, table, etc.)",
+      "4. Entity Extraction: Identify and normalize people, organizations, locations, concepts, etc.",
+      "5. Relationship Mapping: Determine connections between sections, entities, and concepts",
+      "6. Taxonomy Building: Create a hierarchical categorization of document topics",
+      "7. FAQ Generation: Extract explicit questions and answers or create them from implicit information",
+      "8. Metrics Extraction: Identify numerical data, statistics, and KPIs from the document",
+      "9. Cross-Referencing: Ensure all IDs are unique and references are valid",
+      "10. Summarization: Generate concise summaries for each major section"
+    ]
+  },
+  "metadata": {
+    "_instructions": "This section contains information about the knowledge base document itself.",
+    "title": "",
+    "description": "",
+    "source": {
+      "filename": "",
+      "filetype": "",
+      "dateUploaded": "",
+      "dateCreated": "",
+      "dateModified": ""
+    },
+    "version": "1.0",
+    "author": "",
+    "tags": []
+  },
+  "content": {
+    "_instructions": "Break down the document into logical sections. Each section should represent a coherent unit of information (chapter, major heading, etc.).",
+    "sections": [
+      {
+        "id": "section-1",
+        "title": "",
+        "level": 1,
+        "parentId": null,
+        "content": [],
+        "summary": ""
+      }
+    ]
+  },
+  "contentTypes": {
+    "_instructions": "This defines the formats that can be used within the 'content' array of each section. When processing a document, identify the appropriate type for each content block and follow its structure.",
+    "text": {
+      "_template": {
+        "type": "text",
+        "content": "",
+        "tags": [],
+        "importance": "medium"
+      },
+      "_instructions": "For regular paragraphs or text blocks. Preserve original formatting where meaningful."
+    },
+    "heading": {
+      "_template": {
+        "type": "heading",
+        "content": "",
+        "level": 1,
+        "id": ""
+      },
+      "_instructions": "For headings and subheadings. Level indicates hierarchy (1 for main heading, 2 for subheading, etc.)."
+    },
+    "list": {
+      "_template": {
+        "type": "list",
+        "style": "bullet",
+        "items": [
+          {
+            "content": "",
+            "subitems": []
+          }
+        ]
+      },
+      "_instructions": "For bulleted or numbered lists. 'style' can be 'bullet', 'numbered', or 'checklist'. Preserve hierarchy in nested lists using the subitems array."
+    },
+    "instruction": {
+      "_template": {
+        "type": "instruction",
+        "steps": [
+          {
+            "step": 1,
+            "content": "",
+            "notes": ""
+          }
+        ],
+        "context": ""
+      },
+      "_instructions": "For step-by-step instructions or procedures. Number steps sequentially and preserve any contextual information."
+    },
+    "table": {
+      "_template": {
+        "type": "table",
+        "headers": [],
+        "rows": [
+          []
+        ],
+        "caption": ""
+      },
+      "_instructions": "For tabular data. Each row is an array of cell values corresponding to the headers."
+    },
+    "quote": {
+      "_template": {
+        "type": "quote",
+        "content": "",
+        "source": "",
+        "context": ""
+      },
+      "_instructions": "For quoted text. Include source attribution if available."
+    },
+    "code": {
+      "_template": {
+        "type": "code",
+        "content": "",
+        "language": "",
+        "description": ""
+      },
+      "_instructions": "For code snippets or technical syntax. Specify the language if known."
+    },
+    "image": {
+      "_template": {
+        "type": "image",
+        "description": "",
+        "caption": "",
+        "referenceOnly": true
+      },
+      "_instructions": "For image references found in the document. Since images can't be directly included, this is a placeholder with descriptive text."
+    },
+    "definition": {
+      "_template": {
+        "type": "definition",
+        "term": "",
+        "definition": "",
+        "examples": []
+      },
+      "_instructions": "For key terms and their definitions. Include examples if available."
+    }
+  },
+  "entities": {
+    "_instructions": "Extract and normalize important named entities from the document for cross-referencing.",
+    "people": [
+      {
+        "name": "",
+        "mentions": [
+          {
+            "sectionId": "",
+            "context": ""
+          }
+        ],
+        "attributes": {}
+      }
+    ],
+    "organizations": [
+      {
+        "name": "",
+        "mentions": [
+          {
+            "sectionId": "",
+            "context": ""
+          }
+        ],
+        "attributes": {}
+      }
+    ],
+    "locations": [
+      {
+        "name": "",
+        "mentions": [
+          {
+            "sectionId": "",
+            "context": ""
+          }
+        ],
+        "coordinates": null,
+        "attributes": {}
+      }
+    ],
+    "concepts": [
+      {
+        "name": "",
+        "mentions": [
+          {
+            "sectionId": "",
+            "context": ""
+          }
+        ],
+        "definition": "",
+        "relatedConcepts": []
+      }
+    ],
+    "products": [
+      {
+        "name": "",
+        "mentions": [
+          {
+            "sectionId": "",
+            "context": ""
+          }
+        ],
+        "attributes": {}
+      }
+    ],
+    "custom": []
+  },
+  "relationships": {
+    "_instructions": "Define connections between different parts of the knowledge base for better context understanding.",
+    "references": [
+      {
+        "from": {
+          "type": "section",
+          "id": ""
+        },
+        "to": {
+          "type": "section",
+          "id": ""
+        },
+        "relationship": "references",
+        "context": ""
+      }
+    ],
+    "prerequisites": [
+      {
+        "concept": "",
+        "requires": [
+          ""
+        ]
+      }
+    ],
+    "contradictions": [
+      {
+        "statement1": {
+          "sectionId": "",
+          "content": ""
+        },
+        "statement2": {
+          "sectionId": "",
+          "content": ""
+        },
+        "resolution": ""
+      }
+    ]
+  },
+  "taxonomy": {
+    "_instructions": "Create a hierarchical categorization of topics covered in the document.",
+    "categories": [
+      {
+        "name": "",
+        "parent": null,
+        "description": "",
+        "sectionReferences": []
+      }
+    ]
+  },
+  "faqs": {
+    "_instructions": "Extract explicit or implicit question-answer pairs from the document.",
+    "pairs": [
+      {
+        "question": "",
+        "answer": "",
+        "sourceSection": "",
+        "confidence": "high"
+      }
+    ]
+  },
+  "metrics": {
+    "_instructions": "Extract any numerical metrics, statistics, or KPIs mentioned in the document.",
+    "items": [
+      {
+        "name": "",
+        "value": "",
+        "unit": "",
+        "context": "",
+        "sourceSection": ""
+      }
+    ]
+  },
+  "processingInstructions": {
+    "_instructions": "General guidelines for the LLM when processing documents into this template.",
+    "general": [
+      "Preserve the original meaning and intent of the content when restructuring.",
+      "Maintain document hierarchy by properly nesting sections and content.",
+      "When in doubt about content type, choose the most specific applicable type.",
+      "Generate unique IDs for sections and referenced elements to enable cross-referencing.",
+      "Include only factual information from the document; avoid adding interpretations unless explicitly requested.",
+      "Prioritize explicit statements over implicit ones when extracting knowledge.",
+      "For ambiguous content, choose the most likely interpretation based on context."
+    ],
+    "edgeCases": [
+      "Inconsistent Formatting: If document formatting is inconsistent, prioritize semantic meaning over visual structure.",
+      "Missing Headings: Create implicit section titles based on content when formal headings are absent.",
+      "Duplicated Content: For repeated information, include it once and create references for additional instances.",
+      "Contradictions: When the document contains contradictory information, include both versions and flag the contradiction.",
+      "Incomplete Information: Mark information as partial/incomplete rather than attempting to complete it with inference.",
+      "Mixed Content Types: When content blends multiple types (e.g., a paragraph with embedded list), split into separate elements.",
+      "Overly Complex Tables: For tables with merged cells or complex layouts, simplify while preserving critical relationships.",
+      "Non-Standard Lists: Recognize implicit lists that don't use standard bullet or number markers.",
+      "Deeply Nested Content: Limit nesting to 5 levels maximum, flattening deeper structures if necessary."
+    ],
+    "inferenceGuidelines": [
+      "DO infer entity relationships when they're strongly implied by context.",
+      "DO infer section hierarchy based on font size, numbering, or indentation.",
+      "DO categorize content based on semantic meaning when explicit categories aren't provided.",
+      "DO extract implicit definitions when terms are explained without formal definition structures.",
+      "DO NOT infer numerical values that aren't explicitly stated.",
+      "DO NOT create relationships between entities unless there's textual evidence.",
+      "DO NOT add external knowledge that isn't present in the document.",
+      "DO NOT resolve ambiguities with information outside the document scope.",
+      "WHEN UNCERTAIN: Flag content with lower confidence rather than making uncertain inferences."
+    ],
+    "contentExtraction": [
+      "Break long paragraphs into logical units when appropriate.",
+      "Preserve formatting when it conveys meaning (e.g., emphasis, lists, tables).",
+      "Recognize when numbered items are steps in a process versus a simple numbered list.",
+      "Extract definitions even when they're not explicitly formatted as definitions.",
+      "Identify implicit instructions within descriptive text.",
+      "Convert unstructured lists in paragraphs to structured list objects."
+    ],
+    "entityExtraction": [
+      "Extract entities even when they're only mentioned once.",
+      "Normalize different references to the same entity (e.g., 'IBM' and 'International Business Machines').",
+      "Include contextual attributes for entities when available.",
+      "Link related entities to create a knowledge graph.",
+      "Distinguish between specific entities and generic references."
+    ],
+    "relationshipMapping": [
+      "Identify explicit references between document sections.",
+      "Infer relationships based on context and content similarity.",
+      "Detect prerequisite knowledge or dependencies between concepts.",
+      "Flag potential contradictions or inconsistencies within the document.",
+      "Map hierarchical relationships between concepts and categories."
+    ],
+    "taxonomyBuilding": [
+      "Use document headings as initial category guidance.",
+      "Create a balanced taxonomy that covers all major topics.",
+      "Limit hierarchy depth to 3-4 levels for usability.",
+      "Ensure categories are mutually exclusive when possible.",
+      "Use domain-specific terminology for category names when present in the document."
+    ],
+    "postProcessing": [
+      "Generate a concise summary for each major section.",
+      "Create a list of the most important takeaways from the document.",
+      "Identify gaps or ambiguities in the content.",
+      "Remove duplicate information while preserving context.",
+      "Ensure all cross-references are valid and meaningful."
+    ]
+  },
+  "examples": {
+    "_instructions": "Examples showing how different types of document content would be structured in this template.",
+    "example1": {
+      "documentType": "Project Plan",
+      "documentFragment": "# Project Overview\n\nThe Alpha Project aims to improve customer satisfaction by 25% by Q4 2023. The project has three main phases:\n\n1. Research phase (Q1-Q2)\n   - Conduct customer interviews\n   - Analyze competitor products\n\n2. Development phase (Q2-Q3)\n   - Create prototypes\n   - Test with focus groups\n\n3. Implementation phase (Q3-Q4)\n   - Deploy to production\n   - Monitor feedback\n\nJohn Smith (john@example.com) is the project manager working with the Engineering team.\n",
+    "structuredResult": {
+      "sections": [
+        {
+          "id": "section-1",
+          "title": "Project Overview",
+          "level": 1,
+          "parentId": null,
+          "content": [
+            {
+              "type": "text",
+              "content": "The Alpha Project aims to improve customer satisfaction by 25% by Q4 2023.",
+              "tags": ["project goal", "metrics"],
+              "importance": "high"
+            },
+            {
+              "type": "text",
+              "content": "The project has three main phases:",
+              "tags": ["project structure"],
+              "importance": "medium"
+            },
+            {
+              "type": "list",
+              "style": "numbered",
+              "items": [
+                {
+                  "content": "Research phase (Q1-Q2)",
+                  "subitems": [
+                    {
+                      "content": "Conduct customer interviews",
+                      "subitems": []
+                    },
+                    {
+                      "content": "Analyze competitor products",
+                      "subitems": []
+                    }
+                  ]
+                },
+                {
+                  "content": "Development phase (Q2-Q3)",
+                  "subitems": [
+                    {
+                      "content": "Create prototypes",
+                      "subitems": []
+                    },
+                    {
+                      "content": "Test with focus groups",
+                      "subitems": []
+                    }
+                  ]
+                },
+                {
+                  "content": "Implementation phase (Q3-Q4)",
+                  "subitems": [
+                    {
+                      "content": "Deploy to production",
+                      "subitems": []
+                    },
+                    {
+                      "content": "Monitor feedback",
+                      "subitems": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "content": "John Smith (john@example.com) is the project manager working with the Engineering team.",
+              "tags": ["team", "contact"],
+              "importance": "medium"
+            }
+          ],
+          "summary": "The Alpha Project aims to improve customer satisfaction by 25% by Q4 2023 through a three-phase approach: research, development, and implementation. John Smith is the project manager."
+        }
+      ],
+      "entities": {
+        "people": [
+          {
+            "name": "John Smith",
+            "mentions": [
+              {
+                "sectionId": "section-1",
+                "context": "project manager working with the Engineering team"
+              }
+            ],
+            "attributes": {
+              "email": "john@example.com",
+              "role": "project manager"
+            }
+          }
+        ],
+        "organizations": [
+          {
+            "name": "Engineering team",
+            "mentions": [
+              {
+                "sectionId": "section-1",
+                "context": "John Smith is the project manager working with the Engineering team"
+              }
+            ],
+            "attributes": {}
+          }
+        ],
+        "concepts": [
+          {
+            "name": "Alpha Project",
+            "mentions": [
+              {
+                "sectionId": "section-1",
+                "context": "aims to improve customer satisfaction by 25% by Q4 2023"
+              }
+            ],
+            "definition": "A project focused on improving customer satisfaction metrics",
+            "relatedConcepts": ["customer satisfaction"]
+          }
+        ]
+      },
+      "metrics": {
+        "items": [
+          {
+            "name": "Customer satisfaction improvement target",
+            "value": "25",
+            "unit": "percent",
+            "context": "by Q4 2023",
+            "sourceSection": "section-1"
+          }
+        ]
+      }
+    }
+    },
+    "example2": {
+      "documentType": "Technical Documentation",
+      "documentFragment": "## Installation Requirements\n\nBefore installing the software, ensure your system meets the following requirements:\n\nOperating System: Windows 10 (64-bit), macOS 10.15+, or Ubuntu 20.04+\nRAM: Minimum 8GB, Recommended 16GB\nStorage: 500MB free space\nAdditional Software: Java Runtime Environment 11\n\n### Installation Steps\n\nFollow these steps to install the application:\n\n1. Download the installer from portal.example.com/downloads\n2. Run the installer with administrator privileges\n3. Select installation directory\n4. Choose components to install:\n   * Core application (required)\n   * Documentation (optional)\n   * Developer tools (optional)\n5. Click \"Install\" and wait for the process to complete\n\nTroubleshooting: If you encounter error code E-1234, verify your Java version by running `java -version` in the terminal.\n",
+      "structuredResult": {
+        "sections": [
+          {
+            "id": "section-1",
+            "title": "Installation Requirements",
+            "level": 2,
+            "parentId": null,
+            "content": [
+              {
+                "type": "text",
+                "content": "Before installing the software, ensure your system meets the following requirements:",
+                "tags": ["prerequisites", "requirements"],
+                "importance": "high"
+              },
+              {
+                "type": "list",
+                "style": "bullet",
+                "items": [
+                  {
+                    "content": "Operating System: Windows 10 (64-bit), macOS 10.15+, or Ubuntu 20.04+",
+                    "subitems": []
+                  },
+                  {
+                    "content": "RAM: Minimum 8GB, Recommended 16GB",
+                    "subitems": []
+                  },
+                  {
+                    "content": "Storage: 500MB free space",
+                    "subitems": []
+                  },
+                  {
+                    "content": "Additional Software: Java Runtime Environment 11",
+                    "subitems": []
+                  }
+                ]
+              }
+            ],
+            "summary": "System requirements include Windows 10, macOS 10.15+, or Ubuntu 20.04+, with 8GB RAM minimum (16GB recommended), 500MB free storage, and Java Runtime Environment 11."
+          },
+          {
+            "id": "section-2",
+            "title": "Installation Steps",
+            "level": 3,
+            "parentId": "section-1",
+            "content": [
+              {
+                "type": "text",
+                "content": "Follow these steps to install the application:",
+                "tags": ["procedure", "installation"],
+                "importance": "high"
+              },
+              {
+                "type": "instruction",
+                "steps": [
+                  {
+                    "step": 1,
+                    "content": "Download the installer from portal.example.com/downloads",
+                    "notes": ""
+                  },
+                  {
+                    "step": 2,
+                    "content": "Run the installer with administrator privileges",
+                    "notes": ""
+                  },
+                  {
+                    "step": 3,
+                    "content": "Select installation directory",
+                    "notes": ""
+                  },
+                  {
+                    "step": 4,
+                    "content": "Choose components to install",
+                    "notes": "Core application (required), Documentation (optional), Developer tools (optional)"
+                  },
+                  {
+                    "step": 5,
+                    "content": "Click \"Install\" and wait for the process to complete",
+                    "notes": ""
+                  }
+                ],
+                "context": "Installation procedure"
+              },
+              {
+                "type": "text",
+                "content": "Troubleshooting: If you encounter error code E-1234, verify your Java version by running `java -version` in the terminal.",
+                "tags": ["troubleshooting", "error"],
+                "importance": "medium"
+              }
+            ],
+            "summary": "Installation involves downloading the installer, running it with admin privileges, selecting an installation directory, choosing components, and completing the installation. Troubleshooting is provided for error E-1234."
+          }
+        ],
+        "entities": {
+          "concepts": [
+            {
+              "name": "Java Runtime Environment",
+              "mentions": [
+                {
+                  "sectionId": "section-1",
+                  "context": "Additional Software: Java Runtime Environment 11"
+                },
+                {
+                  "sectionId": "section-2",
+                  "context": "verify your Java version by running `java -version`"
+                }
+              ],
+              "definition": "Software component required for running Java applications",
+              "relatedConcepts": ["Java"]
+            },
+            {
+              "name": "Error E-1234",
+              "mentions": [
+                {
+                  "sectionId": "section-2",
+                  "context": "If you encounter error code E-1234, verify your Java version"
+                }
+              ],
+              "definition": "An installation error related to Java version incompatibility",
+              "relatedConcepts": ["Java Runtime Environment", "troubleshooting"]
+            }
+          ]
+        },
+        "metrics": {
+          "items": [
+            {
+              "name": "Minimum RAM",
+              "value": "8",
+              "unit": "GB",
+              "context": "System requirements",
+              "sourceSection": "section-1"
+            },
+            {
+              "name": "Recommended RAM",
+              "value": "16",
+              "unit": "GB",
+              "context": "System requirements",
+              "sourceSection": "section-1"
+            },
+            {
+              "name": "Required storage",
+              "value": "500",
+              "unit": "MB",
+              "context": "System requirements",
+              "sourceSection": "section-1"
+            }
+          ]
+        },
+        "faqs": {
+          "pairs": [
+            {
+              "question": "What are the minimum system requirements?",
+              "answer": "Windows 10 (64-bit), macOS 10.15+, or Ubuntu 20.04+, with 8GB RAM minimum, 500MB free storage, and Java Runtime Environment 11.",
+              "sourceSection": "section-1",
+              "confidence": "high"
+            },
+            {
+              "question": "How do I fix error code E-1234?",
+              "answer": "Verify your Java version by running `java -version` in the terminal.",
+              "sourceSection": "section-2",
+              "confidence": "high"
+            }
+          ]
+        }
+      }
+    },
+    "example3": {
+      "documentType": "Policy Document",
+      "documentFragment": "COMPANY TRAVEL POLICY\n\nEffective: January 1, 2023\n\nTravel Authorization\nAll business travel must be authorized by a department manager prior to booking. International travel requires additional approval from a vice president.\n\nExpense Guidelines:\n* Economy class airfare is standard for flights under 6 hours\n* Business class is permitted for flights over 6 hours\n* Hotel accommodations should not exceed $250/night for standard locations or $350/night for high-cost cities (New York, San Francisco, London, Tokyo)\n* Per diem meal allowance is $75 in standard locations, $100 in high-cost cities\n\nReimbursement Process\nSubmit all expenses within 14 days of return using the expense management system. Attach receipts for all expenses over $25. Expenses submitted after 30 days require VP approval and may be denied.\n\nContact the Travel Department at travel@example.com with any questions.\n",
+      "structuredResult": {
+        "sections": [
+          {
+            "id": "section-1",
+            "title": "COMPANY TRAVEL POLICY",
+            "level": 1,
+            "parentId": null,
+            "content": [
+              {
+                "type": "text",
+                "content": "Effective: January 1, 2023",
+                "tags": ["metadata", "date"],
+                "importance": "medium"
+              }
+            ],
+            "summary": "Company travel policy effective January 1, 2023, covering travel authorization, expense guidelines, and reimbursement process."
+          },
+          {
+            "id": "section-2",
+            "title": "Travel Authorization",
+            "level": 2,
+            "parentId": "section-1",
+            "content": [
+              {
+                "type": "text",
+                "content": "All business travel must be authorized by a department manager prior to booking. International travel requires additional approval from a vice president.",
+                "tags": ["authorization", "approval"],
+                "importance": "high"
+              }
+            ],
+            "summary": "All business travel requires department manager authorization, with international travel needing additional VP approval."
+          },
+          {
+            "id": "section-3",
+            "title": "Expense Guidelines",
+            "level": 2,
+            "parentId": "section-1",
+            "content": [
+              {
+                "type": "list",
+                "style": "bullet",
+                "items": [
+                  {
+                    "content": "Economy class airfare is standard for flights under 6 hours",
+                    "subitems": []
+                  },
+                  {
+                    "content": "Business class is permitted for flights over 6 hours",
+                    "subitems": []
+                  },
+                  {
+                    "content": "Hotel accommodations should not exceed $250/night for standard locations or $350/night for high-cost cities (New York, San Francisco, London, Tokyo)",
+                    "subitems": []
+                  },
+                  {
+                    "content": "Per diem meal allowance is $75 in standard locations, $100 in high-cost cities",
+                    "subitems": []
+                  }
+                ]
+              }
+            ],
+            "summary": "Guidelines for travel expenses including flight class restrictions, hotel cost limits, and meal allowances that vary by location type."
+          },
+          {
+            "id": "section-4",
+            "title": "Reimbursement Process",
+            "level": 2,
+            "parentId": "section-1",
+            "content": [
+              {
+                "type": "text",
+                "content": "Submit all expenses within 14 days of return using the expense management system. Attach receipts for all expenses over $25. Expenses submitted after 30 days require VP approval and may be denied.",
+                "tags": ["reimbursement", "process", "deadlines"],
+                "importance": "high"
+              },
+              {
+                "type": "text",
+                "content": "Contact the Travel Department at travel@example.com with any questions.",
+                "tags": ["contact", "support"],
+                "importance": "medium"
+              }
+            ],
+            "summary": "Expenses must be submitted within 14 days with receipts for items over $25. Late submissions (after 30 days) need VP approval and might be denied."
+          }
+        ],
+        "entities": {
+          "organizations": [
+            {
+              "name": "Travel Department",
+              "mentions": [
+                {
+                  "sectionId": "section-4",
+                  "context": "Contact the Travel Department at travel@example.com with any questions"
+                }
+              ],
+              "attributes": {
+                "email": "travel@example.com"
+              }
+            }
+          ],
+          "locations": [
+            {
+              "name": "New York",
+              "mentions": [
+                {
+                  "sectionId": "section-3",
+                  "context": "high-cost cities (New York, San Francisco, London, Tokyo)"
+                }
+              ],
+              "attributes": {
+                "category": "high-cost city"
+              }
+            },
+            {
+              "name": "San Francisco",
+              "mentions": [
+                {
+                  "sectionId": "section-3",
+                  "context": "high-cost cities (New York, San Francisco, London, Tokyo)"
+                }
+              ],
+              "attributes": {
+                "category": "high-cost city"
+              }
+            },
+            {
+              "name": "London",
+              "mentions": [
+                {
+                  "sectionId": "section-3",
+                  "context": "high-cost cities (New York, San Francisco, London, Tokyo)"
+                }
+              ],
+              "attributes": {
+                "category": "high-cost city"
+              }
+            },
+            {
+              "name": "Tokyo",
+              "mentions": [
+                {
+                  "sectionId": "section-3",
+                  "context": "high-cost cities (New York, San Francisco, London, Tokyo)"
+                }
+              ],
+              "attributes": {
+                "category": "high-cost city"
+              }
+            }
+          ]
+        },
+        "metrics": {
+          "items": [
+            {
+              "name": "Maximum hotel cost (standard)",
+              "value": "250",
+              "unit": "USD per night",
+              "context": "standard locations",
+              "sourceSection": "section-3"
+            },
+            {
+              "name": "Maximum hotel cost (high-cost)",
+              "value": "350",
+              "unit": "USD per night",
+              "context": "high-cost cities",
+              "sourceSection": "section-3"
+            },
+            {
+              "name": "Per diem meal allowance (standard)",
+              "value": "75",
+              "unit": "USD",
+              "context": "standard locations",
+              "sourceSection": "section-3"
+            },
+            {
+              "name": "Per diem meal allowance (high-cost)",
+              "value": "100",
+              "unit": "USD",
+              "context": "high-cost cities",
+              "sourceSection": "section-3"
+            },
+            {
+              "name": "Expense submission deadline",
+              "value": "14",
+              "unit": "days",
+              "context": "after return",
+              "sourceSection": "section-4"
+            },
+            {
+              "name": "Receipt requirement threshold",
+              "value": "25",
+              "unit": "USD",
+              "context": "expenses requiring receipts",
+              "sourceSection": "section-4"
+            },
+            {
+              "name": "Late submission threshold",
+              "value": "30",
+              "unit": "days",
+              "context": "requiring VP approval",
+              "sourceSection": "section-4"
+            }
+          ]
+        },
+        "faqs": {
+          "pairs": [
+            {
+              "question": "When do I need VP approval for travel?",
+              "answer": "VP approval is required for international travel and for expense submissions after 30 days.",
+              "sourceSection": "section-2, section-4",
+              "confidence": "high"
+            },
+            {
+              "question": "What's the deadline for submitting expenses?",
+              "answer": "Submit all expenses within 14 days of return. Expenses submitted after 30 days require VP approval and may be denied.",
+              "sourceSection": "section-4",
+              "confidence": "high"
+            },
+            {
+              "question": "When can I book business class flights?",
+              "answer": "Business class is permitted for flights over 6 hours.",
+              "sourceSection": "section-3",
+              "confidence": "high"
+            }
+          ]
+        }
+      }
+    }
+  }
+}

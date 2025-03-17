@@ -1,6 +1,6 @@
 /**
  * Usability Heuristics Knowledge Base
- * JavaScript module format for easy importing
+ * JavaScript format for direct browser loading
  */
 const usabilityHeuristicsData = {
   "title": "Usability Heuristics Evaluation",
@@ -367,5 +367,5 @@ const usabilityHeuristicsData = {
   "userInstructions": "To get the most effective usability evaluation:\n\n### Submitting Interfaces for Review\n- Upload screenshots, mockups, or provide detailed descriptions\n- Specify the user task or journey being evaluated\n- Indicate any specific usability concerns\n- Mention the target users or usage context if relevant\n- For financial interfaces, note specific regulatory considerations or user accessibility needs\n- Specify which professional perspective you'd like applied (e.g., usability specialist, UX designer)\n\n### Example Queries\n- \"What usability heuristics are violated in this banking login interface?\"\n- \"How severe are the usability issues in this investment dashboard?\"\n- \"What recommendations would improve this loan application process?\"\n- \"How well does this trading platform support recognition rather than recall?\"\n- \"What error prevention issues exist in this payment form?\"\n- \"How clear is the fee disclosure in this subscription service?\"\n- \"Analyze this interface from an expert usability specialist's perspective\"\n- \"Evaluate this form for elderly users with limited tech experience\"\n\n### Follow-up Options\n- Request detailed analysis of specific interface elements\n- Ask for prioritized implementation recommendations\n- Request pattern analysis across multiple screens\n- Ask about industry-specific best practices\n- Request before-and-after comparisons of recommended changes\n- Request analysis from a different professional perspective"
 };
 
-// Export the data for use in other modules
-export default usabilityHeuristicsData;
+// Make the data available globally
+window.usabilityHeuristicsData = usabilityHeuristicsData;

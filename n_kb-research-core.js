@@ -2,13 +2,10 @@
  * Research Knowledge Base Core
  * This file provides the core functionality for loading and processing research-related 
  * knowledge bases such as Dark Patterns and Usability Heuristics.
- * 
- * Uses direct JavaScript imports for knowledge base data
  */
-import darkPatternsData from './n_dark-patterns.js';
-import usabilityHeuristicsData from './n_usability-heuristics.js';
 
-(function() {
+// Define the knowledge base module - not immediately invoked to support module loading
+const kbResearchModule = (darkPatternsData, usabilityHeuristicsData) => {
     // Private utilities
     const utils = {
         log: function(message, type = 'info') {
@@ -216,9 +213,66 @@ import usabilityHeuristicsData from './n_usability-heuristics.js';
         }
     };
 
-    // Initialize the knowledge base
-    kbResearch.initialize();
+    return kbResearch;
+};
+
+// Loader script to handle various ways of importing
+// This allows flexibility in how the script is loaded
+(function() {
+    // Load knowledge base data using <script> tags
+    function loadScript(url, callback) {
+        const script = document.createElement('script');
+        script.type = 'text/javascript';
+        script.src = url;
+        script.onload = callback;
+        document.head.appendChild(script);
+    }
+
+    // Initialization sequence
+    function init() {
+        console.log('[KB Research] Starting initialization...');
+        
+        // Counter to track loaded modules
+        let loadedCount = 0;
+        let darkPatterns = null;
+        let usabilityHeuristics = null;
+        
+        function checkInit() {
+            loadedCount++;
+            if (loadedCount === 2) {
+                // Both modules loaded, initialize the knowledge base
+                console.log('[KB Research] All modules loaded, initializing...');
+                const kbResearch = kbResearchModule(darkPatterns, usabilityHeuristics);
+                kbResearch.initialize();
+                window.kbResearch = kbResearch;
+            }
+        }
+        
+        // Load dark patterns data
+        loadScript('./n_dark-patterns.js', function() {
+            console.log('[KB Research] Dark patterns module loaded');
+            // Access the module data from the global scope
+            if (window.darkPatternsData) {
+                darkPatterns = window.darkPatternsData;
+                checkInit();
+            } else {
+                console.error('[KB Research] Dark patterns data not found in global scope');
+            }
+        });
+        
+        // Load usability heuristics data
+        loadScript('./n_usability-heuristics.js', function() {
+            console.log('[KB Research] Usability heuristics module loaded');
+            // Access the module data from the global scope
+            if (window.usabilityHeuristicsData) {
+                usabilityHeuristics = window.usabilityHeuristicsData;
+                checkInit();
+            } else {
+                console.error('[KB Research] Usability heuristics data not found in global scope');
+            }
+        });
+    }
     
-    // Expose to global scope - this is what the bookmarklet framework expects
-    window.kbResearch = kbResearch;
+    // Start the initialization process
+    init();
 })();

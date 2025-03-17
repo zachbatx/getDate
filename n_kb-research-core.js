@@ -3,7 +3,7 @@
  * This file provides the core functionality for loading and processing research-related 
  * knowledge bases such as Dark Patterns and Usability Heuristics.
  * 
- * Modified to use JavaScript imports instead of remote JSON fetching
+ * Uses direct JavaScript imports for knowledge base data
  */
 import darkPatternsData from './n_dark-patterns.js';
 import usabilityHeuristicsData from './n_usability-heuristics.js';
@@ -19,8 +19,6 @@ import usabilityHeuristicsData from './n_usability-heuristics.js';
                 console.log(`${prefix} ${message}`);
             }
         }
-        
-        // Removed loadJSON utility since we now import data directly
     };
 
     // Create the knowledge base object
@@ -28,11 +26,6 @@ import usabilityHeuristicsData from './n_usability-heuristics.js';
         name: "Research Best Practices",
         features: {},
         loadedFeatures: {},
-        // Keep featureUrls for backward compatibility and feature identification
-        featureUrls: {
-            darkPatterns: "https://example.com/dark-patterns.json",
-            usabilityHeuristics: "https://example.com/usability-heuristics.json"
-        },
         
         /**
          * Initialize the knowledge base
@@ -40,35 +33,28 @@ import usabilityHeuristicsData from './n_usability-heuristics.js';
         initialize: function() {
             utils.log("Initializing Research Knowledge Base...");
             
-            // Pre-populate features to display in dropdown
-            this.features = {
-                darkPatterns: {
-                    title: "Dark Patterns"
-                },
-                usabilityHeuristics: {
-                    title: "Usability Heuristics"
-                }
-            };
-            
-            // Pre-load the features data (now that we have it as imports)
+            // Pre-load the features data from imports
             this.loadedFeatures = {
                 darkPatterns: darkPatternsData,
                 usabilityHeuristics: usabilityHeuristicsData
             };
             
-            // Update the feature titles from the loaded data
-            for (const [featureId, featureData] of Object.entries(this.loadedFeatures)) {
-                this.features[featureId] = {
-                    title: featureData.title || featureData.name || featureId
-                };
-            }
+            // Set up features based on loaded data
+            this.features = {
+                darkPatterns: {
+                    title: darkPatternsData.title || "Dark Patterns"
+                },
+                usabilityHeuristics: {
+                    title: usabilityHeuristicsData.title || "Usability Heuristics"
+                }
+            };
             
             // Register with the bookmarklet loader if available
             if (window.KnowledgeBaseLoader) {
                 window.KnowledgeBaseLoader.registerBase(
                     "researchKB", 
                     "Research Best Practices",
-                    "n_kb-research-core.js", // Updated to match actual filename
+                    "n_kb-research-core.js",
                     "kbResearch"
                 );
             }
@@ -77,72 +63,55 @@ import usabilityHeuristicsData from './n_usability-heuristics.js';
         },
 
         /**
-         * Load a specific feature's data
+         * Get a specific feature's data
          * @param {string} featureId - The feature identifier
-         * @returns {Promise<Object>} - The loaded feature data
+         * @returns {Object} - The feature data
          */
-        loadFeature: async function(featureId) {
-            // This now just returns the already-loaded data
+        getFeature: function(featureId) {
             if (this.loadedFeatures[featureId]) {
-                utils.log(`Using imported data for ${featureId}`);
                 return this.loadedFeatures[featureId];
             }
-
             throw new Error(`Unknown feature: ${featureId}`);
         },
 
         /**
          * Generate a prompt for a specific feature
-         * Modified to be synchronous for compatibility with the bookmarklet framework
          * @param {string} featureId - The feature to generate a prompt for
          * @returns {string} - The generated prompt
          */
         generatePrompt: function(featureId) {
-            // Check if the feature is already loaded (should always be true now)
-            if (!this.loadedFeatures[featureId]) {
-                // Return an error message
-                return `Error: Feature "${this.features[featureId]?.title || featureId}" not found.\n\n` +
-                       `Please check if the feature identifier is correct.`;
+            try {
+                const featureData = this.getFeature(featureId);
+                
+                // Check if the feature data has llmInstructions
+                if (!featureData.llmInstructions) {
+                    return `Error: No instructions available for feature "${featureId}"`;
+                }
+                
+                return this.generateFeaturePrompt(featureData);
+            } catch (error) {
+                return `Error: ${error.message}`;
             }
-            
-            const featureData = this.loadedFeatures[featureId];
-            
-            // Check if the feature data has a prompt generator field
-            // This is for backward compatibility - data structure should include llmInstructions
-            if (!featureData.llmInstructions) {
-                return `Error: No prompt generator available for feature "${featureId}"`;
-            }
-            
-            return this.generateFeaturePrompt(featureData);
         },
 
         /**
-         * Generic prompt generator that uses data from the imported data
+         * Generate prompt from feature data
          * @param {Object} data - The feature data
          * @returns {string} - The generated prompt
          */
         generateFeaturePrompt: function(data) {
-            // Each feature should contain:
-            // 1. knowledgeBase section with relevant data
-            // 2. llmInstructions section with instructions for LLM
-            // 3. userInstructions section with instructions for users
-            
+            // Structure the prompt with all available sections
             let prompt = `# ${data.title || data.name} Knowledge Base\n\n`;
             
-            // Add knowledge base section
-            if (data.knowledgeBase) {
-                prompt += `## Knowledge Base\n${data.knowledgeBase}\n\n`;
-            } else {
-                // Fall back to generic formatting of data sections
-                prompt += this.formatGenericKnowledgeBase(data);
-            }
+            // Add formatted knowledge base section
+            prompt += this.formatGenericKnowledgeBase(data);
             
-            // Add LLM instructions if present
+            // Add LLM instructions
             if (data.llmInstructions) {
                 prompt += `## LLM Instructions\n${data.llmInstructions}\n\n`;
             }
             
-            // Add user interaction instructions if present
+            // Add user interaction instructions
             if (data.userInstructions) {
                 prompt += `## User Interaction Instructions\n${data.userInstructions}\n\n`;
             }

@@ -2,7 +2,12 @@
  * Research Knowledge Base Core
  * This file provides the core functionality for loading and processing research-related 
  * knowledge bases such as Dark Patterns and Usability Heuristics.
+ * 
+ * Modified to use JavaScript imports instead of remote JSON fetching
  */
+import darkPatternsData from './n_dark-patterns.js';
+import usabilityHeuristicsData from './n_usability-heuristics.js';
+
 (function() {
     // Private utilities
     const utils = {
@@ -13,25 +18,9 @@
             } else {
                 console.log(`${prefix} ${message}`);
             }
-        },
-
-        /**
-         * Load JSON data from a URL
-         * @param {string} url - The URL to load JSON from
-         * @returns {Promise<Object>} - The loaded JSON data
-         */
-        loadJSON: async function(url) {
-            try {
-                const response = await fetch(url);
-                if (!response.ok) {
-                    throw new Error(`Failed to load JSON: ${response.status} ${response.statusText}`);
-                }
-                return await response.json();
-            } catch (error) {
-                utils.log(`Error loading JSON from ${url}: ${error.message}`, 'error');
-                throw error;
-            }
         }
+        
+        // Removed loadJSON utility since we now import data directly
     };
 
     // Create the knowledge base object
@@ -39,6 +28,7 @@
         name: "Research Best Practices",
         features: {},
         loadedFeatures: {},
+        // Keep featureUrls for backward compatibility and feature identification
         featureUrls: {
             darkPatterns: "https://example.com/dark-patterns.json",
             usabilityHeuristics: "https://example.com/usability-heuristics.json"
@@ -50,12 +40,35 @@
         initialize: function() {
             utils.log("Initializing Research Knowledge Base...");
             
+            // Pre-populate features to display in dropdown
+            this.features = {
+                darkPatterns: {
+                    title: "Dark Patterns"
+                },
+                usabilityHeuristics: {
+                    title: "Usability Heuristics"
+                }
+            };
+            
+            // Pre-load the features data (now that we have it as imports)
+            this.loadedFeatures = {
+                darkPatterns: darkPatternsData,
+                usabilityHeuristics: usabilityHeuristicsData
+            };
+            
+            // Update the feature titles from the loaded data
+            for (const [featureId, featureData] of Object.entries(this.loadedFeatures)) {
+                this.features[featureId] = {
+                    title: featureData.title || featureData.name || featureId
+                };
+            }
+            
             // Register with the bookmarklet loader if available
             if (window.KnowledgeBaseLoader) {
                 window.KnowledgeBaseLoader.registerBase(
                     "researchKB", 
                     "Research Best Practices",
-                    "kb-research-core.js",
+                    "n_kb-research-core.js", // Updated to match actual filename
                     "kbResearch"
                 );
             }
@@ -69,63 +82,47 @@
          * @returns {Promise<Object>} - The loaded feature data
          */
         loadFeature: async function(featureId) {
+            // This now just returns the already-loaded data
             if (this.loadedFeatures[featureId]) {
-                utils.log(`Using cached data for ${featureId}`);
+                utils.log(`Using imported data for ${featureId}`);
                 return this.loadedFeatures[featureId];
             }
 
-            const url = this.featureUrls[featureId];
-            if (!url) {
-                throw new Error(`Unknown feature: ${featureId}`);
-            }
-
-            utils.log(`Loading feature data for ${featureId}...`);
-            try {
-                const featureData = await utils.loadJSON(url);
-                this.loadedFeatures[featureId] = featureData;
-                
-                // Register the feature in the features object
-                this.features[featureId] = {
-                    title: featureData.title || featureData.name || featureId
-                };
-                
-                utils.log(`Successfully loaded ${featureId} data`);
-                return featureData;
-            } catch (error) {
-                utils.log(`Failed to load feature ${featureId}: ${error.message}`, 'error');
-                throw error;
-            }
+            throw new Error(`Unknown feature: ${featureId}`);
         },
 
         /**
          * Generate a prompt for a specific feature
+         * Modified to be synchronous for compatibility with the bookmarklet framework
          * @param {string} featureId - The feature to generate a prompt for
          * @returns {string} - The generated prompt
          */
-        generatePrompt: async function(featureId) {
-            try {
-                // Ensure the feature data is loaded
-                await this.loadFeature(featureId);
-                const featureData = this.loadedFeatures[featureId];
-                
-                // Use the appropriate generator function based on feature ID
-                if (!featureData.promptGenerator) {
-                    return `Error: No prompt generator available for feature "${featureId}"`;
-                }
-                
-                return this.generateFeaturePrompt(featureData);
-            } catch (error) {
-                return `Error generating prompt: ${error.message}`;
+        generatePrompt: function(featureId) {
+            // Check if the feature is already loaded (should always be true now)
+            if (!this.loadedFeatures[featureId]) {
+                // Return an error message
+                return `Error: Feature "${this.features[featureId]?.title || featureId}" not found.\n\n` +
+                       `Please check if the feature identifier is correct.`;
             }
+            
+            const featureData = this.loadedFeatures[featureId];
+            
+            // Check if the feature data has a prompt generator field
+            // This is for backward compatibility - data structure should include llmInstructions
+            if (!featureData.llmInstructions) {
+                return `Error: No prompt generator available for feature "${featureId}"`;
+            }
+            
+            return this.generateFeaturePrompt(featureData);
         },
 
         /**
-         * Generic prompt generator that uses data from the JSON file
+         * Generic prompt generator that uses data from the imported data
          * @param {Object} data - The feature data
          * @returns {string} - The generated prompt
          */
         generateFeaturePrompt: function(data) {
-            // Each feature JSON should contain:
+            // Each feature should contain:
             // 1. knowledgeBase section with relevant data
             // 2. llmInstructions section with instructions for LLM
             // 3. userInstructions section with instructions for users

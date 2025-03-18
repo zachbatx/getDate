@@ -1,0 +1,1133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Knowledge Base Editor (Improved UI)</title>
+  <!-- Font Awesome from CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <style>
+    /* Reset and base styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    }
+    
+    body {
+      background-color: #f8fafc;
+      color: #1e293b;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    /* Header styles */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem;
+      background-color: #1e293b;
+      color: white;
+    }
+    
+    .header-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .header-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+    
+    /* Button styles */
+    button {
+      cursor: pointer;
+      border: none;
+      border-radius: 0.25rem;
+      font-size: 0.875rem;
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+    
+    .btn {
+      padding: 0.5rem 0.75rem;
+      font-weight: 500;
+    }
+    
+    .btn-small {
+      padding: 0.25rem 0.5rem;
+      font-size: 0.75rem;
+    }
+    
+    .btn-primary {
+      background-color: #2563eb;
+      color: white;
+    }
+    
+    .btn-primary:hover {
+      background-color: #3b82f6;
+    }
+    
+    .btn-secondary {
+      background-color: #334155;
+      color: white;
+    }
+    
+    .btn-secondary:hover {
+      background-color: #475569;
+    }
+    
+    .btn-success {
+      background-color: #16a34a;
+      color: white;
+    }
+    
+    .btn-success:hover {
+      background-color: #22c55e;
+    }
+    
+    .btn-danger {
+      background-color: #dc2626;
+      color: white;
+    }
+    
+    .btn-danger:hover {
+      background-color: #ef4444;
+    }
+    
+    .btn-icon {
+      /*padding: 0.375rem;*/
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      border-radius: 0.25rem;
+      transition: background-color 0.1s ease;
+    }
+    
+    .btn-icon:hover {
+      background-color: rgba(0, 0, 0, 0.05);
+    }
+    
+    .btn-icon.edit {
+      color: #0369a1;
+    }
+    
+    .btn-icon.add {
+      color: #0369a1;
+
+    }
+    
+    .btn-icon.delete {
+      color: #0369a1;
+    }
+    
+    /* Main container */
+    main {
+      flex: 1;
+      padding: 1rem;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    
+    /* Drop zone */
+    .drop-zone {
+      border: 2px dashed #cbd5e1;
+      border-radius: 0.5rem;
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .drop-zone:hover {
+      border-color: #94a3b8;
+    }
+    
+    .drop-zone.active {
+      border-color: #3b82f6;
+      background-color: #eff6ff;
+    }
+    
+    .drop-zone-icon {
+      color: #94a3b8;
+      margin-bottom: 0.5rem;
+      font-size: 2rem;
+    }
+    
+    .drop-zone-text {
+      color: #64748b;
+      margin-bottom: 0.25rem;
+    }
+    
+    .drop-zone-subtext {
+      color: #94a3b8;
+      font-size: 0.875rem;
+    }
+    
+    /* Filename input */
+    .filename-container {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .filename-label {
+      font-weight: 600;
+      color: #334155;
+    }
+    
+    /* Cards */
+    .card {
+      background-color: white;
+      border-radius: 0.5rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      padding: 1rem;
+    }
+    
+    /* Form inputs */
+    .form-group {
+      margin-bottom: 1rem;
+    }
+    
+    .form-group:last-child {
+      margin-bottom: 0;
+    }
+    
+    label {
+      display: block;
+      font-weight: 600;
+      color: #334155;
+      margin-bottom: 0.25rem;
+    }
+    
+    input[type="text"],
+    textarea,
+    select {
+      width: 100%;
+      padding: 0.5rem 0.75rem;
+      border: 1px solid #cbd5e1;
+      border-radius: 0.25rem;
+      font-size: 0.875rem;
+    }
+    
+    input[type="text"]:focus,
+    textarea:focus,
+    select:focus {
+      outline: none;
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
+    }
+    
+    textarea {
+      resize: vertical;
+      min-height: 5rem;
+    }
+
+    /* Tree view */
+    .tree-view {
+      font-size: 0.875rem;
+    }
+    
+    .tree-node {
+      margin: 0.25rem 0;
+    }
+    
+    .node-header {
+      display: flex;
+      align-items: center;
+      padding: 0.375rem 0.25rem;
+      cursor: pointer;
+      /*border-radius: 0.25rem;*/
+      transition: background-color 0.1s ease;
+      border-bottom: 1px solid #d5e3ea;
+    }
+    
+    .node-header:hover {
+      /*background-color: #f1f5f9;*/
+    }
+    
+    .node-chevron {
+      margin-right: 0.25rem;
+      transition: transform 0.2s;
+    }
+    
+    .node-chevron.expanded {
+      transform: rotate(90deg);
+    }
+    
+    .node-children {
+      margin-left: 1.25rem;
+      overflow: hidden;
+    }
+    
+    .node-key {
+      font-weight: 500;
+      margin-right: 0.25rem;
+      /*flex-grow: 1;*/
+      display: flex;
+      align-items: center;
+    }
+    
+    .node-value {
+      color: #64748b;
+      margin-right: 2.0rem;
+      padding: 5px;
+      background-color: #f5f1f1;
+      margin-left: 5px;
+      border-radius: 3px;
+    }
+    
+    .node-value.string {
+      color: #16a34a;
+    }
+    
+    .node-value.number {
+      color: #2563eb;
+    }
+    
+    .node-value.boolean {
+      color: #9333ea;
+    }
+    
+    .node-actions {
+      display: flex;
+      /*gap: 0.5rem;
+      margin-left: auto;*/
+    }
+    
+    /* Editor */
+    .edit-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 10;
+    }
+    
+    .edit-dialog {
+      width: 90%;
+      max-width: 32rem;
+      background-color: white;
+      border-radius: 0.5rem;
+      overflow: hidden;
+    }
+    
+    .edit-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem;
+      background-color: #f1f5f9;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    
+    .edit-title {
+      font-weight: 600;
+      font-size: 1.125rem;
+    }
+    
+    .edit-close {
+      color: #64748b;
+      cursor: pointer;
+    }
+    
+    .edit-close:hover {
+      color: #1e293b;
+    }
+    
+    .edit-content {
+      padding: 1rem;
+    }
+    
+    .edit-footer {
+      display: flex;
+      justify-content: flex-end;
+      padding: 1rem;
+      gap: 0.5rem;
+      background-color: #f8fafc;
+      border-top: 1px solid #e2e8f0;
+    }
+    
+    /* Info text */
+    .info-text {
+      font-size: 0.875rem;
+      color: #64748b;
+      margin-top: 0.5rem;
+    }
+
+    /* Format selector */
+    .format-selector {
+      margin-top: 0.5rem;
+      display: flex;
+      gap: 1rem;
+    }
+
+    .radio-group {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .radio-group input[type="radio"] {
+      margin: 0;
+    }
+    
+    /* Icons */
+    .icon {
+      display: inline-block;
+      vertical-align: middle;
+      width: 1em;
+      height: 1em;
+      stroke-width: 0;
+      stroke: currentColor;
+      fill: currentColor;
+    }
+    
+    /* Hidden */
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <div class="header-title">
+      <i class="fas fa-file-alt" style="font-size:24px;"></i>
+      Knowledge Base Editor
+    </div>
+    <div class="header-actions">
+      <button id="new-btn" class="btn btn-secondary">
+        <i class="material-icons">add_to_photos</i>
+        New
+      </button>
+      <button id="export-btn" class="btn btn-primary">
+        <i class="fas fa-download"></i>
+        Export
+      </button>
+    </div>
+  </header>
+  
+  <!-- Main Content -->
+  <main>
+    <!-- File Drop Area -->
+    <div id="drop-zone" class="drop-zone">
+      <input type="file" id="file-input" accept=".js" class="hidden">
+      <i class="fas fa-cloud-upload-alt" style="font-size:32px;"></i>
+      <p class="drop-zone-text">Drag & drop your knowledge base file here</p>
+      <p class="drop-zone-subtext">or click to browse</p>
+      <p class="info-text">Supports any JS file format and complex nested structures</p>
+    </div>
+    
+    <!-- Filename Input -->
+    <div class="filename-container">
+      <label for="filename" class="filename-label">Filename:</label>
+      <input type="text" id="filename" value="knowledge-base.js" class="filename-input">
+    </div>
+    
+    <!-- Export Format Selection -->
+    <div class="format-selector">
+      <label class="filename-label">Export Format:</label>
+      <div class="radio-group">
+        <input type="radio" id="format-module" name="export-format" value="module">
+        <label for="format-module">ES6 Module (export default)</label>
+      </div>
+      <div class="radio-group">
+        <input type="radio" id="format-const" name="export-format" value="const" checked>
+        <label for="format-const">Const declaration</label>
+      </div>
+    </div>
+    
+    <!-- Tree View -->
+    <div class="card">
+      <div id="tree-container" class="tree-view"></div>
+    </div>
+  </main>
+  
+  <!-- Edit Modal -->
+  <div id="edit-modal" class="edit-modal hidden">
+    <div class="edit-dialog">
+      <div class="edit-header">
+        <h2 class="edit-title">Edit Value</h2>
+        <span class="edit-close">✕</span>
+      </div>
+      <div class="edit-content">
+        <div class="form-group">
+          <label for="edit-key">Property Name:</label>
+          <input type="text" id="edit-key" placeholder="Enter a name for this property">
+        </div>
+        <div class="form-group">
+          <label for="edit-value">Value:</label>
+          <textarea id="edit-value" placeholder="Enter the value"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="edit-type">Value Type:</label>
+          <select id="edit-type">
+            <option value="string">Text (words, phrases, paragraphs)</option>
+            <option value="number">Number (like 1, 2.5, -10)</option>
+            <option value="boolean">Yes/No (true or false)</option>
+            <option value="array">List of Items (collection)</option>
+            <option value="object">Group of Properties (container)</option>
+          </select>
+        </div>
+      </div>
+      <div class="edit-footer">
+        <button id="edit-cancel-btn" class="btn btn-secondary">Cancel</button>
+        <button id="edit-save-btn" class="btn btn-primary">Save</button>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // State
+      let knowledgeBase = {};
+      let expandedNodes = {};
+      let editPath = [];
+      let editMode = 'edit'; // 'edit', 'add'
+      
+      // List of non-editable key names
+      const nonEditableKeys = ['title', 'name', 'llmInstructions', 'userInstructions'];
+      
+      // DOM Elements
+      const dropZone = document.getElementById('drop-zone');
+      const fileInput = document.getElementById('file-input');
+      const filenameInput = document.getElementById('filename');
+      const treeContainer = document.getElementById('tree-container');
+      const newBtn = document.getElementById('new-btn');
+      const exportBtn = document.getElementById('export-btn');
+      const formatModule = document.getElementById('format-module');
+      const formatConst = document.getElementById('format-const');
+      
+      // Modal elements
+      const editModal = document.getElementById('edit-modal');
+      const editKey = document.getElementById('edit-key');
+      const editValue = document.getElementById('edit-value');
+      const editType = document.getElementById('edit-type');
+      const editCloseBtn = document.querySelector('.edit-close');
+      const editCancelBtn = document.getElementById('edit-cancel-btn');
+      const editSaveBtn = document.getElementById('edit-save-btn');
+      
+      // Event Listeners
+      dropZone.addEventListener('click', () => fileInput.click());
+      fileInput.addEventListener('change', handleFileSelect);
+      dropZone.addEventListener('dragover', handleDragOver);
+      dropZone.addEventListener('dragleave', handleDragLeave);
+      dropZone.addEventListener('drop', handleDrop);
+      
+      newBtn.addEventListener('click', createNew);
+      exportBtn.addEventListener('click', exportKnowledgeBase);
+      
+      // Modal event listeners
+      editCloseBtn.addEventListener('click', closeEditModal);
+      editCancelBtn.addEventListener('click', closeEditModal);
+      editSaveBtn.addEventListener('click', saveEdit);
+      
+      // Init
+      createNew();
+      
+      // Handlers
+      function handleDragOver(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        dropZone.classList.add('active');
+      }
+      
+      function handleDragLeave(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        dropZone.classList.remove('active');
+      }
+      
+      function handleDrop(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        dropZone.classList.remove('active');
+        
+        if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+          handleFile(e.dataTransfer.files[0]);
+        }
+      }
+      
+      function handleFileSelect(e) {
+        if (e.target.files && e.target.files[0]) {
+          handleFile(e.target.files[0]);
+        }
+      }
+      
+      function handleFile(file) {
+        filenameInput.value = file.name;
+        
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          try {
+            const content = e.target.result;
+            
+            // Try to match "export default {...}" pattern
+            let match = content.match(/export\s+default\s+(\{[\s\S]*\});?\s*$/);
+            
+            if (match && match[1]) {
+              // ES6 module format
+              const parsed = new Function(`return ${match[1]}`)();
+              knowledgeBase = parsed;
+              updateUI();
+              formatModule.checked = true;
+              return;
+            }
+            
+            // Try to match "const varName = {...}" pattern
+            match = content.match(/const\s+(\w+)\s*=\s*(\{[\s\S]*\});/);
+            
+            if (match && match[2]) {
+              // Const declaration format
+              const parsed = new Function(`return ${match[2]}`)();
+              knowledgeBase = parsed;
+              updateUI();
+              formatConst.checked = true;
+              const varName = match[1];
+              filenameInput.value = varName + '.js';
+              return;
+            }
+            
+            // Try to extract any JavaScript object
+            match = content.match(/(\{[\s\S]*\})/);
+            
+            if (match && match[1]) {
+              try {
+                const parsed = new Function(`return ${match[1]}`)();
+                if (typeof parsed === 'object' && parsed !== null) {
+                  knowledgeBase = parsed;
+                  updateUI();
+                  return;
+                }
+              } catch (err) {
+                console.error("Error parsing object:", err);
+              }
+            }
+            
+            throw new Error("Could not parse file format");
+          } catch (error) {
+            console.error("Error parsing file:", error);
+            alert("Error parsing file. Please make sure it's a valid JavaScript file with an object.");
+          }
+        };
+        
+        reader.readAsText(file);
+      }
+      
+      function createNew() {
+        const confirm = window.confirm("This will clear the current knowledge base. Continue?");
+        if (confirm) {
+          knowledgeBase = {
+            title: 'New Knowledge Base',
+            description: 'Knowledge base description',
+            categories: []
+          };
+          expandedNodes = {};
+          filenameInput.value = 'knowledge-base.js';
+          updateUI();
+        }
+      }
+      
+      function exportKnowledgeBase() {
+        // Format the knowledge base object as a string
+        const formatObject = (obj, indent = 0) => {
+          const spacing = ' '.repeat(indent);
+          
+          if (Array.isArray(obj)) {
+            if (obj.length === 0) return '[]';
+            
+            // Check if array contains simple values
+            const hasComplexItems = obj.some(item => typeof item === 'object' && item !== null);
+            
+            if (!hasComplexItems) {
+              // Format arrays of primitives on one line with double quotes for strings
+              const items = obj.map(item => typeof item === 'string' ? `"${item.replace(/"/g, '\\"')}"` : item);
+              return `[${items.join(', ')}]`;
+            }
+            
+            // Format arrays of objects with proper indentation
+            let result = '[\n';
+            obj.forEach((item, index) => {
+              if (typeof item === 'object' && item !== null) {
+                result += `${spacing}  ${formatObject(item, indent + 2)}`;
+              } else if (typeof item === 'string') {
+                result += `${spacing}  "${item.replace(/"/g, '\\"')}"`;
+              } else {
+                result += `${spacing}  ${item}`;
+              }
+              
+              if (index < obj.length - 1) result += ',';
+              result += '\n';
+            });
+            result += `${spacing}]`;
+            return result;
+          }
+          
+          if (typeof obj !== 'object' || obj === null) {
+            if (typeof obj === 'string') return `"${obj.replace(/"/g, '\\"')}"`;
+            return String(obj);
+          }
+          
+          const keys = Object.keys(obj);
+          if (keys.length === 0) return '{}';
+          
+          let result = '{\n';
+          
+          keys.forEach((key, index) => {
+            const value = obj[key];
+            result += `${spacing}  "${key}": `;
+            
+            if (typeof value === 'object' && value !== null) {
+              result += formatObject(value, indent + 2);
+            } else if (typeof value === 'string') {
+              result += `"${value.replace(/"/g, '\\"')}"`;
+            } else {
+              result += value;
+            }
+            
+            if (index < keys.length - 1) result += ',';
+            result += '\n';
+          });
+          
+          result += `${spacing}}`;
+          return result;
+        };
+        
+        let jsContent;
+        const baseFileName = filenameInput.value.replace(/\.js$/, '');
+        const varName = baseFileName.replace(/[^a-zA-Z0-9_]/g, '_') || 'knowledgeBase';
+        
+        if (formatModule.checked) {
+          // ES6 module format
+          jsContent = `export default ${formatObject(knowledgeBase)};`;
+        } else {
+          // Const declaration format
+          jsContent = `/**
+ * ${knowledgeBase.title || 'Knowledge Base'}
+ * JavaScript module format for easy importing
+ */
+const ${varName}Data = ${formatObject(knowledgeBase)};
+
+// Make the data available globally
+window.${varName}Data = ${varName}Data;`;
+        }
+        
+        // Create a blob and download link
+        const blob = new Blob([jsContent], { type: 'application/javascript' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filenameInput.value;
+        document.body.appendChild(a);
+        a.click();
+        URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+      }
+      
+      // Tree view functions
+      function updateUI() {
+        renderTree();
+      }
+      
+      function renderTree() {
+        treeContainer.innerHTML = '';
+        
+        // Check if knowledgeBase is empty
+        if (Object.keys(knowledgeBase).length === 0) {
+          const emptyNode = document.createElement('div');
+          emptyNode.className = 'node-empty';
+          emptyNode.textContent = 'No data yet. Import a file or add properties.';
+          treeContainer.appendChild(emptyNode);
+          
+          // Add root level add button
+          const addRootBtn = document.createElement('button');
+          addRootBtn.className = 'btn btn-small btn-success';
+          addRootBtn.innerHTML = '<i class="material-icons">add_to_photos</i> Add Property';
+          addRootBtn.addEventListener('click', () => showAddModal([]));
+          treeContainer.appendChild(addRootBtn);
+          
+          return;
+        }
+        
+        // Render each root level property
+        Object.entries(knowledgeBase).forEach(([key, value]) => {
+          const nodeElement = createTreeNode(key, value, [key]);
+          treeContainer.appendChild(nodeElement);
+        });
+        
+        // Add root level add button
+        const addRootBtn = document.createElement('button');
+        addRootBtn.className = 'btn btn-small btn-success';
+        addRootBtn.style.marginTop = '0.5rem';
+        addRootBtn.innerHTML = '<i class="material-icons">add_to_photos</i> Add Property';
+        addRootBtn.addEventListener('click', () => showAddModal([]));
+        treeContainer.appendChild(addRootBtn);
+      }
+      
+      function createTreeNode(key, value, path) {
+        const nodeElement = document.createElement('div');
+        nodeElement.className = 'tree-node';
+        nodeElement.dataset.path = JSON.stringify(path);
+        
+        const nodeHeader = document.createElement('div');
+        nodeHeader.className = 'node-header';
+        
+        // Determine node type and expandability
+        const isExpandable = typeof value === 'object' && value !== null && Object.keys(value).length > 0;
+        const pathKey = path.join('.');
+        const isExpanded = expandedNodes[pathKey] || false;
+        
+        // Create chevron or spacer
+        if (isExpandable) {
+          const chevron = document.createElement('span');
+          chevron.className = `node-chevron ${isExpanded ? 'expanded' : ''}`;
+          chevron.innerHTML = '<i class="fas fa-chevron-right"></i>';
+          nodeHeader.appendChild(chevron);
+        } else {
+          const spacer = document.createElement('span');
+          spacer.style.width = '16px';
+          spacer.style.display = 'inline-block';
+          nodeHeader.appendChild(spacer);
+        }
+        
+        // Key name & value wrapper
+        const keyValueWrapper = document.createElement('div');
+        keyValueWrapper.className = 'node-key';
+        
+        const keyElement = document.createElement('span');
+        keyElement.textContent = key;
+        keyValueWrapper.appendChild(keyElement);
+        
+        // Value preview
+        if (!isExpandable) {
+          const valueElement = document.createElement('span');
+          valueElement.className = `node-value ${typeof value}`;
+          
+          if (typeof value === 'string') {
+            valueElement.textContent = `"${value.length > 50 ? value.substring(0, 47) + '...' : value}"`;
+          } else if (value === null) {
+            valueElement.textContent = 'null';
+          } else {
+            valueElement.textContent = String(value);
+          }
+          
+          keyValueWrapper.appendChild(valueElement);
+        } else if (Array.isArray(value)) {
+          const previewElement = document.createElement('span');
+          previewElement.className = 'node-value';
+          previewElement.textContent = `List with ${value.length} item${value.length !== 1 ? 's' : ''}`;
+          keyValueWrapper.appendChild(previewElement);
+        } else {
+          const previewElement = document.createElement('span');
+          previewElement.className = 'node-value';
+          previewElement.textContent = `Group with ${Object.keys(value).length} propert${Object.keys(value).length !== 1 ? 'ies' : 'y'}`;
+          keyValueWrapper.appendChild(previewElement);
+        }
+        
+        nodeHeader.appendChild(keyValueWrapper);
+        
+        // Action buttons
+        const actionsElement = document.createElement('div');
+        actionsElement.className = 'node-actions';
+        
+        const editBtn = document.createElement('button');
+        editBtn.className = 'btn-icon edit';
+        editBtn.title = 'Edit';
+        editBtn.innerHTML = '<i class="far fa-edit" style="font-size:17px"></i>';
+        editBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          showEditModal(path);
+        });
+        actionsElement.appendChild(editBtn);
+        
+        if (isExpandable) {
+          const addBtn = document.createElement('button');
+          addBtn.className = 'btn-icon add';
+          addBtn.title = 'Add Item';
+          addBtn.innerHTML = '<i class="material-icons" style="font-size:20px">add_to_photos</i>';
+          addBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            showAddModal(path);
+          });
+          actionsElement.appendChild(addBtn);
+        }
+        
+        const deleteBtn = document.createElement('button');
+        deleteBtn.className = 'btn-icon delete';
+        deleteBtn.title = 'Delete';
+        deleteBtn.innerHTML = '<i class="far fa-trash-alt" style="font-size:17px"></i>';
+        deleteBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          deleteNode(path);
+        });
+        actionsElement.appendChild(deleteBtn);
+        
+        nodeHeader.appendChild(actionsElement);
+        
+        // Toggle expand/collapse on click
+        if (isExpandable) {
+          nodeHeader.addEventListener('click', () => toggleNodeExpand(path));
+        }
+        
+        nodeElement.appendChild(nodeHeader);
+        
+        // Children container
+        if (isExpandable) {
+          const childrenContainer = document.createElement('div');
+          childrenContainer.className = `node-children ${isExpanded ? '' : 'hidden'}`;
+          
+          if (isExpanded) {
+            if (Array.isArray(value)) {
+              value.forEach((item, index) => {
+                const childNode = createTreeNode(index.toString(), item, [...path, index]);
+                childrenContainer.appendChild(childNode);
+              });
+            } else {
+              Object.entries(value).forEach(([childKey, childValue]) => {
+                const childNode = createTreeNode(childKey, childValue, [...path, childKey]);
+                childrenContainer.appendChild(childNode);
+              });
+            }
+          }
+          
+          nodeElement.appendChild(childrenContainer);
+        }
+        
+        return nodeElement;
+      }
+      
+      function toggleNodeExpand(path) {
+        const pathKey = path.join('.');
+        expandedNodes[pathKey] = !expandedNodes[pathKey];
+        updateUI();
+      }
+      
+      function getValueAtPath(obj, path) {
+        if (path.length === 0) return obj;
+        
+        let current = obj;
+        for (let i = 0; i < path.length; i++) {
+          if (current === undefined || current === null) return undefined;
+          current = current[path[i]];
+        }
+        
+        return current;
+      }
+      
+      function setValueAtPath(obj, path, value) {
+        if (path.length === 0) return value;
+        
+        const key = path[0];
+        
+        if (path.length === 1) {
+          obj[key] = value;
+          return obj;
+        }
+        
+        if (obj[key] === undefined || obj[key] === null) {
+          obj[key] = !isNaN(Number(path[1])) ? [] : {};
+        }
+        
+        const remaining = path.slice(1);
+        obj[key] = setValueAtPath(obj[key], remaining, value);
+        return obj;
+      }
+      
+      function deleteValueAtPath(obj, path) {
+        if (path.length === 0) return;
+        
+        if (path.length === 1) {
+          if (Array.isArray(obj)) {
+            obj.splice(Number(path[0]), 1);
+          } else {
+            delete obj[path[0]];
+          }
+          return;
+        }
+        
+        const key = path[0];
+        const remaining = path.slice(1);
+        
+        if (obj[key] !== undefined && obj[key] !== null) {
+          deleteValueAtPath(obj[key], remaining);
+          
+          // Clean up empty objects or arrays
+          if (typeof obj[key] === 'object' && Object.keys(obj[key]).length === 0) {
+            delete obj[key];
+          }
+        }
+      }
+      
+      function deleteNode(path) {
+        if (confirm(`Are you sure you want to delete "${path[path.length - 1]}"?`)) {
+          if (path.length === 1) {
+            delete knowledgeBase[path[0]];
+          } else {
+            const parentPath = path.slice(0, -1);
+            const parent = getValueAtPath(knowledgeBase, parentPath);
+            
+            if (Array.isArray(parent)) {
+              parent.splice(Number(path[path.length - 1]), 1);
+            } else {
+              delete parent[path[path.length - 1]];
+            }
+          }
+          
+          updateUI();
+        }
+      }
+      
+      // Edit modal functions
+      function showEditModal(path) {
+        editPath = path;
+        editMode = 'edit';
+        
+        const value = getValueAtPath(knowledgeBase, path);
+        const key = path.length > 0 ? path[path.length - 1] : '';
+        
+        // Set the key value
+        editKey.value = key;
+        
+        // Determine if the key should be disabled based on if it's in the nonEditableKeys list
+        const isNonEditable = nonEditableKeys.includes(key);
+        editKey.disabled = isNonEditable;
+        
+        if (typeof value === 'object' && value !== null) {
+          editValue.value = JSON.stringify(value, null, 2);
+          editType.value = Array.isArray(value) ? 'array' : 'object';
+        } else {
+          editValue.value = value === null ? '' : String(value);
+          editType.value = typeof value;
+        }
+        
+        // Update modal title
+        document.querySelector('.edit-title').textContent = 'Edit Value';
+        editModal.classList.remove('hidden');
+      }
+      
+      function showAddModal(path) {
+        editPath = path;
+        editMode = 'add';
+        
+        editKey.value = '';
+        editKey.disabled = false;
+        editValue.value = '';
+        editType.value = 'string';
+        
+        // Check if parent is an array
+        const parent = getValueAtPath(knowledgeBase, path);
+        if (Array.isArray(parent)) {
+          editKey.value = parent.length.toString();
+          editKey.disabled = true;
+        }
+        
+        // Update modal title
+        document.querySelector('.edit-title').textContent = 'Add New Item';
+        editModal.classList.remove('hidden');
+      }
+      
+      function closeEditModal() {
+        editModal.classList.add('hidden');
+      }
+      
+      function saveEdit() {
+        try {
+          const key = editKey.value.trim();
+          const type = editType.value;
+          let value;
+          
+          if (editMode === 'add' && !key && !editKey.disabled) {
+            alert('Property Name is required');
+            return;
+          }
+          
+          switch (type) {
+            case 'string':
+              value = editValue.value;
+              break;
+            case 'number':
+              value = Number(editValue.value);
+              if (isNaN(value)) throw new Error('Invalid number');
+              break;
+            case 'boolean':
+              value = editValue.value.toLowerCase() === 'true';
+              break;
+            case 'object':
+            case 'array':
+              try {
+                value = JSON.parse(editValue.value);
+                if (type === 'array' && !Array.isArray(value)) {
+                  value = Array.isArray(value) ? value : [];
+                }
+                if (type === 'object' && Array.isArray(value)) {
+                  value = {};
+                }
+              } catch (e) {
+                throw new Error('Invalid format: ' + e.message);
+              }
+              break;
+          }
+          
+          if (editMode === 'edit') {
+            if (editPath.length === 0) {
+              knowledgeBase = value;
+            } else {
+              const parentPath = editPath.slice(0, -1);
+              const parent = parentPath.length > 0 ? getValueAtPath(knowledgeBase, parentPath) : knowledgeBase;
+              const oldKey = editPath[editPath.length - 1];
+              
+              if (oldKey !== key && parent && !editKey.disabled) {
+                delete parent[oldKey];
+                parent[key] = value;
+              } else {
+                parent[oldKey] = value;
+              }
+            }
+          } else if (editMode === 'add') {
+            const parent = editPath.length > 0 ? getValueAtPath(knowledgeBase, editPath) : knowledgeBase;
+            
+            if (Array.isArray(parent)) {
+              parent.push(value);
+            } else {
+              parent[key] = value;
+            }
+            
+            // Auto-expand the parent node
+            if (editPath.length > 0) {
+              expandedNodes[editPath.join('.')] = true;
+            }
+          }
+          
+          closeEditModal();
+          updateUI();
+        } catch (error) {
+          alert('Error: ' + error.message);
+        }
+      }
+    });
+  </script>
+</body>
+</html>

@@ -4,8 +4,8 @@
  * knowledge bases such as Dark Patterns and Usability Heuristics.
  */
 
-// Define the knowledge base module - not immediately invoked to support module loading
-const kbResearchModule = (darkPatternsData, usabilityHeuristicsData) => {
+// Define the knowledge base module
+const kbResearchModule = () => {
     // Private utilities
     const utils = {
         log: function(message, type = 'info') {
@@ -18,6 +18,23 @@ const kbResearchModule = (darkPatternsData, usabilityHeuristicsData) => {
         }
     };
 
+    // Configuration for available knowledge base features
+    const knowledgeBaseConfig = [
+        {
+            id: 'darkPatterns',
+            title: 'Dark Patterns',
+            scriptPath: './n_dark-patterns.js',
+            globalVarName: 'darkPatternsData'
+        },
+        {
+            id: 'usabilityHeuristics',
+            title: 'Usability Heuristics',
+            scriptPath: './n_usability-heuristics.js',
+            globalVarName: 'usabilityHeuristicsData'
+        }
+        // Add new features here by just adding a new object to this array
+    ];
+
     // Create the knowledge base object
     const kbResearch = {
         name: "Research Best Practices",
@@ -29,27 +46,75 @@ const kbResearchModule = (darkPatternsData, usabilityHeuristicsData) => {
          */
         initialize: function() {
             utils.log("Initializing Research Knowledge Base...");
+            this._loadKnowledgeBases();
+        },
+
+        /**
+         * Load all knowledge bases from configuration
+         */
+        _loadKnowledgeBases: function() {
+            const totalFeatures = knowledgeBaseConfig.length;
+            let loadedCount = 0;
             
-            // Pre-load the features data from imports
-            this.loadedFeatures = {
-                darkPatterns: darkPatternsData,
-                usabilityHeuristics: usabilityHeuristicsData
-            };
+            // If no features to load, we're already initialized
+            if (totalFeatures === 0) {
+                utils.log("No knowledge bases configured", "error");
+                return;
+            }
             
-            // Set up features based on loaded data
-            this.features = {
-                darkPatterns: {
-                    title: darkPatternsData.title || "Dark Patterns"
-                },
-                usabilityHeuristics: {
-                    title: usabilityHeuristicsData.title || "Usability Heuristics"
+            // Load each knowledge base from config
+            knowledgeBaseConfig.forEach(feature => {
+                this._loadFeature(feature, () => {
+                    loadedCount++;
+                    utils.log(`Loaded ${loadedCount}/${totalFeatures} knowledge bases`);
+                    
+                    // If all features loaded, we're initialized
+                    if (loadedCount === totalFeatures) {
+                        utils.log("Research Knowledge Base initialized successfully");
+                    }
+                });
+            });
+        },
+        
+        /**
+         * Load a single knowledge base feature
+         * @param {Object} feature - Feature configuration
+         * @param {Function} callback - Function to call when loaded
+         */
+        _loadFeature: function(feature, callback) {
+            utils.log(`Loading ${feature.title || feature.id}...`);
+            
+            // Create a script element to load the feature
+            const script = document.createElement('script');
+            script.type = 'text/javascript';
+            script.src = feature.scriptPath;
+            
+            script.onload = () => {
+                const featureData = window[feature.globalVarName];
+                
+                if (featureData) {
+                    // Register the feature in our collections
+                    this.loadedFeatures[feature.id] = featureData;
+                    
+                    // Set up feature metadata
+                    this.features[feature.id] = {
+                        title: featureData.title || feature.title || feature.id
+                    };
+                    
+                    utils.log(`${feature.title || feature.id} loaded successfully`);
+                    callback();
+                } else {
+                    utils.log(`${feature.title || feature.id} data not found in global scope`, "error");
+                    callback(); // Call callback anyway to avoid deadlock
                 }
             };
             
-            // REMOVED: Registration with the bookmarklet loader
-            // This is now handled directly in the bookmarklet itself
+            script.onerror = () => {
+                utils.log(`Failed to load ${feature.title || feature.id}`, "error");
+                callback(); // Call callback anyway to avoid deadlock
+            };
             
-            utils.log("Research Knowledge Base initialized successfully");
+            document.head.appendChild(script);
         },
 
         /**
@@ -62,6 +127,14 @@ const kbResearchModule = (darkPatternsData, usabilityHeuristicsData) => {
                 return this.loadedFeatures[featureId];
             }
             throw new Error(`Unknown feature: ${featureId}`);
+        },
+
+        /**
+         * Get a list of all available features
+         * @returns {Array} - Array of feature IDs
+         */
+        getAvailableFeatures: function() {
+            return Object.keys(this.features);
         },
 
         /**
@@ -203,69 +276,34 @@ const kbResearchModule = (darkPatternsData, usabilityHeuristicsData) => {
                     }
                 })
                 .join('; ');
+        },
+        
+        /**
+         * Register a new knowledge base feature at runtime
+         * @param {Object} featureConfig - Configuration for the new feature
+         */
+        registerFeature: function(featureConfig) {
+            // Add to configuration
+            knowledgeBaseConfig.push(featureConfig);
+            
+            // Load the feature
+            this._loadFeature(featureConfig, () => {
+                utils.log(`Dynamic feature ${featureConfig.title || featureConfig.id} registration complete`);
+            });
         }
     };
 
     return kbResearch;
 };
 
-// Loader script to handle various ways of importing
-// This allows flexibility in how the script is loaded
+// Initialize the knowledge base module
 (function() {
-    // Load knowledge base data using <script> tags
-    function loadScript(url, callback) {
-        const script = document.createElement('script');
-        script.type = 'text/javascript';
-        script.src = url;
-        script.onload = callback;
-        document.head.appendChild(script);
-    }
-
-    // Initialization sequence
-    function init() {
-        console.log('[KB Research] Starting initialization...');
-        
-        // Counter to track loaded modules
-        let loadedCount = 0;
-        let darkPatterns = null;
-        let usabilityHeuristics = null;
-        
-        function checkInit() {
-            loadedCount++;
-            if (loadedCount === 2) {
-                // Both modules loaded, initialize the knowledge base
-                console.log('[KB Research] All modules loaded, initializing...');
-                const kbResearch = kbResearchModule(darkPatterns, usabilityHeuristics);
-                kbResearch.initialize();
-                window.kbResearch = kbResearch;
-            }
-        }
-        
-        // Load dark patterns data
-        loadScript('./n_dark-patterns.js', function() {
-            console.log('[KB Research] Dark patterns module loaded');
-            // Access the module data from the global scope
-            if (window.darkPatternsData) {
-                darkPatterns = window.darkPatternsData;
-                checkInit();
-            } else {
-                console.error('[KB Research] Dark patterns data not found in global scope');
-            }
-        });
-        
-        // Load usability heuristics data
-        loadScript('./n_usability-heuristics.js', function() {
-            console.log('[KB Research] Usability heuristics module loaded');
-            // Access the module data from the global scope
-            if (window.usabilityHeuristicsData) {
-                usabilityHeuristics = window.usabilityHeuristicsData;
-                checkInit();
-            } else {
-                console.error('[KB Research] Usability heuristics data not found in global scope');
-            }
-        });
-    }
+    console.log('[KB Research] Starting initialization...');
     
-    // Start the initialization process
-    init();
+    // Create and initialize the knowledge base module
+    const kbResearch = kbResearchModule();
+    kbResearch.initialize();
+    
+    // Expose the module globally
+    window.kbResearch = kbResearch;
 })();

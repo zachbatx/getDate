@@ -105,7 +105,6 @@
     }
     
     .btn-icon {
-      /*padding: 0.375rem;*/
       width: 32px;
       height: 32px;
       display: flex;
@@ -121,16 +120,15 @@
     }
     
     .btn-icon.edit {
-      color: #0369a1;
+      color: #64748b;
     }
     
     .btn-icon.add {
-      color: #0369a1;
-
+      color: #64748b;
     }
     
     .btn-icon.delete {
-      color: #0369a1;
+      color: #64748b;
     }
     
     /* Main container */
@@ -204,6 +202,7 @@
     /* Form inputs */
     .form-group {
       margin-bottom: 1rem;
+      position: relative;
     }
     
     .form-group:last-child {
@@ -254,13 +253,11 @@
       align-items: center;
       padding: 0.375rem 0.25rem;
       cursor: pointer;
-      /*border-radius: 0.25rem;*/
-      transition: background-color 0.1s ease;
       border-bottom: 1px solid #d5e3ea;
     }
     
     .node-header:hover {
-      /*background-color: #f1f5f9;*/
+      background-color: #f1f5f9;
     }
     
     .node-chevron {
@@ -280,7 +277,6 @@
     .node-key {
       font-weight: 500;
       margin-right: 0.25rem;
-      /*flex-grow: 1;*/
       display: flex;
       align-items: center;
     }
@@ -308,8 +304,6 @@
     
     .node-actions {
       display: flex;
-      /*gap: 0.5rem;
-      margin-left: auto;*/
     }
     
     /* Editor */
@@ -328,7 +322,7 @@
     
     .edit-dialog {
       width: 90%;
-      max-width: 32rem;
+      max-width: 36rem;
       background-color: white;
       border-radius: 0.5rem;
       overflow: hidden;
@@ -359,6 +353,8 @@
     
     .edit-content {
       padding: 1rem;
+      max-height: 70vh;
+      overflow-y: auto;
     }
     
     .edit-footer {
@@ -394,6 +390,78 @@
       margin: 0;
     }
     
+    /* Tooltip styles */
+    .help-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background-color: #64748b;
+      color: white;
+      font-size: 14px;
+      cursor: pointer;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+
+    .tooltip {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      width: 100%;
+      padding: 10px;
+      background-color: #334155;
+      color: white;
+      border-radius: 4px;
+      z-index: 100;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+      margin-top: 5px;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .tooltip p {
+      margin-bottom: 8px;
+    }
+
+    .tooltip ul {
+      padding-left: 20px;
+      margin-bottom: 8px;
+    }
+
+    .tooltip code {
+      background-color: #475569;
+      padding: 2px 4px;
+      border-radius: 2px;
+    }
+
+    /* Markdown examples */
+    .markdown-guide {
+      background-color: #f1f5f9;
+      padding: 12px;
+      border-radius: 4px;
+      margin-top: 12px;
+      border-left: 3px solid #0369a1;
+    }
+
+    .markdown-guide h5 {
+      margin-top: 0;
+      margin-bottom: 8px;
+      color: #0369a1;
+    }
+
+    .markdown-guide code {
+      display: block;
+      background-color: #e2e8f0;
+      color: #31373f;
+      padding: 5px;
+      border-radius: 3px;
+      margin-bottom: 8px;
+      font-family: monospace;
+    }
+
     /* Icons */
     .icon {
       display: inline-block;
@@ -478,8 +546,51 @@
           <label for="edit-key">Property Name:</label>
           <input type="text" id="edit-key" placeholder="Enter a name for this property">
         </div>
-        <div class="form-group">
+        <div class="form-group" id="value-form-group">
           <label for="edit-value">Value:</label>
+          <div id="markdown-tooltip" class="tooltip hidden">
+            <p><strong>Markdown Formatting Guide:</strong></p>
+            <p>Organize your instructions clearly using Markdown:</p>
+            <ul>
+              <li><strong>Headers & Sections</strong>: Use <code>#</code> to create headings (<code># Main Title</code>, <code>## Subtitle</code>)</li>
+              <li><strong>Emphasis</strong>: Use <code>*text*</code> for italics and <code>**text**</code> for bold</li>
+              <li><strong>Lists</strong>: Use <code>* item</code> or <code>- item</code> to create bullet lists</li>
+              <li><strong>Numbered Lists</strong>: Use <code>1. First item</code>, <code>2. Second item</code></li>
+              <li><strong>Code</strong>: Use backticks <code>`code`</code> for inline code</li>
+            </ul>
+            <div class="markdown-guide">
+              <h5>Example</h5>
+              <code># Main Instructions<br><br>
+## Step 1: Define Target<br>
+* First do this<br>
+* Then do **this important part**<br><br>
+## Step 2: Analyze<br>
+1. Check for X<br>
+2. Verify Y is working</code>
+            </div>
+          </div>
+          <div id="user-instructions-tooltip" class="tooltip hidden">
+            <p><strong>User Interaction Guide:</strong></p>
+            <p>Provide clear instructions for end users on how to interact with the LLM using this knowledge base:</p>
+            <ul>
+              <li><strong>Explain Purpose</strong>: What tasks or questions this knowledge base helps with</li>
+              <li><strong>Provide Example Queries</strong>: Sample questions that work well</li>
+              <li><strong>Specify Input Format</strong>: Any specific format users should follow</li>
+              <li><strong>Explain Output Interpretation</strong>: How to understand responses</li>
+              <li><strong>Include Best Practices</strong>: Tips for getting optimal results</li>
+            </ul>
+            <div class="markdown-guide">
+              <h5>Example</h5>
+              <code># How to Use This Knowledge Base<br><br>
+## Effective Queries<br>
+* Upload screenshots of your interface for evaluation<br>
+* Ask specific questions like "Analyze this form for dark patterns"<br>
+* Request specific formats: "Provide analysis in table format"<br><br>
+## Sample Interactions<br>
+1. "Evaluate this checkout flow for manipulative patterns"<br>
+2. "What specific improvements would make this design more ethical?"</code>
+            </div>
+          </div>
           <textarea id="edit-value" placeholder="Enter the value"></textarea>
         </div>
         <div class="form-group">
@@ -508,8 +619,8 @@
       let editPath = [];
       let editMode = 'edit'; // 'edit', 'add'
       
-      // List of non-editable key names
-      const nonEditableKeys = ['title', 'name', 'llmInstructions', 'userInstructions'];
+      // List of keys that should display markdown help
+      const markdownHelpKeys = ['llmInstructions', 'userInstructions'];
       
       // DOM Elements
       const dropZone = document.getElementById('drop-zone');
@@ -529,6 +640,8 @@
       const editCloseBtn = document.querySelector('.edit-close');
       const editCancelBtn = document.getElementById('edit-cancel-btn');
       const editSaveBtn = document.getElementById('edit-save-btn');
+      const markdownTooltip = document.getElementById('markdown-tooltip');
+      const valueFormGroup = document.getElementById('value-form-group');
       
       // Event Listeners
       dropZone.addEventListener('click', () => fileInput.click());
@@ -544,6 +657,85 @@
       editCloseBtn.addEventListener('click', closeEditModal);
       editCancelBtn.addEventListener('click', closeEditModal);
       editSaveBtn.addEventListener('click', saveEdit);
+      
+      // Custom help icon function
+      function addHelpIconToFormGroup(key) {
+        // Remove any existing help icon
+        const existingIcon = valueFormGroup.querySelector('.help-icon');
+        if (existingIcon) {
+          existingIcon.remove();
+        }
+        
+        if (markdownHelpKeys.includes(key)) {
+          const helpIcon = document.createElement('span');
+          helpIcon.className = 'help-icon';
+          helpIcon.innerHTML = '?';
+          
+          // Different tooltips based on the field type
+          if (key === 'llmInstructions') {
+            helpIcon.title = 'LLM Instructions Formatting Help';
+          } else if (key === 'userInstructions') {
+            helpIcon.title = 'User Interaction Guide';
+          } else {
+            helpIcon.title = 'Markdown Formatting Help';
+          }
+          
+          const label = valueFormGroup.querySelector('label');
+          label.appendChild(helpIcon);
+          
+          helpIcon.addEventListener('click', function(e) {
+            e.stopPropagation();
+            
+            // Hide all tooltips first
+            markdownTooltip.classList.add('hidden');
+            document.getElementById('user-instructions-tooltip').classList.add('hidden');
+            
+            // Show the appropriate tooltip
+            if (key === 'llmInstructions') {
+              markdownTooltip.classList.remove('hidden');
+            } else if (key === 'userInstructions') {
+              document.getElementById('user-instructions-tooltip').classList.remove('hidden');
+            }
+          });
+          
+          // Also show on focus
+          editValue.addEventListener('focus', function() {
+            // Hide all tooltips first
+            markdownTooltip.classList.add('hidden');
+            document.getElementById('user-instructions-tooltip').classList.add('hidden');
+            
+            // Show the appropriate tooltip based on the current field
+            if (editKey.value === 'llmInstructions') {
+              markdownTooltip.classList.remove('hidden');
+            } else if (editKey.value === 'userInstructions') {
+              document.getElementById('user-instructions-tooltip').classList.remove('hidden');
+            }
+          });
+          
+          // Hide on blur
+          editValue.addEventListener('blur', function() {
+            // Small delay to allow clicking on the tooltip
+            setTimeout(() => {
+              const currentTooltip = editKey.value === 'llmInstructions' ? 
+                markdownTooltip : 
+                document.getElementById('user-instructions-tooltip');
+                
+              if (!currentTooltip.contains(document.activeElement)) {
+                currentTooltip.classList.add('hidden');
+              }
+            }, 100);
+          });
+        } else {
+          // Make sure tooltips are hidden for other fields
+          markdownTooltip.classList.add('hidden');
+          document.getElementById('user-instructions-tooltip').classList.add('hidden');
+        }
+      }
+      
+      // Add event listener for edit key changes
+      editKey.addEventListener('input', function() {
+        addHelpIconToFormGroup(this.value);
+      });
       
       // Init
       createNew();
@@ -643,6 +835,8 @@
           knowledgeBase = {
             title: 'New Knowledge Base',
             description: 'Knowledge base description',
+            llmInstructions: '# Instructions for the LLM\n\nProvide clear step-by-step instructions for the language model on how to use this knowledge base.\n\n## Key Principles\n* Use structured analysis approach\n* Provide detailed explanations\n* Follow specified formats\n\n## Evaluation Process\n1. First, analyze the provided input\n2. Next, apply heuristic principles\n3. Finally, provide actionable recommendations',
+            userInstructions: '# How to Use This Knowledge Base\n\n## Effective Queries\n* Upload screenshots of your interface for evaluation\n* Ask specific questions like "Analyze this form for accessibility issues"\n* Request specific formats: "Provide analysis in table format"\n\n## Sample Interactions\n1. "Evaluate this checkout flow for usability problems"\n2. "What specific improvements would make this design more inclusive?"',
             categories: []
           };
           expandedNodes = {};
@@ -819,6 +1013,14 @@ window.${varName}Data = ${varName}Data;`;
         
         const keyElement = document.createElement('span');
         keyElement.textContent = key;
+        
+        // Add indicator for markdown fields
+        if (markdownHelpKeys.includes(key)) {
+          keyElement.innerHTML = `${key} <i class="fas fa-markdown" style="font-size: 12px; color: #0369a1;" title="Markdown field"></i>`;
+        } else {
+          keyElement.textContent = key;
+        }
+        
         keyValueWrapper.appendChild(keyElement);
         
         // Value preview
@@ -1012,8 +1214,10 @@ window.${varName}Data = ${varName}Data;`;
         editKey.value = key;
         
         // Determine if the key should be disabled based on if it's in the nonEditableKeys list
-        const isNonEditable = nonEditableKeys.includes(key);
-        editKey.disabled = isNonEditable;
+        editKey.disabled = true; // Always disabled in edit mode to prevent key changes
+        
+        // Check if this is a markdown help field and show tooltip if needed
+        addHelpIconToFormGroup(key);
         
         if (typeof value === 'object' && value !== null) {
           editValue.value = JSON.stringify(value, null, 2);
@@ -1037,6 +1241,9 @@ window.${varName}Data = ${varName}Data;`;
         editValue.value = '';
         editType.value = 'string';
         
+        // Hide markdown help for now - will show if user types a markdown help key
+        markdownTooltip.classList.add('hidden');
+        
         // Check if parent is an array
         const parent = getValueAtPath(knowledgeBase, path);
         if (Array.isArray(parent)) {
@@ -1051,6 +1258,7 @@ window.${varName}Data = ${varName}Data;`;
       
       function closeEditModal() {
         editModal.classList.add('hidden');
+        markdownTooltip.classList.add('hidden');
       }
       
       function saveEdit() {
@@ -1098,13 +1306,7 @@ window.${varName}Data = ${varName}Data;`;
               const parentPath = editPath.slice(0, -1);
               const parent = parentPath.length > 0 ? getValueAtPath(knowledgeBase, parentPath) : knowledgeBase;
               const oldKey = editPath[editPath.length - 1];
-              
-              if (oldKey !== key && parent && !editKey.disabled) {
-                delete parent[oldKey];
-                parent[key] = value;
-              } else {
-                parent[oldKey] = value;
-              }
+              parent[oldKey] = value;
             }
           } else if (editMode === 'add') {
             const parent = editPath.length > 0 ? getValueAtPath(knowledgeBase, editPath) : knowledgeBase;

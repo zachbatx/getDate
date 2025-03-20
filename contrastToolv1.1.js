@@ -1,0 +1,1 @@
+javascript:(function(){var s=/^((?!chrome|android).)*safari/i.test(navigator.userAgent);if(s||!("EyeDropper" in window)){alert("Eyedropper API not supported in this browser.");return;}new EyeDropper().open().then(function(c){console.log(c.color)}).catch(function(e){console.error(e)});})();

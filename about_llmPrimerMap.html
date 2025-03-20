@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LLM Primer Component Diagram</title>
+    <!-- Include the Mermaid library -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .diagram-container {
+            margin-top: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+    <h1>LLM Primer Component Diagram</h1>
+    
+    <div class="diagram-container">
+        <!-- Mermaid diagram code goes inside a div with class "mermaid" -->
+        <div class="mermaid">
+classDiagram
+    class BookmarkletFramework {
+        +initialize()
+        +registerKnowledgeBase()
+        +loadKnowledgeBase()
+        +generatePrompt()
+        +injectPrompt()
+        +copyPrompt()
+        -addThemeStyles()
+        -loadScript()
+        -createUIPanel()
+    }
+    
+    class KnowledgeBaseLoader {
+        +registerBase()
+        +getAvailableKnowledgeBases()
+    }
+    
+    class ResearchKnowledgeBase {
+        +name: String
+        +features: Object
+        +loadedFeatures: Object
+        +initialize()
+        +getFeature(featureId)
+        +getAvailableFeatures()
+        +generatePrompt(featureId)
+        -loadKnowledgeBases()
+        -loadFeature(feature, callback)
+        -formatGenericKnowledgeBase(data)
+    }
+    
+    class DarkPatternsKB {
+        +title: String
+        +taxonomy: Object
+        +patterns: Object
+        +attributes: Array
+        +regulations: Array
+        +personas: Object
+        +llmInstructions: String
+        +userInstructions: String
+    }
+    
+    class UsabilityHeuristicsKB {
+        +title: String
+        +heuristics: Array
+        +evaluationCriteria: Object
+        +personas: Object
+        +llmInstructions: String
+        +userInstructions: String
+    }
+    
+    class UIPanel {
+        -sourceSelect: Element
+        -featureSelect: Element
+        -generateBtn: Element
+        -copyBtn: Element
+        -styleToggle: Element
+        -themeToggle: Element
+        +show()
+        +hide()
+        +updateFeatures(features)
+        +setLoadingStatus(message, type)
+    }
+    
+    class LLMSessionHandler {
+        +injectGeneratedPrompt(prompt)
+        +handleTargetSite()
+    }
+    
+    BookmarkletFramework --> KnowledgeBaseLoader : uses
+    BookmarkletFramework --> UIPanel : creates and manages
+    BookmarkletFramework --> LLMSessionHandler : interacts with
+    KnowledgeBaseLoader --> ResearchKnowledgeBase : loads
+    ResearchKnowledgeBase --> DarkPatternsKB : manages
+    ResearchKnowledgeBase --> UsabilityHeuristicsKB : manages
+        </div>
+    </div>
+
+    <!-- If you want to add the architecture diagram as well, add another container -->
+    <h1>LLM Primer System Architecture</h1>
+    <div class="diagram-container">
+        <div class="mermaid">
+flowchart TD
+    subgraph Frontend["Browser Environment"]
+        Bookmarklet["Bookmarklet JavaScript\n(llmPrimer_bkm_framework)"]
+        UIPanel["Prompt Generator UI Panel"]
+        DataManager["Knowledge Base Data Manager"]
+        
+        Bookmarklet -- "Injects" --> UIPanel
+        UIPanel -- "User Selections" --> DataManager
+        DataManager -- "Updates UI" --> UIPanel
+    end
+    
+    subgraph KnowledgeBases["Knowledge Base Modules"]
+        CoreModule["Research Knowledge Base Core\n(n_kb-research-core.js)"]
+        DarkPatterns["Dark Patterns Knowledge Base\n(n_dark-patterns.js)"]
+        UsabilityHeuristics["Usability Heuristics Knowledge Base\n(n_usability-heuristics.js)"]
+        AccessibilityKB["Accessibility Knowledge Base"]
+        OtherKBs["Other Specialized Knowledge Bases"]
+        
+        CoreModule --> DarkPatterns
+        CoreModule --> UsabilityHeuristics
+        CoreModule --> AccessibilityKB
+        CoreModule --> OtherKBs
+    end
+    
+    subgraph LLMSession["LLM Session"]
+        PromptInjection["Prompt Injection Point"]
+        LLMProcessing["LLM Processing with Knowledge"]
+        EnhancedResponse["Enhanced LLM Response"]
+        
+        PromptInjection --> LLMProcessing
+        LLMProcessing --> EnhancedResponse
+    end
+    
+    subgraph KnowledgeContent["Knowledge Base Content"]
+        TaxonomyData["Taxonomies & Frameworks"]
+        PatternData["Pattern Definitions"]
+        PersonaData["Personas & User Stories"]
+        InstructionData["LLM & User Instructions"]
+        
+        TaxonomyData --> PatternData
+        PatternData --> PersonaData
+        PersonaData --> InstructionData
+    end
+    
+    User["User"] -- "Activates" --> Bookmarklet
+    User -- "Selects Knowledge Base & Feature" --> UIPanel
+    User -- "Submits Query" --> LLMSession
+    
+    DataManager -- "Loads" --> CoreModule
+    CoreModule -- "Registers Features" --> DataManager
+    UIPanel -- "Injects Generated Prompt" --> PromptInjection
+    
+    KnowledgeContent -- "Structured in" --> KnowledgeBases
+    
+    EnhancedResponse -- "Provides Domain-Specific Insights" --> User
+        </div>
+    </div>
+
+    <!-- Initialize Mermaid -->
+    <script>
+        // Initialize Mermaid with configuration options
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'default',
+            securityLevel: 'loose',
+            flowchart: {
+                useMaxWidth: true,
+                htmlLabels: true,
+                curve: 'basis'
+            },
+            themeVariables: {
+                primaryColor: '#f4f4f4',
+                primaryTextColor: '#333',
+                primaryBorderColor: '#ccc',
+                lineColor: '#666',
+                secondaryColor: '#e6e6e6',
+                tertiaryColor: '#fff'
+            }
+        });
+    </script>
+</body>
+</html>

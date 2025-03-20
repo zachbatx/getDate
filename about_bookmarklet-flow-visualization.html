@@ -1,0 +1,1124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UX Bookmarklet Flow Map</title>
+    <style>
+        :root {
+            --primary-color: #147CBD;
+            --secondary-color: #49A74C;
+            --tertiary-color: #0B78D0;
+            --background-light: #f8f9fa;
+            --background-dark: #222;
+            --text-light: #333;
+            --text-dark: #fff;
+            --border-light: #ccc;
+            --border-dark: #444;
+            --highlight: #ffeaa7;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: var(--background-light);
+            color: var(--text-light);
+            transition: background-color 0.3s, color 0.3s;
+        }
+        
+        .dark-mode {
+            background-color: var(--background-dark);
+            color: var(--text-dark);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            position: relative;
+        }
+        
+        h1 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+        
+        .theme-toggle {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: 1px solid var(--border-light);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s;
+        }
+        
+        .dark-mode .theme-toggle {
+            border-color: var(--border-dark);
+        }
+        
+        .theme-toggle:hover {
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+        
+        .dark-mode .theme-toggle:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .flow-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .section {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 30px;
+            transition: background-color 0.3s, box-shadow 0.3s;
+        }
+        
+        .dark-mode .section {
+            background-color: #333;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+        
+        .section h2 {
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 10px;
+            margin-top: 0;
+        }
+        
+        .flow-map {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 30px 0;
+        }
+        
+        .stage {
+            width: 100%;
+            margin-bottom: 50px;
+            position: relative;
+        }
+        
+        .stage-title {
+            font-weight: bold;
+            text-align: center;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .stage-content {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .process-box {
+            background-color: white;
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            padding: 15px;
+            width: 280px;
+            min-height: 150px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s, background-color 0.3s, border-color 0.3s;
+            cursor: pointer;
+        }
+        
+        .dark-mode .process-box {
+            background-color: #444;
+            border-color: var(--border-dark);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .process-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+        }
+        
+        .dark-mode .process-box:hover {
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.4);
+        }
+        
+        .process-box h3 {
+            color: var(--primary-color);
+            margin-top: 0;
+            border-bottom: 1px solid var(--border-light);
+            padding-bottom: 8px;
+        }
+        
+        .dark-mode .process-box h3 {
+            border-color: var(--border-dark);
+        }
+        
+        .process-box.highlight {
+            border: 2px solid var(--secondary-color);
+            background-color: var(--highlight);
+        }
+        
+        .dark-mode .process-box.highlight {
+            background-color: #2c3e50;
+        }
+        
+        .arrow {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 24px;
+            color: var(--primary-color);
+        }
+        
+        .tab-container {
+            width: 100%;
+            margin: 20px 0;
+        }
+        
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border-light);
+        }
+        
+        .dark-mode .tabs {
+            border-color: var(--border-dark);
+        }
+        
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            font-size: 16px;
+            font-weight: 500;
+            color: var(--text-light);
+            transition: background-color 0.3s;
+        }
+        
+        .dark-mode .tab {
+            color: var(--text-dark);
+        }
+        
+        .tab.active {
+            border-bottom: 3px solid var(--primary-color);
+            color: var(--primary-color);
+        }
+        
+        .tab-content {
+            display: none;
+            padding: 20px 0;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .code-block {
+            background-color: #f5f5f5;
+            border-radius: 6px;
+            padding: 15px;
+            overflow-x: auto;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 14px;
+            line-height: 1.4;
+            margin: 15px 0;
+        }
+        
+        .dark-mode .code-block {
+            background-color: #2d2d2d;
+            color: #e0e0e0;
+        }
+        
+        .key-components {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .component-card {
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            padding: 15px;
+            background-color: white;
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+        
+        .dark-mode .component-card {
+            background-color: #444;
+            border-color: var(--border-dark);
+        }
+        
+        .component-card h3 {
+            color: var(--primary-color);
+            margin-top: 0;
+            border-bottom: 1px solid var(--border-light);
+            padding-bottom: 8px;
+        }
+        
+        .dark-mode .component-card h3 {
+            border-color: var(--border-dark);
+        }
+        
+        .step-diagram {
+            display: flex;
+            overflow-x: auto;
+            padding: 20px 0;
+            gap: 20px;
+        }
+        
+        .step {
+            min-width: 200px;
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            padding: 15px;
+            position: relative;
+            background-color: white;
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+        
+        .dark-mode .step {
+            background-color: #444;
+            border-color: var(--border-dark);
+        }
+        
+        .step::after {
+            content: "→";
+            position: absolute;
+            right: -15px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 20px;
+            color: var(--primary-color);
+        }
+        
+        .step:last-child::after {
+            display: none;
+        }
+        
+        .step h4 {
+            color: var(--primary-color);
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+        
+        .interactive-demo {
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            padding: 20px;
+            margin: 30px 0;
+            background-color: white;
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+        
+        .dark-mode .interactive-demo {
+            background-color: #444;
+            border-color: var(--border-dark);
+        }
+        
+        .demo-container {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .demo-panel {
+            flex: 1;
+            min-width: 300px;
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            padding: 15px;
+            transition: border-color 0.3s;
+        }
+        
+        .dark-mode .demo-panel {
+            border-color: var(--border-dark);
+        }
+        
+        .mock-panel {
+            background-color: #f8f8f8;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            width: 300px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin: 0 auto;
+            font-size: 14px;
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+        
+        .dark-mode .mock-panel {
+            background-color: #333;
+            border-color: #555;
+        }
+        
+        .mock-panel h3 {
+            color: #147CBD;
+            margin: 0 0 15px 0;
+            font-size: 16px;
+        }
+        
+        .mock-select {
+            width: 100%;
+            padding: 5px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            transition: border-color 0.3s;
+        }
+        
+        .dark-mode .mock-select {
+            background-color: #444;
+            color: white;
+            border-color: #666;
+        }
+        
+        .mock-btn {
+            padding: 8px;
+            margin-right: 10px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        
+        .mock-generate {
+            background: #49A74C;
+            color: white;
+        }
+        
+        .mock-copy {
+            background: #0B78D0;
+            color: white;
+        }
+        
+        .mock-generate:hover {
+            background: #3a8a3c;
+        }
+        
+        .mock-copy:hover {
+            background: #0a67a8;
+        }
+        
+        .sequence-diagram {
+            width: 100%;
+            margin: 30px 0;
+            overflow-x: auto;
+        }
+        
+        .knowledge-base-structure {
+            margin: 20px 0;
+        }
+        
+        .kb-object {
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            background-color: white;
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+        
+        .dark-mode .kb-object {
+            background-color: #444;
+            border-color: var(--border-dark);
+        }
+        
+        .kb-property {
+            margin-left: 20px;
+            padding: 5px;
+            border-left: 3px solid var(--primary-color);
+        }
+        
+        .toggle-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--primary-color);
+            font-weight: bold;
+            padding: 5px;
+        }
+        
+        .toggle-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .toggle-content.show {
+            max-height: 1000px;
+            padding-top: 10px;
+            padding-bottom: 10px;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .process-box {
+                width: 100%;
+            }
+            
+            .step-diagram {
+                flex-direction: column;
+            }
+            
+            .step {
+                min-width: auto;
+                margin-bottom: 20px;
+            }
+            
+            .step::after {
+                content: "↓";
+                right: auto;
+                top: auto;
+                bottom: -15px;
+                left: 50%;
+                transform: translateX(-50%);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>UX Bookmarklet & Knowledge Base Architecture</h1>
+            <p>Interactive visualization of pre-prompt generation and injection flow</p>
+            <button class="theme-toggle" id="themeToggle" title="Toggle dark/light mode">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="5"></circle>
+                    <path d="M12 1v2M12 21v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M1 12h2M21 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"></path>
+                </svg>
+            </button>
+        </header>
+        
+        <div class="section">
+            <h2>System Overview</h2>
+            <p>The UX Bookmarklet is a JavaScript tool designed to streamline the creation of pre-prompts for UX and accessibility considerations. It works by injecting a panel into a webpage that allows users to generate specialized prompts based on knowledge bases stored in external JavaScript files.</p>
+            
+            <div class="tab-container">
+                <div class="tabs">
+                    <button class="tab active" data-tab="overview">Architecture Overview</button>
+                    <button class="tab" data-tab="components">Key Components</button>
+                    <button class="tab" data-tab="flow">User Flow</button>
+                </div>
+                
+                <div class="tab-content active" id="overview">
+                    <div class="step-diagram">
+                        <div class="step">
+                            <h4>1. Injection</h4>
+                            <p>The bookmarklet is executed from the browser's bookmarks bar, injecting the UI panel into any webpage.</p>
+                        </div>
+                        <div class="step">
+                            <h4>2. Loading</h4>
+                            <p>External knowledge bases are loaded from remote servers based on user selection.</p>
+                        </div>
+                        <div class="step">
+                            <h4>3. Selection</h4>
+                            <p>User selects specific features and aspects to focus on for the pre-prompt.</p>
+                        </div>
+                        <div class="step">
+                            <h4>4. Generation</h4>
+                            <p>The system generates a pre-prompt using templates and selected knowledge base data.</p>
+                        </div>
+                        <div class="step">
+                            <h4>5. Delivery</h4>
+                            <p>Pre-prompt is either injected directly into the page or copied to clipboard.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="tab-content" id="components">
+                    <div class="key-components">
+                        <div class="component-card">
+                            <h3>Bookmarklet Core</h3>
+                            <ul>
+                                <li>Self-executing function</li>
+                                <li>UI panel creation and styling</li>
+                                <li>Event handling</li>
+                                <li>Knowledge base loading</li>
+                            </ul>
+                        </div>
+                        <div class="component-card">
+                            <h3>Knowledge Bases</h3>
+                            <ul>
+                                <li>External JS files</li>
+                                <li>Structured data objects</li>
+                                <li>Feature definitions</li>
+                                <li>Persona information</li>
+                                <li>Template generation functions</li>
+                            </ul>
+                        </div>
+                        <div class="component-card">
+                            <h3>UI Components</h3>
+                            <ul>
+                                <li>Source selector (KB type)</li>
+                                <li>Feature selector</li>
+                                <li>Generation/copy buttons</li>
+                                <li>Theme toggle</li>
+                                <li>Panel style toggle</li>
+                            </ul>
+                        </div>
+                        <div class="component-card">
+                            <h3>Utility Functions</h3>
+                            <ul>
+                                <li>Script loading mechanisms</li>
+                                <li>Error handling</li>
+                                <li>Prompt generation</li>
+                                <li>Clipboard integration</li>
+                                <li>DOM manipulation</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="tab-content" id="flow">
+                    <div style="width:100%; height:400px; background:#f5f5f5; border-radius:8px; display:flex; flex-direction:column; justify-content:center; align-items:center; margin-bottom:20px; overflow:hidden;">
+                        <svg width="800" height="400" viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg">
+                            <!-- Flow background -->
+                            <rect x="0" y="0" width="800" height="400" fill="#f5f5f5"/>
+                            
+                            <!-- Connection lines -->
+                            <path d="M100,80 L700,80" stroke="#147CBD" stroke-width="2" stroke-dasharray="5,5"/>
+                            <path d="M100,160 L700,160" stroke="#147CBD" stroke-width="2" stroke-dasharray="5,5"/>
+                            <path d="M100,240 L700,240" stroke="#147CBD" stroke-width="2" stroke-dasharray="5,5"/>
+                            <path d="M100,320 L700,320" stroke="#147CBD" stroke-width="2" stroke-dasharray="5,5"/>
+                            
+                            <!-- Vertical arrows -->
+                            <path d="M400,100 L400,140" stroke="#147CBD" stroke-width="2"/>
+                            <polygon points="400,145 395,135 405,135" fill="#147CBD"/>
+                            
+                            <path d="M400,180 L400,220" stroke="#147CBD" stroke-width="2"/>
+                            <polygon points="400,225 395,215 405,215" fill="#147CBD"/>
+                            
+                            <path d="M400,260 L400,300" stroke="#147CBD" stroke-width="2"/>
+                            <polygon points="400,305 395,295 405,295" fill="#147CBD"/>
+                            
+                            <path d="M400,340 L400,380" stroke="#147CBD" stroke-width="2"/>
+                            <polygon points="400,385 395,375 405,375" fill="#147CBD"/>
+                            
+                            <!-- Step 1: Activation -->
+                            <rect x="250" y="40" width="300" height="40" rx="5" fill="#147CBD"/>
+                            <text x="400" y="65" font-family="Arial" font-size="14" fill="white" text-anchor="middle">1. User Activates Bookmarklet</text>
+                            
+                            <!-- Step 2: KB Selection -->
+                            <rect x="250" y="120" width="300" height="40" rx="5" fill="#49A74C"/>
+                            <text x="400" y="145" font-family="Arial" font-size="14" fill="white" text-anchor="middle">2. Knowledge Base Selection</text>
+                            
+                            <!-- Step 3: Feature Selection -->
+                            <rect x="250" y="200" width="300" height="40" rx="5" fill="#0B78D0"/>
+                            <text x="400" y="225" font-family="Arial" font-size="14" fill="white" text-anchor="middle">3. Feature Selection</text>
+                            
+                            <!-- Step 4: Generation -->
+                            <rect x="250" y="280" width="300" height="40" rx="5" fill="#8E44AD"/>
+                            <text x="400" y="305" font-family="Arial" font-size="14" fill="white" text-anchor="middle">4. Pre-prompt Generation</text>
+                            
+                            <!-- Step 5: Delivery -->
+                            <rect x="250" y="360" width="300" height="40" rx="5" fill="#E67E22"/>
+                            <text x="400" y="385" font-family="Arial" font-size="14" fill="white" text-anchor="middle">5. Delivery (Inject/Copy)</text>
+                            
+                            <!-- Left side icons -->
+                            <circle cx="100" cy="60" r="20" fill="#147CBD"/>
+                            <text x="100" y="65" font-family="Arial" font-size="16" fill="white" text-anchor="middle">🔖</text>
+                            
+                            <circle cx="100" cy="140" r="20" fill="#49A74C"/>
+                            <text x="100" y="145" font-family="Arial" font-size="16" fill="white" text-anchor="middle">📚</text>
+                            
+                            <circle cx="100" cy="220" r="20" fill="#0B78D0"/>
+                            <text x="100" y="225" font-family="Arial" font-size="16" fill="white" text-anchor="middle">🔍</text>
+                            
+                            <circle cx="100" cy="300" r="20" fill="#8E44AD"/>
+                            <text x="100" y="305" font-family="Arial" font-size="16" fill="white" text-anchor="middle">⚙️</text>
+                            
+                            <circle cx="100" cy="380" r="20" fill="#E67E22"/>
+                            <text x="100" y="385" font-family="Arial" font-size="16" fill="white" text-anchor="middle">📋</text>
+                            
+                            <!-- Right side notes -->
+                            <rect x="600" y="40" width="180" height="40" rx="5" fill="white" stroke="#147CBD"/>
+                            <text x="690" y="65" font-family="Arial" font-size="12" fill="#333" text-anchor="middle">Browser Bookmark Click</text>
+                            
+                            <rect x="600" y="120" width="180" height="40" rx="5" fill="white" stroke="#49A74C"/>
+                            <text x="690" y="145" font-family="Arial" font-size="12" fill="#333" text-anchor="middle">Accessibility/UX/Research</text>
+                            
+                            <rect x="600" y="200" width="180" height="40" rx="5" fill="white" stroke="#0B78D0"/>
+                            <text x="690" y="225" font-family="Arial" font-size="12" fill="#333" text-anchor="middle">Domain-Specific Features</text>
+                            
+                            <rect x="600" y="280" width="180" height="40" rx="5" fill="white" stroke="#8E44AD"/>
+                            <text x="690" y="305" font-family="Arial" font-size="12" fill="#333" text-anchor="middle">Template Processing</text>
+                            
+                            <rect x="600" y="360" width="180" height="40" rx="5" fill="white" stroke="#E67E22"/>
+                            <text x="690" y="385" font-family="Arial" font-size="12" fill="#333" text-anchor="middle">To Page or Clipboard</text>
+                        </svg>
+                    </div>
+                    
+                    <h3>User Flow Steps:</h3>
+                    <ol>
+                        <li><strong>Activation:</strong> User clicks bookmarklet in browser</li>
+                        <li><strong>Panel Appears:</strong> UI panel is injected into the current page</li>
+                        <li><strong>Knowledge Base Selection:</strong> User selects which KB to load (Accessibility, UX, Research)</li>
+                        <li><strong>Feature Selection:</strong> User selects specific feature to focus on</li>
+                        <li><strong>Generation:</strong> User clicks either "Inject" or "Copy" button</li>
+                        <li><strong>Delivery:</strong> Pre-prompt is either injected into page or copied to clipboard</li>
+                        <li><strong>Usage:</strong> User works with the generated pre-prompt in their workflow</li>
+                    </ol>
+                </div>
+            </div>
+            
+            <p>The UX Bookmarklet presents an elegant solution for generating structured pre-prompts that guide AI systems to provide more user-centered, context-aware responses. By combining external knowledge bases with a simple user interface, it enables users to quickly generate tailored prompts that incorporate best practices from UX, accessibility, and research fields.</p>
+            
+            <p>Key strengths of the design include:</p>
+            <ul>
+                <li><strong>Modularity:</strong> New knowledge bases can be added without changing the core bookmarklet</li>
+                <li><strong>Flexibility:</strong> Works across different websites by adapting to find input fields</li>
+                <li><strong>Efficiency:</strong> Streamlines the process of creating detailed, structured prompts</li>
+                <li><strong>Specialization:</strong> Focuses on domain-specific knowledge to improve AI responses</li>
+            </ul>
+        </div>
+        
+        <script>
+            // Initialize all tabs and toggles when the DOM is fully loaded
+            document.addEventListener('DOMContentLoaded', function() {
+                // Tab switching functionality
+                const allTabs = document.querySelectorAll('.tab');
+                allTabs.forEach(tab => {
+                    tab.addEventListener('click', function() {
+                        // Get the tab container
+                        const tabContainer = this.closest('.tab-container');
+                        
+                        // Remove active class from all tabs in this container
+                        tabContainer.querySelectorAll('.tab').forEach(t => {
+                            t.classList.remove('active');
+                        });
+                        
+                        // Add active class to clicked tab
+                        this.classList.add('active');
+                        
+                        // Get the tab content id
+                        const tabContentId = this.getAttribute('data-tab');
+                        
+                        // Hide all tab contents in this container
+                        tabContainer.querySelectorAll('.tab-content').forEach(content => {
+                            content.classList.remove('active');
+                        });
+                        
+                        // Show the selected tab content
+                        const targetContent = tabContainer.querySelector('#' + tabContentId);
+                        if (targetContent) {
+                            targetContent.classList.add('active');
+                        }
+                    });
+                });
+                
+                // Toggle button functionality
+                const allToggleButtons = document.querySelectorAll('.toggle-btn');
+                allToggleButtons.forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const targetId = this.getAttribute('data-target');
+                        const content = document.getElementById(targetId);
+                        if (content) {
+                            content.classList.toggle('show');
+                            this.textContent = content.classList.contains('show') ? 'Hide' : 'Show/Hide';
+                        }
+                    });
+                });
+                
+                // Theme toggle functionality
+                const themeToggle = document.getElementById('themeToggle');
+                if (themeToggle) {
+                    themeToggle.addEventListener('click', function() {
+                        document.body.classList.toggle('dark-mode');
+                        
+                        if (document.body.classList.contains('dark-mode')) {
+                            this.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>';
+                        } else {
+                            this.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><path d="M12 1v2M12 21v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M1 12h2M21 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"></path></svg>';
+                        }
+                    });
+                }
+                
+                // Process box click highlighting
+                const allProcessBoxes = document.querySelectorAll('.process-box');
+                allProcessBoxes.forEach(box => {
+                    box.addEventListener('click', function() {
+                        allProcessBoxes.forEach(b => {
+                            b.classList.remove('highlight');
+                        });
+                        this.classList.add('highlight');
+                    });
+                });
+            });
+
+            // Run initialization immediately as well
+            // Tab switching initialization
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => {
+                tab.onclick = function() {
+                    const tabContainer = this.closest('.tab-container');
+                    const tabId = this.getAttribute('data-tab');
+                    
+                    tabContainer.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    tabContainer.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                    const content = document.getElementById(tabId);
+                    if (content) content.classList.add('active');
+                };
+            });
+            
+            // Make sure toggle buttons work
+            document.querySelectorAll('.toggle-content').forEach(content => {
+                // Set initial max-height to ensure transitions work
+                if (content.classList.contains('show')) {
+                    content.style.maxHeight = content.scrollHeight + 'px';
+                }
+            });
+        </script>
+        
+        <div class="section">
+            <h2>Bookmarklet Architecture</h2>
+            
+            <div class="flow-map">
+                <div class="stage">
+                    <div class="stage-title">Initialization & UI Creation</div>
+                    <div class="stage-content">
+                        <div class="process-box" id="box-init">
+                            <h3>Self-Executing Function</h3>
+                            <p>The entire bookmarklet is wrapped in a self-executing function to avoid polluting the global namespace.</p>
+                        </div>
+                        <div class="process-box" id="box-vars">
+                            <h3>Variable Initialization</h3>
+                            <p>Sets up knowledge base URLs, UI styles, theme options, and other configuration variables.</p>
+                        </div>
+                        <div class="process-box" id="box-ui">
+                            <h3>UI Panel Creation</h3>
+                            <p>Generates the HTML for the UI panel with selectors, buttons, and status indicators.</p>
+                        </div>
+                    </div>
+                    <div class="arrow">↓</div>
+                </div>
+                
+                <div class="stage">
+                    <div class="stage-title">Knowledge Base Loading</div>
+                    <div class="stage-content">
+                        <div class="process-box" id="box-load">
+                            <h3>Script Loading</h3>
+                            <p>Loads external JavaScript files using either script tag injection or fetch + eval approach as a fallback.</p>
+                        </div>
+                        <div class="process-box" id="box-kbProcess">
+                            <h3>KB Processing</h3>
+                            <p>Processes the loaded knowledge base to extract feature lists and make them available for selection.</p>
+                        </div>
+                        <div class="process-box" id="box-error">
+                            <h3>Error Handling</h3>
+                            <p>Manages loading failures with fallback methods and user notifications.</p>
+                        </div>
+                    </div>
+                    <div class="arrow">↓</div>
+                </div>
+                
+                <div class="stage">
+                    <div class="stage-title">Pre-prompt Generation</div>
+                    <div class="stage-content">
+                        <div class="process-box" id="box-template">
+                            <h3>Template Selection</h3>
+                            <p>Chooses the appropriate template based on the selected knowledge base and feature.</p>
+                        </div>
+                        <div class="process-box" id="box-persona">
+                            <h3>Persona Selection</h3>
+                            <p>Randomly selects relevant personas from the knowledge base to include in the pre-prompt.</p>
+                        </div>
+                        <div class="process-box" id="box-generate">
+                            <h3>Content Assembly</h3>
+                            <p>Assembles the final pre-prompt by combining templates, selected data, and formatting.</p>
+                        </div>
+                    </div>
+                    <div class="arrow">↓</div>
+                </div>
+                
+                <div class="stage">
+                    <div class="stage-title">Pre-prompt Delivery</div>
+                    <div class="stage-content">
+                        <div class="process-box" id="box-inject">
+                            <h3>Injection Method</h3>
+                            <p>Finds the target input field in the page and injects the generated pre-prompt directly.</p>
+                        </div>
+                        <div class="process-box" id="box-copy">
+                            <h3>Clipboard Method</h3>
+                            <p>Copies the generated pre-prompt to the clipboard for manual pasting by the user.</p>
+                        </div>
+                        <div class="process-box" id="box-cleanup">
+                            <h3>Cleanup</h3>
+                            <p>Removes UI panel when finished or when escape key is pressed.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>Knowledge Base Structure</h2>
+            <p>The knowledge bases are structured JavaScript objects that provide template data for generating pre-prompts. The "Research Best Practices" knowledge base shown below demonstrates the organizational structure.</p>
+            
+            <div class="knowledge-base-structure">
+                <div class="kb-object">
+                    <strong>window.kbResearch</strong>
+                    <div class="kb-property">
+                        <strong>name:</strong> "Research Best Practices"
+                    </div>
+                    <div class="kb-property">
+                        <strong>features:</strong> <button class="toggle-btn" data-target="features-content">Show/Hide</button>
+                        <div class="toggle-content" id="features-content">
+                            <ul>
+                                <li><strong>disneyMethod:</strong> The Disney Method template data
+                                    <ul>
+                                        <li>title: "The Disney Method"</li>
+                                        <li>considerations: [...array of considerations]</li>
+                                        <li>principles: [...array of principles]</li>
+                                        <li>userStories: [...array of user stories]</li>
+                                    </ul>
+                                </li>
+                                <li><strong>interviews:</strong> User Interview Techniques template data</li>
+                                <li><strong>usabilityTests:</strong> Usability Testing Methods template data</li>
+                                <li><strong>surveys:</strong> Survey Design & Analysis template data</li>
+                                <li><strong>ethnographic:</strong> Ethnographic Research template data</li>
+                                <li><strong>dataAnalysis:</strong> Research Data Analysis template data</li>
+                                <li><strong>workshops:</strong> Research Workshop Facilitation template data</li>
+                                <li><strong>ethics:</strong> Research Ethics & Governance template data</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="kb-property">
+                        <strong>disabilityCategories:</strong> <button class="toggle-btn" data-target="categories-content">Show/Hide</button>
+                        <div class="toggle-content" id="categories-content">
+                            Maps features to relevant persona categories
+                            <ul>
+                                <li><strong>disneyMethod:</strong> ["UX Researchers", "Research Teams", "Solo Practitioners"]</li>
+                                <li><strong>interviews:</strong> ["Researchers", "Product Managers", "UX Teams"]</li>
+                                <!-- Other mappings -->
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="kb-property">
+                        <strong>personas:</strong> <button class="toggle-btn" data-target="personas-content">Show/Hide</button>
+                        <div class="toggle-content" id="personas-content">
+                            Array of persona categories with example personas
+                            <ul>
+                                <li><strong>UX Researchers:</strong>
+                                    <ul>
+                                        <li>Maya: 34, mid-sized tech company, 8 years of experience</li>
+                                        <li>Darius: 28, agency environment, multiple client projects</li>
+                                    </ul>
+                                </li>
+                                <!-- Other personas -->
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="kb-property">
+                        <strong>generatePrompt:</strong> Function that generates the pre-prompt based on selected feature
+                    </div>
+                    <div class="kb-property">
+                        <strong>disneyKB:</strong> Specialized knowledge base for Disney Method with detailed phase information
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>Pre-prompt Generation Process</h2>
+            <p>The system follows a systematic approach to generate pre-prompts based on the selected knowledge base and feature.</p>
+            
+            <div class="tab-container">
+                <div class="tabs">
+                    <button class="tab active" data-tab="generation-flow">Generation Flow</button>
+                    <button class="tab" data-tab="template-structure">Template Structure</button>
+                    <button class="tab" data-tab="generation-code">Generation Code</button>
+                </div>
+                
+                <div class="tab-content active" id="generation-flow">
+                    <ol>
+                        <li><strong>Feature Selection:</strong> User selects a specific feature from the loaded knowledge base</li>
+                        <li><strong>Template Retrieval:</strong> System retrieves the template data for the selected feature</li>
+                        <li><strong>Persona Selection:</strong> System randomly selects relevant personas based on the feature</li>
+                        <li><strong>Section Assembly:</strong> System builds each section of the pre-prompt (considerations, principles, etc.)</li>
+                        <li><strong>Formatting:</strong> System applies consistent formatting to create a structured Markdown document</li>
+                        <li><strong>Delivery:</strong> Final pre-prompt is either injected into the page or copied to clipboard</li>
+                    </ol>
+                </div>
+                
+                <div class="tab-content" id="template-structure">
+                    <p>The pre-prompt templates follow a consistent structure across different knowledge bases:</p>
+                    
+                    <div class="code-block">
+# [KB Name] Pre-prompt for [Feature Title]
+
+## Key [Domain] Considerations
+- Consideration 1
+- Consideration 2
+...
+
+## [Domain] Principles
+- Principle 1
+- Principle 2
+...
+
+## User Scenarios
+- Scenario 1
+- Scenario 2
+...
+
+## Personas with [Domain] Needs
+
+### Persona 1: [Name]
+- Age: [Age]
+- [Domain] Need: [Need]
+- Assistive Technology: [Tools]
+- Key Challenges: [Challenges]
+- Background: [Description]
+
+### Persona 2: [Name]
+...
+
+## Design Request
+Based on the information above, please:
+
+1. **[First request]**
+   - Detail 1
+   - Detail 2
+   ...
+
+2. **[Second request]**
+...
+
+3. **[Third request]**
+...
+                    </div>
+                </div>
+                
+                <div class="tab-content" id="generation-code">
+                    <p>The core pre-prompt generation function (<code>G()</code> in the bookmarklet code) handles template assembly:</p>
+                    
+                    <div class="code-block">
+function G() {
+    var e = document.getElementById("feature-select"),
+        t = 2,
+        n = e.value;
+    if (!c || !c.features || !c.features[n]) return "Error: Could not generate pre-prompt. Data not loaded correctly.";
+    
+    var r = c.features[n],
+        a = "# " + c.name + " Pre-prompt for " + r.title + "\n\n## Key Design Considerations\n";
+    
+    // Add considerations
+    r.considerations.forEach(function(e) {
+        a += "- " + e + "\n"
+    });
+    a += "\n";
+    
+    // Add WCAG guidelines if available
+    if (r.wcagGuidelines) {
+        a += "## Relevant WCAG Guidelines\n";
+        r.wcagGuidelines.forEach(function(e) {
+            a += "- WCAG " + e + "\n"
+        });
+        a += "\n";
+    }
+    
+    // Add principles if available
+    if (r.principles) {
+        a += "## UX Design Principles\n";
+        r.principles.forEach(function(e) {
+            a += "- " + e + "\n"
+        });
+        a += "\n";
+    }
+    
+    // Add user scenarios
+    a += "## User Scenarios\n";
+    r.userStories.forEach(function(e) {
+        a += "- " + e + "\n"
+    });
+    a += "\n## Personas with " + (c.name.includes("Accessibility") ? "Accessibility" : "UX") + " Needs\n";
+    
+    // Select and add personas
+    function s(u, C) {
+        const v = c.disabilityCategories[u] || [];
+        let w = [];
+        c.personas.forEach(x => {
+            if (v.includes(x.category))
+                x.examples.forEach(y => {
+                    w.push({...y, category: x.category})
+                })
+        });
+        // Shuffle and select limited number of personas
+        w = function r(t) {
+            for (let u = t.length - 1; u > 0; u--) {
+                const v = Math.floor(Math.random() * (u + 1));
+                [t[u], t[v]] = [t[v], t[u]]
+            }
+            return t
+        }(w);
+        return w.slice(0, C)
+    }
+    
+    // Format persona sections
+    s(n, t).forEach((z, A) => {
+        a += `\n### Persona ${A+1}: ${z.name}\n`;
+        if (z.age) a += `- Age: ${z.age}\n`;
+        if (c.name.includes("Accessibility")) {
+            a += `- Accessibility Need: ${z.disability} (${z.category})\n`;
+            a += `- Assistive Technology: ${z.tools}\n`;
+            a += `- Key Challenges: ${z.challenges}\n`;
+        } else {
+            a += `- Context: ${z.context}\n`;
+            a += `- Tools: ${z.tools}\n`;
+            a += `- Key Challenges: ${z.challenges}\n`;
+        }
+        a += `- Background: ${z.description}\n`
+    });
+    
+    // Add design request section with domain-specific content
+    a += "\n## Design Request\nBased on the information above, please:\n\n";
+    
+    // Domain-specific request sections
+    if (c.name.includes("Accessibility")) {
+        // Accessibility-specific requests
+        a += "1. **Enhance the provided personas** - Expand on these personas to make them more realistic and detailed, following the W3C WAI user stories model. Include:\n   - Daily technology habits and preferences\n   - Specific scenarios showing how they interact with this feature\n   - Emotional aspects of their user experience\n   - Social contexts where they use digital products\n\n";
+        a += "2. **Provide accessible design considerations** for " + r.title + " that address the needs of the personas. Include:\n   - Specific technical implementations (with code examples where relevant)\n   - Design patterns that would work well\n   - Potential pitfalls to avoid\n   - Opportunities to exceed minimum compliance requirements\n\n";
+    } else {
+        // UX-specific requests
+        a += "1. **Enhance the provided personas** - Expand on these personas to make them more realistic and detailed. Include:\n   - Technology preferences and behaviors\n   - Specific user journeys showing interaction with this feature\n   - Pain points and moments of delight\n   - Context and environment considerations\n\n";
+        a += "2. **Provide UX design considerations** for " + r.title + " that address the needs of the personas. Include:\n   - Innovative interface solutions\n   - Best practice implementations\n   - Common UX pitfalls to avoid\n   - Metrics to measure success\n\n";
+    }
+    
+    // Common final request section
+    a += "3. **Create user stories** that illustrate how these personas would interact with an " + (c.name.includes("Accessibility") ? "accessible" : "optimal") + " implementation of this feature, highlighting:\n   - The journey through the feature\n   - Pain points that proper " + (c.name.includes("Accessibility") ? "accessibility" : "UX design") + " would solve\n   - Moments of delight when " + (c.name.includes("Accessibility") ? "accessibility" : "user experience") + " is done well\n\n";
+    a += "Please write in a practical, actionable style that balances technical accuracy with human-centered design thinking.";
+    
+    return a
+}
+                    </div>
+                </div>
+                    

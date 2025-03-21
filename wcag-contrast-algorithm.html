@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WCAG Contrast Algorithm</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            color: black;
+            background-color: white;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .formula {
+            font-style: italic;
+            margin: 15px 0;
+            text-align: center;
+        }
+        ol {
+            padding-left: 20px;
+        }
+        li {
+            margin-bottom: 20px;
+        }
+        ul {
+            padding-left: 20px;
+        }
+        .bullet {
+            margin-bottom: 10px;
+        }
+        .sub {
+            vertical-align: sub;
+            font-size: smaller;
+        }
+        .math {
+            display: block;
+            text-align: center;
+            margin: 15px 0;
+            font-size: 18px;
+        }
+        .indent {
+            margin-left: 20px;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+</head>
+<body>
+    <h1>WCAG Contrast Algorithm</h1>
+    
+    <p>The contrast algorithm in this tool is based on the WCAG guidelines (Web Content Accessibility Guidelines 2.0/2.1/2.2) and works as follows:</p>
+    
+    <ol>
+        <li>
+            <strong>Relative Luminance Calculation:</strong>
+            <p>Each color is first converted from sRGB (0–255) to a linearized luminance value. This involves:</p>
+            
+            <ul>
+                <li class="bullet"><strong>Normalization:</strong> Dividing each RGB component by 255 to convert it to a 0–1 range.</li>
+                
+                <li class="bullet">
+                    <strong>Linearization:</strong> For each normalized component:
+                    <ul>
+                        <li class="bullet">If ≤ 0.03928, it is divided by 12.92.</li>
+                        <li class="bullet">Otherwise, it is transformed with the formula:</li>
+                    </ul>
+                    <div class="math">
+                        \[component_{linear} = \left(\frac{component + 0.055}{1.055}\right)^{2.4}\]
+                    </div>
+                </li>
+                
+                <li class="bullet">
+                    <strong>Weighted Sum:</strong> The relative luminance \(L\) is then computed using the weights:
+                    <div class="math">
+                        \[L = 0.2126 \times R_{lin} + 0.7152 \times G_{lin} + 0.0722 \times B_{lin}\]
+                    </div>
+                </li>
+            </ul>
+        </li>
+        
+        <li>
+            <strong>Contrast Ratio Formula:</strong>
+            <p>Given two colors (foreground and background), their contrast ratio is calculated as:</p>
+            <div class="math">
+                \[Contrast\ Ratio = \frac{L_1 + 0.05}{L_2 + 0.05}\]
+            </div>
+            <p>where \(L_1\) is the luminance of the lighter color and \(L_2\) is the luminance of the darker color. The added 0.05 helps account for ambient light conditions and prevents division by zero.</p>
+        </li>
+        
+        <li>
+            <strong>Alpha Compositing:</strong>
+            <p>If the foreground (or background) color is semi-transparent (alpha less than 1), the tool composites it over the background (or a white backdrop) to compute an effective color before calculating the luminance. This ensures the contrast ratio reflects the actual appearance when colors blend.</p>
+        </li>
+        
+        <li>
+            <strong>WCAG Thresholds:</strong>
+            <p>The computed contrast ratio is compared to thresholds defined by WCAG:</p>
+            <ul>
+                <li class="bullet"><strong>AA Level:</strong> Typically requires a ratio of at least 4.5:1 for normal text.</li>
+                <li class="bullet"><strong>AAA Level:</strong> Requires a ratio of at least 7:1 for enhanced accessibility.</li>
+            </ul>
+            <p>These thresholds help ensure that text is legible for users, including those with visual impairments.</p>
+        </li>
+    </ol>
+    
+    <p>This method is widely recognized and used in accessibility tools, ensuring your content is both forward‑thinking and accessible by meeting established WCAG standards.</p>
+</body>
+</html>

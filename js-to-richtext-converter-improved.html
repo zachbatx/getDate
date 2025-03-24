@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JS to Rich Text Converter</title>
+    <!-- Font Awesome from CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        h1, h2, h3, h4, h5, h6, ul, ol {
+            padding-bottom: 10px;
+        }
+        ul {
+            padding-inline-start: 17px;
+        }
+        ol {
+            padding-inline-start: 18px;
+        }
+        li {
+            padding-bottom: 2px;
+        }
+        .fa-cloud-upload-alt {
+            color: #1e293b;
+        }
+        input, button {
+            height: 40px;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        }
+        body {
+            background-color: #f5f8fa;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .headerArea {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background-color: #1e293b;
+            color: #fff !important;
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            width: 100%;
+        }
+
+        .headerArea h1 {
+            color: #fff;
+            margin-bottom: 0.5rem;
+            font-weight: 500 !important;
+        }
+
+        .subtitle {
+            color: #7f8c8d;
+            font-size: 1.1rem;
+        }
+
+        .app-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            margin-top: 100px;
+        }
+
+        .upload-area {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            text-align: center;
+            display: flex;
+        }
+
+        .preview-area {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            height: 100%;
+            overflow-y: auto;
+        }
+
+        .drop-zone {
+            border: 2px dashed #3498db;
+            border-radius: 5px;
+            padding: 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color 0.2s;
+            flex: 1 1 50%;
+        }
+
+        .drop-zone:hover, .drop-zone.active {
+            border-color: #2980b9;
+            background-color: #f0f7fc;
+        }
+
+        .drop-zone-text {
+            font-size: 1.2rem;
+            color: #3498db;
+            margin-bottom: 1rem;
+        }
+
+        .drop-zone-icon {
+            font-size: 2rem;
+            color: #3498db;
+            margin-bottom: 0.5rem;
+        }
+
+        .btn {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 0.55rem 1.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: background-color 0.2s;
+        }
+
+        .btn:hover {
+            background-color: #2980b9;
+        }
+
+        .btn:disabled {
+            background-color: #bdc3c7;
+            cursor: not-allowed;
+        }
+
+        .btn-browser {
+            background-color: #f8f9fa;
+            color: #3498db;
+            border: 1px solid #3498db;
+        }
+
+        .btn-browser:hover {
+            background-color: #e9f5fe;
+        }
+
+        #fileInput, #pasteInput {
+            display: none;
+        }
+
+        .file-info {
+            text-align: left;
+            padding: 0.85rem;
+            border-radius: 5px;
+            transition: opacity 0.3s;
+            flex: 1 1 50%;
+            margin: auto 20px;
+        }
+
+        .file-info.show {
+            opacity: 1;
+        }
+
+        .export-options {
+            background-color: white;
+            padding: 0px;
+            float: right;
+            display: -webkit-inline-box;
+            margin-left: 26%;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            display: flex;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: #2c3e50;
+            top: 8px;
+            position: relative;
+            margin-right: 3px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        .alert {
+            padding: 1rem;
+            border-radius: 5px;
+            margin-bottom: 1.5rem;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .alert.show {
+            opacity: 1;
+        }
+
+        .preview-content {
+            padding: 1rem;
+            border-radius: 5px;
+            line-height: 1.5;
+            overflow-y: auto;
+        }
+        
+        #jsContent {
+            font-family: 'Courier New', Courier, monospace;
+            white-space: pre-wrap;
+            background-color: #2d2d2d;
+            color: #f8f8f2;
+            min-height: 200px;
+            padding: 1rem;
+            border-radius: 5px;
+            font-size: 0.9rem;
+        }
+        
+        #richTextContent {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            white-space: normal;
+            min-height: 300px;
+            border: 1px solid #ddd;
+            outline: none;
+            padding: 2.3rem;
+            background-color: white;
+        }
+
+        .tabs {
+            display: flex;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .tab {
+            padding: 0.75rem 1.5rem;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+        }
+
+        .tab.active {
+            border-bottom-color: #3498db;
+            color: #3498db;
+            font-weight: 600;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .input-group {
+            display: flex;
+            margin-bottom: 1rem;
+        }
+
+        .input-group .btn {
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+        }
+
+        .input-group input {
+            border-top-right-radius: 0;
+            border-bottom-right-radius: 0;
+            flex: 1;
+        }
+
+        .paste-area {
+            display: flex;
+            flex-direction: column;
+            margin-top: 20px;
+        }
+
+        .paste-area textarea {
+            width: 100%;
+            min-height: 150px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-family: 'Courier New', Courier, monospace;
+            margin-bottom: 10px;
+        }
+
+        .copy-btn {
+            align-self: flex-end;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="headerArea">
+            <h1>JS to Rich Text Converter</h1>
+        </div>
+
+        <div id="alertBox" class="alert"></div>
+
+        <div class="app-container">
+            <div class="upload-area">
+                <div id="dropZone" class="drop-zone">
+                    <i class="fas fa-cloud-upload-alt" style="font-size:32px;"></i>
+                    <p class="drop-zone-text">Drag & Drop your JS file here</p>
+                    <button id="browseBtn" class="btn btn-browser">Browse Files</button>
+                    <input type="file" id="fileInput" accept=".js" />
+                </div>
+                
+                <div id="fileInfo" class="file-info">
+                    <h3>File Information</h3>
+                    <p id="fileName">No file selected</p>
+                    <p id="fileSize"></p>
+                    <div class="paste-area">
+                        <h4>Or paste JS code here:</h4>
+                        <textarea id="jsPasteArea" placeholder="Paste your JavaScript knowledge base object here..."></textarea>
+                        <button id="processJsBtn" class="btn">Process JS</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="preview-area">
+                <div class="tabs">
+                    <div class="tab active" data-tab="js">JavaScript Code</div>
+                    <div class="tab" data-tab="richText">Rich Text</div>
+                    <div class="export-options">
+                        <div class="form-group">
+                            <button id="copyBtn" class="btn" disabled>Copy Rich Text</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="jsContent" class="tab-content active preview-content">
+                    No JavaScript content yet. Please upload a JS file or paste code above.
+                </div>
+                
+                <div id="richTextContent" class="tab-content preview-content">
+                    No converted content yet.
+                </div>
+            </div>
+        </div> 
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // DOM elements
+            const dropZone = document.getElementById('dropZone');
+            const fileInput = document.getElementById('fileInput');
+            const browseBtn = document.getElementById('browseBtn');
+            const fileInfo = document.getElementById('fileInfo');
+            const fileName = document.getElementById('fileName');
+            const fileSize = document.getElementById('fileSize');
+            const jsContent = document.getElementById('jsContent');
+            const richTextContent = document.getElementById('richTextContent');
+            const jsPasteArea = document.getElementById('jsPasteArea');
+            const processJsBtn = document.getElementById('processJsBtn');
+            const copyBtn = document.getElementById('copyBtn');
+            const alertBox = document.getElementById('alertBox');
+            const tabs = document.querySelectorAll('.tab');
+
+            // Variables to store processed content
+            let dataObj = null;
+            
+            // Prevent default drag behaviors
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                dropZone.addEventListener(eventName, preventDefaults, false);
+                document.body.addEventListener(eventName, preventDefaults, false);
+            });
+
+            // Highlight drop zone when dragging over it
+            ['dragenter', 'dragover'].forEach(eventName => {
+                dropZone.addEventListener(eventName, highlight, false);
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                dropZone.addEventListener(eventName, unhighlight, false);
+            });
+
+            // Handle dropped files
+            dropZone.addEventListener('drop', handleDrop, false);
+
+            // Handle browse button click
+            browseBtn.addEventListener('click', () => fileInput.click());
+            fileInput.addEventListener('change', handleFiles);
+
+            // Handle tab switching
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    // Remove active class from all tabs and contents
+                    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                    
+                    // Add active class to clicked tab
+                    tab.classList.add('active');
+                    
+                    // Show corresponding content
+                    const tabId = tab.getAttribute('data-tab');
+                    document.getElementById(tabId + 'Content').classList.add('active');
+                });
+            });
+
+            // Handle process JS button click
+            processJsBtn.addEventListener('click', processJsCode);
+            
+            // Handle copy button click
+            copyBtn.addEventListener('click', copyRichText);
+
+            // Prevent default actions for drag events
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+
+            function highlight() {
+                dropZone.classList.add('active');
+            }
+
+            function unhighlight() {
+                dropZone.classList.remove('active');
+            }
+
+            function handleDrop(e) {
+                const dt = e.dataTransfer;
+                const files = dt.files;
+                handleFiles({ target: { files } });
+            }
+
+            function handleFiles(e) {
+                const files = e.target.files;
+                if (files.length > 0) {
+                    const file = files[0];
+                    
+                    // Check if file is a js
+                    if (file.name.endsWith('.js')) {
+                        processJsFile(file);
+                    } else {
+                        showAlert('Please upload a .js file.', 'error');
+                    }
+                }
+            }
+
+            function processJsFile(file) {
+                // Update file info
+                fileInfo.classList.add('show');
+                fileName.textContent = `File: ${file.name}`;
+                fileSize.textContent = `Size: ${formatBytes(file.size)}`;
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const jsCode = e.target.result;
+                    jsContent.textContent = jsCode;
+                    
+                    try {
+                        // Process JS code
+                        processJs(jsCode);
+                        
+                        // Enable copy button
+                        copyBtn.disabled = false;
+                        
+                        showAlert('JavaScript successfully processed!', 'success');
+                    } catch (error) {
+                        console.error('Error processing JS:', error);
+                        showAlert('Error processing JavaScript file. Make sure it contains a valid knowledge base object.', 'error');
+                    }
+                };
+                reader.readAsText(file);
+            }
+            
+            function processJsCode() {
+                const jsCode = jsPasteArea.value;
+                if (!jsCode.trim()) {
+                    showAlert('Please paste JavaScript code first.', 'error');
+                    return;
+                }
+                
+                jsContent.textContent = jsCode;
+                
+                try {
+                    // Process JS code
+                    processJs(jsCode);
+                    
+                    // Enable copy button
+                    copyBtn.disabled = false;
+                    
+                    showAlert('JavaScript successfully processed!', 'success');
+                } catch (error) {
+                    console.error('Error processing JS:', error);
+                    showAlert('Error processing JavaScript code. Make sure it contains a valid knowledge base object.', 'error');
+                }
+            }
+            
+            function processJs(jsCode) {
+                // Extract the object from the JS code
+                try {
+                    // Find the object in the code
+                    const objectMatch = jsCode.match(/const\s+[a-zA-Z0-9_]+\s*=\s*(\{[\s\S]*\});/);
+                    if (objectMatch && objectMatch[1]) {
+                        // Extract the object part
+                        const objectStr = objectMatch[1];
+                        
+                        // Convert the string to an actual object
+                        dataObj = JSON.parse(objectStr);
+                        
+                        // Generate rich text from the object
+                        const richText = generateRichText(dataObj);
+                        richTextContent.innerHTML = richText;
+                        
+                        // Show success message
+                        showAlert('Successfully converted JavaScript to rich text! You can now view and copy the formatted content.', 'success');
+                    } else {
+                        throw new Error('Could not find a valid knowledge base object in the code');
+                    }
+                } catch (error) {
+                    console.error('Error extracting object:', error);
+                    showAlert('Error processing JavaScript: ' + error.message, 'error');
+                    throw error;
+                }
+            }
+            
+            function generateRichText(obj) {
+                let html = '';
+                
+                // Process standard metadata properties first (if they exist)
+                if (obj.title) {
+                    html += `<h1><strong>#Title: ${obj.title}</strong></h1>`;
+                }
+                
+                if (obj.name) {
+                    html += `<h1><strong>#Name: ${obj.name}</strong></h1>`;
+                }
+                
+                // Process LLM instructions if present
+                if (obj.llmInstructions) {
+                    html += `<h2><strong>#llmInstructions</strong></h2>`;
+                    html += formatInstructions(obj.llmInstructions);
+                }
+                
+                // Process user instructions if present
+                if (obj.userInstructions) {
+                    html += `<h2><strong>#userInstructions</strong></h2>`;
+                    html += formatInstructions(obj.userInstructions);
+                }
+                
+                // Process all other properties recursively
+                for (const key in obj) {
+                    // Skip the properties we've already processed
+                    if (['title', 'name', 'llmInstructions', 'userInstructions'].includes(key)) {
+                        continue;
+                    }
+                    
+                    // Format the key as a heading
+                    const formattedKey = formatPropertyName(key);
+                    html += `<h2><strong>${formattedKey}</strong></h2>`;
+                    
+                    // Process the value based on its type
+                    html += processValue(obj[key], 3); // Start at h3 level for nested headings
+                }
+                
+                return html;
+            }
+            
+            // Function to recursively process values based on their type
+            function processValue(value, headingLevel = 3) {
+                let html = '';
+                
+                // Handle different value types
+                if (Array.isArray(value)) {
+                    // Process arrays differently based on their content
+                    if (value.length > 0) {
+                        if (typeof value[0] === 'object' && value[0] !== null) {
+                            // Array of objects - process each object
+                            value.forEach(item => {
+                                html += processValue(item, headingLevel);
+                            });
+                        } else {
+                            // Array of primitives - create a list
+                            html += '<ul>';
+                            value.forEach(item => {
+                                html += `<li>${formatText(String(item))}</li>`;
+                            });
+                            html += '</ul>';
+                        }
+                    }
+                } else if (typeof value === 'object' && value !== null) {
+                    // Process object properties
+                    for (const key in value) {
+                        const formattedKey = formatPropertyName(key);
+                        html += `<h${headingLevel}><strong>${formattedKey}</strong></h${headingLevel}>`;
+                        
+                        // Recursively process nested values
+                        html += processValue(value[key], headingLevel + 1);
+                    }
+                } else {
+                    // Handle primitive values (strings, numbers, booleans)
+                    html += `<p>${formatText(String(value))}</p>`;
+                }
+                
+                return html;
+            }
+            
+            // Helper to format property names
+            function formatPropertyName(name) {
+                // Convert camelCase to Title Case
+                return name
+                    .replace(/([A-Z])/g, ' $1')
+                    .replace(/^./, function(str) { return str.toUpperCase(); })
+                    .trim();
+            }
+            
+            // Helper to format instruction text with proper markdown styling
+            function formatInstructions(instructionsText) {
+                let html = '';
+                
+                // Split by newlines
+                const lines = instructionsText.split('\n');
+                
+                let inList = false;
+                let inOrderedList = false;
+                let listLevel = 0;
+                let listStack = [];
+                
+                for (let i = 0; i < lines.length; i++) {
+                    let line = lines[i].trim();
+                    
+                    if (!line) {
+                        // Empty line - close any open lists
+                        while (listStack.length > 0) {
+                            const listType = listStack.pop();
+                            html += listType === 'ol' ? '</ol>' : '</ul>';
+                        }
+                        inList = false;
+                        inOrderedList = false;
+                        listLevel = 0;
+                        html += '<p>&nbsp;</p>';
+                        continue;
+                    }
+                    
+                    // Check for headings
+                    if (line.startsWith('#')) {
+                        // Close any open lists
+                        while (listStack.length > 0) {
+                            const listType = listStack.pop();
+                            html += listType === 'ol' ? '</ol>' : '</ul>';
+                        }
+                        inList = false;
+                        inOrderedList = false;
+                        listLevel = 0;
+                        
+                        const level = (line.match(/#/g) || []).length;
+                        const text = line.replace(/#/g, '').trim();
+                        html += `<h${Math.min(level + 1, 6)}>${text}</h${Math.min(level + 1, 6)}>`;
+                        continue;
+                    }
+                    
+                    // Check for numbered list items
+                    const orderedListMatch = line.match(/^(\d+)\.\s+(.*)$/);
+                    if (orderedListMatch) {
+                        const indentLevel = countLeadingSpaces(lines[i]) / 2; // Assuming 2 spaces per indent level
+                        
+                        // Close lists if needed
+                        while (listLevel > indentLevel) {
+                            const listType = listStack.pop();
+                            html += listType === 'ol' ? '</ol>' : '</ul>';
+                            listLevel--;
+                        }
+                        
+                        // Open new list if needed
+                        if (!inOrderedList || listLevel < indentLevel) {
+                            html += '<ol>';
+                            listStack.push('ol');
+                            listLevel = indentLevel;
+                            inOrderedList = true;
+                            inList = false;
+                        }
+                        
+                        // Apply formatting (bold, italic, etc.)
+                        const itemText = formatText(orderedListMatch[2]);
+                        html += `<li>${itemText}</li>`;
+                        continue;
+                    }
+                    
+                    // Check for bulleted list items
+                    if (line.startsWith('*') || line.startsWith('-')) {
+                        const indentLevel = countLeadingSpaces(lines[i]) / 2; // Assuming 2 spaces per indent level
+                        
+                        // Close lists if needed
+                        while (listLevel > indentLevel) {
+                            const listType = listStack.pop();
+                            html += listType === 'ol' ? '</ol>' : '</ul>';
+                            listLevel--;
+                        }
+                        
+                        // Open new list if needed
+                        if (!inList || listLevel < indentLevel) {
+                            html += '<ul>';
+                            listStack.push('ul');
+                            listLevel = indentLevel;
+                            inList = true;
+                            inOrderedList = false;
+                        }
+                        
+                        // Extract and format text
+                        const itemText = formatText(line.replace(/^[*-]\s*/, '').trim());
+                        html += `<li>${itemText}</li>`;
+                    } else {
+                        // Regular paragraph
+                        // Close any open lists
+                        while (listStack.length > 0) {
+                            const listType = listStack.pop();
+                            html += listType === 'ol' ? '</ol>' : '</ul>';
+                        }
+                        inList = false;
+                        inOrderedList = false;
+                        listLevel = 0;
+                        
+                        // Apply formatting (bold, italic, etc.)
+                        const formattedText = formatText(line);
+                        html += `<p>${formattedText}</p>`;
+                    }
+                }
+                
+                // Close any remaining open lists
+                while (listStack.length > 0) {
+                    const listType = listStack.pop();
+                    html += listType === 'ol' ? '</ol>' : '</ul>';
+                }
+                
+                return html;
+            }
+            
+            // Helper function to count leading spaces for indentation
+            function countLeadingSpaces(str) {
+                const match = str.match(/^(\s*)/);
+                return match ? match[1].length : 0;
+            }
+            
+            // Helper function to format text with bold, italic, etc.
+            function formatText(text) {
+                if (!text) return '';
+                
+                // Bold - **text** or __text__
+                text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                text = text.replace(/__(.*?)__/g, '<strong>$1</strong>');
+                
+                // Italic - *text* or _text_
+                text = text.replace(/\*([^\*]+)\*/g, '<em>$1</em>');
+                text = text.replace(/_([^_]+)_/g, '<em>$1</em>');
+                
+                // Code - `text`
+                text = text.replace(/`(.*?)`/g, '<code>$1</code>');
+                
+                // Special handling for escaped brackets in markdown
+                text = text.replace(/\\</g, '&lt;').replace(/\\>/g, '&gt;');
+                
+                // Escape square brackets that are part of markdown syntax [text]
+                text = text.replace(/\[(.*?)\]/g, '[$1]');
+                
+                // Handle special characters
+                text = text.replace(/\\'/g, "'");
+                
+                return text;
+            }
+            
+            function copyRichText() {
+                // Create a range
+                const range = document.createRange();
+                range.selectNode(richTextContent);
+                
+                // Select the range
+                const selection = window.getSelection();
+                selection.removeAllRanges();
+                selection.addRange(range);
+                
+                // Execute copy command
+                try {
+                    document.execCommand('copy');
+                    showAlert('Rich text content copied to clipboard!', 'success');
+                } catch (err) {
+                    showAlert('Failed to copy: ' + err, 'error');
+                }
+                
+                // Clear selection
+                selection.removeAllRanges();
+            }
+            
+            function showAlert(message, type) {
+                alertBox.textContent = message;
+                alertBox.className = `alert alert-${type} show`;
+                
+                // Hide the alert after 5 seconds
+                setTimeout(() => {
+                    alertBox.classList.remove('show');
+                }, 5000);
+            }
+            
+            function formatBytes(bytes, decimals = 2) {
+                if (bytes === 0) return '0 Bytes';
+                
+                const k = 1024;
+                const dm = decimals < 0 ? 0 : decimals;
+                const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+                
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+            }
+        });
+    </script>
+</body>
+</html>

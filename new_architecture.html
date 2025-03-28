@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prompt Generator Framework Architecture</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.8.0/mermaid.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            border-radius: 5px;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        .diagram-container {
+            overflow: auto;
+            margin: 20px 0;
+        }
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            margin-top: 20px;
+            justify-content: center;
+            gap: 15px;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-right: 15px;
+        }
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            margin-right: 5px;
+            border: 1px solid #333;
+        }
+        .core-color {
+            background-color: #f9f;
+        }
+        .ui-color {
+            background-color: #bbf;
+        }
+        .kb-color {
+            background-color: #bfb;
+        }
+        .function-color {
+            background-color: #fbb;
+        }
+        .description {
+            margin-top: 20px;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Prompt Generator Framework Architecture</h1>
+        
+        <div class="diagram-container">
+            <pre class="mermaid">
+graph TD
+    subgraph "Bookmarklet Initialization"
+        A[User activates Bookmarklet] --> B[llmPrimer_bkm_framework_v1.1.js]
+        B --> C[Create UI Panel]
+        B --> D[Set up Event Handlers]
+        B --> E[Register Knowledge Bases]
+    end
+
+    subgraph "Dynamic Loading System"
+        E --> F[Load Function L/F]
+        F -->|Loads via script tag| G[n_kb-research-core.js]
+        F -->|Fallback Fetch Method| H[Fetch API Loader]
+    end
+
+    subgraph "Knowledge Base Core"
+        G --> I[Initialize kbResearch]
+        I --> J[Load Knowledge Bases from Config]
+        J -->|Creates script elements| K[Dynamic Script Loading]
+    end
+
+    subgraph "Specialized Knowledge Bases"
+        K -->|Loads| L[n_dark-patterns.js]
+        K -->|Loads| M[n_usability-heuristics.js]
+        L --> N[darkPatternsData in global scope]
+        M --> O[usabilityHeuristicsData in global scope]
+    end
+
+    subgraph "Runtime Functionality"
+        C --> P[User selects knowledge base]
+        P --> Q[User selects feature]
+        Q --> R[Generate Prompt]
+        R --> S1[Inject Prompt]
+        R --> S2[Copy Prompt]
+    end
+
+    subgraph "Data Flow"
+        N -->|Registers with| I
+        O -->|Registers with| I
+        N --> R
+        O --> R
+    end
+
+    classDef core fill:#f9f,stroke:#333,stroke-width:2px;
+    classDef ui fill:#bbf,stroke:#333,stroke-width:1px;
+    classDef kb fill:#bfb,stroke:#333,stroke-width:1px;
+    classDef function fill:#fbb,stroke:#333,stroke-width:1px;
+
+    class B,G core;
+    class C,D,P,Q,S1,S2 ui;
+    class L,M,N,O kb;
+    class F,H,K,R function;
+            </pre>
+        </div>
+
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color core-color"></div>
+                <span>Core Components</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color ui-color"></div>
+                <span>UI Elements</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color kb-color"></div>
+                <span>Knowledge Bases</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color function-color"></div>
+                <span>Functional Components</span>
+            </div>
+        </div>
+
+        <div class="description">
+            <h2>Loading Process & Component Relationships</h2>
+            <ol>
+                <li>
+                    <strong>Initialization Phase</strong>
+                    <ul>
+                        <li>User activates the bookmarklet in their browser</li>
+                        <li><code>llmPrimer_bkm_framework_v1.1.js</code> executes and creates the floating UI panel</li>
+                        <li>The bookmarklet registers available knowledge bases using <code>registerKnowledgeBase()</code></li>
+                        <li>Initial knowledge bases are registered</li>
+                    </ul>
+                </li>
+                <li>
+                    <strong>Core Module Loading</strong>
+                    <ul>
+                        <li>When the user selects a knowledge base from the dropdown, <code>K()</code> function is triggered</li>
+                        <li>The framework attempts to load the core module (<code>n_kb-research-core.js</code>) using the <code>L()</code> function</li>
+                        <li>If standard loading fails, it falls back to a fetch-based approach (<code>F()</code>)</li>
+                    </ul>
+                </li>
+                <li>
+                    <strong>Knowledge Base Initialization</strong>
+                    <ul>
+                        <li>Once loaded, <code>n_kb-research-core.js</code> initializes the <code>kbResearch</code> module</li>
+                        <li>The module creates its configuration for available knowledge bases</li>
+                        <li>It then calls <code>_loadKnowledgeBases()</code> to begin loading specialized knowledge bases</li>
+                    </ul>
+                </li>
+                <li>
+                    <strong>Specialized Knowledge Base Loading</strong>
+                    <ul>
+                        <li>For each knowledge base in the configuration, a script element is created</li>
+                        <li>Scripts (<code>n_dark-patterns.js</code> and <code>n_usability-heuristics.js</code>) are loaded dynamically</li>
+                        <li>Each script contains a global variable (<code>darkPatternsData</code> or <code>usabilityHeuristicsData</code>)</li>
+                        <li>These globals are registered with the core module as available features</li>
+                    </ul>
+                </li>
+                <li>
+                    <strong>Feature Selection & Prompt Generation</strong>
+                    <ul>
+                        <li>Once knowledge bases are loaded, the feature dropdown is populated</li>
+                        <li>When the user selects a feature, the Generate/Copy buttons become enabled</li>
+                        <li>Clicking Generate/Copy calls the appropriate knowledge base's prompt generation function</li>
+                        <li>The resulting prompt is either injected into the current page or copied to clipboard</li>
+                    </ul>
+                </li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'default',
+            securityLevel: 'loose',
+            flowchart: {
+                useMaxWidth: false,
+                htmlLabels: true
+            }
+        });
+    </script>
+</body>
+</html>

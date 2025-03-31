@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prompt Generator Framework Architecture - Infographic Style</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.8.0/mermaid.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Nunito Sans', sans-serif; /* Modern, friendly font */
+            margin: 0;
+            padding: 0;
+            background-color: #f0f4f8; /* Soft, light background */
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            width: 95%; /* Responsive width */
+            max-width: 1400px;
+            background-color: #fff;
+            padding: 40px; /* Increased padding */
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08); /* Softer, wider shadow */
+            border-radius: 12px; /* More rounded corners */
+            margin: 20px;
+        }
+        h1 {
+            color: #34495e;
+            text-align: center;
+            font-size: 2.5em; /* Larger, more prominent title */
+            margin-bottom: 30px;
+            font-weight: 700;
+        }
+        .diagram-container {
+            overflow-x: auto;
+            margin: 30px 0;
+            padding: 30px;
+            background-color: #f8fafc; /* Very light grey for diagram area */
+            border-radius: 10px;
+            border: 1px solid #e2e8f0; /* Soft border */
+        }
+        .mermaid {
+            font-size: 16px; /* Slightly larger font in diagram */
+        }
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 40px;
+            padding: 20px;
+            background-color: #f8fafc;
+            border-radius: 10px;
+            border: 1px solid #e2e8f0;
+            box-shadow: inset 0 0 5px rgba(0,0,0,0.02); /* Inset shadow for depth */
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .legend-color {
+            width: 30px; /* Larger color indicators */
+            height: 30px;
+            border-radius: 6px; /* Rounded color indicators */
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .legend-text {
+            font-size: 1.1em;
+            color: #4a5568; /* Slightly muted text color */
+        }
+        .core-color { background-color: #63B3ED; } /* Vibrant Blue */
+        .ui-color { background-color: #48BB78; }   /* Fresh Green */
+        .kb-color { background-color: #F6AD55; }   /* Warm Orange */
+        .function-color { background-color: #E53E3E; } /* Energetic Red */
+
+        .description {
+            margin-top: 50px;
+            line-height: 1.8;
+            color: #555;
+        }
+        .description h2 {
+            color: #34495e;
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 10px;
+        }
+        .description ol, .description ul {
+            padding-left: 25px;
+        }
+        .description strong {
+            color: #4a5568; /* Slightly bolder text */
+        }
+
+        /* Mermaid node styling for infographic look */
+        .mermaid .node rect {
+            fill: #fff !important; /* White nodes */
+            stroke: #cbd5e0 !important; /* Light grey border */
+            stroke-width: 1.5px !important;
+            rx: 8px !important; /* Rounded corners for nodes */
+            ry: 8px !important;
+        }
+        .mermaid .node text {
+            fill: #4a5568 !important; /* Node text color */
+            font-weight: 500;
+        }
+        .mermaid .edge path {
+            stroke: #a0aec0 !important; /* Soft grey arrows */
+            stroke-width: 1.5px !important;
+        }
+        .mermaid .edge text {
+            fill: #718096 !important; /* Edge text color */
+            font-size: 0.9em;
+        }
+        .mermaid .cluster-rect {
+            fill: transparent !important; /* No fill for subgraphs */
+            stroke: #cbd5e0 !important; /* Light grey dashed border for subgraphs */
+            stroke-dasharray: 8 5 !important;
+            stroke-width: 1.5px !important;
+            rx: 10px !important;
+            ry: 10px !important;
+        }
+        .mermaid .cluster-label text {
+            fill: #718096 !important; /* Subgraph label color */
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Prompt Generator Framework Architecture</h1>
+
+        <div class="diagram-container">
+            <pre class="mermaid">
+graph LR
+    subgraph Bookmarklet_Initialization [Bookmarklet Initialization]
+        style Bookmarklet_Initialization fill:transparent,stroke:#cbd5e0,stroke-dasharray: 8 5;
+        direction TB
+        A[Activate Bookmarklet] --> B(Bookmarklet Script<br><code>llmPrimer_bkm_v1.1.js</code>)
+        B --> C(Create UI Panel)
+        B --> D(Set Event Handlers)
+        B --> E(Register Knowledge Bases)
+    end
+
+    subgraph Dynamic_Loading [Dynamic Module Loading]
+        style Dynamic_Loading fill:transparent,stroke:#cbd5e0,stroke-dasharray: 8 5;
+        direction TB
+        E --> F(Load Function<br><code>L/F</code>)
+        F -->|Script Tag Load| G(Core Module<br><code>n_kb-research-core.js</code>)
+        F -->|Fallback: Fetch API| H(Fetch API Loader)
+    end
+
+    subgraph KB_Core [Knowledge Base Core]
+        style KB_Core fill:transparent,stroke:#cbd5e0,stroke-dasharray: 8 5;
+        direction TB
+        G --> I(Initialize <code>kbResearch</code>)
+        I --> J(Load KB Config)
+        J -->|Create Script Tags| K(Dynamic Script Loader)
+    end
+
+    subgraph Specialized_KBs [Specialized Knowledge Bases]
+        style Specialized_KBs fill:transparent,stroke:#cbd5e0,stroke-dasharray: 8 5;
+        direction TB
+        K -->|Load Scripts| L(Dark Patterns KB<br><code>n_dark-patterns.js</code>)
+        K -->|Load Scripts| M(Usability Heuristics KB<br><code>n_usability-heuristics.js</code>)
+        L --> N(<code>darkPatternsData</code><br>Global Scope)
+        M --> O(<code>usabilityHeuristicsData</code><br>Global Scope)
+    end
+
+    subgraph Runtime_Functionality [Runtime Functionality]
+        style Runtime_Functionality fill:transparent,stroke:#cbd5e0,stroke-dasharray: 8 5;
+        direction TB
+        C --> P(User Selects KB)
+        P --> Q(User Selects Feature)
+        Q --> R(Generate Prompt)
+        R --> S1(Inject Prompt)
+        R --> S2(Copy Prompt)
+    end
+
+    subgraph Data_Flow [Data Flow & Registration]
+        style Data_Flow fill:transparent,stroke:#cbd5e0,stroke-dasharray: 8 5;
+        direction LR
+        N -->|Registers Features with| I
+        O -->|Registers Features with| I
+        N --> R
+        O --> R
+    end
+
+    classDef core fill:#63B3ED,stroke:#2A69AC,stroke-width:2px, color:#fff;
+    classDef ui fill:#48BB78,stroke:#276749,stroke-width:2px, color:#fff;
+    classDef kb fill:#F6AD55,stroke:#B45309,stroke-width:2px, color:#fff;
+    classDef function fill:#E53E3E,stroke:#972626,stroke-width:2px, color:#fff;
+
+    class B,G core;
+    class C,D,P,Q,S1,S2 ui;
+    class L,M,N,O kb;
+    class F,H,K,R function;
+
+    style A fill:#fff,stroke:#cbd5e0,stroke-width:1.5px,color:#4a5568
+    style E fill:#fff,stroke:#cbd5e0,stroke-width:1.5px,color:#4a5568
+    style I fill:#fff,stroke:#cbd5e0,stroke-width:1.5px,color:#4a5568
+    style J fill:#fff,stroke:#cbd5e0,stroke-width:1.5px,color:#4a5568
+            </pre>
+        </div>
+
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color core-color"></div>
+                <span class="legend-text">Core Components</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color ui-color"></div>
+                <span class="legend-text">UI Elements</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color kb-color"></div>
+                <span class="legend-text">Knowledge Bases</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color function-color"></div>
+                <span class="legend-text">Functional Components</span>
+            </div>
+        </div>
+
+        <div class="description">
+            <h2>Loading Process & Component Relationships</h2>
+            <ol>
+                <li>
+                    <strong>Initialization Phase</strong>
+                    <ul>
+                        <li>User activates the bookmarklet in their browser</li>
+                        <li><code>llmPrimer_bkm_framework_v1.1.js</code> executes and creates the floating UI panel</li>
+                        <li>The bookmarklet registers available knowledge bases using <code>registerKnowledgeBase()</code></li>
+                        <li>Initial knowledge bases are registered</li>
+                    </ul>
+                </li>
+                <li>
+                    <strong>Core Module Loading</strong>
+                    <ul>
+                        <li>When the user selects a knowledge base from the dropdown, <code>K()</code> function is triggered</li>
+                        <li>The framework attempts to load the core module (<code>n_kb-research-core.js</code>) using the <code>L()</code> function</li>
+                        <li>If standard loading fails, it falls back to a fetch-based approach (<code>F()</code>)</li>
+                    </ul>
+                </li>
+                <li>
+                    <strong>Knowledge Base Initialization</strong>
+                    <ul>
+                        <li>Once loaded, <code>n_kb-research-core.js</code> initializes the <code>kbResearch</code> module</li>
+                        <li>The module creates its configuration for available knowledge bases</li>
+                        <li>It then calls <code>_loadKnowledgeBases()</code> to begin loading specialized knowledge bases</li>
+                    </ul>
+                </li>
+                <li>
+                    <strong>Specialized Knowledge Base Loading</strong>
+                    <ul>
+                        <li>For each knowledge base in the configuration, a script element is created</li>
+                        <li>Scripts (<code>n_dark-patterns.js</code> and <code>n_usability-heuristics.js</code>) are loaded dynamically</li>
+                        <li>Each script contains a global variable (<code>darkPatternsData</code> or <code>usabilityHeuristicsData</code>)</li>
+                        <li>These globals are registered with the core module as available features</li>
+                    </ul>
+                </li>
+                <li>
+                    <strong>Feature Selection & Prompt Generation</strong>
+                    <ul>
+                        <li>Once knowledge bases are loaded, the feature dropdown is populated</li>
+                        <li>When the user selects a feature, the Generate/Copy buttons become enabled</li>
+                        <li>Clicking Generate/Copy calls the appropriate knowledge base's prompt generation function</li>
+                        <li>The resulting prompt is either injected into the current page or copied to clipboard</li>
+                    </ul>
+                </li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'neutral',
+            securityLevel: 'loose',
+            flowchart: {
+                useMaxWidth: false,
+                htmlLabels: true
+            }
+        });
+    </script>
+</body>
+</html>

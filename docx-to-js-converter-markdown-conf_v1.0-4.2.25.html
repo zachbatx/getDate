@@ -1314,76 +1314,113 @@ window.${variableName} = ${variableName};`;
                 return code;
             }
             
-            function exportJSFile() {
-                    if (!jsObject) {
-                        showAlert('No content to export. Please upload a DOCX file first.', 'error');
-                        return;
-                    }
-                    
-                    // Get the JS code based on current tab
-                    let jsCode;
-                    if (document.querySelector('.tab[data-tab="converted"]').classList.contains('active')) {
-                        jsCode = editableJsContent.textContent;
-                    } else {
-                        const editedContent = editableContent.innerHTML;
-                        jsObject = convertHtmlToJsObject(editedContent);
-                        jsCode = generateJsCode(jsObject);
-                    }
-                    
-                    const fileName = outputFileName.value || 'knowledge-base.js';
-                    
-                    // Create a blob with the JS code
-                    const blob = new Blob([jsCode], { type: 'application/javascript' });
-                    
-                    // Create a file object from the blob
-                    const file = new File([blob], fileName.endsWith('.js') ? fileName : `${fileName}.js`, {
-                        type: 'application/javascript'
-                    });
-                    
-                    // Check if we're in Confluence context
-                    const confluenceForm = document.querySelector('.plugin_attachments_uploadform');
-                    if (confluenceForm) {
-                        // We're in Confluence, so use their upload system
-                        const formData = new FormData(confluenceForm);
-                        formData.append('file', file);
-                        
-                        // Create file input for Confluence's uploader
-                        const fileInput = document.createElement('input');
-                        fileInput.type = 'file';
-                        fileInput.name = 'file';
-                        fileInput.style.display = 'none';
-                        
-                        // Add to form and trigger Confluence's upload handler
-                        confluenceForm.appendChild(fileInput);
-                        
-                        // Use the DataTransfer API to set the file
-                        const dataTransfer = new DataTransfer();
-                        dataTransfer.items.add(file);
-                        fileInput.files = dataTransfer.files;
-                        
-                        // Trigger Confluence's native upload handler
-                        const browseButton = document.querySelector('.browse-files');
-                        if (browseButton) {
-                            browseButton.click();
-                            // Let Confluence handle the rest
-                            showAlert('Ready to upload. Complete the process in Confluence\'s upload dialog.', 'success');
-                        } else {
-                            // Submit form programmatically as fallback
-                            confluenceForm.classList.remove('hidden');
-                            confluenceForm.submit();
-                        }
-                    } else {
-                        // Standard download if not in Confluence
-                        const a = document.createElement('a');
-                        a.href = URL.createObjectURL(blob);
-                        a.download = fileName.endsWith('.js') ? fileName : `${fileName}.js`;
-                        document.body.appendChild(a);
-                        a.click();
-                        document.body.removeChild(a);
-                        
-                        showAlert('Successfully Exported!', 'success');
-                    }
-                }
+            // Replace the existing exportJSFile function with this corrected version
+function exportJSFile() {
+    if (!jsObject) {
+        showAlert('No content to export. Please upload a DOCX file first.', 'error');
+        return;
+    }
+    
+    // Get the JS code based on current tab
+    let jsCode;
+    if (document.querySelector('.tab[data-tab="converted"]').classList.contains('active')) {
+        jsCode = editableJsContent.textContent;
+    } else {
+        const editedContent = editableContent.innerHTML;
+        jsObject = convertHtmlToJsObject(editedContent);
+        jsCode = generateJsCode(jsObject);
+    }
+    
+    const fileName = outputFileName.value || 'knowledge-base.js';
+    const finalFileName = fileName.endsWith('.js') ? fileName : `${fileName}.js`;
+    
+    // Create a blob with the JS code
+    const blob = new Blob([jsCode], { type: 'application/javascript' });
+    
+    // Check if we're in Confluence context
+    const confluenceForm = document.querySelector('.plugin_attachments_uploadform');
+    
+    if (confluenceForm) {
+        // We're in Confluence, try using the upload API
+        try {
+            const jsFile = new File([blob], finalFileName, { type: 'application/javascript' });
+            uploadToConfluence(jsFile, confluenceForm);
+        } catch (error) {
+            console.error('Confluence upload error:', error);
+            // Fall back to standard download
+            standardDownload(blob, finalFileName);
+        }
+    } else {
+        // Standard download if not in Confluence
+        standardDownload(blob, finalFileName);
+    }
+}
+
+// Add this helper function for standard downloads
+function standardDownload(blob, fileName) {
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = fileName;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    
+    showAlert('Successfully Exported!', 'success');
+}
+
+// Add this helper function for Confluence uploads
+function uploadToConfluence(file, confluenceForm) {
+    // Try using the AJS API if available (Confluence's JavaScript API)
+    if (typeof AJS !== 'undefined' && AJS.AttachmentsUtils) {
+        showAlert('Uploading to Confluence...', 'success');
+        try {
+            AJS.AttachmentsUtils.uploadFile(file);
+            return;
+        } catch (e) {
+            console.error('AJS upload failed, trying form method', e);
+        }
+    }
+    
+    // Try via the form
+    const formData = new FormData(confluenceForm);
+    formData.append('file', file);
+    
+    // Look for the browse files button
+    const browseButton = document.querySelector('.browse-files');
+    if (browseButton) {
+        // Create a file input for Confluence's uploader
+        const fileInput = document.createElement('input');
+        fileInput.type = 'file';
+        fileInput.name = 'file';
+        fileInput.style.display = 'none';
+        
+        // Add to form
+        confluenceForm.appendChild(fileInput);
+        
+        try {
+            // Use the DataTransfer API to set the file
+            const dataTransfer = new DataTransfer();
+            dataTransfer.items.add(file);
+            fileInput.files = dataTransfer.files;
+            
+            // Trigger click on the browse button to open file dialog
+            browseButton.click();
+            showAlert('Select the exported file in the file dialog that opens', 'success');
+        } catch (e) {
+            console.error('DataTransfer method failed', e);
+            // If DataTransfer fails, try direct form submission
+            try {
+                confluenceForm.classList.remove('hidden');
+                confluenceForm.submit();
+            } catch (formError) {
+                console.error('Form submission failed', formError);
+                throw new Error('Unable to upload to Confluence');
+            }
+        }
+    } else {
+        throw new Error('Confluence browse button not found');
+    }
+}
                 if (!jsObject) {
                     showAlert('No content to export. Please upload a DOCX file first.', 'error');
                     return;

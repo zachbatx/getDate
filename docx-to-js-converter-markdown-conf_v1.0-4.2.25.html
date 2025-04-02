@@ -537,10 +537,10 @@
                     // Remove active class from all tabs and contents
                     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
                     document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-                    
+
                     // Add active class to clicked tab
                     tab.classList.add('active');
-                    
+
                     // Show corresponding content
                     const tabId = tab.getAttribute('data-tab');
                     document.getElementById(tabId + 'Content').classList.add('active');
@@ -551,7 +551,7 @@
             autoUpdateToggle.addEventListener('change', function() {
                 isAutoUpdateEnabled = this.checked;
             });
-            
+
             // Format JS button
             document.querySelector('.js-format-btn').addEventListener('click', function() {
                 try {
@@ -563,7 +563,7 @@
                     showAlert('Error formatting JavaScript. Check for syntax errors.', 'error');
                 }
             });
-            
+
             // Function to format JavaScript code
             function formatJavaScript(jsCode) {
                 try {
@@ -571,13 +571,13 @@
                     const variableName = getJsVariableName(documentTitle, documentName);
                     const jsonStart = jsCode.indexOf(`const ${variableName} = `) + `const ${variableName} = `.length;
                     const jsonEnd = jsCode.lastIndexOf(';\n\n// Make the data');
-                    
+
                     if (jsonStart > 0 && jsonEnd > jsonStart) {
                         const jsonPart = jsCode.substring(jsonStart, jsonEnd);
                         // Parse and format the JSON
                         const parsedJson = JSON.parse(jsonPart);
                         const formattedJson = JSON.stringify(parsedJson, null, 2);
-                        
+
                         // Reconstruct the JavaScript
                         return jsCode.substring(0, jsonStart) + formattedJson + jsCode.substring(jsonEnd);
                     } else {
@@ -588,26 +588,26 @@
                     return jsCode; // Return unchanged on error
                 }
             }
-            
+
             // Handle text editor buttons
             document.querySelectorAll('.editor-toolbar button').forEach(button => {
                 button.addEventListener('click', function() {
                     const command = this.dataset.command;
                     const value = this.dataset.value || null;
-                    
+
                     if (command === 'formatBlock') {
                         document.execCommand(command, false, value);
                     } else {
                         document.execCommand(command, false, null);
                     }
-                    
+
                     // Update the converted JS when content is edited if auto-update is enabled
                     if (isAutoUpdateEnabled) {
                         updateConvertedJS();
                     }
                 });
             });
-            
+
             // Listen for changes in the editable content
             editableContent.addEventListener('input', function() {
                 // Update the converted JS when content is edited if auto-update is enabled
@@ -615,16 +615,49 @@
                     updateConvertedJS();
                 }
             });
-            
+
             // Function to update the JS conversion based on edited content
             function updateConvertedJS() {
                 const editedContent = editableContent.innerHTML;
                 jsObject = convertHtmlToJsObject(editedContent);
                 editableJsContent.textContent = generateJsCode(jsObject);
             }
-            
-            // Handle export button click
-            exportBtn.addEventListener('click', exportJSFile);
+
+            function exportJSFile() {
+                if (!jsObject) {
+                    showAlert('No content to export. Please upload a DOCX file first.', 'error');
+                    return;
+                }
+
+                let jsCode;
+
+                // If we're on the JS tab, use the edited JS content directly
+                if (document.querySelector('.tab[data-tab="converted"]').classList.contains('active')) {
+                    jsCode = editableJsContent.textContent;
+                } else {
+                    // If we're on the original content tab, convert the current HTML to JS
+                    const editedContent = editableContent.innerHTML;
+                    jsObject = convertHtmlToJsObject(editedContent);
+                    jsCode = generateJsCode(jsObject);
+                }
+
+                // Find the Confluence attachments container
+                const attachmentContainer = document.querySelector('.plugin_attachments_container');
+
+                if (attachmentContainer) {
+                    // Create a script element
+                    const script = document.createElement('script');
+                    script.type = 'text/javascript';
+                    script.textContent = jsCode;
+
+                    // Inject the script into the attachments container
+                    attachmentContainer.appendChild(script);
+                    showAlert('Successfully injected JS into Confluence attachments!', 'success');
+                } else {
+                    showAlert('Confluence attachments container not found. Injection failed.', 'error');
+                    console.error('Confluence attachments container not found.');
+                }
+            }
 
             // Prevent default actions for drag events
             function preventDefaults(e) {
@@ -650,13 +683,13 @@
                 const files = e.target.files;
                 if (files.length > 0) {
                     const file = files[0];
-                    
+
                     // Check if file is a docx
                     if (file.name.endsWith('.docx')) {
                         // Set default output filename based on input file
                         const baseName = file.name.replace('.docx', '');
                         outputFileName.value = `${baseName}.js`;
-                        
+
                         processDocxFile(file);
                     } else {
                         showAlert('Please upload a .docx file.', 'error');
@@ -669,25 +702,25 @@
                 fileInfo.classList.add('show');
                 fileName.textContent = `File: ${file.name}`;
                 fileSize.textContent = `Size: ${formatBytes(file.size)}`;
-                
+
                 // Convert docx to HTML
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     const arrayBuffer = e.target.result;
-                    
+
                     // Use mammoth to convert docx to HTML
                     mammoth.convertToHtml({ arrayBuffer: arrayBuffer })
                         .then(result => {
                             docxContent = result.value;
                             editableContent.innerHTML = docxContent;
-                            
+
                             // Convert HTML to JS object
                             jsObject = convertHtmlToJsObject(docxContent);
                             editableJsContent.textContent = generateJsCode(jsObject);
-                            
+
                             // Enable export button
                             exportBtn.disabled = false;
-                            
+
                             showAlert('Document successfully loaded! You can now edit the content before exporting.', 'success');
                         })
                         .catch(error => {
@@ -702,10 +735,10 @@
                 // Create a DOM parser
                 const parser = new DOMParser();
                 const doc = parser.parseFromString(html, 'text/html');
-                
+
                 // Initialize result object with empty structure
                 const result = {};
-                
+
                 // Look for title and name tags
                 const titleMatch = findTaggedContent(doc, "#Title:");
                 if (titleMatch) {
@@ -734,10 +767,10 @@
 
                 // Extract main content sections by heading
                 extractDocumentStructure(doc, result);
-                
+
                 return result;
             }
-            
+
             // Helper function to find content with a specific tag
             function findTaggedContent(doc, tag) {
                 const headings = doc.querySelectorAll('h1, h2, h3, h4, h5, h6');
@@ -759,15 +792,15 @@
                 }
                 return null;
             }
-            
+
             // Extract content from a tagged heading until the next heading
             function extractContentUntilNextHeading(doc, taggedHeadingText) {
                 const heading = findTaggedHeading(doc, taggedHeadingText);
                 if (!heading) return '';
-                
+
                 let content = '';
                 let currentNode = heading.nextSibling;
-                
+
                 // Skip the heading itself
                 while (currentNode && !isHeading(currentNode)) {
                     if (currentNode.textContent) {
@@ -775,21 +808,21 @@
                     }
                     currentNode = currentNode.nextSibling;
                 }
-                
+
                 return content.trim();
             }
-            
+
             // Extract full content from a heading until the next heading that starts with #
             // Now with Markdown conversion
             function extractFullContentUntilNextHashHeading(headingElement) {
                 const result = [];
                 let currentNode = headingElement.nextSibling;
-                
+
                 while (currentNode) {
                     if (isHeading(currentNode) && currentNode.textContent.trim().startsWith('#')) {
                         break;
                     }
-                    
+
                     if (currentNode.nodeType === Node.ELEMENT_NODE) {
                         // Convert element to Markdown
                         const markdown = convertElementToMarkdown(currentNode);
@@ -799,46 +832,46 @@
                     } else if (currentNode.nodeType === Node.TEXT_NODE && currentNode.textContent.trim()) {
                         result.push(currentNode.textContent.trim());
                     }
-                    
+
                     currentNode = currentNode.nextSibling;
                 }
-                
+
                 return result.join('\n');
             }
-            
+
             // New function for HTML to Markdown conversion
             function convertElementToMarkdown(element) {
                 const tagName = element.tagName.toLowerCase();
                 const content = element.textContent.trim();
-                
+
                 if (!content) return '';
-                
+
                 // Convert headings
                 if (tagName.match(/^h[1-6]$/)) {
                     const level = parseInt(tagName.charAt(1), 10);
                     const hashes = '#'.repeat(level);
                     return `${hashes} ${content}`;
                 }
-                
+
                 // Convert paragraphs
                 if (tagName === 'p') {
                     return content;
                 }
-                
+
                 // Convert emphasis
                 if (tagName === 'strong' || tagName === 'b') {
                     return `**${content}**`;
                 }
-                
+
                 if (tagName === 'em' || tagName === 'i') {
                     return `*${content}*`;
                 }
-                
+
                 // Convert code
                 if (tagName === 'code') {
                     return `\`${content}\``;
                 }
-                
+
                 // Convert lists
                 if (tagName === 'ul' || tagName === 'ol') {
                     const items = Array.from(element.children).map(li => {
@@ -850,11 +883,11 @@
                     });
                     return items.join('\n');
                 }
-                
+
                 // For other elements, just return the text content
                 return content;
             }
-            
+
             function isHeading(node) {
                 return node.nodeName && /^H[1-6]$/i.test(node.nodeName);
             }
@@ -866,15 +899,15 @@
                     const text = h.textContent.trim();
                     return !text.startsWith('#');
                 });
-                
+
                 for (const heading of mainHeadings) {
                     const headingText = heading.textContent.trim();
                     const propertyName = convertToValidProperty(headingText);
-                    
+
                     // Process based on heading text
                     if (headingText === "Taxonomy of Dark Patterns") {
                         resultObj[propertyName] = extractTaxonomySection(heading);
-                    } 
+                    }
                     else if (headingText === "Common Dark Patterns") {
                         resultObj[propertyName] = extractPatternsSection(heading, "common");
                     }
@@ -899,13 +932,13 @@
                     }
                 }
             }
-            
+
             // Get all elements following a heading until the next heading of same or higher level
             function getFollowingElements(heading) {
                 const elements = [];
                 let currentNode = heading.nextSibling;
                 const headingLevel = parseInt(heading.tagName.substring(1), 10);
-                
+
                 while (currentNode) {
                     if (isHeading(currentNode)) {
                         const currentLevel = parseInt(currentNode.tagName.substring(1), 10);
@@ -913,146 +946,146 @@
                             break; // Stop at same or higher level heading
                         }
                     }
-                    
+
                     if (currentNode.nodeType === Node.ELEMENT_NODE) {
                         elements.push(currentNode);
                     }
-                    
+
                     currentNode = currentNode.nextSibling;
                 }
-                
+
                 return elements;
             }
-            
+
             // Get all subheadings under a heading
             function getSubheadings(heading) {
                 const headingLevel = parseInt(heading.tagName.substring(1), 10);
                 const subheadingLevel = headingLevel + 1;
                 const subheadings = [];
-                
+
                 let currentNode = heading.nextSibling;
-                
+
                 while (currentNode) {
                     if (isHeading(currentNode)) {
                         const currentLevel = parseInt(currentNode.tagName.substring(1), 10);
-                        
+
                         if (currentLevel <= headingLevel) {
                             break; // Stop at same or higher level heading
                         }
-                        
+
                         if (currentLevel === subheadingLevel) {
                             subheadings.push(currentNode);
                         }
                     }
-                    
+
                     currentNode = currentNode.nextSibling;
                 }
-                
+
                 return subheadings;
             }
-            
+
             // Extract taxonomy section
             function extractTaxonomySection(heading) {
                 const result = {};
                 const subheadings = getSubheadings(heading);
-                
+
                 for (const subheading of subheadings) {
                     const subheadingText = subheading.textContent.trim();
                     const propertyName = convertToValidProperty(subheadingText);
-                    
+
                     // Get the list items under this subheading
                     const categoryItems = extractCategoryItems(subheading);
-                    
+
                     if (categoryItems.length > 0) {
                         result[propertyName] = categoryItems;
                     }
                 }
-                
+
                 return result;
             }
-            
+
             // Extract patterns section
             function extractPatternsSection(heading, type) {
                 const patterns = [];
                 const elements = getFollowingElements(heading);
                 const lists = elements.filter(el => el.tagName === 'UL' || el.tagName === 'OL');
-                
+
                 for (const list of lists) {
                     const items = list.querySelectorAll('li');
-                    
+
                     let currentPattern = null;
-                    
+
                     for (const item of items) {
                         const text = item.textContent.trim();
-                        
+
                         // Check if this is a pattern name (not a description or examples line)
                         if (!text.startsWith('Description:') && !text.startsWith('Examples:')) {
                             // This is a new pattern
                             if (currentPattern) {
                                 patterns.push(currentPattern);
                             }
-                            
+
                             currentPattern = {
                                 name: text,
                                 description: "",
                                 examples: []
                             };
-                        } 
+                        }
                         else if (text.startsWith('Description:') && currentPattern) {
                             currentPattern.description = text.replace('Description:', '').trim();
-                        } 
+                        }
                         else if (text.startsWith('Examples:') && currentPattern) {
                             const examplesText = text.replace('Examples:', '').trim();
                             currentPattern.examples = examplesText.split(',').map(ex => ex.trim());
                         }
                     }
-                    
+
                     // Add the last pattern
                     if (currentPattern) {
                         patterns.push(currentPattern);
                     }
                 }
-                
+
                 return patterns;
             }
-            
+
             // Extract attributes section
             function extractAttributesSection(heading) {
                 const attributes = [];
                 const elements = getFollowingElements(heading);
                 const lists = elements.filter(el => el.tagName === 'UL' || el.tagName === 'OL');
-                
+
                 for (const list of lists) {
                     const items = list.querySelectorAll('li');
-                    
+
                     for (const item of items) {
                         const text = item.textContent.trim();
                         attributes.push(text);
                     }
                 }
-                
+
                 return attributes;
             }
-            
+
             // Extract regulations section
             function extractRegulationsSection(heading) {
                 const regulations = [];
                 const subheadings = getSubheadings(heading);
-                
+
                 for (const subheading of subheadings) {
                     const name = subheading.textContent.trim();
                     const elements = getFollowingElements(subheading);
                     const lists = elements.filter(el => el.tagName === 'UL' || el.tagName === 'OL');
-                    
+
                     let description = "";
                     let relevance = "";
-                    
+
                     for (const list of lists) {
                         const items = list.querySelectorAll('li');
-                        
+
                         for (const item of items) {
                             const text = item.textContent.trim();
-                            
+
                             if (text.startsWith('Description:')) {
                                 description = text.replace('Description:', '').trim();
                             } else if (text.startsWith('Relevance:')) {
@@ -1060,110 +1093,110 @@
                             }
                         }
                     }
-                    
+
                     regulations.push({
                         name: name,
                         description: description,
                         relevance: relevance
                     });
                 }
-                
+
                 return regulations;
             }
-            
+
             // Extract personas section
             function extractPersonasSection(heading) {
                 const result = {};
                 const subheadings = getSubheadings(heading);
-                
+
                 for (const subheading of subheadings) {
                     const subheadingText = subheading.textContent.trim();
-                    
+
                     if (subheadingText === "Professional Categories") {
                         result.professionalCategories = extractSimpleList(subheading);
-                    } 
+                    }
                     else if (subheadingText === "Persona Examples") {
                         result.personaExamples = extractPersonaExamples(subheading);
-                    } 
+                    }
                     else if (subheadingText === "User Stories") {
                         result.userStories = extractSimpleList(subheading);
                     }
                 }
-                
+
                 return result;
             }
-            
+
             // Extract a simple list of items from a heading
             function extractSimpleList(heading) {
                 const items = [];
                 const elements = getFollowingElements(heading);
                 const lists = elements.filter(el => el.tagName === 'UL' || el.tagName === 'OL');
-                
+
                 for (const list of lists) {
                     const listItems = list.querySelectorAll('li');
-                    
+
                     for (const item of listItems) {
                         items.push(item.textContent.trim());
                     }
                 }
-                
+
                 return items;
             }
-            
+
             // Extract category items from a heading
             function extractCategoryItems(heading) {
                 const categories = [];
                 const elements = getFollowingElements(heading);
                 const lists = elements.filter(el => el.tagName === 'UL' || el.tagName === 'OL');
-                
+
                 let currentCategory = null;
-                
+
                 for (const list of lists) {
                     const items = list.querySelectorAll('li');
-                    
+
                     for (const item of items) {
                         const text = item.textContent.trim();
-                        
+
                         // If not a "Description:" or "Examples:" line, it's a category name
                         if (!text.startsWith('Description:') && !text.startsWith('Examples:')) {
                             if (currentCategory) {
                                 categories.push(currentCategory);
                             }
-                            
+
                             currentCategory = {
                                 name: text,
                                 description: "",
                                 examples: []
                             };
-                        } 
+                        }
                         else if (text.startsWith('Description:') && currentCategory) {
                             currentCategory.description = text.replace('Description:', '').trim();
-                        } 
+                        }
                         else if (text.startsWith('Examples:') && currentCategory) {
                             const examplesText = text.replace('Examples:', '').trim();
                             currentCategory.examples = examplesText.split(',').map(ex => ex.trim());
                         }
                     }
                 }
-                
+
                 // Add the last category
                 if (currentCategory) {
                     categories.push(currentCategory);
                 }
-                
+
                 return categories;
             }
-            
+
             // Extract persona examples from a heading
             function extractPersonaExamples(heading) {
                 const personas = [];
                 const subheadings = getSubheadings(heading);
-                
+
                 for (const subheading of subheadings) {
                     const name = subheading.textContent.trim();
                     const elements = getFollowingElements(subheading);
                     const lists = elements.filter(el => el.tagName === 'UL' || el.tagName === 'OL');
-                    
+
                     let persona = {
                         name: name,
                         age: "",
@@ -1172,81 +1205,81 @@
                         challenges: "",
                         description: ""
                     };
-                    
+
                     for (const list of lists) {
                         const items = list.querySelectorAll('li');
-                        
+
                         for (const item of items) {
                             const text = item.textContent.trim();
-                            
+
                             if (text.startsWith('Age:')) {
                                 persona.age = text.replace('Age:', '').trim();
-                            } 
+                            }
                             else if (text.startsWith('Context:')) {
                                 persona.context = text.replace('Context:', '').trim();
-                            } 
+                            }
                             else if (text.startsWith('Tools:')) {
                                 persona.tools = text.replace('Tools:', '').trim();
-                            } 
+                            }
                             else if (text.startsWith('Challenges:')) {
                                 persona.challenges = text.replace('Challenges:', '').trim();
-                            } 
+                            }
                             else if (text.startsWith('Description:')) {
                                 persona.description = text.replace('Description:', '').trim();
                             }
                         }
                     }
-                    
+
                     personas.push(persona);
                 }
-                
+
                 return personas;
             }
-            
+
             // Extract generic section content
             function extractGenericSection(heading) {
                 const elements = getFollowingElements(heading);
-                
+
                 if (elements.length === 0) {
                     return null;
                 }
-                
+
                 // Check if this section has subsections
                 const subheadings = getSubheadings(heading);
-                
+
                 if (subheadings.length > 0) {
                     // This is a section with subsections
                     const result = {};
-                    
+
                     for (const subheading of subheadings) {
                         const subName = convertToValidProperty(subheading.textContent.trim());
                         const subContent = extractGenericSection(subheading);
-                        
+
                         if (subContent) {
                             result[subName] = subContent;
                         }
                     }
-                    
+
                     return result;
                 }
-                
+
                 // Check for lists
                 const lists = elements.filter(el => el.tagName === 'UL' || el.tagName === 'OL');
-                
+
                 if (lists.length > 0) {
                     return extractSimpleList(heading);
                 }
-                
+
                 // Just plain text content
                 let content = '';
-                
+
                 for (const element of elements) {
                     content += element.textContent.trim() + '\n';
                 }
-                
+
                 return content.trim();
             }
-            
+
             // Convert a heading text to a valid JS property name
             function convertToValidProperty(text) {
                 // Handle special cases
@@ -1270,37 +1303,37 @@
                     case "Financial-Specific Categories":
                         return "financialSpecificCategories";
                 }
-                
+
                 // Remove any non-alphanumeric characters at the beginning
                 let property = text.replace(/^[^a-zA-Z0-9]+/, '');
-                
+
                 // Replace spaces, dashes, etc. with camelCase
                 property = property.replace(/[^a-zA-Z0-9]+(.)/g, (match, chr) => {
                     return chr.toUpperCase();
                 });
-                
+
                 // Ensure first character is lowercase
                 property = property.charAt(0).toLowerCase() + property.slice(1);
-                
+
                 return property;
             }
-            
+
             // Get variable name from document title/name
             function getJsVariableName(title, name) {
                 if (!title && !name) return 'knowledgeBaseData';
-                
+
                 let baseName = (title || name).toLowerCase()
                     .replace(/\s+/g, '_')  // Replace spaces with underscores
                     .replace(/[^a-z0-9_]/g, '')  // Remove non-alphanumeric characters
                     .replace(/_+/g, '_');  // Replace multiple underscores with a single one
-                
+
                 return `${baseName}Data`;
             }
-            
+
             // Generate JavaScript code from the JS object
             function generateJsCode(jsObject) {
                 const variableName = getJsVariableName(documentTitle, documentName);
-                
+
                 // Create the JavaScript code with proper formatting
                 const code = `/**
  * ${documentTitle || documentName || 'Knowledge Base'}
@@ -1310,124 +1343,18 @@ const ${variableName} = ${JSON.stringify(jsObject, null, 2)};
 
 // Make the data available globally
 window.${variableName} = ${variableName};`;
-                
+
                 return code;
             }
-            
-            // Replace the existing exportJSFile function with this corrected version
-function exportJSFile() {
-    if (!jsObject) {
-        showAlert('No content to export. Please upload a DOCX file first.', 'error');
-        return;
-    }
-    
-    // Get the JS code based on current tab
-    let jsCode;
-    if (document.querySelector('.tab[data-tab="converted"]').classList.contains('active')) {
-        jsCode = editableJsContent.textContent;
-    } else {
-        const editedContent = editableContent.innerHTML;
-        jsObject = convertHtmlToJsObject(editedContent);
-        jsCode = generateJsCode(jsObject);
-    }
-    
-    const fileName = outputFileName.value || 'knowledge-base.js';
-    const finalFileName = fileName.endsWith('.js') ? fileName : `${fileName}.js`;
-    
-    // Create a blob with the JS code
-    const blob = new Blob([jsCode], { type: 'application/javascript' });
-    
-    // Check if we're in Confluence context
-    const confluenceForm = document.querySelector('.plugin_attachments_uploadform');
-    
-    if (confluenceForm) {
-        // We're in Confluence, try using the upload API
-        try {
-            const jsFile = new File([blob], finalFileName, { type: 'application/javascript' });
-            uploadToConfluence(jsFile, confluenceForm);
-        } catch (error) {
-            console.error('Confluence upload error:', error);
-            // Fall back to standard download
-            standardDownload(blob, finalFileName);
-        }
-    } else {
-        // Standard download if not in Confluence
-        standardDownload(blob, finalFileName);
-    }
-}
 
-// Add this helper function for standard downloads
-function standardDownload(blob, fileName) {
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = fileName;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    
-    showAlert('Successfully Exported!', 'success');
-}
-
-// Add this helper function for Confluence uploads
-function uploadToConfluence(file, confluenceForm) {
-    // Try using the AJS API if available (Confluence's JavaScript API)
-    if (typeof AJS !== 'undefined' && AJS.AttachmentsUtils) {
-        showAlert('Uploading to Confluence...', 'success');
-        try {
-            AJS.AttachmentsUtils.uploadFile(file);
-            return;
-        } catch (e) {
-            console.error('AJS upload failed, trying form method', e);
-        }
-    }
-    
-    // Try via the form
-    const formData = new FormData(confluenceForm);
-    formData.append('file', file);
-    
-    // Look for the browse files button
-    const browseButton = document.querySelector('.browse-files');
-    if (browseButton) {
-        // Create a file input for Confluence's uploader
-        const fileInput = document.createElement('input');
-        fileInput.type = 'file';
-        fileInput.name = 'file';
-        fileInput.style.display = 'none';
-        
-        // Add to form
-        confluenceForm.appendChild(fileInput);
-        
-        try {
-            // Use the DataTransfer API to set the file
-            const dataTransfer = new DataTransfer();
-            dataTransfer.items.add(file);
-            fileInput.files = dataTransfer.files;
-            
-            // Trigger click on the browse button to open file dialog
-            browseButton.click();
-            showAlert('Select the exported file in the file dialog that opens', 'success');
-        } catch (e) {
-            console.error('DataTransfer method failed', e);
-            // If DataTransfer fails, try direct form submission
-            try {
-                confluenceForm.classList.remove('hidden');
-                confluenceForm.submit();
-            } catch (formError) {
-                console.error('Form submission failed', formError);
-                throw new Error('Unable to upload to Confluence');
-            }
-        }
-    } else {
-        throw new Error('Confluence browse button not found');
-    }
-}
+            function exportJSFile() {
                 if (!jsObject) {
                     showAlert('No content to export. Please upload a DOCX file first.', 'error');
                     return;
                 }
-                
+
                 let jsCode;
-                
+
                 // If we're on the JS tab, use the edited JS content directly
                 if (document.querySelector('.tab[data-tab="converted"]').classList.contains('active')) {
                     jsCode = editableJsContent.textContent;
@@ -1437,42 +1364,44 @@ function uploadToConfluence(file, confluenceForm) {
                     jsObject = convertHtmlToJsObject(editedContent);
                     jsCode = generateJsCode(jsObject);
                 }
-                
-                const fileName = outputFileName.value || 'knowledge-base.js';
-                
-                // Create a blob with the JS code
-                const blob = new Blob([jsCode], { type: 'application/javascript' });
-                
-                // Create a download link and trigger the download
-                const a = document.createElement('a');
-                a.href = URL.createObjectURL(blob);
-                a.download = fileName.endsWith('.js') ? fileName : `${fileName}.js`;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                
-                showAlert('Successfully Exported!', 'success');
+
+                // Find the Confluence attachments container
+                const attachmentContainer = document.querySelector('.plugin_attachments_container');
+
+                if (attachmentContainer) {
+                    // Create a script element
+                    const script = document.createElement('script');
+                    script.type = 'text/javascript';
+                    script.textContent = jsCode;
+
+                    // Inject the script into the attachments container
+                    attachmentContainer.appendChild(script);
+                    showAlert('Successfully injected JS into Confluence attachments!', 'success');
+                } else {
+                    showAlert('Confluence attachments container not found. Injection failed.', 'error');
+                    console.error('Confluence attachments container not found.');
+                }
             }
-            
+
             function showAlert(message, type) {
                 alertBox.textContent = message;
                 alertBox.className = `alert alert-${type} show`;
-                
+
                 // Hide the alert after 5 seconds
                 setTimeout(() => {
                     alertBox.classList.remove('show');
                 }, 5000);
             }
-            
+
             function formatBytes(bytes, decimals = 2) {
                 if (bytes === 0) return '0 Bytes';
-                
+
                 const k = 1024;
                 const dm = decimals < 0 ? 0 : decimals;
                 const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
-                
+
                 const i = Math.floor(Math.log(bytes) / Math.log(k));
-                
+
                 return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
             }
         });

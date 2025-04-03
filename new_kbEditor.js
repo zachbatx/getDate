@@ -1,0 +1,1531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DOCX to JS Converter</title>
+     <!-- Font Awesome from CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        h1, h2, h3, h4, h5, h6, ul, ol {
+            padding-bottom:10px;
+        }
+        ul {
+            padding-inline-start: 17px;
+        }
+        ol {
+            padding-inline-start: 18px;
+        }
+        li {
+            padding-bottom: 2px;
+        }
+        .fa-cloud-upload-alt {
+            color: #1e293b;
+        }
+        input, button {
+            height: 40px;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        }
+        body {
+            background-color: #f5f8fa;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .headerArea {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background-color: #1e293b;
+            color: #fff !important;
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            width: 100%;
+        }
+
+        .headerArea h1 {
+            color: #fff;
+            margin-bottom: 0.5rem;
+            font-weight: 500 !important;
+        }
+
+        .subtitle {
+            color: #7f8c8d;
+            font-size: 1.1rem;
+        }
+
+        .app-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .upload-area {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            text-align: center;
+            display:flex;
+        }
+
+        .preview-area {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            height: 100%;
+            overflow-y: auto;
+        }
+
+        .drop-zone {
+            border: 2px dashed #3498db;
+            border-radius: 5px;
+            padding: 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color 0.2s;
+            flex: 1 1 50%;
+        }
+
+        .drop-zone:hover, .drop-zone.active {
+            border-color: #2980b9;
+            background-color: #f0f7fc;
+        }
+
+        .drop-zone-text {
+            font-size: 1.2rem;
+            color: #3498db;
+            margin-bottom: 1rem;
+        }
+
+        .drop-zone-icon {
+            font-size: 2rem;
+            color: #3498db;
+            margin-bottom: 0.5rem;
+        }
+
+        .btn {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 0.55rem 1.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: background-color 0.2s;
+        }
+
+        .btn:hover {
+            background-color: #2980b9;
+        }
+
+        .btn:disabled {
+            background-color: #bdc3c7;
+            cursor: not-allowed;
+        }
+
+        .btn-browser {
+            background-color: #f8f9fa;
+            color: #3498db;
+            border: 1px solid #3498db;
+        }
+
+        .btn-browser:hover {
+            background-color: #e9f5fe;
+        }
+
+        #fileInput {
+            display: none;
+        }
+
+        .file-info {
+            /* margin-top: 1rem; */
+            text-align: left;
+            padding: 0.85rem;
+            border-radius: 5px;
+            /* opacity: 0; */
+            transition: opacity 0.3s;
+            flex: 1 1 50%;
+            margin: auto 20px;
+        }
+
+        .file-info.show {
+            opacity: 1;
+        }
+
+        .export-options {
+            background-color: white;
+            padding: 0px;
+            float: right;
+            display: -webkit-inline-box;
+            margin-left: 26%;
+
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            display: flex;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: #2c3e50;
+            top: 8px;
+            position: relative;
+            margin-right:3px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        .alert {
+            padding: 1rem;
+            border-radius: 5px;
+            margin-bottom: 1.5rem;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .alert.show {
+            opacity: 1;
+        }
+
+        .preview-content {
+            font-family: 'Courier New', Courier, monospace;
+            white-space: pre-wrap;
+            padding: 1rem;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            min-height: 200px;
+            max-height: 100%;
+            overflow-y: auto;
+        }
+
+        /* Rich text editor styling */
+        #editableContent {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            white-space: normal;
+            min-height: 300px;
+            border: 1px solid #ddd;
+            outline: none;
+            padding: 2.3rem;
+            background-color: white;
+        }
+
+        .editor-toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.3rem;
+            padding: 0.5rem;
+            background-color: #f1f3f4;
+            border: 1px solid #ddd;
+            border-bottom: none;
+            border-radius: 5px 5px 0 0;
+        }
+
+        .editor-toolbar button {
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            padding: 0.3rem 0.6rem;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .editor-toolbar button:hover {
+            background-color: #e9ecef;
+        }
+
+        .editor-toolbar button.active {
+            background-color: #e2f0fd;
+            border-color: #3498db;
+        }
+
+        .js-editor {
+            font-family: 'Courier New', Courier, monospace;
+            white-space: pre-wrap;
+            background-color: #2d2d2d;
+            color: #f8f8f2;
+            border: 1px solid #444;
+            padding: 2.3rem !important;
+        }
+
+        .js-editor-toolbar {
+            display: none;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem;
+            background-color: #333;
+            border: 1px solid #444;
+            border-bottom: none;
+            border-radius: 5px 5px 0 0;
+        }
+
+        .js-format-btn {
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            padding: 0.4rem 0.8rem;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            display: none;
+        }
+
+        .js-format-btn:hover {
+            background-color: #45a049;
+        }
+
+        /* Toggle switch styling */
+        .editor-toggle {
+            display: none;
+            align-items: center;
+            gap: 0.5rem;
+            color: #ddd;
+            font-size: 0.9rem;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+        }
+
+        input:checked + .slider {
+            background-color: #3498db;
+        }
+
+        input:focus + .slider {
+            box-shadow: 0 0 1px #3498db;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 24px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        .tab {
+            padding: 0.75rem 1.5rem;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+        }
+
+        .tab.active {
+            border-bottom-color: #3498db;
+            color: #3498db;
+            font-weight: 600;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+         /* Tab styling for preview */
+         .tabs {
+            display: flex;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid #ddd;
+        }
+        button#exportBtn {
+            position: relative;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="headerArea">
+            <h1>Knowledge Base Editor (.DOCX to .JS)</h1>
+        </div>
+        <select id="fileDropdown">
+            <option value="">Select a file</option>
+          </select>
+        <div id="alertBox" class="alert"></div>
+
+        <div class="app-container">
+            <div class="upload-area">
+                <div id="dropZone" class="drop-zone">
+                    <!---<div class="drop-zone-icon">📄</div>--->
+                    <i class="fas fa-cloud-upload-alt" style="font-size:32px;"></i>
+                    <p class="drop-zone-text">Drag & Drop your DOCX file here</p>
+                    <button id="browseBtn" class="btn btn-browser">Browse Files</button>
+                    <input type="file" id="fileInput" accept=".docx" />
+                </div>
+
+                <div id="fileInfo" class="file-info">
+                    <h3>File Information</h3>
+                    <p id="fileName">No file selected</p>
+                    <p id="fileSize"></p>
+                </div>
+            </div>
+
+            <div class="preview-area">
+                <div class="tabs">
+                    <div class="tab active" data-tab="original">Original Content</div>
+                    <div class="tab" data-tab="converted">Converted JS</div>
+                    <div class="export-options">
+                        <div class="form-group">
+                            <label for="outputFileName">Name:</label>
+                            <input type="text" id="outputFileName" placeholder="knowledge-base.js" value="knowledge-base.js" />
+                        </div>
+
+                        <button id="exportBtn" class="btn" disabled>Export</button>
+                    </div>
+                </div>
+
+                <div id="originalContent" class="tab-content active">
+                    <div class="editor-toolbar">
+                        <button type="button" data-command="bold" title="Bold"><b>B</b></button>
+                        <button type="button" data-command="italic" title="Italic"><i>I</i></button>
+                        <button type="button" data-command="underline" title="Underline"><u>U</u></button>
+                        <button type="button" data-command="formatBlock" data-value="H1" title="Heading 1">H1</button>
+                        <button type="button" data-command="formatBlock" data-value="H2" title="Heading 2">H2</button>
+                        <button type="button" data-command="formatBlock" data-value="H3" title="Heading 3">H3</button>
+                        <button type="button" data-command="insertUnorderedList" title="Bullet List">• List</button>
+                        <button type="button" data-command="justifyLeft" title="Align Left">⇤</button>
+                        <button type="button" data-command="justifyCenter" title="Align Center">⇔</button>
+                        <button type="button" data-command="justifyRight" title="Align Right">⇥</button>
+                    </div>
+                    <div class="preview-content" id="editableContent" contenteditable="true">No content to preview yet. Please upload a DOCX file.</div>
+                </div>
+
+                <div id="convertedContent" class="tab-content">
+                    <div class="js-editor-toolbar">
+                        <button type="button" class="js-format-btn" title="Format JS">Format Code</button>
+                        <div class="editor-toggle">
+                            <span>Auto-update from content:</span>
+                            <label class="switch">
+                                <input type="checkbox" id="autoUpdateToggle" checked>
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="preview-content js-editor" id="editableJsContent" contenteditable="true">No converted content yet.</div>
+                </div>
+            </div>
+        </div>
+        <div class="plugin_attachments_container conf-macro output-block" data-hasbody="false" data-macro-name="attachments">
+            <div class="plugin_attachments_table_container"></div>
+            <div class="plugin_attachments_upload_container">
+              <div class="attachments-table-drop-zone">
+                <li class="drop-zone-text">
+                  <div class="drop-zone-image"></div>
+                  <span>
+                    Drag and drop to upload or
+                    <a class="aui-button aui-button-link browse-files" resolved>browse for files</a>
+                  </span>
+                  <img src="/confluence/images/icons/wait.gif" class="plugin_attachments_dropzone_uploadwaiticon">
+                </li>
+                <form method="POST" class="plugin_attachments_uploadform aui hidden" action="/confluence/pages/plugins/attachments/doattachfile.action?pageId=4645356648" enctype="multipart/form-data">
+                </form>
+              </div>
+            </div>
+          </div>
+    </div>
+
+    <!-- Include the mammoth.js library for DOCX parsing -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.17/mammoth.browser.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // DOM elements
+            const dropZone = document.getElementById('dropZone');
+            const fileInput = document.getElementById('fileInput');
+            const browseBtn = document.getElementById('browseBtn');
+            const fileInfo = document.getElementById('fileInfo');
+            const fileName = document.getElementById('fileName');
+            const fileSize = document.getElementById('fileSize');
+            const editableContent = document.getElementById('editableContent');
+            const editableJsContent = document.getElementById('editableJsContent');
+            const autoUpdateToggle = document.getElementById('autoUpdateToggle');
+            const outputFileName = document.getElementById('outputFileName');
+            const exportBtn = document.getElementById('exportBtn');
+            const alertBox = document.getElementById('alertBox');
+            const tabs = document.querySelectorAll('.tab');
+            const attachmentsDropZone = document.querySelector('.attachments-table-drop-zone'); // Target drop zone
+            const fileDropdown = document.getElementById('fileDropdown'); // Get the dropdown
+
+            // Variables to store processed content
+            let docxContent = null;
+            let jsObject = null;
+            let isAutoUpdateEnabled = true;
+            let documentTitle = '';
+            let documentName = '';
+
+            // Prevent default drag behaviors for main drop zone
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                dropZone.addEventListener(eventName, preventDefaults, false);
+                document.body.addEventListener(eventName, preventDefaults, false);
+            });
+
+            // Highlight main drop zone when dragging over it
+            ['dragenter', 'dragover'].forEach(eventName => {
+                dropZone.addEventListener(eventName, highlight, false);
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                dropZone.addEventListener(eventName, unhighlight, false);
+            });
+
+            // Handle dropped files on main drop zone
+            dropZone.addEventListener('drop', handleDrop, false);
+
+            // Handle browse button click
+            browseBtn.addEventListener('click', () => fileInput.click());
+            fileInput.addEventListener('change', handleFiles);
+
+            // Handle tab switching
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    // Remove active class from all tabs and contents
+                    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+
+                    // Add active class to clicked tab
+                    tab.classList.add('active');
+
+                    // Show corresponding content
+                    const tabId = tab.getAttribute('data-tab');
+                    document.getElementById(tabId + 'Content').classList.add('active');
+                });
+            });
+
+            // Handle auto-update toggle
+            autoUpdateToggle.addEventListener('change', function() {
+                isAutoUpdateEnabled = this.checked;
+            });
+
+            // Format JS button
+            document.querySelector('.js-format-btn').addEventListener('click', function() {
+                try {
+                    const jsContent = editableJsContent.textContent;
+                    // Format the JavaScript code
+                    const formattedJs = formatJavaScript(jsContent);
+                    editableJsContent.textContent = formattedJs;
+                } catch (error) {
+                    showAlert('Error formatting JavaScript. Check for syntax errors.', 'error');
+                }
+            });
+
+            // Function to format JavaScript code
+            function formatJavaScript(jsCode) {
+                try {
+                    // Find the start of the object declaration
+                    const variableName = getJsVariableName(documentTitle, documentName);
+                    const jsonStart = jsCode.indexOf(`const ${variableName} = `) + `const ${variableName} = `.length;
+                    const jsonEnd = jsCode.lastIndexOf(';\n\n// Make the data');
+
+                    if (jsonStart > 0 && jsonEnd > jsonStart) {
+                        const jsonPart = jsCode.substring(jsonStart, jsonEnd);
+                        // Parse and format the JSON
+                        const parsedJson = JSON.parse(jsonPart);
+                        const formattedJson = JSON.stringify(parsedJson, null, 2);
+
+                        // Reconstruct the JavaScript
+                        return jsCode.substring(0, jsonStart) + formattedJson + jsCode.substring(jsonEnd);
+                    } else {
+                        return jsCode; // Return unchanged if structure doesn't match
+                    }
+                } catch (error) {
+                    console.error('Error formatting JS:', error);
+                    return jsCode; // Return unchanged on error
+                }
+            }
+
+            // Handle text editor buttons
+            document.querySelectorAll('.editor-toolbar button').forEach(button => {
+                button.addEventListener('click', function() {
+                    const command = this.dataset.command;
+                    const value = this.dataset.value || null;
+
+                    if (command === 'formatBlock') {
+                        document.execCommand(command, false, value);
+                    } else {
+                        document.execCommand(command, false, null);
+                    }
+
+                    // Update the converted JS when content is edited if auto-update is enabled
+                    if (isAutoUpdateEnabled) {
+                        updateConvertedJS();
+                    }
+                });
+            });
+
+            // Listen for changes in the editable content
+            editableContent.addEventListener('input', function() {
+                // Update the converted JS when content is edited if auto-update is enabled
+                if (isAutoUpdateEnabled) {
+                    updateConvertedJS();
+                }
+            });
+
+            // Function to update the JS conversion based on edited content
+            function updateConvertedJS() {
+                const editedContent = editableContent.innerHTML;
+                jsObject = convertHtmlToJsObject(editedContent);
+                editableJsContent.textContent = generateJsCode(jsObject);
+            }
+
+            // Handle export button click
+            exportBtn.addEventListener('click', exportJSFile);
+
+            // Prevent default actions for drag events
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+
+            function highlight() {
+                dropZone.classList.add('active');
+            }
+
+            function unhighlight() {
+                dropZone.classList.remove('active');
+            }
+
+            function handleDrop(e) {
+                const dt = e.dataTransfer;
+                const files = dt.files;
+                handleFiles({ target: { files } });
+            }
+
+            function handleFiles(e) {
+                const files = e.target.files;
+                if (files.length > 0) {
+                    const file = files[0];
+
+                    // Check if file is a docx
+                    if (file.name.endsWith('.docx')) {
+                        // Set default output filename based on input file
+                        const baseName = file.name.replace('.docx', '');
+                        outputFileName.value = `${baseName}.js`;
+
+                        processDocxFile(file);
+                    } else {
+                        showAlert('Please upload a .docx file.', 'error');
+                    }
+                }
+            }
+
+            function processDocxFile(file) {
+                // Update file info
+                fileInfo.classList.add('show');
+                fileName.textContent = `File: ${file.name}`;
+                fileSize.textContent = `Size: ${formatBytes(file.size)}`;
+
+                // Convert docx to HTML
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const arrayBuffer = e.target.result;
+
+                    // Use mammoth to convert docx to HTML
+                    mammoth.convertToHtml({ arrayBuffer: arrayBuffer })
+                        .then(result => {
+                            docxContent = result.value;
+                            editableContent.innerHTML = docxContent;
+
+                            // Convert HTML to JS object
+                            jsObject = convertHtmlToJsObject(docxContent);
+                            editableJsContent.textContent = generateJsCode(jsObject);
+
+                            // Enable export button
+                            exportBtn.disabled = false;
+
+                            showAlert('Document successfully loaded! You can now edit the content before exporting.', 'success');
+                        })
+                        .catch(error => {
+                            console.error('Error converting docx:', error);
+                            showAlert('Error processing DOCX file.', 'error');
+                        });
+                };
+                reader.readAsArrayBuffer(file);
+            }
+
+            function convertHtmlToJsObject(html) {
+                // Create a DOM parser
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+
+                // Initialize result object with empty structure
+                const result = {};
+
+                // Look for title and name tags
+                const titleMatch = findTaggedContent(doc, "#Title:");
+                if (titleMatch) {
+                    documentTitle = titleMatch.replace("#Title:", "").trim();
+                    result.title = documentTitle;
+                }
+
+                const nameMatch = findTaggedContent(doc, "#Name:");
+                if (nameMatch) {
+                    documentName = nameMatch.replace("#Name:", "").trim();
+                    result.name = documentName;
+                }
+
+                // Extract instructions sections with Markdown formatting
+                const llmInstructionsHeading = findTaggedHeading(doc, "#llmInstructions");
+                if (llmInstructionsHeading) {
+                    const llmContent = extractFullContentUntilNextHashHeading(llmInstructionsHeading);
+                    result.llmInstructions = llmContent.trim();
+                }
+
+                const userInstructionsHeading = findTaggedHeading(doc, "#userInstructions");
+                if (userInstructionsHeading) {
+                    const userContent = extractFullContentUntilNextHashHeading(userInstructionsHeading);
+                    result.userInstructions = userContent.trim();
+                }
+
+                // Extract main content sections by heading
+                extractDocumentStructure(doc, result);
+
+                return result;
+            }
+
+            // Helper function to find content with a specific tag
+            function findTaggedContent(doc, tag) {
+                const headings = doc.querySelectorAll('h1, h2, h3, h4, h5, h6');
+                for (const heading of headings) {
+                    if (heading.textContent.includes(tag)) {
+                        return heading.textContent.trim();
+                    }
+                }
+                return null;
+            }
+
+            // Find heading element containing a specific tag
+            function findTaggedHeading(doc, tag) {
+                const headings = doc.querySelectorAll('h1, h2, h3, h4, h5, h6');
+                for (const heading of headings) {
+                    if (heading.textContent.includes(tag)) {
+                        return heading;
+                    }
+                }
+                return null;
+            }
+
+            // Extract content from a tagged heading until the next heading
+            function extractContentUntilNextHeading(doc, taggedHeadingText) {
+                const heading = findTaggedHeading(doc, taggedHeadingText);
+                if (!heading) return '';
+
+                let content = '';
+                let currentNode = heading.nextSibling;
+
+                // Skip the heading itself
+                while (currentNode && !isHeading(currentNode)) {
+                    if (currentNode.textContent) {
+                        content += currentNode.textContent.trim() + '\n';
+                    }
+                    currentNode = currentNode.nextSibling;
+                }
+
+                return content.trim();
+            }
+
+            // Extract full content from a heading until the next heading that starts with #
+            // Now with Markdown conversion
+            function extractFullContentUntilNextHashHeading(headingElement) {
+                const result = [];
+                let currentNode = headingElement.nextSibling;
+
+                while (currentNode) {
+                    if (isHeading(currentNode) && currentNode.textContent.trim().startsWith('#')) {
+                        break;
+                    }
+
+                    if (currentNode.nodeType === Node.ELEMENT_NODE) {
+                        // Convert element to Markdown
+                        const markdown = convertElementToMarkdown(currentNode);
+                        if (markdown) {
+                            result.push(markdown);
+                        }
+                    } else if (currentNode.nodeType === Node.TEXT_NODE && currentNode.textContent.trim()) {
+                        result.push(currentNode.textContent.trim());
+                    }
+
+                    currentNode = currentNode.nextSibling;
+                }
+
+                return result.join('\n');
+            }
+
+            // New function for HTML to Markdown conversion
+            function convertElementToMarkdown(element) {
+                const tagName = element.tagName.toLowerCase();
+                const content = element.textContent.trim();
+
+                if (!content) return '';
+
+                // Convert headings
+                if (tagName.match(/^h[1-6]$/)) {
+                    const level = parseInt(tagName.charAt(1), 10);
+                    const hashes = '#'.repeat(level);
+                    return `${hashes} ${content}`;
+                }
+
+                // Convert paragraphs
+                if (tagName === 'p') {
+                    return content;
+                }
+
+                // Convert emphasis
+                if (tagName === 'strong' || tagName === 'b') {
+                    return `**${content}**`;
+                }
+
+                if (tagName === 'em' || tagName === 'i') {
+                    return `*${content}*`;
+                }
+
+                // Convert code
+                if (tagName === 'code') {
+                    return `\`${content}\``;
+                }
+
+                // Convert lists
+                if (tagName === 'ul' || tagName === 'ol') {
+                    const items = Array.from(element.children).map(li => {
+                        if (li.tagName.toLowerCase() === 'li') {
+                            const prefix = tagName === 'ul' ? '* ' : '1. ';
+                            return `${prefix}${li.textContent.trim()}`;
+                        }
+                        return '';
+                    });
+                    return items.join('\n');
+                }
+
+                // For other elements, just return the text content
+                return content;
+            }
+
+            function isHeading(node) {
+                return node.nodeName && /^H[1-6]$/i.test(node.nodeName);
+            }
+
+            // Extract the structured document content
+            function extractDocumentStructure(doc, resultObj) {
+                // Get all main section headings (excluding tagged headings)
+                const mainHeadings = Array.from(doc.querySelectorAll('h1, h2')).filter(h => {
+                    const text = h.textContent.trim();
+                    return !text.startsWith('#');
+                });
+
+                for (const heading of mainHeadings) {
+                    const headingText = heading.textContent.trim();
+                    const propertyName = convertToValidProperty(headingText);
+
+                    // Process based on heading text
+                    if (headingText === "Taxonomy of Dark Patterns") {
+                        resultObj[propertyName] = extractTaxonomySection(heading);
+                    }
+                    else if (headingText === "Common Dark Patterns") {
+                        resultObj[propertyName] = extractPatternsSection(heading, "common");
+                    }
+                    else if (headingText === "Financial Dark Patterns") {
+                        resultObj[propertyName] = extractPatternsSection(heading, "financial");
+                    }
+                    else if (headingText === "Attributes of Dark Patterns") {
+                        resultObj[propertyName] = extractAttributesSection(heading);
+                    }
+                    else if (headingText === "Relevant Regulations") {
+                        resultObj[propertyName] = extractRegulationsSection(heading);
+                    }
+                    else if (headingText === "Personas and Use Cases") {
+                        resultObj[propertyName] = extractPersonasSection(heading);
+                    }
+                    else {
+                        // Generic section extraction
+                        const sectionContent = extractGenericSection(heading);
+                        if (sectionContent && Object.keys(sectionContent).length > 0) {
+                            resultObj[propertyName] = sectionContent;
+                        }
+                    }
+                }
+            }
+
+            // Get all elements following a heading until the next heading of same or higher level
+            function getFollowingElements(heading) {
+                const elements = [];
+                let currentNode = heading.nextSibling;
+                const headingLevel = parseInt(heading.tagName.substring(1), 10);
+
+                while (currentNode) {
+                    if (isHeading(currentNode)) {
+                        const currentLevel = parseInt(currentNode.tagName.substring(1), 10);
+                        if (currentLevel <= headingLevel) {
+                            break; // Stop at same or higher level heading
+                        }
+                    }
+
+                    if (currentNode.nodeType === Node.ELEMENT_NODE) {
+                        elements.push(currentNode);
+                    }
+
+                    currentNode = currentNode.nextSibling;
+                }
+
+                return elements;
+            }
+
+            // Get all subheadings under a heading
+            function getSubheadings(heading) {
+                const headingLevel = parseInt(heading.tagName.substring(1), 10);
+                const subheadingLevel = headingLevel + 1;
+                const subheadings = [];
+
+                let currentNode = heading.nextSibling;
+
+                while (currentNode) {
+                    if (isHeading(currentNode)) {
+                        const currentLevel = parseInt(currentNode.tagName.substring(1), 10);
+
+                        if (currentLevel <= headingLevel) {
+                            break; // Stop at same or higher level heading
+                        }
+
+                        if (currentLevel === subheadingLevel) {
+                            subheadings.push(currentNode);
+                        }
+                    }
+
+                    currentNode = currentNode.nextSibling;
+                }
+
+                return subheadings;
+            }
+
+            // Extract taxonomy section
+            function extractTaxonomySection(heading) {
+                const result = {};
+                const subheadings = getSubheadings(heading);
+
+                for (const subheading of subheadings) {
+                    const subheadingText = subheading.textContent.trim();
+                    const propertyName = convertToValidProperty(subheadingText);
+
+                    // Get the list items under this subheading
+                    const categoryItems = extractCategoryItems(subheading);
+
+                    if (categoryItems.length > 0) {
+                        result[propertyName] = categoryItems;
+                    }
+                }
+
+                return result;
+            }
+
+            // Extract patterns section
+            function extractPatternsSection(heading, type) {
+                const patterns = [];
+                const elements = getFollowingElements(heading);
+                const lists = elements.filter(el => el.tagName === 'UL' || el.tagName === 'OL');
+
+                for (const list of lists) {
+                    const items = list.querySelectorAll('li');
+
+                    let currentPattern = null;
+
+                    for (const item of items) {
+                        const text = item.textContent.trim();
+
+                        // Check if this is a pattern name (not a description or examples line)
+                        if (!text.startsWith('Description:') && !text.startsWith('Examples:')) {
+                            // This is a new pattern
+                            if (currentPattern) {
+                                patterns.push(currentPattern);
+                            }
+
+                            currentPattern = {
+                                name: text,
+                                description: "",
+                                examples: []
+                            };
+                        }
+                        else if (text.startsWith('Description:') && currentPattern) {
+                            currentPattern.description = text.replace('Description:', '').trim();
+                        }
+                        else if (text.startsWith('Examples:') && currentPattern) {
+                            const examplesText = text.replace('Examples:', '').trim();
+                            currentPattern.examples = examplesText.split(',').map(ex => ex.trim());
+                        }
+                    }
+
+                    // Add the last pattern
+                    if (currentPattern) {
+                        patterns.push(currentPattern);
+                    }
+                }
+
+                return patterns;
+            }
+
+            // Extract attributes section
+            function extractAttributesSection(heading) {
+                const attributes = [];
+                const elements = getFollowingElements(heading);
+                const lists = elements.filter(el => el.tagName === 'UL' || el.tagName === 'OL');
+
+                for (const list of lists) {
+                    const items = list.querySelectorAll('li');
+
+                    for (const item of items) {
+                        const text = item.textContent.trim();
+                        attributes.push(text);
+                    }
+                }
+
+                return attributes;
+            }
+
+            // Extract regulations section
+            function extractRegulationsSection(heading) {
+                const regulations = [];
+                const subheadings = getSubheadings(heading);
+
+                for (const subheading of subheadings) {
+                    const name = subheading.textContent.trim();
+                    const elements = getFollowingElements(subheading);
+                    const lists = elements.filter(el => el.tagName === 'UL' || el.tagName === 'OL');
+
+                    let description = "";
+                    let relevance = "";
+
+                    for (const list of lists) {
+                        const items = list.querySelectorAll('li');
+
+                        for (const item of items) {
+                            const text = item.textContent.trim();
+
+                            if (text.startsWith('Description:')) {
+                                description = text.replace('Description:', '').trim();
+                            } else if (text.startsWith('Relevance:')) {
+                                relevance = text.replace('Relevance:', '').trim();
+                            }
+                        }
+                    }
+
+                    regulations.push({
+                        name: name,
+                        description: description,
+                        relevance: relevance
+                    });
+                }
+
+                return regulations;
+            }
+
+            // Extract personas section
+            function extractPersonasSection(heading) {
+                const result = {};
+                const subheadings = getSubheadings(heading);
+
+                for (const subheading of subheadings) {
+                    const subheadingText = subheading.textContent.trim();
+
+                    if (subheadingText === "Professional Categories") {
+                        result.professionalCategories = extractSimpleList(subheading);
+                    }
+                    else if (subheadingText === "Persona Examples") {
+                        result.personaExamples = extractPersonaExamples(subheading);
+                    }
+                    else if (subheadingText === "User Stories") {
+                        result.userStories = extractSimpleList(subheading);
+                    }
+                }
+
+                return result;
+            }
+
+            // Extract a simple list of items from a heading
+            function extractSimpleList(heading) {
+                const items = [];
+                const elements = getFollowingElements(heading);
+                const lists = elements.filter(el => el.tagName === 'UL' || el.tagName === 'OL');
+
+                for (const list of lists) {
+                    const listItems = list.querySelectorAll('li');
+
+                    for (const item of listItems) {
+                        items.push(item.textContent.trim());
+                    }
+                }
+
+                return items;
+            }
+
+            // Extract category items from a heading
+            function extractCategoryItems(heading) {
+                const categories = [];
+                const elements = getFollowingElements(heading);
+                const lists = elements.filter(el => el.tagName === 'UL' || el.tagName === 'OL');
+
+                let currentCategory = null;
+
+                for (const list of lists) {
+                    const items = list.querySelectorAll('li');
+
+                    for (const item of items) {
+                        const text = item.textContent.trim();
+
+                        // If not a "Description:" or "Examples:" line, it's a category name
+                        if (!text.startsWith('Description:') && !text.startsWith('Examples:')) {
+                            if (currentCategory) {
+                                categories.push(currentCategory);
+                            }
+
+                            currentCategory = {
+                                name: text,
+                                description: "",
+                                examples: []
+                            };
+                        }
+                        else if (text.startsWith('Description:') && currentCategory) {
+                            currentCategory.description = text.replace('Description:', '').trim();
+                        }
+                        else if (text.startsWith('Examples:') && currentCategory) {
+                            const examplesText = text.replace('Examples:', '').trim();
+                            currentCategory.examples = examplesText.split(',').map(ex => ex.trim());
+                        }
+                    }
+                }
+
+                // Add the last category
+                if (currentCategory) {
+                    categories.push(currentCategory);
+                }
+
+                return categories;
+            }
+
+            // Extract persona examples from a heading
+            function extractPersonaExamples(heading) {
+                const personas = [];
+                const subheadings = getSubheadings(heading);
+
+                for (const subheading of subheadings) {
+                    const name = subheading.textContent.trim();
+                    const elements = getFollowingElements(subheading);
+                    const lists = elements.filter(el => el.tagName === 'UL' || el.tagName === 'OL');
+
+                    let persona = {
+                        name: name,
+                        age: "",
+                        context: "",
+                        tools: "",
+                        challenges: "",
+                        description: ""
+                    };
+
+                    for (const list of lists) {
+                        const items = list.querySelectorAll('li');
+
+                        for (const item of items) {
+                            const text = item.textContent.trim();
+
+                            if (text.startsWith('Age:')) {
+                                persona.age = text.replace('Age:', '').trim();
+                            }
+                            else if (text.startsWith('Context:')) {
+                                persona.context = text.replace('Context:', '').trim();
+                            }
+                            else if (text.startsWith('Tools:')) {
+                                persona.tools = text.replace('Tools:', '').trim();
+                            }
+                            else if (text.startsWith('Challenges:')) {
+                                persona.challenges = text.replace('Challenges:', '').trim();
+                            }
+                            else if (text.startsWith('Description:')) {
+                                persona.description = text.replace('Description:', '').trim();
+                            }
+                        }
+                    }
+
+                    personas.push(persona);
+                }
+
+                return personas;
+            }
+
+            // Extract generic section content
+            function extractGenericSection(heading) {
+                const elements = getFollowingElements(heading);
+
+                if (elements.length === 0) {
+                    return null;
+                }
+
+                // Check if this section has subsections
+                const subheadings = getSubheadings(heading);
+
+                if (subheadings.length > 0) {
+                    // This is a section with subsections
+                    const result = {};
+
+                    for (const subheading of subheadings) {
+                        const subName = convertToValidProperty(subheading.textContent.trim());
+                        const subContent = extractGenericSection(subheading);
+
+                        if (subContent) {
+                            result[subName] = subContent;
+                        }
+                    }
+
+                    return result;
+                }
+
+                // Check for lists
+                const lists = elements.filter(el => el.tagName === 'UL' || el.tagName === 'OL');
+
+                if (lists.length > 0) {
+                    return extractSimpleList(heading);
+                }
+
+                // Just plain text content
+                let content = '';
+
+                for (const element of elements) {
+                    content += element.textContent.trim() + '\n';
+                }
+
+                return content.trim();
+            }
+
+            // Convert a heading text to a valid JS property name
+            function convertToValidProperty(text) {
+                // Handle special cases
+                switch (text) {
+                    case "Taxonomy of Dark Patterns":
+                        return "taxonomyOfDarkPatterns";
+                    case "Common Dark Patterns":
+                        return "commonDarkPatterns";
+                    case "Financial Dark Patterns":
+                        return "financialDarkPatterns";
+                    case "Attributes of Dark Patterns":
+                        return "attributesOfDarkPatterns";
+                    case "Relevant Regulations":
+                        return "relevantRegulations";
+                    case "Personas and Use Cases":
+                        return "personasAndUseCases";
+                    case "High-Level Categories":
+                        return "highLevelCategories";
+                    case "Mid-Level Categories":
+                        return "midLevelCategories";
+                    case "Financial-Specific Categories":
+                        return "financialSpecificCategories";
+                }
+
+                // Remove any non-alphanumeric characters at the beginning
+                let property = text.replace(/^[^a-zA-Z0-9]+/, '');
+
+                // Replace spaces, dashes, etc. with camelCase
+                property = property.replace(/[^a-zA-Z0-9]+(.)/g, (match, chr) => {
+                    return chr.toUpperCase();
+                });
+
+                // Ensure first character is lowercase
+                property = property.charAt(0).toLowerCase() + property.slice(1);
+
+                return property;
+            }
+
+            // Get variable name from document title/name
+            function getJsVariableName(title, name) {
+                if (!title && !name) return 'knowledgeBaseData';
+
+                let baseName = (title || name).toLowerCase()
+                    .replace(/\s+/g, '_')  // Replace spaces with underscores
+                    .replace(/[^a-z0-9_]/g, '')  // Remove non-alphanumeric characters
+                    .replace(/_+/g, '_');  // Replace multiple underscores with a single one
+
+                return `${baseName}Data`;
+            }
+
+            // Generate JavaScript code from the JS object
+            function generateJsCode(jsObject) {
+                const variableName = getJsVariableName(documentTitle, documentName);
+
+                // Create the JavaScript code with proper formatting
+                const code = `/**
+ * ${documentTitle || documentName || 'Knowledge Base'}
+ * JavaScript module format for easy importing
+ */
+const ${variableName} = ${JSON.stringify(jsObject, null, 2)};
+
+// Make the data available globally
+window.${variableName} = ${variableName};`;
+
+                return code;
+            }
+
+            function exportJSFile() {
+                if (!jsObject) {
+                    showAlert('No content to export. Please upload a DOCX file first.', 'error');
+                    return;
+                }
+
+                let jsCode;
+
+                // If we're on the JS tab, use the edited JS content directly
+                if (document.querySelector('.tab[data-tab="converted"]').classList.contains('active')) {
+                    jsCode = editableJsContent.textContent;
+                } else {
+                    // If we're on the original content tab, convert the current HTML to JS
+                    const editedContent = editableContent.innerHTML;
+                    jsObject = convertHtmlToJsObject(editedContent);
+                    jsCode = generateJsCode(jsObject);
+                }
+
+                const fileName = outputFileName.value || 'knowledge-base.js';
+
+                // Create a blob with the JS code
+                const jsFileBlob = new Blob([jsCode], { type: 'application/javascript' });
+                const jsFile = new File([jsFileBlob], fileName.endsWith('.js') ? fileName : `${fileName}.js`, { type: 'application/javascript' });
+
+                // Simulate drag and drop to attachmentsDropZone
+                simulateFileDrop(attachmentsDropZone, jsFile);
+
+                showAlert('Successfully Exported and sent to Attachments!', 'success');
+            }
+
+            function simulateFileDrop(dropZoneElement, file) {
+                const dataTransfer = new DataTransfer();
+                dataTransfer.items.add(file);
+
+                const dropEvent = new DragEvent('drop', {
+                    bubbles: true,
+                    cancelable: true,
+                    dataTransfer: dataTransfer
+                });
+
+                const dragEnterEvent = new DragEvent('dragenter', {
+                    bubbles: true,
+                    cancelable: true,
+                    dataTransfer: dataTransfer
+                });
+
+                 const dragOverEvent = new DragEvent('dragover', {
+                    bubbles: true,
+                    cancelable: true,
+                    dataTransfer: dataTransfer
+                });
+
+                dropZoneElement.dispatchEvent(dragEnterEvent);
+                dropZoneElement.dispatchEvent(dragOverEvent);
+                dropZoneElement.dispatchEvent(dropEvent);
+            }
+
+
+            function showAlert(message, type) {
+                alertBox.textContent = message;
+                alertBox.className = `alert alert-${type} show`;
+
+                // Hide the alert after 5 seconds
+                setTimeout(() => {
+                    alertBox.classList.remove('show');
+                }, 5000);
+            }
+
+            function formatBytes(bytes, decimals = 2) {
+                if (bytes === 0) return '0 Bytes';
+
+                const k = 1024;
+                const dm = decimals < 0 ? 0 : decimals;
+                const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+            }
+
+            // Function to populate the dropdown with filenames
+            function populateDropdown() {
+                // Get all filename columns within the class "filename-column"
+                const filenameColumns = document.querySelectorAll('td.filename-column');
+
+                // Get the dropdown element
+                const dropdown = document.getElementById('fileDropdown');
+
+                // Clear existing options except the default one
+                while (dropdown.options.length > 1) {
+                    dropdown.remove(1);
+                }
+
+                // Iterate over each filename column
+                filenameColumns.forEach(column => {
+                    // Find the <a> element within the column
+                    const link = column.querySelector('a');
+                    if (link) {
+                        const filename = link.textContent.trim();
+
+                        // Check if the filename ends with '.js'
+                        if (filename.endsWith('.js')) {
+                            // Create a new <option> element
+                            const option = document.createElement('option');
+                            option.value = filename;
+                            option.textContent = filename;
+
+                            // Add the option to the dropdown
+                            dropdown.appendChild(option);
+                        }
+                    }
+                });
+            }
+
+            // Event listener for dropdown change
+            fileDropdown.addEventListener('change', function() {
+                const selectedFile = this.value;
+                if (selectedFile) {
+                    // For now, just display the selected filename in the content areas.
+                    // In a real application, you would load the content of the .js file here.
+                    editableContent.textContent = `Selected file: ${selectedFile}.  (Content would be loaded here in a real application)`;
+                    editableJsContent.textContent = `Selected file: ${selectedFile}. (JS Content would be loaded and displayed here)`;
+                    showAlert(`File "${selectedFile}" selected.`, 'success');
+                } else {
+                    editableContent.textContent = 'No file selected from dropdown.';
+                    editableJsContent.textContent = 'No file selected from dropdown.';
+                }
+            });
+
+            // Call the function to populate the dropdown
+            populateDropdown();
+        });
+    </script>
+
+  <script>
+    // Example of how filenames might be dynamically added to the attachments table (for demonstration purposes)
+    document.addEventListener('DOMContentLoaded', function() {
+        const attachmentsTableDropZone = document.querySelector('.attachments-table-drop-zone');
+        if (attachmentsTableDropZone) {
+            // Simulate adding some file entries after a delay for demonstration
+            setTimeout(() => {
+                const tableContainer = attachmentsTableDropZone.closest('.plugin_attachments_upload_container').previousElementSibling; // Get the table container
+                if (tableContainer) {
+                    tableContainer.innerHTML = `
+                        <table class="plugin_attachments_table attachments-table" id="plugin_attachments_table_4645356648">
+                            <thead>
+                                <tr>
+                                    <th class="filename-column">Filename</th>
+                                    <th class="filesize-column">Size</th>
+                                    <th class="filetype-column">Type</th>
+                                    <th class="filedate-column">Date</th>
+                                    <th class="fileops-column">&nbsp;</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="plugin_attachments_table_row">
+                                    <td class="filename-column">
+                                        <a title="myScript1.js" href="#">myScript1.js</a>
+                                    </td>
+                                    <td class="filesize-column">2 KB</td>
+                                    <td class="filetype-column">JavaScript</td>
+                                    <td class="filedate-column">Today</td>
+                                    <td class="fileops-column"></td>
+                                </tr>
+                                <tr class="plugin_attachments_table_row">
+                                    <td class="filename-column">
+                                        <a title="anotherScript.js" href="#">anotherScript.js</a>
+                                    </td>
+                                    <td class="filesize-column">5 KB</td>
+                                    <td class="filetype-column">JavaScript</td>
+                                    <td class="filedate-column">Yesterday</td>
+                                    <td class="fileops-column"></td>
+                                </tr>
+                                <tr class="plugin_attachments_table_row">
+                                    <td class="filename-column">
+                                        <a title="document.docx" href="#">document.docx</a>
+                                    </td>
+                                    <td class="filesize-column">15 KB</td>
+                                    <td class="filetype-column">Word Document</td>
+                                    <td class="filedate-column">2 days ago</td>
+                                    <td class="fileops-column"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    `;
+                }
+                populateDropdown(); // Re-populate the dropdown after table is updated
+            }, 1000); // Simulate delay after page load, e.g., attachments loading asynchronously
+        }
+    });
+  </script>
+
+</body>
+</html>

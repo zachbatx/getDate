@@ -414,7 +414,7 @@
       const exportBtn = document.getElementById('exportBtn');
       const alertBox = document.getElementById('alertBox');
       const tabs = document.querySelectorAll('.tab');
-      const attachmentsDropZone = document.querySelector('.attachments-table-drop-zone');
+      const attachmentsDropZone = document.querySelector('.attachments-table-drop-zone'); // This line might be kept for simulated drop, even if the container is removed
       const fileDropdown = document.getElementById('fileDropdown');
 
       // Variables to store content and state
@@ -877,28 +877,32 @@ window.${variableName} = ${variableName};`;
         }
       }
 
-      function generateRichTextFromJsObject(jsObject, level = 1) {
+      // --- STEP 1: Implement convertJsObjectToHtml(jsObject) function ---
+      function convertJsObjectToHtml(jsObject) {
         let html = '';
-        for (const key in jsObject) {
-          if (jsObject.hasOwnProperty(key)) {
-            const value = jsObject[key];
-            const headingTag = `h${level + 1 > 6 ? 6 : level + 1}`; // Limit heading levels to h6
+        if (jsObject.title) {
+          html += `<h1>${jsObject.title}</h1>`;
+        }
+        if (jsObject.name) {
+          html += `<p><strong>Name:</strong> ${jsObject.name}</p>`;
+        }
 
-            if (typeof value === 'string') {
-              html += `<${headingTag}>${key}</${headingTag}>\n<p>${value}</p>\n`;
-            } else if (Array.isArray(value)) {
-              html += `<${headingTag}>${key}</${headingTag}>\n<ul>\n`;
-              value.forEach(item => {
-                html += `<li>${item}</li>\n`;
-              });
-              html += `</ul>\n`;
-            } else if (typeof value === 'object' && value !== null) {
-              html += `<${headingTag}>${key}</${headingTag}>\n`;
-              html += generateRichTextFromJsObject(value, level + 1); // Recursive call for nested objects
-            } else {
-              // Handle other data types if needed (e.g., numbers, booleans)
-              html += `<${headingTag}>${key}</${headingTag}>\n<p>${value === null ? 'null' : String(value)}</p>\n`;
-            }
+        for (const key in jsObject) {
+          if (['title', 'name'].includes(key)) continue; // Skip title and name as they are already handled
+
+          const value = jsObject[key];
+          if (typeof value === 'string') {
+            html += `<h2>${key}</h2><p>${value}</p>`;
+          } else if (Array.isArray(value)) {
+            html += `<h2>${key}</h2><ul>`;
+            value.forEach(item => {
+              html += `<li>${item}</li>`;
+            });
+            html += `</ul>`;
+          } else if (typeof value === 'object' && value !== null) {
+            // Recursive call for nested objects (using h3 for sub-sections)
+            html += `<h2>${key}</h2>`;
+            html += convertJsObjectToHtml(value).replace(/<h[12]>/g, '<h3>').replace(/<\/h[12]>/g, '</h3>'); //Replace h1 and h2 in nested content to h3
           }
         }
         return html;
@@ -908,40 +912,29 @@ window.${variableName} = ${variableName};`;
       function loadJSFileContent(filename) {
         fetchConfluenceAttachmentContent(filename)
           .then(jsContent => {
-            editableJsContent.textContent = jsContent; // Keep raw JS in code view
-            let richTextContent = '';
-            if (jsContent.trim().startsWith('{') && jsContent.trim().endsWith('}')) {
-              try {
-                const jsObject = JSON.parse(jsContent);
-                richTextContent = generateRichTextFromJsObject(jsObject);
-              } catch (e) {
-                console.error("Error parsing JSON:", e);
-                richTextContent = `<p>Error parsing JSON content. Displaying as plain text.</p><pre>${jsContent}</pre>`; // Display with pre for visibility
-                showAlert('Error parsing JSON from JS file. Displaying raw content in Original Content tab.', 'error');
-              }
-            } else {
-              richTextContent = `<pre>${jsContent}</pre>`; // Display as plain text if not JSON-like
+            editableJsContent.textContent = jsContent; // Display JS code in code editor
+            try {
+              jsObject = JSON.parse(jsContent); // Parse JS content to object
+              const richTextHtml = convertJsObjectToHtml(jsObject); // Convert JS object to HTML
+              editableContent.innerHTML = richTextHtml; // Display rich text in editableContent
+            } catch (e) {
+              console.error("Error parsing or converting JS content:", e);
+              editableContent.innerHTML = '<p>Error displaying content as Rich Text. Invalid JS Object format.</p>'; // Error message in rich text editor
             }
-            editableContent.innerHTML = richTextContent;
-
 
             outputFileName.value = filename;
-            exportBtn.textContent = 'Save'; // Change button text to "Save" for JS files
             exportBtn.disabled = false;
+            exportBtn.textContent = 'Save';
             loadedJsFilename = filename;
-            docxContent = null;
-            jsObject = null;
+            docxContent = null; // Reset docx content flag
             fileInfo.classList.remove('show');
             showAlert(`JS File '${filename}' loaded from Attachments!`, 'success');
-             // Debugging logs for save functionality
-            console.log("JS File loaded:", filename);
-            console.log("Export button text set to: Save");
-
-
           })
           .catch(error => {
             console.error('Error loading JS file:', error);
             showAlert(`Error loading JS File '${filename}' from Attachments.`, 'error');
+            editableContent.textContent = 'Error loading content.'; // Error message in rich text editor
+            editableJsContent.textContent = 'Error loading content.'; // Error message in code editor
           });
       }
 
@@ -973,12 +966,11 @@ window.${variableName} = ${variableName};`;
             loadedJsFilename = selectedFilename;
             outputFileName.value = selectedFilename;
             loadJSFileContent(selectedFilename);
-            exportBtn.textContent = 'Save'; // Ensure button text is "Save" when JS is loaded
           } else {
             editableContent.textContent = 'No content to preview yet. Please upload a DOCX file or select a JS file from dropdown.';
             editableJsContent.textContent = 'No converted content yet.';
             exportBtn.disabled = true;
-            exportBtn.textContent = 'Export'; // Reset to "Export" for DOCX workflow
+            exportBtn.textContent = 'Export';
             loadedJsFilename = null;
             outputFileName.value = 'knowledge-base.js';
           }
@@ -987,31 +979,17 @@ window.${variableName} = ${variableName};`;
 
       // Call populateDropdown on load
       populateDropdown();
-
-      //Remove Redundant Attachments Container
-      const redundantAttachmentsContainer = document.querySelector('.plugin_attachments_container.conf-macro.output-block');
-      if (redundantAttachmentsContainer) {
-          redundantAttachmentsContainer.remove();
-      }
     });
 
-    // JavaScript formatting function (using basic indentation for now) - Placeholder, can be replaced with a more robust formatter
+    // --- Helper function to format JavaScript code (using browser's built-in JSON.stringify for simplicity) ---
     function formatJavaScript(jsCode) {
-      // Basic indentation - can be improved with a proper JS formatter library
-      let formattedCode = '';
-      let indentLevel = 0;
-      const indent = '  ';
-      jsCode.split('\n').forEach(line => {
-        const trimmedLine = line.trim();
-        if (trimmedLine.startsWith('}') || trimmedLine.startsWith(']')) {
-          indentLevel = Math.max(0, indentLevel - 1);
-        }
-        formattedCode += indent.repeat(indentLevel) + trimmedLine + '\n';
-        if (trimmedLine.endsWith('{') || trimmedLine.endsWith('[') || trimmedLine.endsWith(',')) {
-          indentLevel++;
-        }
-      });
-      return formattedCode.trim();
+      try {
+        const jsObject = JSON.parse(jsCode);
+        return JSON.stringify(jsObject, null, 2);
+      } catch (e) {
+        // If parsing fails, assume it's already JavaScript and return as is (or handle error)
+        return jsCode;
+      }
     }
   </script>
 </body>

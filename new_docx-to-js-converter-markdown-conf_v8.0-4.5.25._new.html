@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Knowledge Base Editor (.DOCX to .JS)</title>
+  <!-- Font Awesome and Material Icons from CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+  <style>
+    /* Global Styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    }
+    body {
+      background-color: #f5f8fa;
+      color: #333;
+      line-height: 1.6;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+    /* Header */
+    .headerArea {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem;
+      background-color: #1e293b;
+      color: #fff !important;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+    }
+    .headerArea h1 {
+      color: #fff;
+      margin-bottom: 0.5rem;
+      font-weight: 500 !important;
+    }
+    /* Upload & Preview Areas */
+    .app-container {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+      margin-top: 80px;
+    }
+    .upload-area, .preview-area {
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      padding: 1.5rem;
+    }
+    .upload-area {
+      text-align: center;
+      display: flex;
+    }
+    .drop-zone {
+      border: 2px dashed #3498db;
+      border-radius: 5px;
+      padding: 1.5rem;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.2s;
+      flex: 1 1 50%;
+    }
+    .drop-zone:hover, .drop-zone.active {
+      border-color: #2980b9;
+      background-color: #f0f7fc;
+    }
+    .drop-zone-text {
+      font-size: 1.2rem;
+      color: #3498db;
+      margin-bottom: 1rem;
+    }
+    .btn {
+      background-color: #3498db;
+      color: white;
+      border: none;
+      padding: 0.55rem 1.5rem;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 600;
+      transition: background-color 0.2s;
+    }
+    .btn:hover {
+      background-color: #2980b9;
+    }
+    .btn:disabled {
+      background-color: #bdc3c7;
+      cursor: not-allowed;
+    }
+    .btn-browser {
+      background-color: #f8f9fa;
+      color: #3498db;
+      border: 1px solid #3498db;
+    }
+    .btn-browser:hover {
+      background-color: #e9f5fe;
+    }
+    #fileInput {
+      display: none;
+    }
+    .file-info {
+      text-align: left;
+      padding: 0.85rem;
+      border-radius: 5px;
+      transition: opacity 0.3s;
+      flex: 1 1 50%;
+      margin: auto 20px;
+    }
+    .file-info.show {
+      opacity: 1;
+    }
+    .export-options {
+      background-color: white;
+      padding: 0;
+      float: right;
+      display: inline-flex;
+      margin-left: 26%;
+    }
+    .form-group {
+      margin-bottom: 1.5rem;
+      display: flex;
+    }
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      color: #2c3e50;
+      position: relative;
+      margin-right: 3px;
+    }
+    .form-group input {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      font-size: 1rem;
+    }
+    .alert {
+      padding: 1rem;
+      border-radius: 5px;
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .alert-success {
+      background-color: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+    .alert-error {
+      background-color: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+    .alert.show {
+      opacity: 1;
+    }
+    .preview-content {
+      font-family: 'Courier New', Courier, monospace;
+      white-space: pre-wrap;
+      padding: 1rem;
+      background-color: #f8f9fa;
+      border-radius: 5px;
+      font-size: 0.9rem;
+      line-height: 1.5;
+      min-height: 200px;
+      max-height: 100%;
+      overflow-y: auto;
+    }
+    /* Rich Text Editor */
+    #editableContent {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      white-space: normal;
+      min-height: 300px;
+      border: 1px solid #ddd;
+      outline: none;
+      padding: 2.3rem;
+      background-color: white;
+    }
+    .editor-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.3rem;
+      padding: 0.5rem;
+      background-color: #f1f3f4;
+      border: 1px solid #ddd;
+      border-bottom: none;
+      border-radius: 5px 5px 0 0;
+    }
+    .editor-toolbar button {
+      background-color: white;
+      border: 1px solid #ddd;
+      border-radius: 3px;
+      padding: 0.3rem 0.6rem;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    .editor-toolbar button:hover {
+      background-color: #e9ecef;
+    }
+    .editor-toolbar button.active {
+      background-color: #e2f0fd;
+      border-color: #3498db;
+    }
+    .js-editor {
+      font-family: 'Courier New', Courier, monospace;
+      white-space: pre-wrap;
+      background-color: #2d2d2d;
+      color: #f8f8f2;
+      border: 1px solid #444;
+      padding: 2.3rem !important;
+    }
+    .js-editor-toolbar {
+      display: none;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.5rem;
+      background-color: #333;
+      border: 1px solid #444;
+      border-bottom: none;
+      border-radius: 5px 5px 0 0;
+    }
+    .js-format-btn {
+      background-color: #4caf50;
+      color: white;
+      border: none;
+      border-radius: 3px;
+      padding: 0.4rem 0.8rem;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: background-color 0.2s;
+      display: none;
+    }
+    .js-format-btn:hover {
+      background-color: #45a049;
+    }
+    /* Toggle Switch */
+    .editor-toggle {
+      display: none;
+      align-items: center;
+      gap: 0.5rem;
+      color: #ddd;
+      font-size: 0.9rem;
+    }
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 50px;
+      height: 24px;
+    }
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      transition: .4s;
+    }
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 16px;
+      width: 16px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      transition: .4s;
+    }
+    input:checked + .slider {
+      background-color: #3498db;
+    }
+    input:focus + .slider {
+      box-shadow: 0 0 1px #3498db;
+    }
+    input:checked + .slider:before {
+      transform: translateX(26px);
+    }
+    .slider.round {
+      border-radius: 24px;
+    }
+    .slider.round:before {
+      border-radius: 50%;
+    }
+    /* Tabs */
+    .tabs {
+      display: flex;
+      margin-bottom: 1rem;
+      border-bottom: 1px solid #ddd;
+    }
+    .tab {
+      padding: 0.75rem 1.5rem;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+    }
+    .tab.active {
+      border-bottom-color: #3498db;
+      color: #3498db;
+      font-weight: 600;
+    }
+    .tab-content {
+      display: none;
+    }
+    .tab-content.active {
+      display: block;
+    }
+    button#exportBtn {
+      position: relative;
+      margin-left: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="headerArea">
+      <h1>Knowledge Base Editor (.DOCX to .JS)</h1>
+    </div>
+    <select id="fileDropdown">
+      <option value="">Select a file</option>
+    </select>
+    <div id="alertBox" class="alert"></div>
+    <div class="app-container">
+      <div class="upload-area">
+        <div id="dropZone" class="drop-zone">
+          <i class="fas fa-cloud-upload-alt" style="font-size:32px;"></i>
+          <p class="drop-zone-text">Drag & Drop your DOCX file here</p>
+          <button id="browseBtn" class="btn btn-browser">Browse Files</button>
+          <input type="file" id="fileInput" accept=".docx" />
+        </div>
+        <div id="fileInfo" class="file-info">
+          <h3>File Information</h3>
+          <p id="fileName">No file selected</p>
+          <p id="fileSize"></p>
+        </div>
+      </div>
+      <div class="preview-area">
+        <div class="tabs">
+          <div class="tab active" data-tab="original">Original Content</div>
+          <div class="tab" data-tab="converted">Converted JS</div>
+          <div class="export-options">
+            <div class="form-group">
+              <label for="outputFileName">Name:</label>
+              <input type="text" id="outputFileName" placeholder="knowledge-base.js" value="knowledge-base.js" />
+            </div>
+            <button id="exportBtn" class="btn" disabled>Export</button>
+          </div>
+        </div>
+        <div id="originalContent" class="tab-content active">
+          <div class="editor-toolbar">
+            <button type="button" data-command="bold" title="Bold"><b>B</b></button>
+            <button type="button" data-command="italic" title="Italic"><i>I</i></button>
+            <button type="button" data-command="underline" title="Underline"><u>U</u></button>
+            <button type="button" data-command="formatBlock" data-value="H1" title="Heading 1">H1</button>
+            <button type="button" data-command="formatBlock" data-value="H2" title="Heading 2">H2</button>
+            <button type="button" data-command="formatBlock" data-value="H3" title="Heading 3">H3</button>
+            <button type="button" data-command="insertUnorderedList" title="Bullet List">• List</button>
+            <button type="button" data-command="justifyLeft" title="Align Left">⇤</button>
+            <button type="button" data-command="justifyCenter" title="Align Center">⇔</button>
+            <button type="button" data-command="justifyRight" title="Align Right">⇥</button>
+          </div>
+          <div class="preview-content" id="editableContent" contenteditable="true">
+            No content to preview yet. Please upload a DOCX file or select a JS file from dropdown.
+          </div>
+        </div>
+        <div id="convertedContent" class="tab-content">
+          <div class="js-editor-toolbar">
+            <button type="button" class="js-format-btn" title="Format JS">Format Code</button>
+            <div class="editor-toggle">
+              <span>Auto-update from content:</span>
+              <label class="switch">
+                <input type="checkbox" id="autoUpdateToggle" checked>
+                <span class="slider round"></span>
+              </label>
+            </div>
+          </div>
+          <div class="preview-content js-editor" id="editableJsContent" contenteditable="true">
+            No converted content yet.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Include Mammoth.js for DOCX parsing -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.17/mammoth.browser.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      // ** Global Variables (FIX 5: Add global variables)**
+      let currentFileSource = null; // 'docx' or 'dropdown' to track file origin for export logic
+      let currentJsObject = null; // To store the JS object for potential modifications (if needed for two-way binding logic)
+
+      // DOM Elements
+      const dropZone = document.getElementById('dropZone');
+      const fileInput = document.getElementById('fileInput');
+      const browseBtn = document.getElementById('browseBtn');
+      const fileInfo = document.getElementById('fileInfo');
+      const fileName = document.getElementById('fileName');
+      const fileSize = document.getElementById('fileSize');
+      const editableContent = document.getElementById('editableContent');
+      const editableJsContent = document.getElementById('editableJsContent');
+      const autoUpdateToggle = document.getElementById('autoUpdateToggle');
+      const outputFileName = document.getElementById('outputFileName');
+      const exportBtn = document.getElementById('exportBtn');
+      const alertBox = document.getElementById('alertBox');
+      const tabs = document.querySelectorAll('.tab');
+      const attachmentsDropZone = document.querySelector('.attachments-table-drop-zone'); // This line might be kept for simulated drop, even if the container is removed
+      const fileDropdown = document.getElementById('fileDropdown');
+
+      // Variables to store content and state
+      let docxContent = null;
+      let jsObject = null;
+      let isAutoUpdateEnabled = true;
+      let documentTitle = '';
+      let documentName = '';
+      let loadedJsFilename = null; // Track if a JS file was loaded from dropdown
+
+      // Prevent default drag behaviors on dropZone and document body
+      ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        dropZone.addEventListener(eventName, preventDefaults, false);
+        document.body.addEventListener(eventName, preventDefaults, false);
+      });
+
+      // Highlight dropZone on drag events
+      ['dragenter', 'dragover'].forEach(eventName => {
+        dropZone.addEventListener(eventName, () => dropZone.classList.add('active'), false);
+      });
+      ['dragleave', 'drop'].forEach(eventName => {
+        dropZone.addEventListener(eventName, () => dropZone.classList.remove('active'), false);
+      });
+
+      // File drop and file input handlers
+      dropZone.addEventListener('drop', handleDrop, false);
+      browseBtn.addEventListener('click', () => fileInput.click());
+      fileInput.addEventListener('change', handleFiles);
+
+      // Tab switching
+      tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+          document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+          document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+          tab.classList.add('active');
+          const tabId = tab.getAttribute('data-tab');
+          document.getElementById(tabId + 'Content').classList.add('active');
+        });
+      });
+
+      // Auto-update toggle
+      autoUpdateToggle.addEventListener('change', function () {
+        isAutoUpdateEnabled = this.checked;
+      });
+
+      // Format JS button
+      document.querySelector('.js-format-btn').addEventListener('click', function () {
+        try {
+          const jsContent = editableJsContent.textContent;
+          const formattedJs = formatJavaScript(jsContent);
+          editableJsContent.textContent = formattedJs;
+        } catch (error) {
+          showAlert('Error formatting JavaScript. Check for syntax errors.', 'error');
+        }
+      });
+
+      // Editor toolbar buttons for rich text editing
+      document.querySelectorAll('.editor-toolbar button').forEach(button => {
+        button.addEventListener('click', function () {
+          const command = this.dataset.command;
+          const value = this.dataset.value || null;
+          document.execCommand(command, false, value);
+          if (isAutoUpdateEnabled && docxContent !== null) {
+            updateConvertedJS();
+          }
+        });
+      });
+
+      // Update converted JS when editable content changes (DOCX workflow)
+      editableContent.addEventListener('input', function () {
+        if (isAutoUpdateEnabled && docxContent !== null) {
+          updateConvertedJS();
+        }
+      });
+
+      // Update JS conversion based on the edited content
+      function updateConvertedJS() {
+        const editedContent = editableContent.innerHTML;
+        jsObject = convertHtmlToJsObject(editedContent);
+        editableJsContent.textContent = generateJsCode(jsObject);
+      }
+
+      // Export button handler
+      exportBtn.addEventListener('click', exportJSFile);
+
+      // Prevent default drag events
+      function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+
+      function handleDrop(e) {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        handleFiles({ target: { files } });
+      }
+
+      function handleFiles(e) {
+        const files = e.target.files;
+        if (files.length > 0) {
+          const file = files[0];
+          loadedJsFilename = null; // Reset if a new DOCX is uploaded
+          if (file.name.endsWith('.docx')) {
+            const baseName = file.name.replace('.docx', '');
+            outputFileName.value = `${baseName}.js`;
+            processDocxFile(file);
+          } else {
+            showAlert('Please upload a .docx file.', 'error');
+          }
+        }
+      }
+
+      function processDocxFile(file) {
+        editableContent.textContent = '';
+        editableJsContent.textContent = '';
+        docxContent = null;
+        jsObject = null;
+        documentTitle = '';
+        documentName = '';
+        outputFileName.value = file.name.replace('.docx', '.js');
+        fileInfo.classList.add('show');
+        fileName.textContent = `File: ${file.name}`;
+        fileSize.textContent = `Size: ${formatBytes(file.size)}`;
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          const arrayBuffer = e.target.result;
+          mammoth.convertToHtml({ arrayBuffer: arrayBuffer })
+            .then(result => {
+              docxContent = result.value;
+              editableContent.innerHTML = docxContent;
+              jsObject = convertHtmlToJsObject(docxContent);
+              editableJsContent.textContent = generateJsCode(jsObject);
+              exportBtn.disabled = false;
+              exportBtn.textContent = 'Export';
+              showAlert('Document successfully loaded! You can now edit the content before exporting.', 'success');
+            })
+            .catch(error => {
+              console.error('Error converting docx:', error);
+              showAlert('Error processing DOCX file.', 'error');
+            });
+        };
+        reader.readAsArrayBuffer(file);
+      }
+
+      // Generic conversion: Convert HTML content to a JS object by extracting title, name, and all generic sections.
+      function convertHtmlToJsObject(html) {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        const result = {};
+
+        // Extract title and name if available
+        const titleMatch = findTaggedContent(doc, "#Title:");
+        if (titleMatch) {
+          documentTitle = titleMatch.replace("#Title:", "").trim();
+          result.title = documentTitle;
+        }
+        const nameMatch = findTaggedContent(doc, "#Name:");
+        if (nameMatch) {
+          documentName = nameMatch.replace("#Name:", "").trim();
+          result.name = documentName;
+        }
+        // Extract sections using generic document structure extraction
+        extractDocumentStructure(doc, result);
+        return result;
+      }
+
+      // Find content in headings containing a specific tag (e.g., #Title: or #Name:)
+      function findTaggedContent(doc, tag) {
+        const headings = doc.querySelectorAll('h1, h2, h3, h4, h5, h6');
+        for (const heading of headings) {
+          if (heading.textContent.includes(tag)) {
+            return heading.textContent.trim();
+          }
+        }
+        return null;
+      }
+
+      // Extract content from a heading until the next heading starting with #
+      function extractFullContentUntilNextHashHeading(headingElement) {
+        const result = [];
+        let currentNode = headingElement.nextSibling;
+        while (currentNode) {
+          if (isHeading(currentNode) && currentNode.textContent.trim().startsWith('#')) {
+            break;
+          }
+          if (currentNode.nodeType === Node.ELEMENT_NODE) {
+            const markdown = convertElementToMarkdown(currentNode);
+            if (markdown) result.push(markdown);
+          } else if (currentNode.nodeType === Node.TEXT_NODE && currentNode.textContent.trim()) {
+            result.push(currentNode.textContent.trim());
+          }
+          currentNode = currentNode.nextSibling;
+        }
+        return result.join('\n');
+      }
+
+      // Convert an HTML element to Markdown (basic conversion)
+      function convertElementToMarkdown(element) {
+        const tagName = element.tagName.toLowerCase();
+        const content = element.textContent.trim();
+        if (!content) return '';
+        if (tagName.match(/^h[1-6]$/)) {
+          const level = parseInt(tagName.charAt(1), 10);
+          const hashes = '#'.repeat(level);
+          return `${hashes} ${content}`;
+        }
+        if (tagName === 'p') return content;
+        if (tagName === 'strong' || tagName === 'b') return `**${content}**`;
+        if (tagName === 'em' || tagName === 'i') return `*${content}*`;
+        if (tagName === 'code') return `\`${content}\``;
+        if (tagName === 'ul' || tagName === 'ol') {
+          const items = Array.from(element.children).map(li => {
+            if (li.tagName.toLowerCase() === 'li') {
+              const prefix = tagName === 'ul' ? '* ' : '1. ';
+              return `${prefix}${li.textContent.trim()}`;
+            }
+            return '';
+          });
+          return items.join('\n');
+        }
+        return content;
+      }
+
+      function isHeading(node) {
+        return node.nodeName && /^H[1-6]$/i.test(node.nodeName);
+      }
+
+      // Generic document structure extraction:
+      // For each main heading (h1, h2) that does not start with a '#' tag,
+      // extract its content generically.
+      function extractDocumentStructure(doc, resultObj) {
+        const mainHeadings = Array.from(doc.querySelectorAll('h1, h2')).filter(h => {
+          const text = h.textContent.trim();
+          return !text.startsWith('#');
+        });
+        mainHeadings.forEach(heading => {
+          const headingText = heading.textContent.trim();
+          const propertyName = convertToValidProperty(headingText);
+          const sectionContent = extractGenericSection(heading);
+          if (sectionContent && ((typeof sectionContent === 'object' && Object.keys(sectionContent).length > 0) || (typeof sectionContent === 'string' && sectionContent.length > 0))) {
+            resultObj[propertyName] = sectionContent;
+          }
+        });
+      }
+
+      // Generic extraction for a section: If subheadings are found, build an object; otherwise, return text.
+      function extractGenericSection(heading) {
+        const elements = getFollowingElements(heading);
+        if (elements.length === 0) return null;
+        // If subheadings exist, create a nested structure
+        const subheadings = getSubheadings(heading);
+        if (subheadings.length > 0) {
+          const result = {};
+          subheadings.forEach(subheading => {
+            const subName = convertToValidProperty(subheading.textContent.trim());
+            const subContent = extractGenericSection(subheading);
+            if (subContent) result[subName] = subContent;
+          });
+          return result;
+        }
+        // If lists exist, return an array; otherwise, return plain text.
+        const lists = elements.filter(el => el.tagName === 'UL' || el.tagName === 'OL');
+        if (lists.length > 0) {
+          let items = [];
+          lists.forEach(list => {
+            const listItems = list.querySelectorAll('li');
+            listItems.forEach(item => {
+              items.push(item.textContent.trim());
+            });
+          });
+          return items;
+        }
+        let content = '';
+        elements.forEach(el => {
+          content += el.textContent.trim() + '\n';
+        });
+        return content.trim();
+      }
+
+      // Get all elements following a heading until a heading of the same or higher level is encountered
+      function getFollowingElements(heading) {
+        const elements = [];
+        let currentNode = heading.nextSibling;
+        const headingLevel = parseInt(heading.tagName.substring(1), 10);
+        while (currentNode) {
+          if (isHeading(currentNode)) {
+            const currentLevel = parseInt(currentNode.tagName.substring(1), 10);
+            if (currentLevel <= headingLevel) break;
+          }
+          if (currentNode.nodeType === Node.ELEMENT_NODE) {
+            elements.push(currentNode);
+          }
+          currentNode = currentNode.nextSibling;
+        }
+        return elements;
+      }
+
+      // Get all subheadings immediately under a given heading
+      function getSubheadings(heading) {
+        const headingLevel = parseInt(heading.tagName.substring(1), 10);
+        const subheadingLevel = headingLevel + 1;
+        const subheadings = [];
+        let currentNode = heading.nextSibling;
+        while (currentNode) {
+          if (isHeading(currentNode)) {
+            const currentLevel = parseInt(currentNode.tagName.substring(1), 10);
+            if (currentLevel <= headingLevel) break;
+            if (currentLevel === subheadingLevel) subheadings.push(currentNode);
+          }
+          currentNode = currentNode.nextSibling;
+        }
+        return subheadings;
+      }
+
+      // --- NEW: Dynamic conversion of heading text to a valid JS property name ---
+      function convertToValidProperty(text) {
+        // Trim and remove leading non-alphanumeric characters
+        let property = text.trim().replace(/^[^a-zA-Z0-9]+/, '');
+        // Replace any group of non-alphanumeric characters with a single uppercase letter (camelCase)
+        property = property.replace(/[^a-zA-Z0-9]+(.)/g, (match, chr) => chr.toUpperCase());
+        // Ensure first character is lowercase
+        property = property.charAt(0).toLowerCase() + property.slice(1);
+        return property;
+      }
+
+      // Generate JavaScript module code from the JS object
+      function generateJsCode(jsObject) {
+        const variableName = getJsVariableName(documentTitle, documentName);
+        const code = `/**
+ * ${documentTitle || documentName || 'Knowledge Base'}
+ * JavaScript module format for easy importing
+ */
+const ${variableName} = ${JSON.stringify(jsObject, null, 2)};
+
+// Make the data available globally
+window.${variableName} = ${variableName};`;
+        return code;
+      }
+
+      // Generate a variable name based on document title or name
+      function getJsVariableName(title, name) {
+        if (!title && !name) return 'knowledgeBaseData';
+        let baseName = (title || name).toLowerCase()
+          .replace(/\s+/g, '_')
+          .replace(/[^a-z0-9_]/g, '')
+          .replace(/_+/g, '_');
+        return `${baseName}Data`;
+      }
+
+      // Export JS file: handles both JS loaded from dropdown and DOCX export workflow
+      function exportJSFile() {
+        const fileNameToSave = outputFileName.value + '.js'; // **FIX 5: File Renaming - Use outputFileName.value**
+        let jsContentToSave = editableJsContent.textContent; // Default to getting content from JS editor
+
+        if (currentFileSource === 'dropdown') { // **FIX 4: Export Functionality - Check currentFileSource**
+          // File loaded from dropdown - use content from editableJsContent
+          console.log('Exporting JS content from dropdown source.');
+          // jsContentToSave is already set to editableJsContent.textContent
+        } else if (jsObject) { // DOCX export workflow
+          // DOCX export workflow - use existing logic to get JS code
+          console.log('Exporting JS content from DOCX source.');
+          if (document.querySelector('.tab[data-tab="converted"]').classList.contains('active')) {
+            jsContentToSave = editableJsContent.textContent;
+          } else {
+            const editedContent = editableContent.innerHTML;
+            jsObject = convertHtmlToJsObject(editedContent);
+            jsContentToSave = generateJsCode(jsObject); // Re-generate JS code from HTML if needed
+          }
+        } else {
+          showAlert('No content to export or save.', 'error');
+          return; // Exit if no content to export
+        }
+
+
+        const jsFileBlob = new Blob([jsContentToSave], { type: 'application/javascript' });
+        const finalFileName = fileNameToSave.endsWith('.js') ? fileNameToSave : `${fileNameToSave}.js`;
+        const jsFile = new File([jsFileBlob], finalFileName, { type: 'application/javascript' });
+        simulateFileDrop(attachmentsDropZone, jsFile);
+        showAlert('Successfully Exported and sent to Attachments!', 'success');
+        exportBtn.textContent = 'Export';
+        currentFileSource = null; // **FIX 4: Reset file source after export**
+      }
+
+      // Simulate a drag and drop event on the attachments widget
+      function simulateFileDrop(dropZoneElement, file) {
+        const dataTransfer = new DataTransfer();
+        dataTransfer.items.add(file);
+        const dropEvent = new DragEvent('drop', {
+          bubbles: true,
+          cancelable: true,
+          dataTransfer: dataTransfer
+        });
+        const dragEnterEvent = new DragEvent('dragenter', {
+          bubbles: true,
+          cancelable: true,
+          dataTransfer: dataTransfer
+        });
+        const dragOverEvent = new DragEvent('dragover', {
+          bubbles: true,
+          cancelable: true,
+          dataTransfer: dataTransfer
+        });
+        dropZoneElement.dispatchEvent(dragEnterEvent);
+        dropZoneElement.dispatchEvent(dragOverEvent);
+        dropZoneElement.dispatchEvent(dropEvent);
+      }
+
+      // Alert message display
+      function showAlert(message, type) {
+        alertBox.textContent = message;
+        alertBox.className = `alert alert-${type} show`;
+        setTimeout(() => {
+          alertBox.classList.remove('show');
+        }, 5000);
+      }
+
+      // Format file sizes
+      function formatBytes(bytes, decimals = 2) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const dm = decimals < 0 ? 0 : decimals;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+      }
+
+      // --- New Functions for JS File Loading from Dropdown ---
+      async function fetchConfluenceAttachmentContent(filename) {
+        const filenameLinks = document.querySelectorAll('table.attachments a.filename'); // Adjust selector if needed
+        let fileUrl = null;
+
+        for (const link of filenameLinks) {
+            if (link.textContent.trim() === filename) {
+                fileUrl = link.getAttribute('href');
+                break; // Exit loop once the matching link is found
+            }
+        }
+
+        if (!fileUrl) {
+            return Promise.reject(new Error(`Attachment link not found for filename: ${filename}`));
+        }
+
+        try {
+            const response = await fetch(fileUrl);
+
+            if (!response.ok) {
+                // Handle HTTP errors (e.g., 404, 500)
+                return Promise.reject(new Error(`HTTP error! status: ${response.status}`));
+            }
+
+            const jsContent = await response.text();
+            return jsContent; // Resolve the promise with the JavaScript content
+
+        } catch (error) {
+            // Handle network errors or other fetch errors
+            return Promise.reject(new Error(`Fetch error: ${error.message}`));
+        }
+      }
+
+      // ** FIX 1: Improved `convertJsObjectToHtml` function **
+      function convertJsObjectToHtml(jsObject) {
+        let html = '';
+        if (typeof jsObject === 'object' && jsObject !== null) {
+            if (Array.isArray(jsObject)) {
+                html += '<ul>'; // Or <ol> if you need ordered lists, determine based on your JS object structure
+                jsObject.forEach(item => {
+                    html += '<li>' + convertJsObjectToHtml(item) + '</li>';
+                });
+                html += '</ul>';
+            } else {
+                for (const key in jsObject) {
+                    if (jsObject.hasOwnProperty(key)) {
+                        const value = jsObject[key];
+                        if (key.toLowerCase().startsWith('heading')) { // Example: Handle keys like "heading1", "heading2"
+                            const headingLevel = parseInt(key.toLowerCase().replace('heading', ''), 10) || 1; // Default to h1 if level is not parsable
+                            html += `<h${headingLevel}>${value}</h${headingLevel}>`;
+                        } else if (key.toLowerCase() === 'paragraph' || key.toLowerCase() === 'p') {
+                            html += `<p>${value}</p>`;
+                        } else if (key.toLowerCase() === 'list' || key.toLowerCase() === 'items') { // Handle lists, adjust key names based on your JS object
+                            html += convertJsObjectToHtml(value); // Recursively handle list items
+                        }
+                         else if (typeof value === 'string') { // Default to paragraph for string values if no specific key is matched
+                            html += `<p>${value}</p>`;
+                        }
+                         else {
+                            // For nested objects or unhandled types, recursively process them or handle as needed
+                            html += convertJsObjectToHtml(value);
+                        }
+                    }
+                }
+            }
+        } else if (typeof jsObject === 'string' || typeof jsObject === 'number' || typeof jsObject === 'boolean') {
+            html += String(jsObject); // Ensure basic types are converted to string
+        }
+        return html;
+    }
+
+
+      // ** FIX 2 & 3: Enhanced `loadJSFileContent` function **
+      function loadJSFileContent(filename) {
+        fetchConfluenceAttachmentContent(filename)
+          .then(jsContent => {
+            editableJsContent.textContent = jsContent; // Display JS code in code editor
+            try {
+              jsObject = JSON.parse(jsContent); // Parse JS content to object
+              // ** FIX 1: Use improved `convertJsObjectToHtml` function **
+              const richTextHtml = convertJsObjectToHtml(jsObject); // Convert JS object to HTML
+              editableContent.innerHTML = richTextHtml; // Display rich text in editableContent
+            } catch (e) {
+              console.error("Error parsing or converting JS content:", e);
+              editableContent.innerHTML = '<p>Error displaying content as Rich Text. Invalid JS Object format.</p>'; // Error message in rich text editor
+            }
+
+            outputFileName.value = filename.replace('.js', ''); // **FIX 2 & 3: Set outputFileName without .js extension**
+            exportBtn.disabled = false;
+            exportBtn.textContent = 'Save';
+            loadedJsFilename = filename;
+            docxContent = null; // Reset docx content flag
+            fileInfo.classList.remove('show');
+            showAlert(`JS File '${filename}' loaded from Attachments!`, 'success');
+            currentFileSource = 'dropdown'; // **FIX 2 & 3: Set currentFileSource to 'dropdown'**
+            currentJsObject = jsObject; // **FIX 2 & 3: Store the JS object**
+
+
+          })
+          .catch(error => {
+            console.error('Error loading JS file:', error);
+            showAlert(`Error loading JS File '${filename}' from Attachments.`, 'error');
+            editableContent.textContent = 'Error loading content.'; // Error message in rich text editor
+            editableJsContent.textContent = 'Error loading content.'; // Error message in code editor
+          });
+      }
+
+      // Populate dropdown with .js files found in the attachments table
+      function populateDropdown() {
+        const filenameColumns = document.querySelectorAll('td.filename-column');
+        filenameColumns.forEach(column => {
+          const link = column.querySelector('a');
+          if (link) {
+            const filename = link.textContent.trim();
+            if (filename.endsWith('.js')) {
+              const option = document.createElement('option');
+              option.value = filename;
+              option.textContent = filename;
+              fileDropdown.appendChild(option);
+            }
+          }
+        });
+         // ** FIX 3: Add event listener to fileDropdown **
+        fileDropdown.addEventListener('change', function() {
+            const selectedFileName = this.value; // Assuming dropdown value is filename
+            if (selectedFileName) {
+                editableContent.textContent = '';
+                editableJsContent.textContent = '';
+                docxContent = null;
+                jsObject = null;
+                documentTitle = '';
+                documentName = '';
+                fileInfo.classList.remove('show');
+                loadedJsFilename = selectedFileName;
+                outputFileName.value = selectedFileName.replace('.js', ''); // ** Initialize outputFileName on dropdown change **
+                loadJSFileContent(selectedFileName);
+            } else {
+                editableContent.textContent = 'No content to preview yet. Please upload a DOCX file or select a JS file from dropdown.';
+                editableJsContent.textContent = 'No converted content yet.';
+                exportBtn.disabled = true;
+                exportBtn.textContent = 'Export';
+                loadedJsFilename = null;
+                outputFileName.value = 'knowledge-base.js';
+                currentFileSource = null; // ** Reset file source when dropdown is reset **
+            }
+        });
+      }
+
+      // Call populateDropdown on load
+      populateDropdown();
+    });
+
+    // --- Helper function to format JavaScript code (using browser's built-in JSON.stringify for simplicity) ---
+    function formatJavaScript(jsCode) {
+      try {
+        const jsObject = JSON.parse(jsCode);
+        return JSON.stringify(jsObject, null, 2);
+      } catch (e) {
+        // If parsing fails, assume it's already JavaScript and return as is (or handle error)
+        return jsCode;
+      }
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DOCX to Markdown & JS Converter</title>
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <style>
+    /* Basic reset and typography */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+        Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    }
+    body {
+      background-color: #f5f8fa;
+      color: #333;
+      line-height: 1.6;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+    .headerArea {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 1rem;
+      background-color: #1e293b;
+      color: #fff;
+      margin-bottom: 2rem;
+      border-radius: 5px;
+    }
+    .headerArea h1 {
+      font-weight: 500;
+    }
+    .alert {
+      padding: 1rem;
+      border-radius: 5px;
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      transition: opacity 0.3s;
+      text-align: center;
+    }
+    .alert-success {
+      background-color: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+    .alert-error {
+      background-color: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+    .alert.show {
+      opacity: 1;
+    }
+    .app-container {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+    .upload-area {
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      padding: 1.5rem;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+    }
+    .drop-zone {
+      border: 2px dashed #3498db;
+      border-radius: 5px;
+      padding: 1.5rem;
+      text-align: center;
+      cursor: pointer;
+      transition: background-color 0.2s, border-color 0.2s;
+      flex: 1 1 300px;
+      margin: 1rem;
+      position: relative;
+    }
+    .drop-zone.active {
+      border-color: #2980b9;
+      background-color: #f0f7fc;
+    }
+    .drop-zone-icon {
+      font-size: 32px;
+      color: #3498db;
+      margin-bottom: 0.5rem;
+    }
+    .drop-zone-text {
+      font-size: 1.2rem;
+      color: #3498db;
+      margin-bottom: 1rem;
+    }
+    .btn {
+      background-color: #3498db;
+      color: #fff;
+      border: none;
+      padding: 0.55rem 1.5rem;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 600;
+      transition: background-color 0.2s;
+    }
+    .btn:hover {
+      background-color: #2980b9;
+    }
+    .btn:disabled {
+      background-color: #bdc3c7;
+      cursor: not-allowed;
+    }
+    .btn-browser {
+      background-color: #f8f9fa;
+      color: #3498db;
+      border: 1px solid #3498db;
+      margin-top: 1rem;
+    }
+    #fileInput {
+      display: none;
+    }
+    .file-info {
+      text-align: left;
+      padding: 0.85rem;
+      border-radius: 5px;
+      transition: opacity 0.3s;
+      margin: 1rem;
+    }
+    .file-info.show {
+      opacity: 1;
+    }
+    .preview-area {
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      padding: 1.5rem;
+    }
+    .preview-area h2 {
+      margin-bottom: 1rem;
+      color: #1e293b;
+      text-align: center;
+    }
+    .preview-content {
+      font-family: 'Courier New', Courier, monospace;
+      white-space: pre-wrap;
+      padding: 1rem;
+      background-color: #f8f9fa;
+      border-radius: 5px;
+      font-size: 0.9rem;
+      line-height: 1.5;
+      min-height: 200px;
+      max-height: 400px;
+      overflow-y: auto;
+      margin-bottom: 1rem;
+    }
+    .button-group {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+    }
+    .options-area {
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid #eee;
+    }
+    .options-area h3 {
+      margin-bottom: 0.5rem;
+      color: #1e293b;
+    }
+    .option-group {
+      margin-bottom: 1rem;
+    }
+    .option-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+    }
+    .option-group input[type="text"] {
+      width: 100%;
+      padding: 0.5rem;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="headerArea">
+      <h1>DOCX to Markdown & JS Converter</h1>
+    </header>
+
+    <div id="alertBox" class="alert"></div>
+
+    <div class="app-container">
+      <!-- File Upload Area -->
+      <div class="upload-area">
+        <div id="dropZone" class="drop-zone">
+          <div class="drop-zone-icon">
+            <i class="fas fa-cloud-upload-alt"></i>
+          </div>
+          <p class="drop-zone-text">Drag & Drop your DOCX file here</p>
+          <button id="browseBtn" class="btn btn-browser">Browse Files</button>
+          <input type="file" id="fileInput" accept=".docx" />
+        </div>
+        <div id="fileInfo" class="file-info">
+          <h3>File Information</h3>
+          <p id="fileName">No file selected</p>
+          <p id="fileSize"></p>
+        </div>
+      </div>
+
+      <!-- Markdown Preview Area -->
+      <div class="preview-area">
+        <h2>Markdown Output</h2>
+        <div class="preview-content" id="markdownOutput">
+          No content to preview yet.
+        </div>
+        <div class="button-group">
+          <button id="copyBtn" class="btn" disabled>Copy Markdown</button>
+          <button id="saveJsBtn" class="btn" disabled>Generate JS File</button>
+        </div>
+        
+        <!-- JS File Options -->
+        <div class="options-area">
+          <h3>JavaScript File Options</h3>
+          <div class="option-group">
+            <label for="variableName">Variable Name:</label>
+            <input type="text" id="variableName" placeholder="markdownContent" value="markdownContent">
+          </div>
+          <div class="option-group">
+            <label for="fileName">File Name (without extension):</label>
+            <input type="text" id="jsFileName" placeholder="markdown_content" value="markdown_content">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Include Mammoth.js for DOCX conversion -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.17/mammoth.browser.min.js"></script>
+  <!-- Include Turndown.js for HTML to Markdown conversion -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/turndown/7.1.1/turndown.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // DOM elements
+      const dropZone = document.getElementById('dropZone');
+      const fileInput = document.getElementById('fileInput');
+      const browseBtn = document.getElementById('browseBtn');
+      const fileInfo = document.getElementById('fileInfo');
+      const fileNameElem = document.getElementById('fileName');
+      const fileSizeElem = document.getElementById('fileSize');
+      const markdownOutput = document.getElementById('markdownOutput');
+      const copyBtn = document.getElementById('copyBtn');
+      const saveJsBtn = document.getElementById('saveJsBtn');
+      const variableNameInput = document.getElementById('variableName');
+      const jsFileNameInput = document.getElementById('jsFileName');
+      const alertBox = document.getElementById('alertBox');
+
+      // Variable to hold converted markdown content
+      let markdownContent = "";
+      let originalFileName = "";
+
+      // Prevent default drag behaviors on the drop zone and document
+      ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        dropZone.addEventListener(eventName, preventDefaults, false);
+        document.body.addEventListener(eventName, preventDefaults, false);
+      });
+
+      // Highlight drop zone on dragenter/dragover
+      ['dragenter', 'dragover'].forEach(eventName => {
+        dropZone.addEventListener(eventName, () => dropZone.classList.add('active'), false);
+      });
+      // Remove highlight on dragleave/drop
+      ['dragleave', 'drop'].forEach(eventName => {
+        dropZone.addEventListener(eventName, () => dropZone.classList.remove('active'), false);
+      });
+
+      // Browse button event
+      browseBtn.addEventListener('click', () => fileInput.click());
+      // Handle file selection via input
+      fileInput.addEventListener('change', handleFiles);
+      // Handle drop event
+      dropZone.addEventListener('drop', handleDrop);
+
+      // Handle copy button click
+      copyBtn.addEventListener('click', () => {
+        copyToClipboard(markdownContent);
+      });
+
+      // Handle save as JS button click
+      saveJsBtn.addEventListener('click', () => {
+        createJavaScriptFile();
+      });
+
+      // Prevent default behavior for drag events
+      function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+
+      // Handle dropped files
+      function handleDrop(e) {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        handleFiles({ target: { files: files } });
+      }
+
+      // Handle file input selection
+      function handleFiles(e) {
+        const files = e.target.files;
+        if (files && files.length > 0) {
+          const file = files[0];
+          if (file.name.endsWith('.docx')) {
+            originalFileName = file.name.replace('.docx', '');
+            jsFileNameInput.value = originalFileName.toLowerCase().replace(/\s+/g, '_');
+            
+            // Update file info
+            fileInfo.classList.add('show');
+            fileNameElem.textContent = "File: " + file.name;
+            fileSizeElem.textContent = "Size: " + formatBytes(file.size);
+            processDocxFile(file);
+          } else {
+            showAlert("Please upload a .docx file.", "error");
+          }
+        }
+      }
+
+      // Process the DOCX file using Mammoth and convert to Markdown
+      function processDocxFile(file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const arrayBuffer = e.target.result;
+          mammoth.convertToHtml({ arrayBuffer: arrayBuffer })
+            .then(result => {
+              const html = result.value;
+              // Use Turndown to convert the resulting HTML to Markdown
+              const turndownService = new TurndownService({
+                headingStyle: 'atx',
+                codeBlockStyle: 'fenced',
+                emDelimiter: '_'
+              });
+              markdownContent = turndownService.turndown(html);
+              // Display Markdown in the preview area
+              markdownOutput.textContent = markdownContent;
+              copyBtn.disabled = false;
+              saveJsBtn.disabled = false;
+              showAlert("Document successfully converted to Markdown!", "success");
+            })
+            .catch(error => {
+              console.error("Error converting DOCX:", error);
+              showAlert("Error processing DOCX file.", "error");
+            });
+        };
+        reader.readAsArrayBuffer(file);
+      }
+
+      // Copy the markdown text to the clipboard
+      function copyToClipboard(text) {
+        navigator.clipboard.writeText(text)
+          .then(() => {
+            showAlert("Markdown copied to clipboard!", "success");
+          })
+          .catch(err => {
+            console.error("Error copying to clipboard:", err);
+            showAlert("Error copying Markdown.", "error");
+          });
+      }
+
+      // Create JavaScript file with the markdown content
+      function createJavaScriptFile() {
+        // Get variable name and file name from inputs
+        const variableName = variableNameInput.value || 'markdownContent';
+        const fileName = jsFileNameInput.value || 'markdown_content';
+        
+        // Sanitize the markdown content for JavaScript string
+        const escapedContent = markdownContent
+          .replace(/\\/g, '\\\\')
+          .replace(/'/g, "\\'")
+          .replace(/\n/g, '\\n');
+        
+        // Create JavaScript file content
+        const jsContent = `/**
+ * Generated JavaScript file with Markdown content
+ * Original file: ${originalFileName}.docx
+ * Generated: ${new Date().toISOString()}
+ */
+
+const ${variableName} = '${escapedContent}';
+
+// Export the markdown content
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = { ${variableName} };
+}
+
+// Make available in browser context
+if (typeof window !== 'undefined') {
+  window.${variableName} = ${variableName};
+}
+`;
+
+        // Create a blob from the JavaScript content
+        const blob = new Blob([jsContent], { type: 'application/javascript' });
+        const url = URL.createObjectURL(blob);
+        
+        // Create a temporary link to download the file
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${fileName}.js`;
+        document.body.appendChild(a);
+        a.click();
+        
+        // Clean up
+        setTimeout(() => {
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+        }, 100);
+
+        showAlert("JavaScript file generated successfully!", "success");
+      }
+
+      // Display alert messages
+      function showAlert(message, type) {
+        alertBox.textContent = message;
+        alertBox.className = "alert alert-" + type + " show";
+        setTimeout(() => {
+          alertBox.classList.remove("show");
+        }, 5000);
+      }
+
+      // Format bytes to readable string
+      function formatBytes(bytes, decimals = 2) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024,
+          dm = decimals < 0 ? 0 : decimals,
+          sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'],
+          i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+      }
+    });
+  </script>
+</body>
+</html>

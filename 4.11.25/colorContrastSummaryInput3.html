@@ -1,0 +1,2033 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Color Contrast Analysis Tool</title>
+    <style>
+        .secOne {
+            /*display: none;*/
+        }
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --background-color: #f8f9fa;
+            --text-color: #333;
+            --border-color: #ddd;
+            --pass-color: #d4edda;
+            --pass-text: #155724;
+            --fail-color: #f8d7da;
+            --fail-text: #721c24;
+            --highlight-color: #e8f4f8;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: var(--background-color);
+        }
+        
+        h1, h2, h3 {
+            color: var(--primary-color);
+        }
+        
+        h1 {
+            border-bottom: 2px solid var(--secondary-color);
+            padding-bottom: 10px;
+        }
+        
+        h2 {
+            border-bottom: 1px solid #bdc3c7;
+            padding-bottom: 5px;
+            margin-top: 30px;
+        }
+        
+        h3 {
+            margin-top: 25px;
+        }
+        
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 20px 0;
+            font-size: 14px;
+            background-color: white;
+        }
+        
+        th, td {
+            border: 1px solid var(--border-color);
+            padding: 8px;
+            text-align: center;
+        }
+        
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+        
+        .expected-row td {
+            font-weight: bold;
+            background-color: var(--highlight-color);
+        }
+        
+        .pass-fail-row td {
+            font-weight: bold;
+        }
+        
+        .pass {
+            background-color: var(--pass-color);
+            color: var(--pass-text);
+        }
+        
+        .fail {
+            background-color: var(--fail-color);
+            color: var(--fail-text);
+        }
+        
+        .variance-analysis {
+            background-color: white;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            border: 1px solid var(--border-color);
+        }
+        
+        .color-sample {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 1px solid var(--border-color);
+            vertical-align: middle;
+            margin-right: 5px;
+        }
+        
+        .text-sample {
+            padding: 5px;
+            margin: 5px 0;
+            font-weight: bold;
+            border-radius: 3px;
+            font-size: 16px;
+        }
+        
+        .color-pair {
+            display: flex;
+            align-items: center;
+        }
+        
+        .color-input {
+            width: 80px;
+            padding: 5px;
+            margin: 0 5px;
+        }
+        
+        input[type="text"] {
+            padding: 5px;
+            border: 1px solid var(--border-color);
+            border-radius: 3px;
+        }
+        
+        .tool-input {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+        
+        .tool-input label {
+            width: 180px;
+            font-weight: bold;
+        }
+        
+        .section-container {
+            background-color: white;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        button {
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 10px 5px;
+        }
+        
+        button:hover {
+            background-color: #2980b9;
+        }
+        
+        .actions {
+            margin: 20px 0;
+        }
+        
+        .highlighted {
+            background-color: #ffffcc;
+        }
+        
+        .tab-container {
+            margin-top: 20px;
+        }
+        
+        .tab-buttons {
+            display: flex;
+            border-bottom: 1px solid var(--border-color);
+            flex-wrap: wrap;
+        }
+        
+        .tab-button {
+            padding: 10px 20px;
+            border: 1px solid var(--border-color);
+            background-color: #f2f2f2;
+            border-bottom: none;
+            cursor: pointer;
+            margin-right: 5px;
+            border-top-left-radius: 5px;
+            border-top-right-radius: 5px;
+            margin-bottom: -1px;
+        }
+        
+        .tab-button.active {
+            background-color: white;
+            font-weight: bold;
+        }
+        
+        .tab-content {
+            display: none;
+            padding: 20px;
+            border: 1px solid var(--border-color);
+            border-top: none;
+            background-color: white;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .table-container {
+            overflow-x: auto;
+        }
+        
+        .export-buttons {
+            margin: 20px 0;
+        }
+        
+        .summary-value {
+            font-weight: bold;
+        }
+        
+        .decimal-2 {
+            min-width: 60px;
+        }
+        
+        .tool-notes {
+            min-width: 120px;
+        }
+
+        /* Added styles for notifications */
+        .notification {
+            padding: 10px 15px;
+            margin: 10px 0;
+            border-radius: 4px;
+            font-weight: bold;
+            display: none;
+        }
+        
+        .notification.success {
+            background-color: var(--pass-color);
+            color: var(--pass-text);
+        }
+        
+        .notification.error {
+            background-color: var(--fail-color);
+            color: var(--fail-text);
+        }
+        
+        /* Added for loading indicator */
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .loading:after {
+            content: " ";
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            margin: 0 10px;
+            border-radius: 50%;
+            border: 3px solid var(--secondary-color);
+            border-color: var(--secondary-color) transparent var(--secondary-color) transparent;
+            animation: loading 1.2s linear infinite;
+        }
+        
+        @keyframes loading {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Interactive Color Contrast Analysis Tool</h1>
+    
+    <!-- Notification area for user feedback -->
+    <div id="notification" class="notification"></div>
+    <div id="loading" class="loading">Processing data...</div>
+    
+    <div class="section-container secOne">
+        <h2>1. Setup Testing Environment</h2>
+        
+        <div>
+            <h3>Tools Setup</h3>
+            <div id="tools-setup">
+                <div class="tool-input">
+                    <label for="webaim-mac-version">WebAIM (Mac) Version:</label>
+                    <input type="text" id="webaim-mac-version" placeholder="Version">
+                </div>
+                <div class="tool-input">
+                    <label for="webaim-win-version">WebAIM (Windows) Version:</label>
+                    <input type="text" id="webaim-win-version" placeholder="Version">
+                </div>
+                <div class="tool-input">
+                    <label for="cca-mac-version">CCA (Mac) Version:</label>
+                    <input type="text" id="cca-mac-version" placeholder="Version">
+                </div>
+                <div class="tool-input">
+                    <label for="cca-win-version">CCA (Windows) Version:</label>
+                    <input type="text" id="cca-win-version" placeholder="Version">
+                </div>
+                <div class="tool-input">
+                    <label for="chrome-mac-version">Chrome DevTools (Mac) Version:</label>
+                    <input type="text" id="chrome-mac-version" placeholder="Version">
+                </div>
+                <div class="tool-input">
+                    <label for="chrome-win-version">Chrome DevTools (Windows) Version:</label>
+                    <input type="text" id="chrome-win-version" placeholder="Version">
+                </div>
+                <div class="tool-input">
+                    <label for="zcontrast-mac-version">zContrast Tool (Mac) Version:</label>
+                    <input type="text" id="zcontrast-mac-version" placeholder="Version">
+                </div>
+                <div class="tool-input">
+                    <label for="zcontrast-win-version">zContrast Tool (Windows) Version:</label>
+                    <input type="text" id="zcontrast-win-version" placeholder="Version">
+                </div>
+            </div>
+            
+            <h3>Test Environment</h3>
+            <div id="test-environment">
+                <div class="tool-input">
+                    <label for="mac-os-version">Mac OS Version:</label>
+                    <input type="text" id="mac-os-version" placeholder="e.g., macOS 12.4">
+                </div>
+                <div class="tool-input">
+                    <label for="win-os-version">Windows OS Version:</label>
+                    <input type="text" id="win-os-version" placeholder="e.g., Windows 11">
+                </div>
+                <div class="tool-input">
+                    <label for="mac-browser-version">Mac Browser Version:</label>
+                    <input type="text" id="mac-browser-version" placeholder="e.g., Chrome 98">
+                </div>
+                <div class="tool-input">
+                    <label for="win-browser-version">Windows Browser Version:</label>
+                    <input type="text" id="win-browser-version" placeholder="e.g., Chrome 98">
+                </div>
+                <div class="tool-input">
+                    <label for="mac-color-profile">Mac Color Profile:</label>
+                    <input type="text" id="mac-color-profile" placeholder="e.g., sRGB">
+                </div>
+                <div class="tool-input">
+                    <label for="win-color-profile">Windows Color Profile:</label>
+                    <input type="text" id="win-color-profile" placeholder="e.g., sRGB">
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="section-container secTwo">
+        <h2>2. Data Collection Tables</h2>
+        
+        <div class="tab-container">
+            <div class="tab-buttons">
+                <div class="tab-button active" data-tab="below-three">Below 3:1</div>
+                <div class="tab-button" data-tab="above-three">Above 3:1</div>
+                <div class="tab-button" data-tab="exactly-three">Exactly 3:1</div>
+                <div class="tab-button" data-tab="below-four-five">Below 4.5:1</div>
+                <div class="tab-button" data-tab="above-four-five">Above 4.5:1</div>
+                <div class="tab-button" data-tab="exactly-four-five">Exactly 4.5:1</div>
+                <div class="tab-button" data-tab="common-design">Common Design</div>
+                <div class="tab-button" data-tab="edge-cases">Edge Cases</div>
+            </div>
+            
+            <div id="below-three" class="tab-content active">
+                <h3>Colors Just Below 3:1 Threshold</h3>
+                <div class="table-container" id="below-three-table-container"></div>
+                <div class="variance-analysis">
+                    <h4>Variance Analysis:</h4>
+                    <ul>
+                        <li>Maximum difference: <span id="below-three-max-diff">-</span></li>
+                        <li>Average difference: <span id="below-three-avg-diff">-</span></li>
+                        <li>Tools rounding up: <span id="below-three-round-up">-</span></li>
+                        <li>Tools rounding down: <span id="below-three-round-down">-</span></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div id="above-three" class="tab-content">
+                <h3>Colors Just Above 3:1 Threshold</h3>
+                <div class="table-container" id="above-three-table-container"></div>
+                <div class="variance-analysis">
+                    <h4>Variance Analysis:</h4>
+                    <ul>
+                        <li>Maximum difference: <span id="above-three-max-diff">-</span></li>
+                        <li>Average difference: <span id="above-three-avg-diff">-</span></li>
+                        <li>Tools rounding up: <span id="above-three-round-up">-</span></li>
+                        <li>Tools rounding down: <span id="above-three-round-down">-</span></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div id="exactly-three" class="tab-content">
+                <h3>Colors Exactly at 3:1 Threshold</h3>
+                <div class="table-container" id="exactly-three-table-container"></div>
+                <div class="variance-analysis">
+                    <h4>Variance Analysis:</h4>
+                    <ul>
+                        <li>Maximum difference: <span id="exactly-three-max-diff">-</span></li>
+                        <li>Average difference: <span id="exactly-three-avg-diff">-</span></li>
+                        <li>Tools rounding up: <span id="exactly-three-round-up">-</span></li>
+                        <li>Tools rounding down: <span id="exactly-three-round-down">-</span></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div id="below-four-five" class="tab-content">
+                <h3>Colors Just Below 4.5:1 Threshold</h3>
+                <div class="table-container" id="below-four-five-table-container"></div>
+                <div class="variance-analysis">
+                    <h4>Variance Analysis:</h4>
+                    <ul>
+                        <li>Maximum difference: <span id="below-four-five-max-diff">-</span></li>
+                        <li>Average difference: <span id="below-four-five-avg-diff">-</span></li>
+                        <li>Tools rounding up: <span id="below-four-five-round-up">-</span></li>
+                        <li>Tools rounding down: <span id="below-four-five-round-down">-</span></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div id="above-four-five" class="tab-content">
+                <h3>Colors Just Above 4.5:1 Threshold</h3>
+                <div class="table-container" id="above-four-five-table-container"></div>
+                <div class="variance-analysis">
+                    <h4>Variance Analysis:</h4>
+                    <ul>
+                        <li>Maximum difference: <span id="above-four-five-max-diff">-</span></li>
+                        <li>Average difference: <span id="above-four-five-avg-diff">-</span></li>
+                        <li>Tools rounding up: <span id="above-four-five-round-up">-</span></li>
+                        <li>Tools rounding down: <span id="above-four-five-round-down">-</span></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div id="exactly-four-five" class="tab-content">
+                <h3>Colors Exactly at 4.5:1 Threshold</h3>
+                <div class="table-container" id="exactly-four-five-table-container"></div>
+                <div class="variance-analysis">
+                    <h4>Variance Analysis:</h4>
+                    <ul>
+                        <li>Maximum difference: <span id="exactly-four-five-max-diff">-</span></li>
+                        <li>Average difference: <span id="exactly-four-five-avg-diff">-</span></li>
+                        <li>Tools rounding up: <span id="exactly-four-five-round-up">-</span></li>
+                        <li>Tools rounding down: <span id="exactly-four-five-round-down">-</span></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div id="common-design" class="tab-content">
+                <h3>Common Design Colors</h3>
+                <div class="table-container" id="common-design-table-container"></div>
+                <div class="variance-analysis">
+                    <h4>Variance Analysis:</h4>
+                    <ul>
+                        <li>Maximum difference: <span id="common-design-max-diff">-</span></li>
+                        <li>Average difference: <span id="common-design-avg-diff">-</span></li>
+                        <li>Tools rounding up: <span id="common-design-round-up">-</span></li>
+                        <li>Tools rounding down: <span id="common-design-round-down">-</span></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div id="edge-cases" class="tab-content">
+                <h3>Edge Cases</h3>
+                <div class="table-container" id="edge-cases-table-container"></div>
+                <div class="variance-analysis">
+                    <h4>Variance Analysis:</h4>
+                    <ul>
+                        <li>Maximum difference: <span id="edge-cases-max-diff">-</span></li>
+                        <li>Average difference: <span id="edge-cases-avg-diff">-</span></li>
+                        <li>Tools rounding up: <span id="edge-cases-round-up">-</span></li>
+                        <li>Tools rounding down: <span id="edge-cases-round-down">-</span></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="actions">
+            <button id="highlight-differences">Highlight Differences</button>
+            <button id="calculate-variance">Calculate Variance</button>
+            <button id="reset-highlights">Reset Highlights</button>
+        </div>
+    </div>
+    
+    <div class="section-container secThree">
+        <h2>3. Summary Analysis <span style="font-size: 0.8em;">(Auto-populated based on data entry)</span></h2>
+        
+        <h3>3.1 Overall Tool Comparison</h3>
+        <div class="table-container" id="tool-comparison-container"></div>
+        
+        <h3>3.2 Threshold Analysis</h3>
+        <div class="table-container" id="threshold-analysis-container"></div>
+        
+        <h3>3.3 Rounding Behavior Analysis</h3>
+        <div class="table-container" id="rounding-behavior-container"></div>
+
+        <div class="actions">
+            <button id="auto-analyze">Refresh Analysis</button>
+        </div>
+    </div>
+    
+    <div class="section-container secFour">
+        <h2>4. Auto-generated Recommendations</h2>
+        <div id="auto-recommendations"></div>
+        <h3>Your Notes</h3>
+        <textarea id="recommendations" rows="10" style="width: 100%; padding: 10px; margin-top: 10px;" placeholder="Enter your additional recommendations based on the analysis..."></textarea>
+    </div>
+    
+    <div class="export-buttons">
+        <button id="export-html">Export as HTML</button>
+        <button id="export-csv">Export as CSV</button>
+        <button id="save-progress">Save Progress</button>
+        <button id="load-progress">Load Progress</button>
+    </div>
+
+    <script>
+    /**
+     * Interactive Color Contrast Analysis Tool
+     * 
+     * This tool allows users to analyze and compare contrast ratios
+     * across different color contrast checking tools and platforms.
+     * 
+     * Version: 2.0
+     * Updated: April 2025
+     * Compatibility: Backward compatible with previous data formats
+     */
+    
+    // Color pairs for testing organized by threshold categories
+    const colorPairs = {
+      belowThree: [
+        { fg: "#969696", bg: "#FFFFFF", expected: 2.95 },
+        { fg: "#747474", bg: "#CCCCCC", expected: 2.90 },
+        { fg: "#4B8CC8", bg: "#2F5F8A", expected: 2.92 },
+        { fg: "#E5E5E5", bg: "#A5A5A5", expected: 2.93 },
+        { fg: "#FF9900", bg: "#FFCC00", expected: 2.89 },
+        { fg: "#E60011", bg: "#FFFF47", expected: 2.95 }
+      ],
+      aboveThree: [
+        { fg: "#949494", bg: "#FFFFFF", expected: 3.05 },
+        { fg: "#727272", bg: "#CCCCCC", expected: 3.07 },
+        { fg: "#4988C5", bg: "#2F5F8A", expected: 3.03 },
+        { fg: "#E3E3E3", bg: "#A5A5A5", expected: 3.02 },
+        { fg: "#FF9500", bg: "#FFCC00", expected: 3.06 }
+      ],
+      exactlyThree: [
+        { fg: "#949494", bg: "#FFFFFF", expected: 3.00 },
+        { fg: "#6D6D6D", bg: "#AAAAAA", expected: 3.00 }
+      ],
+      belowFourPointFive: [
+        { fg: "#787878", bg: "#FFFFFF", expected: 4.48 },
+        { fg: "#555555", bg: "#CCCCCC", expected: 4.46 },
+        { fg: "#2E6CA3", bg: "#A5CEF0", expected: 4.47 },
+        { fg: "#DEDEDE", bg: "#8A8A8A", expected: 4.44 },
+        { fg: "#FF6C00", bg: "#300E00", expected: 4.42 }
+      ],
+      aboveFourPointFive: [
+        { fg: "#767676", bg: "#FFFFFF", expected: 4.54 },
+        { fg: "#535353", bg: "#CCCCCC", expected: 4.52 },
+        { fg: "#2D6AA0", bg: "#A5CEF0", expected: 4.53 },
+        { fg: "#DDDDDD", bg: "#8A8A8A", expected: 4.51 },
+        { fg: "#FF6A00", bg: "#300E00", expected: 4.56 },
+        { fg: "#3A833C", bg: "#FFFFFF", expected: 4.67 }
+      ],
+      exactlyFourPointFive: [
+        { fg: "#767676", bg: "#FFFFFF", expected: 4.50 },
+        { fg: "#424242", bg: "#AAAAAA", expected: 4.50 }
+      ],
+      commonDesign: [
+        { fg: "#777777", bg: "#FFFFFF", expected: 4.50 },
+        { fg: "#CC21CE", bg: "#FFFFFF", expected: 5.12 },
+        { fg: "#3A833C", bg: "#FFFFFF", expected: 4.67 },
+        { fg: "#E60011", bg: "#FFFF47", expected: 2.95 },
+        { fg: "#CC21CE", bg: "#808080", expected: 1.87 }
+      ],
+      edgeCases: [
+        { fg: "#808080", bg: "#FFFFFF", expected: 3.95 },
+        { fg: "#D0D0D0", bg: "#000000", expected: 12.63 },
+        { fg: "#FFFF00", bg: "#FFFFFF", expected: 1.07 },
+        { fg: "#C8C8C8", bg: "#C0C0C0", expected: 1.05 }
+      ]
+    };
+    
+    // Tools being tested
+    const tools = [
+      "WebAIM (Mac)",
+      "WebAIM (Windows)",
+      "CCA (Mac)",
+      "CCA (Windows)",
+      "Chrome DevTools (Mac)",
+      "Chrome DevTools (Windows)",
+      "zContrast (Mac)",
+      "zContrast (Windows)"
+    ];
+    
+    // Map category IDs to their display names and thresholds
+    const categoryMap = {
+      belowThree: { name: "Colors Just Below 3:1 Threshold", threshold: 3, container: "below-three-table-container" },
+      aboveThree: { name: "Colors Just Above 3:1 Threshold", threshold: 3, container: "above-three-table-container" },
+      exactlyThree: { name: "Colors Exactly at 3:1 Threshold", threshold: 3, container: "exactly-three-table-container" },
+      belowFourPointFive: { name: "Colors Just Below 4.5:1 Threshold", threshold: 4.5, container: "below-four-five-table-container" },
+      aboveFourPointFive: { name: "Colors Just Above 4.5:1 Threshold", threshold: 4.5, container: "above-four-five-table-container" },
+      exactlyFourPointFive: { name: "Colors Exactly at 4.5:1 Threshold", threshold: 4.5, container: "exactly-four-five-table-container" },
+      commonDesign: { name: "Common Design Colors", threshold: 4.5, container: "common-design-table-container" },
+      edgeCases: { name: "Edge Cases", threshold: 4.5, container: "edge-cases-table-container" }
+    };
+    
+    // Store tool analysis data
+    let toolAnalysis = {
+      // Per tool statistics across all categories
+      tools: {},
+      // Per category statistics
+      categories: {},
+      // Global statistics
+      global: {
+        maxDifference: 0,
+        avgDifference: 0,
+        thresholdDisagreementCount: 0
+      }
+    };
+    
+    /**
+     * Shows a notification to the user
+     * @param {string} message - Message to display
+     * @param {string} type - 'success' or 'error'
+     * @param {number} duration - Duration in milliseconds (default: 3000ms)
+     */
+    function showNotification(message, type = 'success', duration = 3000) {
+      const notification = document.getElementById('notification');
+      notification.textContent = message;
+      notification.className = `notification ${type}`;
+      notification.style.display = 'block';
+      
+      setTimeout(() => {
+        notification.style.display = 'none';
+      }, duration);
+    }
+    
+    /**
+     * Shows or hides the loading indicator
+     * @param {boolean} show - Whether to show (true) or hide (false) the loading indicator
+     */
+    function showLoading(show) {
+      document.getElementById('loading').style.display = show ? 'block' : 'none';
+    }
+    
+    /**
+     * Generates tables for all color categories
+     */
+    function generateTables() {
+      for (const [category, pairs] of Object.entries(colorPairs)) {
+        const info = categoryMap[category];
+        generateTable(category, pairs, info.threshold, info.container);
+      }
+      
+      generateSummaryTables();
+      
+      // Initialize the tool analysis data structure
+      initializeToolAnalysis();
+    }
+    
+    /**
+     * Initializes the tool analysis data structure
+     */
+    function initializeToolAnalysis() {
+      // Reset tool analysis
+      toolAnalysis = {
+        tools: {},
+        categories: {},
+        global: {
+          maxDifference: 0,
+          avgDifference: 0,
+          thresholdDisagreementCount: 0
+        }
+      };
+      
+      // Initialize per-tool statistics
+      tools.forEach(tool => {
+        toolAnalysis.tools[tool] = {
+          values: [],
+          avgDeviation: 0,
+          maxDeviation: 0,
+          roundingDirection: null,
+          decimalPlaces: 0,
+          consistentRounding: true
+        };
+      });
+      
+      // Initialize per-category statistics
+      Object.keys(categoryMap).forEach(category => {
+        toolAnalysis.categories[category] = {
+          values: [],
+          passFailDisagreements: 0,
+          toolsPassingMore: [],
+          toolsPassingLess: []
+        };
+      });
+    }
+    
+    /**
+     * Generates a table for a specific category of color pairs
+     * @param {string} category - Category identifier
+     * @param {Array} pairs - Array of color pairs
+     * @param {number} threshold - WCAG threshold for this category
+     * @param {string} containerId - ID of container element
+     */
+    function generateTable(category, pairs, threshold, containerId) {
+      const container = document.getElementById(containerId);
+      
+      // Create the table
+      const table = document.createElement('table');
+      
+      // Create the header row
+      const thead = document.createElement('thead');
+      const headerRow = document.createElement('tr');
+      
+      // Add the tool column header
+      const toolHeader = document.createElement('th');
+      toolHeader.textContent = 'Tool';
+      headerRow.appendChild(toolHeader);
+      
+      // Add a column for each color pair
+      pairs.forEach(pair => {
+        const header = document.createElement('th');
+        
+        // Create color samples
+        const fgSample = document.createElement('div');
+        fgSample.className = 'color-sample';
+        fgSample.style.backgroundColor = pair.fg;
+        
+        const bgSample = document.createElement('div');
+        bgSample.className = 'color-sample';
+        bgSample.style.backgroundColor = pair.bg;
+        
+        header.appendChild(fgSample);
+        header.appendChild(bgSample);
+        header.appendChild(document.createTextNode(`${pair.fg}/${pair.bg}\n(~${pair.expected}:1)`));
+        
+        // Add text example - now for all categories
+        const textSample = document.createElement('div');
+        textSample.className = 'text-sample';
+        textSample.style.color = pair.fg;
+        textSample.style.backgroundColor = pair.bg;
+        textSample.textContent = "Sample Text";
+        header.appendChild(textSample);
+        
+        headerRow.appendChild(header);
+      });
+      
+      thead.appendChild(headerRow);
+      table.appendChild(thead);
+      
+      // Create the table body
+      const tbody = document.createElement('tbody');
+      
+      // Add a row for each tool
+      tools.forEach((tool, toolIndex) => {
+        const row = document.createElement('tr');
+        
+        // Add the tool name
+        const toolCell = document.createElement('td');
+        toolCell.textContent = tool;
+        row.appendChild(toolCell);
+        
+        // Add editable cells for each color pair
+        pairs.forEach((pair, pairIndex) => {
+          const cell = document.createElement('td');
+          const input = document.createElement('input');
+          input.type = 'text';
+          input.className = 'color-input';
+          input.dataset.category = category;
+          input.dataset.tool = toolIndex;
+          input.dataset.pair = pairIndex;
+          input.placeholder = 'Ratio';
+          
+          // Add event listener for input changes
+          input.addEventListener('input', function(e) {
+            // Recalculate analysis whenever input changes
+            if (e.target.value && !isNaN(parseFloat(normalizeContrastValue(e.target.value)))) {
+              calculateVariance();
+              
+              // Auto-update summary tables
+              updateToolComparison();
+              updateThresholdAnalysis();
+              updateRoundingBehavior();
+              updateRecommendations();
+            }
+          });
+          
+          cell.appendChild(input);
+          row.appendChild(cell);
+        });
+        
+        tbody.appendChild(row);
+      });
+      
+      // Add the expected value row
+      const expectedRow = document.createElement('tr');
+      expectedRow.className = 'expected-row';
+      
+      const expectedLabelCell = document.createElement('td');
+      expectedLabelCell.textContent = 'Expected Value';
+      expectedRow.appendChild(expectedLabelCell);
+      
+      pairs.forEach(pair => {
+        const cell = document.createElement('td');
+        cell.textContent = `${pair.expected}:1`;
+        expectedRow.appendChild(cell);
+      });
+      
+      tbody.appendChild(expectedRow);
+      
+      // Add the pass/fail row
+      const passFailRow = document.createElement('tr');
+      passFailRow.className = 'pass-fail-row';
+      
+      const passFailLabelCell = document.createElement('td');
+      passFailLabelCell.textContent = `WCAG AA Pass/Fail (${threshold}:1)`;
+      passFailRow.appendChild(passFailLabelCell);
+      
+      pairs.forEach(pair => {
+        const cell = document.createElement('td');
+        const passes = pair.expected >= threshold;
+        cell.textContent = passes ? 'PASS' : 'FAIL';
+        cell.className = passes ? 'pass' : 'fail';
+        passFailRow.appendChild(cell);
+      });
+      
+      tbody.appendChild(passFailRow);
+      
+      // Add a second pass/fail row for common design and edge cases categories
+      if (category === 'commonDesign' || category === 'edgeCases') {
+        const threePassFailRow = document.createElement('tr');
+        threePassFailRow.className = 'pass-fail-row';
+        
+        const threePassFailLabelCell = document.createElement('td');
+        threePassFailLabelCell.textContent = 'WCAG AA Pass/Fail (3:1)';
+        threePassFailRow.appendChild(threePassFailLabelCell);
+        
+        pairs.forEach(pair => {
+          const cell = document.createElement('td');
+          const passes = pair.expected >= 3;
+          cell.textContent = passes ? 'PASS' : 'FAIL';
+          cell.className = passes ? 'pass' : 'fail';
+          threePassFailRow.appendChild(cell);
+        });
+        
+        tbody.appendChild(threePassFailRow);
+      }
+      
+      table.appendChild(tbody);
+      container.appendChild(table);
+    }
+    
+    /**
+     * Generates all summary tables
+     */
+    function generateSummaryTables() {
+      generateToolComparisonTable();
+      generateThresholdAnalysisTable();
+      generateRoundingBehaviorTable();
+    }
+    
+    /**
+     * Generates the tool comparison summary table
+     */
+    function generateToolComparisonTable() {
+      const container = document.getElementById('tool-comparison-container');
+      container.innerHTML = ''; // Clear existing content
+      
+      // Create the table
+      const table = document.createElement('table');
+      
+      // Create the header row
+      const thead = document.createElement('thead');
+      const headerRow = document.createElement('tr');
+      
+      ['Tool', 'Average Deviation', 'Max Deviation', 'Consistent Rounding', 'Decimal Places', 'Notes'].forEach(header => {
+        const th = document.createElement('th');
+        th.textContent = header;
+        headerRow.appendChild(th);
+      });
+      
+      thead.appendChild(headerRow);
+      table.appendChild(thead);
+      
+      // Create the table body
+      const tbody = document.createElement('tbody');
+      
+      tools.forEach(tool => {
+        const row = document.createElement('tr');
+        row.dataset.tool = tool;
+        
+        // Tool name
+        const nameCell = document.createElement('td');
+        nameCell.textContent = tool;
+        row.appendChild(nameCell);
+        
+        // Average deviation
+        const avgDevCell = document.createElement('td');
+        avgDevCell.className = 'summary-value decimal-2';
+        avgDevCell.dataset.field = 'avgDeviation';
+        avgDevCell.textContent = '-';
+        row.appendChild(avgDevCell);
+        
+        // Max deviation
+        const maxDevCell = document.createElement('td');
+        maxDevCell.className = 'summary-value decimal-2';
+        maxDevCell.dataset.field = 'maxDeviation';
+        maxDevCell.textContent = '-';
+        row.appendChild(maxDevCell);
+        
+        // Consistent rounding
+        const roundingCell = document.createElement('td');
+        roundingCell.className = 'summary-value';
+        roundingCell.dataset.field = 'consistentRounding';
+        roundingCell.textContent = '-';
+        row.appendChild(roundingCell);
+        
+        // Decimal places
+        const decimalCell = document.createElement('td');
+        decimalCell.className = 'summary-value';
+        decimalCell.dataset.field = 'decimalPlaces';
+        decimalCell.textContent = '-';
+        row.appendChild(decimalCell);
+        
+        // Notes
+        const notesCell = document.createElement('td');
+        notesCell.className = 'tool-notes';
+        notesCell.dataset.field = 'notes';
+        notesCell.textContent = '-';
+        row.appendChild(notesCell);
+        
+        tbody.appendChild(row);
+      });
+      
+      table.appendChild(tbody);
+      container.appendChild(table);
+    }
+    
+    /**
+     * Generates the threshold analysis summary table
+     */
+    function generateThresholdAnalysisTable() {
+      const container = document.getElementById('threshold-analysis-container');
+      container.innerHTML = ''; // Clear existing content
+      
+      // Create the table
+      const table = document.createElement('table');
+      
+      // Create the header row
+      const thead = document.createElement('thead');
+      const headerRow = document.createElement('tr');
+      
+      ['Category', 'Pass/Fail Disagreements', 'Tools Passing More', 'Tools Passing Less', 'Notes'].forEach(header => {
+        const th = document.createElement('th');
+        th.textContent = header;
+        headerRow.appendChild(th);
+      });
+      
+      thead.appendChild(headerRow);
+      table.appendChild(thead);
+      
+      // Create the table body
+      const tbody = document.createElement('tbody');
+      
+      Object.entries(categoryMap).forEach(([category, info]) => {
+        const row = document.createElement('tr');
+        row.dataset.category = category;
+        
+        // Category name
+        const nameCell = document.createElement('td');
+        nameCell.textContent = info.name;
+        row.appendChild(nameCell);
+        
+        // Pass/Fail disagreements
+        const disagreementsCell = document.createElement('td');
+        disagreementsCell.className = 'summary-value';
+        disagreementsCell.dataset.field = 'passFailDisagreements';
+        disagreementsCell.textContent = '-';
+        row.appendChild(disagreementsCell);
+        
+        // Tools passing more
+        const passingMoreCell = document.createElement('td');
+        passingMoreCell.className = 'summary-value';
+        passingMoreCell.dataset.field = 'toolsPassingMore';
+        passingMoreCell.textContent = '-';
+        row.appendChild(passingMoreCell);
+        
+        // Tools passing less
+        const passingLessCell = document.createElement('td');
+        passingLessCell.className = 'summary-value';
+        passingLessCell.dataset.field = 'toolsPassingLess';
+        passingLessCell.textContent = '-';
+        row.appendChild(passingLessCell);
+        
+        // Notes
+        const notesCell = document.createElement('td');
+        notesCell.className = 'tool-notes';
+        notesCell.dataset.field = 'notes';
+        notesCell.textContent = '-';
+        row.appendChild(notesCell);
+        
+        tbody.appendChild(row);
+      });
+      
+      table.appendChild(tbody);
+      container.appendChild(table);
+    }
+    
+    /**
+     * Generates the rounding behavior analysis summary table
+     */
+    function generateRoundingBehaviorTable() {
+      const container = document.getElementById('rounding-behavior-container');
+      container.innerHTML = ''; // Clear existing content
+      
+      // Create the table
+      const table = document.createElement('table');
+      
+      // Create the header row
+      const thead = document.createElement('thead');
+      const headerRow = document.createElement('tr');
+      
+      ['Tool', 'Rounding Direction', 'Decimal Places', 'Round at Display or Algorithm?', 'Notes'].forEach(header => {
+        const th = document.createElement('th');
+        th.textContent = header;
+        headerRow.appendChild(th);
+      });
+      
+      thead.appendChild(headerRow);
+      table.appendChild(thead);
+      
+      // Create the table body
+      const tbody = document.createElement('tbody');
+      
+      tools.forEach(tool => {
+        const row = document.createElement('tr');
+        row.dataset.tool = tool;
+        
+        // Tool name
+        const nameCell = document.createElement('td');
+        nameCell.textContent = tool;
+        row.appendChild(nameCell);
+        
+        // Rounding direction
+        const directionCell = document.createElement('td');
+        directionCell.className = 'summary-value';
+        directionCell.dataset.field = 'roundingDirection';
+        directionCell.textContent = '-';
+        row.appendChild(directionCell);
+        
+        // Decimal places
+        const decimalCell = document.createElement('td');
+        decimalCell.className = 'summary-value';
+        decimalCell.dataset.field = 'decimalPlaces';
+        decimalCell.textContent = '-';
+        row.appendChild(decimalCell);
+        
+        // Round at display or algorithm
+        const algorithmCell = document.createElement('td');
+        algorithmCell.className = 'summary-value';
+        algorithmCell.dataset.field = 'roundType';
+        algorithmCell.textContent = '-';
+        row.appendChild(algorithmCell);
+        
+        // Notes
+        const notesCell = document.createElement('td');
+        notesCell.className = 'tool-notes';
+        notesCell.dataset.field = 'notes';
+        notesCell.textContent = '-';
+        row.appendChild(notesCell);
+        
+        tbody.appendChild(row);
+      });
+      
+      table.appendChild(tbody);
+      container.appendChild(table);
+    }
+    
+    /**
+     * Updates the tool comparison table with calculated data
+     */
+    function updateToolComparison() {
+      tools.forEach(tool => {
+        const toolData = toolAnalysis.tools[tool];
+        const row = document.querySelector(`#tool-comparison-container tr[data-tool="${tool}"]`);
+        
+        if (row && toolData.values.length > 0) {
+          // Average deviation
+          row.querySelector('[data-field="avgDeviation"]').textContent = toolData.avgDeviation.toFixed(2);
+          
+          // Max deviation
+          row.querySelector('[data-field="maxDeviation"]').textContent = toolData.maxDeviation.toFixed(2);
+          
+          // Consistent rounding
+          row.querySelector('[data-field="consistentRounding"]').textContent = 
+            toolData.consistentRounding ? 'Yes' : 'No';
+          
+          // Decimal places
+          row.querySelector('[data-field="decimalPlaces"]').textContent = toolData.decimalPlaces;
+          
+          // Notes - auto-generated based on analysis
+          let notes = '';
+          if (toolData.maxDeviation > 0.1) {
+            notes += 'High variance detected. ';
+          }
+          if (!toolData.consistentRounding) {
+            notes += 'Inconsistent rounding behavior. ';
+          }
+          if (toolData.values.length < 10) {
+            notes += 'Limited data available. ';
+          }
+          
+          row.querySelector('[data-field="notes"]').textContent = notes || 'Consistent performance.';
+        }
+      });
+    }
+    
+    /**
+     * Updates the threshold analysis table with calculated data
+     */
+    function updateThresholdAnalysis() {
+      Object.entries(categoryMap).forEach(([category, info]) => {
+        const categoryData = toolAnalysis.categories[category];
+        const row = document.querySelector(`#threshold-analysis-container tr[data-category="${category}"]`);
+        
+        if (row && categoryData.values.length > 0) {
+          // Pass/Fail disagreements
+          row.querySelector('[data-field="passFailDisagreements"]').textContent = 
+            categoryData.passFailDisagreements;
+          
+          // Tools passing more
+          row.querySelector('[data-field="toolsPassingMore"]').textContent = 
+            categoryData.toolsPassingMore.join(', ') || 'None';
+          
+          // Tools passing less
+          row.querySelector('[data-field="toolsPassingLess"]').textContent = 
+            categoryData.toolsPassingLess.join(', ') || 'None';
+          
+          // Notes - auto-generated based on analysis
+          let notes = '';
+          if (categoryData.passFailDisagreements > 0) {
+            notes += `${categoryData.passFailDisagreements} disagreements detected. `;
+            
+            if (info.threshold === 3 && category.includes('Three')) {
+              notes += 'Critical for large text/UI components. ';
+            } else if (info.threshold === 4.5 && category.includes('FourPointFive')) {
+              notes += 'Critical for body text. ';
+            }
+          } else {
+            notes = 'Consistent pass/fail results across tools.';
+          }
+          
+          row.querySelector('[data-field="notes"]').textContent = notes;
+        }
+      });
+    }
+    
+    /**
+     * Updates the rounding behavior analysis table with calculated data
+     */
+    function updateRoundingBehavior() {
+      tools.forEach(tool => {
+        const toolData = toolAnalysis.tools[tool];
+        const row = document.querySelector(`#rounding-behavior-container tr[data-tool="${tool}"]`);
+        
+        if (row && toolData.values.length > 0) {
+          // Rounding direction
+          let direction = 'Neutral';
+          if (toolData.roundingDirection !== null) {
+            direction = toolData.roundingDirection > 0 ? 'Up' : 'Down';
+          }
+          row.querySelector('[data-field="roundingDirection"]').textContent = direction;
+          
+          // Decimal places
+          row.querySelector('[data-field="decimalPlaces"]').textContent = toolData.decimalPlaces;
+          
+          // Round type (display vs algorithm)
+          const roundType = toolData.consistentRounding ? 'Likely Algorithm' : 'Possibly Display';
+          row.querySelector('[data-field="roundType"]').textContent = roundType;
+          
+          // Notes
+          let notes = '';
+          if (direction === 'Up') {
+            notes += 'Tends to round values up. ';
+          } else if (direction === 'Down') {
+            notes += 'Tends to round values down. ';
+          }
+          
+          if (toolData.decimalPlaces < 2) {
+            notes += 'Limited precision. ';
+          }
+          
+          row.querySelector('[data-field="notes"]').textContent = notes || 'Neutral rounding pattern.';
+        }
+      });
+    }
+    
+    /**
+     * Updates auto-generated recommendations based on analysis
+     */
+    function updateRecommendations() {
+      const recommendationsContainer = document.getElementById('auto-recommendations');
+      
+      // Find the tool with the lowest average deviation
+      let mostConsistentTool = '';
+      let lowestDeviation = Infinity;
+      
+      tools.forEach(tool => {
+        const toolData = toolAnalysis.tools[tool];
+        if (toolData.values.length > 0 && toolData.avgDeviation < lowestDeviation) {
+          lowestDeviation = toolData.avgDeviation;
+          mostConsistentTool = tool;
+        }
+      });
+      
+      // Count total threshold disagreements
+      let totalDisagreements = 0;
+      Object.values(toolAnalysis.categories).forEach(category => {
+        totalDisagreements += category.passFailDisagreements;
+      });
+      
+      // Generate recommendations
+      let recommendations = '';
+      
+      if (mostConsistentTool) {
+        recommendations += `<p><strong>Most Reliable Tool:</strong> Based on the analysis, ${mostConsistentTool} appears to be the most consistent tool with an average deviation of ${lowestDeviation.toFixed(2)} from expected values.</p>`;
+      }
+      
+      if (totalDisagreements > 0) {
+        recommendations += `<p><strong>Threshold Caution:</strong> The analysis detected ${totalDisagreements} cases where tools disagree on pass/fail outcomes. For borderline cases, consider adding a safety margin of at least 0.2 to ensure consistent results across tools.</p>`;
+      }
+      
+      // Platform-specific recommendations
+      const macTools = tools.filter(t => t.includes('Mac'));
+      const winTools = tools.filter(t => t.includes('Windows'));
+      
+      let macAvg = 0, winAvg = 0, macCount = 0, winCount = 0;
+      
+      macTools.forEach(tool => {
+        const toolData = toolAnalysis.tools[tool];
+        if (toolData.values.length > 0) {
+          macAvg += toolData.avgDeviation;
+          macCount++;
+        }
+      });
+      
+      winTools.forEach(tool => {
+        const toolData = toolAnalysis.tools[tool];
+        if (toolData.values.length > 0) {
+          winAvg += toolData.avgDeviation;
+          winCount++;
+        }
+      });
+      
+      if (macCount > 0) macAvg /= macCount;
+      if (winCount > 0) winAvg /= winCount;
+      
+      if (macCount > 0 && winCount > 0) {
+        const platformDiff = Math.abs(macAvg - winAvg);
+        if (platformDiff > 0.05) {
+          const betterPlatform = macAvg < winAvg ? 'Mac' : 'Windows';
+          recommendations += `<p><strong>Platform Differences:</strong> There appears to be a ${platformDiff.toFixed(2)} average deviation difference between Mac and Windows tools. ${betterPlatform} tools show slightly more consistent results in this analysis.</p>`;
+        }
+      }
+      
+      // Browser versus desktop app recommendations
+      const browserTools = tools.filter(t => t.includes('Chrome'));
+      const desktopTools = tools.filter(t => t.includes('CCA') || t.includes('zContrast'));
+      
+      let browserAvg = 0, desktopAvg = 0, browserCount = 0, desktopCount = 0;
+      
+      browserTools.forEach(tool => {
+        const toolData = toolAnalysis.tools[tool];
+        if (toolData.values.length > 0) {
+          browserAvg += toolData.avgDeviation;
+          browserCount++;
+        }
+      });
+      
+      desktopTools.forEach(tool => {
+        const toolData = toolAnalysis.tools[tool];
+        if (toolData.values.length > 0) {
+          desktopAvg += toolData.avgDeviation;
+          desktopCount++;
+        }
+      });
+      
+      if (browserCount > 0) browserAvg /= browserCount;
+      if (desktopCount > 0) desktopAvg /= desktopCount;
+      
+      if (browserCount > 0 && desktopCount > 0) {
+        const toolTypeDiff = Math.abs(browserAvg - desktopAvg);
+        if (toolTypeDiff > 0.05) {
+          const betterToolType = browserAvg < desktopAvg ? 'browser-based' : 'desktop';
+          recommendations += `<p><strong>Tool Type Comparison:</strong> ${betterToolType.charAt(0).toUpperCase() + betterToolType.slice(1)} tools demonstrate ${toolTypeDiff.toFixed(2)} better average consistency in this analysis.</p>`;
+        }
+      }
+      
+      // Check for any specifically problematic color combinations
+      const potentiallyProblematicColors = [];
+      
+      Object.entries(colorPairs).forEach(([category, pairs]) => {
+        const threshold = categoryMap[category].threshold;
+        
+        pairs.forEach((pair, index) => {
+          // Check if the expected value is near a threshold
+          const nearThreshold = Math.abs(pair.expected - threshold) < 0.1;
+          
+          if (nearThreshold) {
+            // Check if there's inconsistency in the measurements
+            const values = [];
+            const inputs = document.querySelectorAll(`.color-input[data-category="${category}"][data-pair="${index}"]`);
+            
+            inputs.forEach(input => {
+              if (input.value && !isNaN(parseFloat(normalizeContrastValue(input.value)))) {
+                values.push(parseFloat(normalizeContrastValue(input.value)));
+              }
+            });
+            
+            if (values.length > 1) {
+              const maxVal = Math.max(...values);
+              const minVal = Math.min(...values);
+              
+              if (maxVal >= threshold && minVal < threshold) {
+                // This color pair has inconsistent pass/fail results
+                potentiallyProblematicColors.push({
+                  fg: pair.fg,
+                  bg: pair.bg,
+                  expected: pair.expected,
+                  threshold: threshold,
+                  maxVal: maxVal,
+                  minVal: minVal
+                });
+              }
+            }
+          }
+        });
+      });
+      
+      if (potentiallyProblematicColors.length > 0) {
+        recommendations += `<p><strong>Problematic Color Combinations:</strong> The following color pairs show inconsistent pass/fail results across tools and should be avoided or replaced with safer alternatives:</p>`;
+        
+        recommendations += '<ul>';
+        potentiallyProblematicColors.forEach(pair => {
+          recommendations += `<li><div style="display: inline-block; width: 15px; height: 15px; background-color: ${pair.fg}; border: 1px solid #ddd;"></div> 
+          <div style="display: inline-block; width: 15px; height: 15px; background-color: ${pair.bg}; border: 1px solid #ddd;"></div> 
+          ${pair.fg}/${pair.bg} - Expected: ${pair.expected}:1, Range: ${pair.minVal.toFixed(2)} to ${pair.maxVal.toFixed(2)}</li>`;
+        });
+        recommendations += '</ul>';
+      }
+      
+      if (!recommendations) {
+        recommendations = "<p>Enter contrast ratio measurements in the data tables to generate automatic recommendations.</p>";
+      }
+      
+      recommendationsContainer.innerHTML = recommendations;
+    }
+    
+    /**
+     * Highlights differences between measured and expected values
+     */
+    function highlightDifferences() {
+      const inputs = document.querySelectorAll('.color-input');
+      
+      inputs.forEach(input => {
+        const value = parseFloat(normalizeContrastValue(input.value));
+        if (!isNaN(value)) {
+          const category = input.dataset.category;
+          const pairIndex = input.dataset.pair;
+          const expected = colorPairs[category][pairIndex].expected;
+          
+          // Check if the difference is significant (more than 0.05)
+          if (Math.abs(value - expected) > 0.05) {
+            input.style.backgroundColor = '#ffffcc';
+          } else {
+            input.style.backgroundColor = '';
+          }
+        }
+      });
+      
+      showNotification('Significant differences have been highlighted');
+    }
+    
+    /**
+     * Calculates variance statistics for each category and updates summary data
+     */
+    function calculateVariance() {
+      showLoading(true);
+      
+      // Initialize tool analysis
+      initializeToolAnalysis();
+      
+      try {
+        // Process all data by category
+        for (const category of Object.keys(colorPairs)) {
+          processCategory(category);
+        }
+        
+        // Calculate aggregate tool statistics
+        tools.forEach(tool => {
+          const toolData = toolAnalysis.tools[tool];
+          
+          if (toolData.values.length > 0) {
+            // Calculate average deviation
+            const totalDeviation = toolData.values.reduce((sum, item) => sum + Math.abs(item.diff), 0);
+            toolData.avgDeviation = totalDeviation / toolData.values.length;
+            
+            // Determine maximum deviation
+            toolData.maxDeviation = toolData.values.reduce((max, item) => 
+              Math.max(max, Math.abs(item.diff)), 0);
+            
+            // Determine rounding direction trend
+            const upCount = toolData.values.filter(item => item.diff > 0.005).length;
+            const downCount = toolData.values.filter(item => item.diff < -0.005).length;
+            const neutralCount = toolData.values.length - upCount - downCount;
+            
+            if (upCount > downCount && upCount > neutralCount) {
+              toolData.roundingDirection = 1;
+            } else if (downCount > upCount && downCount > neutralCount) {
+              toolData.roundingDirection = -1;
+            } else {
+              toolData.roundingDirection = 0;
+            }
+            
+            // Determine decimal places from input values
+            const decimalPlaces = determineDecimalPlaces(toolData.values);
+            toolData.decimalPlaces = decimalPlaces;
+            
+            // Check for consistent rounding
+            const roundingConsistency = checkRoundingConsistency(toolData.values);
+            toolData.consistentRounding = roundingConsistency;
+          }
+        });
+        
+        showNotification('Variance analysis completed successfully');
+      } catch (error) {
+        console.error('Error in variance calculation:', error);
+        showNotification('Error in variance calculation: ' + error.message, 'error');
+      } finally {
+        showLoading(false);
+      }
+    }
+    
+    /**
+     * Processes a specific category for variance analysis
+     * @param {string} category - Category identifier
+     */
+    function processCategory(category) {
+      const inputs = document.querySelectorAll(`.color-input[data-category="${category}"]`);
+      const values = [];
+      
+      inputs.forEach(input => {
+        const normalizedValue = normalizeContrastValue(input.value);
+        if (normalizedValue && !isNaN(parseFloat(normalizedValue))) {
+          const value = parseFloat(normalizedValue);
+          const toolIndex = parseInt(input.dataset.tool);
+          const pairIndex = parseInt(input.dataset.pair);
+          const expected = colorPairs[category][pairIndex].expected;
+          const toolName = tools[toolIndex];
+          const diff = value - expected;
+          
+          // Store the value for analysis
+          values.push({ 
+            value, 
+            expected, 
+            diff,
+            tool: toolName,
+            toolIndex,
+            pairIndex,
+            threshold: categoryMap[category].threshold
+          });
+          
+          // Store in tool specific analysis
+          toolAnalysis.tools[toolName].values.push({
+            value,
+            expected,
+            diff,
+            category,
+            pairIndex,
+            threshold: categoryMap[category].threshold
+          });
+          
+          // Store in category specific analysis
+          toolAnalysis.categories[category].values.push({
+            value,
+            expected,
+            diff,
+            tool: toolName,
+            toolIndex,
+            pairIndex
+          });
+        }
+      });
+      
+      if (values.length > 0) {
+        // Calculate max difference for this category
+        let maxDiff = 0;
+        values.forEach(item => {
+          const absDiff = Math.abs(item.diff);
+          if (absDiff > maxDiff) {
+            maxDiff = absDiff;
+          }
+          // Update global max difference
+          if (absDiff > toolAnalysis.global.maxDifference) {
+            toolAnalysis.global.maxDifference = absDiff;
+          }
+        });
+        
+        // Calculate average difference for this category
+        const totalDiff = values.reduce((sum, item) => sum + Math.abs(item.diff), 0);
+        const avgDiff = totalDiff / values.length;
+        
+        // Determine which tools round up or down
+        const roundingUp = new Set();
+        const roundingDown = new Set();
+        
+        values.forEach(item => {
+          if (item.diff > 0.005) {
+            roundingUp.add(item.tool);
+          } else if (item.diff < -0.005) {
+            roundingDown.add(item.tool);
+          }
+        });
+        
+        // Update the variance analysis
+        document.getElementById(`${hyphenate(category)}-max-diff`).textContent = maxDiff.toFixed(2);
+        document.getElementById(`${hyphenate(category)}-avg-diff`).textContent = avgDiff.toFixed(2);
+        document.getElementById(`${hyphenate(category)}-round-up`).textContent = Array.from(roundingUp).join(', ') || 'None';
+        document.getElementById(`${hyphenate(category)}-round-down`).textContent = Array.from(roundingDown).join(', ') || 'None';
+        
+        // Analyze pass/fail disagreements
+        analyzePassFailDisagreements(category);
+      }
+    }
+    
+    /**
+     * Analyzes pass/fail disagreements for a category
+     * @param {string} category - Category identifier
+     */
+    function analyzePassFailDisagreements(category) {
+      const categoryData = toolAnalysis.categories[category];
+      const threshold = categoryMap[category].threshold;
+      
+      // Group by color pair
+      const pairData = {};
+      
+      categoryData.values.forEach(item => {
+        if (!pairData[item.pairIndex]) {
+          pairData[item.pairIndex] = [];
+        }
+        
+        pairData[item.pairIndex].push(item);
+      });
+      
+      // Check each color pair for pass/fail disagreements
+      let disagreementCount = 0;
+      let toolsPassingMore = new Set();
+      let toolsPassingLess = new Set();
+      
+      Object.values(pairData).forEach(items => {
+        if (items.length > 1) {
+          const expected = items[0].expected;
+          const expectedPasses = expected >= threshold;
+          
+          let somePass = false;
+          let someFail = false;
+          
+          // Check if there's a disagreement
+          items.forEach(item => {
+            const passes = item.value >= threshold;
+            
+            if (passes && !expectedPasses) {
+              toolsPassingMore.add(item.tool);
+              somePass = true;
+            } else if (!passes && expectedPasses) {
+              toolsPassingLess.add(item.tool);
+              someFail = true;
+            } else {
+              // Consistent with expected - no action needed
+            }
+          });
+          
+          if (somePass && someFail) {
+            disagreementCount++;
+          }
+        }
+      });
+      
+      // Update category statistics
+      categoryData.passFailDisagreements = disagreementCount;
+      categoryData.toolsPassingMore = Array.from(toolsPassingMore);
+      categoryData.toolsPassingLess = Array.from(toolsPassingLess);
+      
+      // Update global disagreement count
+      toolAnalysis.global.thresholdDisagreementCount += disagreementCount;
+    }
+    
+    /**
+     * Determine decimal places used in a set of values
+     * @param {Array} values - Array of value objects
+     * @returns {number} - Most common decimal place count
+     */
+    function determineDecimalPlaces(values) {
+      if (values.length === 0) return 0;
+      
+      // Count decimal places in each value
+      const decimalCounts = values.map(item => {
+        const valueStr = item.value.toString();
+        const decimalIndex = valueStr.indexOf('.');
+        
+        if (decimalIndex === -1) return 0;
+        return valueStr.length - decimalIndex - 1;
+      });
+      
+      // Find the most common decimal place count
+      const countMap = {};
+      let maxCount = 0;
+      let mostCommonPlaces = 0;
+      
+      decimalCounts.forEach(count => {
+        if (!countMap[count]) countMap[count] = 0;
+        countMap[count]++;
+        
+        if (countMap[count] > maxCount) {
+          maxCount = countMap[count];
+          mostCommonPlaces = count;
+        }
+      });
+      
+      return mostCommonPlaces;
+    }
+    
+    /**
+     * Check for consistent rounding behavior
+     * @param {Array} values - Array of value objects
+     * @returns {boolean} - Whether rounding is consistent
+     */
+    function checkRoundingConsistency(values) {
+      if (values.length < 3) return true; // Not enough data
+      
+      // Count rounding directions
+      const upCount = values.filter(item => item.diff > 0.005).length;
+      const downCount = values.filter(item => item.diff < -0.005).length;
+      const neutralCount = values.length - upCount - downCount;
+      
+      // If there's a strong tendency in one direction, it's consistent
+      const maxCount = Math.max(upCount, downCount, neutralCount);
+      const consistencyRatio = maxCount / values.length;
+      
+      return consistencyRatio > 0.7; // At least 70% consistent
+    }
+    
+    /**
+     * Reset all highlighting
+     */
+    function resetHighlights() {
+      const inputs = document.querySelectorAll('.color-input');
+      inputs.forEach(input => {
+        input.style.backgroundColor = '';
+      });
+      showNotification('Highlights have been reset');
+    }
+    
+    /**
+     * Convert camelCase to hyphen-case
+     * @param {string} str - camelCase string
+     * @returns {string} - hyphen-case string
+     */
+    function hyphenate(str) {
+      return str.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase();
+    }
+    
+    /**
+     * Normalizes contrast values by removing ":1" suffix and handling different formats
+     * @param {string} value - Contrast value as string
+     * @returns {string} - Normalized contrast value
+     */
+    function normalizeContrastValue(value) {
+      if (!value) return '';
+      
+      // Handle values with ':1' suffix
+      if (value.includes(':1')) {
+        return value.replace(':1', '').trim();
+      }
+      
+      return value;
+    }
+    
+    /**
+     * Set up tab switching functionality
+     */
+    function setupTabs() {
+      const tabButtons = document.querySelectorAll('.tab-button');
+      
+      tabButtons.forEach(button => {
+        button.addEventListener('click', () => {
+          // Remove active class from all buttons and contents
+          document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+          document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+          
+          // Add active class to the clicked button and its associated content
+          button.classList.add('active');
+          const tabId = button.dataset.tab;
+          document.getElementById(tabId).classList.add('active');
+        });
+      });
+    }
+    
+    /**
+     * Export the data as HTML
+     */
+    function exportHTML() {
+      showLoading(true);
+      try {
+        // Create a copy of the current document
+        const content = document.documentElement.cloneNode(true);
+        
+        // Remove unnecessary elements (like buttons)
+        const exportButtons = content.querySelectorAll('.export-buttons');
+        exportButtons.forEach(button => button.parentNode.removeChild(button));
+        
+        // Remove notification and loading elements
+        const notification = content.querySelector('#notification');
+        const loading = content.querySelector('#loading');
+        if (notification) notification.parentNode.removeChild(notification);
+        if (loading) loading.parentNode.removeChild(loading);
+        
+        // Add a timestamp and title
+        const timestamp = new Date().toLocaleString();
+        const title = document.createElement('div');
+        title.innerHTML = `<h1>Color Contrast Analysis Report</h1><p>Generated: ${timestamp}</p>`;
+        content.querySelector('body').insertBefore(title, content.querySelector('body').firstChild);
+        
+        // Convert to HTML string
+        const htmlContent = `<!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <title>Color Contrast Analysis Report - ${timestamp}</title>
+            <style>${document.querySelector('style').innerHTML}</style>
+        </head>
+        <body>
+            ${content.querySelector('body').innerHTML}
+        </body>
+        </html>`;
+        
+        // Create a download
+        const blob = new Blob([htmlContent], { type: 'text/html' });
+        const url = URL.createObjectURL(blob);
+        
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'contrast-analysis-report.html';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        
+        showNotification('HTML report generated and downloaded');
+      } catch (error) {
+        console.error('Error exporting HTML:', error);
+        showNotification('Error exporting HTML: ' + error.message, 'error');
+      } finally {
+        showLoading(false);
+      }
+    }
+    
+    /**
+     * Export the data as CSV
+     */
+    function exportCSV() {
+      showLoading(true);
+      try {
+        // Prepare CSV data
+        let csvContent = 'Category,Tool,Color Pair,Expected Value,Measured Value,Difference,Pass/Fail\n';
+        
+        // Collect all input values
+        const inputs = document.querySelectorAll('.color-input');
+        
+        inputs.forEach(input => {
+          const value = normalizeContrastValue(input.value);
+          if (value && !isNaN(parseFloat(value))) {
+            const category = input.dataset.category;
+            const toolIndex = parseInt(input.dataset.tool);
+            const pairIndex = parseInt(input.dataset.pair);
+            
+            const toolName = tools[toolIndex];
+            const pair = colorPairs[category][pairIndex];
+            const colorPair = `${pair.fg}/${pair.bg}`;
+            const expected = pair.expected;
+            const threshold = categoryMap[category].threshold;
+            
+            const measuredValue = parseFloat(value);
+            const difference = measuredValue - expected;
+            const passExpected = expected >= threshold ? 'PASS' : 'FAIL';
+            const passMeasured = measuredValue >= threshold ? 'PASS' : 'FAIL';
+            const passFailStatus = passExpected === passMeasured ? 'Consistent' : 'DISAGREEMENT';
+            
+            // Add to CSV
+            csvContent += `${categoryMap[category].name},${toolName},${colorPair},${expected},${measuredValue},${difference.toFixed(2)},${passFailStatus}\n`;
+          }
+        });
+        
+        // Add summary sheet
+        csvContent += '\n\nTool Summary\n';
+        csvContent += 'Tool,Average Deviation,Max Deviation,Consistent Rounding,Decimal Places\n';
+        
+        tools.forEach(tool => {
+          const toolData = toolAnalysis.tools[tool];
+          if (toolData.values.length > 0) {
+            csvContent += `${tool},${toolData.avgDeviation.toFixed(2)},${toolData.maxDeviation.toFixed(2)},${toolData.consistentRounding ? 'Yes' : 'No'},${toolData.decimalPlaces}\n`;
+          }
+        });
+        
+        // Add category summary
+        csvContent += '\n\nCategory Summary\n';
+        csvContent += 'Category,Pass/Fail Disagreements,Tools Passing More,Tools Passing Less\n';
+        
+        Object.entries(categoryMap).forEach(([category, info]) => {
+          const categoryData = toolAnalysis.categories[category];
+          if (categoryData.values.length > 0) {
+            csvContent += `${info.name},${categoryData.passFailDisagreements},${categoryData.toolsPassingMore.join('|') || 'None'},${categoryData.toolsPassingLess.join('|') || 'None'}\n`;
+          }
+        });
+        
+        // Create a download
+        const blob = new Blob([csvContent], { type: 'text/csv' });
+        const url = URL.createObjectURL(blob);
+        
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'contrast-analysis-data.csv';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        
+        showNotification('CSV data generated and downloaded');
+      } catch (error) {
+        console.error('Error exporting CSV:', error);
+        showNotification('Error exporting CSV: ' + error.message, 'error');
+      } finally {
+        showLoading(false);
+      }
+    }
+    
+    /**
+     * Save the current progress
+     */
+    function saveProgress() {
+      showLoading(true);
+      try {
+        const data = {
+          tools: {},
+          categories: {},
+          analysis: toolAnalysis
+        };
+        
+        // Collect all input values
+        const inputs = document.querySelectorAll('input');
+        inputs.forEach(input => {
+          if (input.dataset.category) {
+            // Color input from the data tables
+            if (!data.categories[input.dataset.category]) {
+              data.categories[input.dataset.category] = {};
+            }
+            
+            const key = `${input.dataset.tool}-${input.dataset.pair}`;
+            data.categories[input.dataset.category][key] = input.value;
+          } else if (input.id) {
+            // Other input field with an ID
+            data.tools[input.id] = input.value;
+          }
+        });
+        
+        // Save the recommendations textarea
+        data.recommendations = document.getElementById('recommendations').value;
+        
+        // Convert to JSON and create a download
+        const jsonData = JSON.stringify(data);
+        const blob = new Blob([jsonData], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'contrast-analysis-data.json';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        
+        showNotification('Progress saved! The data has been downloaded as a JSON file');
+      } catch (error) {
+        console.error('Error saving progress:', error);
+        showNotification('Error saving progress: ' + error.message, 'error');
+      } finally {
+        showLoading(false);
+      }
+    }
+    
+    /**
+     * Load saved progress
+     */
+    function loadProgress() {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = '.json';
+      
+      input.onchange = (event) => {
+        showLoading(true);
+        const file = event.target.files[0];
+        
+        if (file) {
+          const reader = new FileReader();
+          
+          reader.onload = (e) => {
+            try {
+              const data = JSON.parse(e.target.result);
+              
+              // Restore tool inputs
+              for (const [id, value] of Object.entries(data.tools || {})) {
+                const input = document.getElementById(id);
+                if (input) {
+                  input.value = value;
+                }
+              }
+              
+              // Restore category data
+              for (const [category, values] of Object.entries(data.categories || {})) {
+                for (const [key, value] of Object.entries(values)) {
+                  const [toolIndex, pairIndex] = key.split('-');
+                  const input = document.querySelector(`.color-input[data-category="${category}"][data-tool="${toolIndex}"][data-pair="${pairIndex}"]`);
+                  if (input) {
+                    input.value = value;
+                  }
+                }
+              }
+              
+              // Restore analysis data if available
+              if (data.analysis) {
+                toolAnalysis = data.analysis;
+              }
+              
+              // Restore recommendations
+              if (data.recommendations) {
+                document.getElementById('recommendations').value = data.recommendations;
+              }
+              
+              // Recalculate variance after loading data
+              calculateVariance();
+              
+              // Update summary tables
+              updateToolComparison();
+              updateThresholdAnalysis();
+              updateRoundingBehavior();
+              updateRecommendations();
+              
+              showNotification('Data loaded successfully!');
+            } catch (error) {
+              console.error('Error loading data:', error);
+              showNotification('Error loading data: ' + error.message, 'error');
+            } finally {
+              showLoading(false);
+            }
+          };
+          
+          reader.onerror = (error) => {
+            console.error('Error reading file:', error);
+            showNotification('Error reading file: ' + error, 'error');
+            showLoading(false);
+          };
+          
+          reader.readAsText(file);
+        } else {
+          showLoading(false);
+        }
+      };
+      
+      input.click();
+    }
+    
+    /**
+     * Initialize the application
+     */
+    function init() {
+      generateTables();
+      setupTabs();
+      
+      // Set up event listeners
+      document.getElementById('highlight-differences').addEventListener('click', highlightDifferences);
+      document.getElementById('calculate-variance').addEventListener('click', function() {
+        calculateVariance();
+        updateToolComparison();
+        updateThresholdAnalysis();
+        updateRoundingBehavior();
+        updateRecommendations();
+      });
+      document.getElementById('reset-highlights').addEventListener('click', resetHighlights);
+      document.getElementById('export-html').addEventListener('click', exportHTML);
+      document.getElementById('export-csv').addEventListener('click', exportCSV);
+      document.getElementById('save-progress').addEventListener('click', saveProgress);
+      document.getElementById('load-progress').addEventListener('click', loadProgress);
+      document.getElementById('auto-analyze').addEventListener('click', function() {
+        calculateVariance();
+        updateToolComparison();
+        updateThresholdAnalysis();
+        updateRoundingBehavior();
+        updateRecommendations();
+      });
+    }
+    
+    // Run initialization when the DOM is loaded
+    document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

@@ -1,0 +1,1446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Color Contrast Analysis Tool Comparison Framework</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #2c3e50;
+            border-bottom: 1px solid #bdc3c7;
+            padding-bottom: 5px;
+            margin-top: 30px;
+        }
+        h3 {
+            color: #2c3e50;
+            margin-top: 25px;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 20px 0;
+            font-size: 14px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+        .expected-row td {
+            font-weight: bold;
+            background-color: #e8f4f8;
+        }
+        .pass-fail-row td {
+            font-weight: bold;
+        }
+        .pass {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .fail {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .variance-analysis {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .color-sample {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 1px solid #ddd;
+            vertical-align: middle;
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Color Contrast Analysis Tool Comparison</h1>
+    
+    <h2>1. Testing Framework Overview</h2>
+    <p>This document provides a structured approach for comparing color contrast ratio calculations across different accessibility tools on Mac and Windows platforms. The goal is to identify discrepancies in how tools calculate contrast ratios, particularly for colors near WCAG threshold requirements.</p>
+    
+    <h2>2. Tools Being Tested</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Tool Name</th>
+                <th>Platform</th>
+                <th>Version</th>
+                <th>Notes</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>1</td>
+                <td>WebAIM Contrast Checker</td>
+                <td>Mac</td>
+                <td>-</td>
+                <td>Web-based tool</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>WebAIM Contrast Checker</td>
+                <td>Windows</td>
+                <td>-</td>
+                <td>Web-based tool</td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td>Color Contrast Analyzer (CCA)</td>
+                <td>Mac</td>
+                <td>-</td>
+                <td>Desktop application</td>
+            </tr>
+            <tr>
+                <td>4</td>
+                <td>Color Contrast Analyzer (CCA)</td>
+                <td>Windows</td>
+                <td>-</td>
+                <td>Desktop application</td>
+            </tr>
+            <tr>
+                <td>5</td>
+                <td>Chrome DevTools</td>
+                <td>Mac</td>
+                <td>-</td>
+                <td>Browser built-in tool</td>
+            </tr>
+            <tr>
+                <td>6</td>
+                <td>Chrome DevTools</td>
+                <td>Windows</td>
+                <td>-</td>
+                <td>Browser built-in tool</td>
+            </tr>
+            <tr>
+                <td>7</td>
+                <td>zContrast Tool</td>
+                <td>Mac</td>
+                <td>-</td>
+                <td>-</td>
+            </tr>
+            <tr>
+                <td>8</td>
+                <td>zContrast Tool</td>
+                <td>Windows</td>
+                <td>-</td>
+                <td>-</td>
+            </tr>
+        </tbody>
+    </table>
+    
+    <h2>3. Testing Tables by Threshold Category</h2>
+    
+    <h3>3.1 Colors Just Below 3:1 Threshold</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Tool</th>
+                <th>
+                    <div class="color-sample" style="background-color: #969696;"></div>
+                    <div class="color-sample" style="background-color: #FFFFFF;"></div>
+                    #969696/#FFFFFF<br>(~2.95:1)
+                </th>
+                <th>
+                    <div class="color-sample" style="background-color: #747474;"></div>
+                    <div class="color-sample" style="background-color: #CCCCCC;"></div>
+                    #747474/#CCCCCC<br>(~2.90:1)
+                </th>
+                <th>
+                    <div class="color-sample" style="background-color: #4B8CC8;"></div>
+                    <div class="color-sample" style="background-color: #2F5F8A;"></div>
+                    #4B8CC8/#2F5F8A<br>(~2.92:1)
+                </th>
+                <th>
+                    <div class="color-sample" style="background-color: #E5E5E5;"></div>
+                    <div class="color-sample" style="background-color: #A5A5A5;"></div>
+                    #E5E5E5/#A5A5A5<br>(~2.93:1)
+                </th>
+                <th>
+                    <div class="color-sample" style="background-color: #FF9900;"></div>
+                    <div class="color-sample" style="background-color: #FFCC00;"></div>
+                    #FF9900/#FFCC00<br>(~2.89:1)
+                </th>
+                <th>
+                    <div class="color-sample" style="background-color: #E60011;"></div>
+                    <div class="color-sample" style="background-color: #FFFF47;"></div>
+                    #E60011/#FFFF47<br>(~2.95:1)
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>WebAIM (Mac)</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>WebAIM (Windows)</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>CCA (Mac)</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>CCA (Windows)</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Chrome DevTools (Mac)</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Chrome DevTools (Windows)</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>zContrast (Mac)</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>zContrast (Windows)</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr class="expected-row">
+                <td>Expected Value</td>
+                <td>2.95:1</td>
+                <td>2.90:1</td>
+                <td>2.92:1</td>
+                <td>2.93:1</td>
+                <td>2.89:1</td>
+                <td>2.95:1</td>
+            </tr>
+            <tr class="pass-fail-row">
+                <td>WCAG AA Pass/Fail (3:1)</td>
+                <td class="fail">FAIL</td>
+                <td class="fail">FAIL</td>
+                <td class="fail">FAIL</td>
+                <td class="fail">FAIL</td>
+                <td class="fail">FAIL</td>
+                <td class="fail">FAIL</td>
+            </tr>
+        </tbody>
+    </table>
+    
+    <div class="variance-analysis">
+        <h4>Variance Analysis:</h4>
+        <ul>
+            <li>Maximum difference: </li>
+            <li>Average difference: </li>
+            <li>Tools rounding up: </li>
+            <li>Tools rounding down: </li>
+        </ul>
+    </div>
+    
+    <h3>3.2 Colors Just Above 3:1 Threshold</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Tool</th>
+                <th>
+                    <div class="color-sample" style="background-color: #949494;"></div>
+                    <div class="color-sample" style="background-color: #FFFFFF;"></div>
+                    #949494/#FFFFFF<br>(~3.05:1)
+                </th>
+                <th>
+                    <div class="color-sample" style="background-color: #727272;"></div>
+                    <div class="color-sample" style="background-color: #CCCCCC;"></div>
+                    #727272/#CCCCCC<br>(~3.07:1)
+                </th>
+                <th>
+                    <div class="color-sample" style="background-color: #4988C5;"></div>
+                    <div class="color-sample" style="background-color: #2F5F8A;"></div>
+                    #4988C5/#2F5F8A<br>(~3.03:1)
+                </th>
+                <th>
+                    <div class="color-sample" style="background-color: #E3E3E3;"></div>
+                    <div class="color-sample" style="background-color: #A5A5A5;"></div>
+                    #E3E3E3/#A5A5A5<br>(~3.02:1)
+                </th>
+                <th>
+                    <div class="color-sample" style="background-color: #FF9500;"></div>
+                    <div class="color-sample" style="background-color: #FFCC00;"></div>
+                    #FF9500/#FFCC00<br>(~3.06:1)
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>WebAIM (Mac)</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>WebAIM (Windows)</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>CCA (Mac)</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>CCA (Windows)</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Chrome DevTools (Mac)</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Chrome DevTools (Windows)</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>zContrast (Mac)</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>zContrast (Windows)</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr class="expected-row">
+                <td>Expected Value</td>
+                <td>3.05:1</td>
+                <td>3.07:1</td>
+                <td>3.03:1</td>
+                <td>3.02:1</td>
+                <td>3.06:1</td>
+            </tr>
+            <tr class="pass-fail-row">
+                <td>WCAG AA Pass/Fail (3:1)</td>
+                <td class="pass">PASS</td>
+                <td class="pass">PASS</td>
+                <td class="pass">PASS</td>
+                <td class="pass">PASS</td>
+                <td class="pass">PASS</td>
+            </tr>
+        </tbody>
+    </table>
+    
+    <div class="variance-analysis">
+        <h4>Variance Analysis:</h4>
+        <ul>
+            <li>Maximum difference: </li>
+            <li>Average difference: </li>
+            <li>Tools rounding up: </li>
+            <li>Tools rounding down: </li>
+        </ul>
+    </div>
+    
+    <h3>3.3 Colors Exactly at 3:1 Threshold</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Tool</th>
+                <th>
+                    <div class="color-sample" style="background-color: #949494;"></div>
+                    <div class="color-sample" style="background-color: #FFFFFF;"></div>
+                    #949494/#FFFFFF<br>(3.0:1)
+                </th>
+                <th>
+                    <div class="color-sample" style="background-color: #6D6D6D;"></div>
+                    <div class="color-sample" style="background-color: #AAAAAA;"></div>
+                    #6D6D6D/#AAAAAA<br>(3.0:1)
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>WebAIM (Mac)</td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>WebAIM (Windows)</td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>CCA (Mac)</td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>CCA (Windows)</td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Chrome DevTools (Mac)</td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Chrome DevTools (Windows)</td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>zContrast (Mac)</td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>zContrast (Windows)</td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr class="expected-row">
+                <td>Expected Value</td>
+                <td>3.00:1</td>
+                <td>3.00:1</td>
+            </tr>
+            <tr class="pass-fail-row">
+                <td>WCAG AA Pass/Fail (3:1)</td>
+                <td class="pass">PASS</td>
+                <td class="pass">PASS</td>
+            </tr>
+        </tbody>
+    </table>
+    
+    <div class="variance-analysis">
+        <h4>Variance Analysis:</h4>
+        <ul>
+            <li>Maximum difference: </li>
+            <li>Average difference: </li>
+            <li>Tools rounding up: </li>
+            <li>Tools rounding down: </li>
+        </ul>
+    </div>
+    
+    <h3>3.4 Colors Just Below 4.5:1 Threshold</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Tool</th>
+                <th>
+                    <div class="color-sample" style="background-color: #787878;"></div>
+                    <div class="color-sample" style="background-color: #FFFFFF;"></div>
+                    #787878/#FFFFFF<br>(~4.48:1)
+                </th>
+                <th>
+                    <div class="color-sample" style="background-color: #555555;"></div>
+                    <div class="color-sample" style="background-color: #CCCCCC;"></div>
+                    #555555/#CCCCCC<br>(~4.46:1)
+                </th>
+                <th>
+                    <div class="color-sample" style="background-color: #2E6CA3;"></div>
+                    <div class="color-sample" style="background-color: #A5CEF0;"></div>
+                    #2E6CA3/#A5CEF0<br>(~4.47:1)
+                </th>
+                <th>
+                    <div class="color-sample" style="background-color: #DEDEDE;"></div>
+                    <div class="color-sample" style="background-color: #8A8A8A;"></div>
+                    #DEDEDE/#8A8A8A<br>(~4.44:1)
+                </th>
+                <th>
+                    <div class="color-sample" style="background-color: #FF6C00;"></div>
+                    <div class="color-sample" style="background-color: #300E00;"></div>
+                    #FF6C00/#300E00<br>(~4.42:1)
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>WebAIM (Mac)</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>WebAIM (Windows)</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>CCA (Mac)</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>CCA (Windows)</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Chrome DevTools (Mac)</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Chrome DevTools (Windows)</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>zContrast (Mac)</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>zContrast (Windows)</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr class="expected-row">
+                <td>Expected Value</td>
+                <td>4.48:1</td>
+                <td>4.46:1</td>
+                <td>4.47:1</td>
+                <td>4.44:1</td>
+                <td>4.42:1</td>
+            </tr>
+            <tr class="pass-fail-row">
+                <td>WCAG AA Pass/Fail (4.5:1)</td>
+                <td class="fail">FAIL</td>
+                <td class="fail">FAIL</td>
+                <td class="fail">FAIL</td>
+                <td class="fail">FAIL</td>
+                <td class="fail">FAIL</td>
+            </tr>
+        </tbody>
+    </table>
+    
+    <div class="variance-analysis">
+        <h4>Variance Analysis:</h4>
+        <ul>
+            <li>Maximum difference: </li>
+            <li>Average difference: </li>
+            <li>Tools rounding up: </li>
+            <li>Tools rounding down: </li>
+        </ul>
+    </div>
+    
+    <h3>3.5 Colors Just Above 4.5:1 Threshold</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Tool</th>
+                <th>
+                    <div class="color-sample" style="background-color: #767676;"></div>
+                    <div class="color-sample" style="background-color: #FFFFFF;"></div>
+                    #767676/#FFFFFF<br>(~4.54:1)
+                </th>
+                <th>
+                    <div class="color-sample" style="background-color: #535353;"></div>
+                    <div class="color-sample" style="background-color: #CCCCCC;"></div>
+                    #535353/#CCCCCC<br>(~4.52:1)
+                </th>
+                <th>
+                    <div class="color-sample" style="background-color: #2D6AA0;"></div>
+                    <div class="color-sample" style="background-color: #A5CEF0;"></div>
+                    #2D6AA0/#A5CEF0<br>(~4.53:1)
+                </th>
+                <th>
+                    <div class="color-sample" style="background-color: #DDDDDD;"></div>
+                    <div class="color-sample" style="background-color: #8A8A8A;"></div>
+                    #DDDDDD/#8A8A8A<br>(~4.51:1)
+                </th>
+                <th>
+                    <div class="color-sample" style="background-color: #FF6A00;"></div>
+                    <div class="color-sample" style="background-color: #300E00;"></div>
+                    #FF6A00/#300E00<br>(~4.56:1)
+                </th>
+                <th>
+                    <div class="color-sample" style="background-color: #3A833C;"></div>
+                    <div class="color-sample" style="background-color: #FFFFFF;"></div>
+                    #3A833C/#FFFFFF<br>(~4.67:1)
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>WebAIM (Mac)</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>WebAIM (Windows)</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>CCA (Mac)</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>CCA (Windows)</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Chrome DevTools (Mac)</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Chrome DevTools (Windows)</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>zContrast (Mac)</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>zContrast (Windows)</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr class="expected-row">
+                <td>Expected Value</td>
+                <td>4.54:1</td>
+                <td>4.52:1</td>
+                <td>4.53:1</td>
+                <td>4.51:1</td>
+                <td>4.56:1</td>
+                <td>4.67:1</td>
+            </tr>
+            <tr class="pass-fail-row">
+                <td>WCAG AA Pass/Fail (4.5:1)</td>
+                <td class="pass">PASS</td>
+                <td class="pass">PASS</td>
+                <td class="pass">PASS</td>
+                <td class="pass">PASS</td>
+                <td class="pass">PASS</td>
+                <td class="pass">PASS</td>
+            </tr>
+        </tbody>
+    </table>
+    
+    <div class="variance-analysis">
+        <h4>Variance Analysis:</h4>
+        <ul>
+            <li>Maximum difference: </li>
+            <li>Average difference: </li>
+            <li>Tools rounding up: </li>
+            <li>Tools rounding down: </li>
+        </ul>
+    </div>
+    
+    <h3>3.6 Colors Exactly at 4.5:1 Threshold</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Tool</th>
+                <th>
+                    <div class="color-sample" style="background-color: #767676;"></div>
+                    <div class="color-sample" style="background-color: #FFFFFF;"></div>
+                    #767676/#FFFFFF<br>(4.5:1)
+                </th>
+                <th>
+                    <div class="color-sample" style="background-color: #424242;"></div>
+                    <div class="color-sample" style="background-color: #AAAAAA;"></div>
+                    #424242/#AAAAAA<br>(4.5:1)
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>WebAIM (Mac)</td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>WebAIM (Windows)</td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>CCA (Mac)</td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>CCA (Windows)</td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Chrome DevTools (Mac)</td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Chrome DevTools (Windows)</td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>zContrast (Mac)</td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>zContrast (Windows)</td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr class="expected-row">
+                <td>Expected Value</td>
+                <td>4.50:1</td>
+                <td>4.50:1</td>
+            </tr>
+            <tr class="pass-fail-row">
+                <td>WCAG AA Pass/Fail (4.5:1)</td>
+                <td class="pass">PASS</td>
+                <td class="pass">PASS</td>
+            </tr>
+        </tbody>
+    </table>
+    
+    <div class="variance-analysis">
+        <h4>Variance Analysis:</h4>
+        <ul>
+            <li>Maximum difference: </li>
+            <li>Average difference: </li>
+            <li>Tools rounding up: </li>
+            <li>Tools rounding down: </li>
+        </ul>
+    </div>
+    
+    <h3>3.7 Common Design Colors</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Tool</th>
+                <th>
+                    <div class="color-sample" style="background-color: #777777;"></div>
+                    <div class="color-sample" style="background-color: #FFFFFF;"></div>
+                    #777777/#FFFFFF<br>(~4.5:1)
+                </th>
+                <th>
+                    <div class="color-sample" style="background-color: #CC21CE;"></div>
+                    <div class="color-sample" style="background-color: #FFFFFF;"></div>
+                    #CC21CE/#FFFFFF<br>(~5.12:1)
+                </th>
+                <th>
+                    <div class="color-sample" style="background-color: #3A833C;"></div>
+                    <div class="color-sample" style="background-color: #FFFFFF;"></div>
+                    #3A833C/#FFFFFF<br>(~4.67:1)
+                </th>
+                <th>
+                    <div class="color-sample" style="background-color: #E60011;"></div>
+                    <div class="color-sample" style="background-color: #FFFF47;"></div>
+                    #E60011/#FFFF47<br>(~2.95:1)
+                </th>
+                <th>
+                    <div class="color-sample" style="background-color: #CC21CE;"></div>
+                    <div class="color-sample" style="background-color: #808080;"></div>
+                    #CC21CE/#808080<br>(~1.87:1)
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>WebAIM (Mac)</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>WebAIM (Windows)</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>CCA (Mac)</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>CCA (Windows)</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Chrome DevTools (Mac)</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Chrome DevTools (Windows)</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>zContrast (Mac)</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>zContrast (Windows)</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr class="expected-row">
+                <td>Expected Value</td>
+                <td>4.50:1</td>
+                <td>5.12:1</td>
+                <td>4.67:1</td>
+                <td>2.95:1</td>
+                <td>1.87:1</td>
+            </tr>
+            <tr class="pass-fail-row">
+                <td>WCAG AA Pass/Fail (4.5:1)</td>
+                <td class="pass">PASS</td>
+                <td class="pass">PASS</td>
+                <td class="pass">PASS</td>
+                <td class="fail">FAIL</td>
+                <td class="fail">FAIL</td>
+            </tr>
+            <tr class="pass-fail-row">
+                <td>WCAG AA Pass/Fail (3:1)</td>
+                <td class="pass">PASS</td>
+                <td class="pass">PASS</td>
+                <td class="pass">PASS</td>
+                <td class="fail">FAIL</td>
+                <td class="fail">FAIL</td>
+            </tr>
+        </tbody>
+    </table>
+    
+    <div class="variance-analysis">
+        <h4>Variance Analysis:</h4>
+        <ul>
+            <li>Maximum difference: </li>
+            <li>Average difference: </li>
+            <li>Tools rounding up: </li>
+            <li>Tools rounding down: </li>
+        </ul>
+    </div>
+    
+    <h3>3.8 Edge Cases</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Tool</th>
+                <th>
+                    <div class="color-sample" style="background-color: #808080;"></div>
+                    <div class="color-sample" style="background-color: #FFFFFF;"></div>
+                    #808080/#FFFFFF<br>(~3.95:1)
+                </th>
+                <th>
+                    <div class="color-sample" style="background-color: #D0D0D0;"></div>
+                    <div class="color-sample" style="background-color: #000000;"></div>
+                    #D0D0D0/#000000<br>(~12.63:1)
+                </th>
+                <th>
+                    <div class="color-sample" style="background-color: #FFFF00;"></div>
+                    <div class="color-sample" style="background-color: #FFFFFF;"></div>
+                    #FFFF00/#FFFFFF<br>(~1.07:1)
+                </th>
+                <th>
+                    <div class="color-sample" style="background-color: #C8C8C8;"></div>
+                    <div class="color-sample" style="background-color: #C0C0C0;"></div>
+                    #C8C8C8/#C0C0C0<br>(~1.05:1)
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>WebAIM (Mac)</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>WebAIM (Windows)</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>CCA (Mac)</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>CCA (Windows)</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Chrome DevTools (Mac)</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Chrome DevTools (Windows)</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>zContrast (Mac)</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>zContrast (Windows)</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr class="expected-row">
+                <td>Expected Value</td>
+                <td>3.95:1</td>
+                <td>12.63:1</td>
+                <td>1.07:1</td>
+                <td>1.05:1</td>
+            </tr>
+            <tr class="pass-fail-row">
+                <td>WCAG AA Pass/Fail (4.5:1)</td>
+                <td class="fail">FAIL</td>
+                <td class="pass">PASS</td>
+                <td class="fail">FAIL</td>
+                <td class="fail">FAIL</td>
+            </tr>
+            <tr class="pass-fail-row">
+                <td>WCAG AA Pass/Fail (3:1)</td>
+                <td class="pass">PASS</td>
+                <td class="pass">PASS</td>
+                <td class="fail">FAIL</td>
+                <td class="fail">FAIL</td>
+            </tr>
+        </tbody>
+    </table>
+    
+    <div class="variance-analysis">
+        <h4>Variance Analysis:</h4>
+        <ul>
+            <li>Maximum difference: </li>
+            <li>Average difference: </li>
+            <li>Tools rounding up: </li>
+            <li>Tools rounding down: </li>
+        </ul>
+    </div>
+    
+    <h2>4. Summary Analysis</h2>
+    
+    <h3>4.1 Overall Tool Comparison</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Tool</th>
+                <th>Average Deviation</th>
+                <th>Max Deviation</th>
+                <th>Consistent Rounding</th>
+                <th>Decimal Places</th>
+                <th>Notes</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>WebAIM (Mac)</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>WebAIM (Windows)</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>CCA (Mac)</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>CCA (Windows)</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Chrome DevTools (Mac)</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Chrome DevTools (Windows)</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>zContrast (Mac)</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>zContrast (Windows)</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+        </tbody>
+    </table>
+    
+    <h3>4.2 Threshold Analysis</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Category</th>
+                <th>Pass/Fail Disagreements</th>
+                <th>Tools Passing More</th>
+                <th>Tools Passing Less</th>
+                <th>Notes</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Just Below 3:1</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Just Above 3:1</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Exactly at 3:1</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Just Below 4.5:1</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Just Above 4.5:1</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Exactly at 4.5:1</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Common Design Colors</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Edge Cases</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+        </tbody>
+    </table>
+    
+    <h3>4.3 Rounding Behavior Analysis</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Tool</th>
+                <th>Rounding Direction</th>
+                <th>Decimal Places</th>
+                <th>Round at Display or Algorithm?</th>
+                <th>Notes</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>WebAIM (Mac)</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>WebAIM (Windows)</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>CCA (Mac)</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>CCA (Windows)</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Chrome DevTools (Mac)</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Chrome DevTools (Windows)</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>zContrast (Mac)</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>zContrast (Windows)</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+        </tbody>
+    </table>
+    
+    <h2>5. Testing Methodology</h2>
+    
+    <h3>5.1 Testing Process</h3>
+    <ol>
+        <li>Each color pair was tested in each tool on both Mac and Windows platforms</li>
+        <li>Screenshots were captured for verification</li>
+        <li>Results were recorded precisely as displayed by each tool</li>
+        <li>Pass/Fail determinations were noted based on WCAG AA criteria:
+            <ul>
+                <li>4.5:1 for normal text</li>
+                <li>3:1 for large text, UI components, and graphical objects</li>
+            </ul>
+        </li>
+    </ol>
+    
+    <h3>5.2 Test Environment</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Platform</th>
+                <th>OS Version</th>
+                <th>Browser Version</th>
+                <th>Screen Settings</th>
+                <th>Color Profile</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Mac</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Windows</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+        </tbody>
+    </table>
+    
+    <h2>6. Recommendations</h2>
+    <p>Based on the analysis, we recommend:</p>
+    <ol>
+        <li><strong>Most Reliable Tool:</strong> [TBD based on findings]</li>
+        <li><strong>Best Practices:</strong>
+            <ul>
+                <li>When working with borderline colors, consider using [TBD] as it provides the most consistent results</li>
+                <li>Account for potential discrepancies by maintaining a margin of [TBD] above minimum thresholds</li>
+                <li>[Additional recommendations based on findings]</li>
+            </ul>
+        </li>
+    </ol>
+    
+    <h2>7. Appendix: Raw Data Collection Template</h2>
+    
+    <h3>Example Data Collection Form</h3>
+    <p>For each test:</p>
+    <ol>
+        <li>Record exact ratio displayed by each tool</li>
+        <li>Mark any discrepancies</li>
+        <li>Note any unusual behavior or interface issues</li>
+    </ol>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>Color Pair</th>
+                <th>Tool</th>
+                <th>Exact Ratio Displayed</th>
+                <th>Decimal Places Shown</th>
+                <th>Passes 3:1</th>
+                <th>Passes 4.5:1</th>
+                <th>Notes</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    <div class="color-sample" style="background-color: #767676;"></div>
+                    <div class="color-sample" style="background-color: #FFFFFF;"></div>
+                    #767676/#FFFFFF
+                </td>
+                <td>WebAIM (Mac)</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+        </tbody>
+    </table>
+    
+    <script>
+        // Optional JavaScript for enhanced functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add highlighting for cells that have discrepancies
+            // This could be implemented when actual data is added
+            
+            // Example function to highlight cells with values that differ from expected
+            function highlightDiscrepancies() {
+                // Implementation would go here
+            }
+            
+            // Call the function when data is loaded
+            // highlightDiscrepancies();
+        });
+    </script>
+</body>
+</html>

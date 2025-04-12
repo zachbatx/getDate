@@ -1729,6 +1729,9 @@
 /**
  * Export the data as HTML - improved version
  */
+/**
+ * Export the data as HTML with working tabs
+ */
  function exportHTML() {
   showLoading(true);
   try {
@@ -1739,12 +1742,11 @@
     const parser = new DOMParser();
     const exportDoc = parser.parseFromString(pageContent, 'text/html');
     
-    // Remove unnecessary elements
+    // Remove only specific elements that aren't needed
     const elementsToRemove = [
       '.export-buttons',
       '#notification',
-      '#loading',
-      'script'  // Remove scripts as they're not needed in the exported version
+      '#loading'
     ];
     
     elementsToRemove.forEach(selector => {
@@ -1753,11 +1755,10 @@
     });
     
     // Make sure all form inputs show their current values in the exported document
-    // This ensures that loaded JSON data is properly represented
     const inputs = exportDoc.querySelectorAll('input[type="text"]');
     inputs.forEach(input => {
       const originalInput = document.getElementById(input.id) || 
-                            document.querySelector(`input[data-category="${input.dataset.category}"][data-tool="${input.dataset.tool}"][data-pair="${input.dataset.pair}"]`);
+                           document.querySelector(`input[data-category="${input.dataset.category}"][data-tool="${input.dataset.tool}"][data-pair="${input.dataset.pair}"]`);
       
       if (originalInput) {
         // Set the value attribute to ensure it shows up in the exported HTML
@@ -1782,12 +1783,44 @@
     const body = exportDoc.querySelector('body');
     body.insertBefore(header, body.firstChild);
     
-    // Make all tabs visible in the exported version
-    const tabContents = exportDoc.querySelectorAll('.tab-content');
-    tabContents.forEach(tab => {
-      tab.classList.add('active');
-      tab.style.display = 'block';
-    });
+    // Extract the original script content
+    const originalScript = document.querySelector('script').innerHTML;
+    
+    // Create a modified version of the script that preserves tab functionality
+    // but removes unnecessary functions for the exported report
+    const modifiedScript = `
+    /**
+     * Interactive Color Contrast Analysis Tool - Exported Report
+     * 
+     * This is a simplified version of the original script for the exported report.
+     */
+    
+    // Set up tab switching functionality
+    function setupTabs() {
+      const tabButtons = document.querySelectorAll('.tab-button');
+      
+      tabButtons.forEach(button => {
+        button.addEventListener('click', () => {
+          // Remove active class from all buttons and contents
+          document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+          document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+          
+          // Add active class to the clicked button and its associated content
+          button.classList.add('active');
+          const tabId = button.dataset.tab;
+          document.getElementById(tabId).classList.add('active');
+        });
+      });
+    }
+    
+    // Initialize the application
+    function init() {
+      setupTabs();
+    }
+    
+    // Run initialization when the DOM is loaded
+    document.addEventListener('DOMContentLoaded', init);
+    `;
     
     // Get the modified HTML
     const exportHTML = `<!DOCTYPE html>
@@ -1800,6 +1833,7 @@
 </head>
 <body>
     ${body.innerHTML}
+    <script>${modifiedScript}</script>
 </body>
 </html>`;
     

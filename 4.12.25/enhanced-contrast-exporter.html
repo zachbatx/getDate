@@ -1,0 +1,1133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced Contrast Analysis Exporter</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --light-bg: #f5f7fa;
+            --dark-bg: #34495e;
+            --success-color: #2ecc71;
+            --warning-color: #f39c12;
+            --font-main: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: var(--font-main);
+            background-color: var(--light-bg);
+            color: var(--primary-color);
+            line-height: 1.6;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: var(--primary-color);
+            color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .app-description {
+            font-size: 1.1rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .file-upload-container {
+            background: white;
+            border-radius: 8px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        
+        .drop-area {
+            border: 3px dashed #ccc;
+            border-radius: 8px;
+            padding: 50px 20px;
+            text-align: center;
+            cursor: pointer;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .drop-area.highlight {
+            border-color: var(--secondary-color);
+            background-color: rgba(52, 152, 219, 0.1);
+        }
+        
+        .drop-area-text {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+        }
+        
+        .drop-area-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            color: var(--secondary-color);
+        }
+        
+        .file-input {
+            display: none;
+        }
+        
+        .browse-button {
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        
+        .browse-button:hover {
+            background-color: #2980b9;
+        }
+        
+        .export-button {
+            background-color: var(--success-color);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 5px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-top: 20px;
+            display: none;
+        }
+        
+        .export-button:hover {
+            background-color: #27ae60;
+        }
+        
+        .status-message {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+        }
+        
+        .status-message.success {
+            background-color: rgba(46, 204, 113, 0.2);
+            color: #27ae60;
+            display: block;
+        }
+        
+        .status-message.error {
+            background-color: rgba(231, 76, 60, 0.2);
+            color: #c0392b;
+            display: block;
+        }
+        
+        .preview-container {
+            background: white;
+            border-radius: 8px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            display: none;
+        }
+        
+        .preview-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .preview-title {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+        }
+        
+        .global-stats {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            flex: 1;
+            min-width: 200px;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            text-align: center;
+        }
+        
+        .stat-card h3 {
+            font-size: 1.2rem;
+            color: var(--secondary-color);
+            margin-bottom: 10px;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+        
+        .tools-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 30px;
+            justify-content: center;
+        }
+        
+        .tool-tag {
+            background: var(--secondary-color);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 500;
+        }
+        
+        .category-selector {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+        
+        .category-tab {
+            padding: 10px 20px;
+            background: #ddd;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .category-tab:hover {
+            background: #ccc;
+        }
+        
+        .category-tab.active {
+            background: var(--secondary-color);
+            color: white;
+        }
+        
+        .data-category {
+            display: none;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+        }
+        
+        .data-category.active {
+            display: block;
+        }
+        
+        .category-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .category-title {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+        }
+        
+        .variance-analysis {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .analysis-card {
+            background: white;
+            padding: 15px;
+            border-radius: 6px;
+            border-left: 4px solid var(--secondary-color);
+        }
+        
+        .analysis-card h4 {
+            margin-bottom: 10px;
+            color: var(--primary-color);
+        }
+        
+        .tools-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .tool-list {
+            list-style-type: none;
+        }
+        
+        .tool-list li {
+            padding: 5px 0;
+        }
+        
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            overflow-x: auto;
+        }
+        
+        .data-table th {
+            background-color: var(--secondary-color);
+            color: white;
+            text-align: left;
+            padding: 12px 15px;
+        }
+        
+        .data-table td {
+            border: 1px solid #ddd;
+            padding: 12px 15px;
+        }
+        
+        .data-table tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        
+        .data-table tr:hover {
+            background-color: #ddd;
+        }
+        
+        .highlighted-row {
+            background-color: rgba(243, 156, 18, 0.2) !important;
+        }
+        
+        .positive-diff {
+            color: var(--success-color);
+            font-weight: bold;
+        }
+        
+        .negative-diff {
+            color: var(--accent-color);
+            font-weight: bold;
+        }
+        
+        .significant-indicator {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            background-color: var(--warning-color);
+            color: white;
+            text-align: center;
+            border-radius: 50%;
+            margin-left: 10px;
+            line-height: 20px;
+            font-weight: bold;
+            font-size: 0.8rem;
+        }
+        
+        .loader {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top-color: var(--secondary-color);
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Color contrast sample styles */
+        .contrast-sample {
+            display: flex;
+            flex-direction: column;
+            margin-top: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .contrast-sample-text {
+            padding: 8px;
+            text-align: center;
+            font-weight: bold;
+        }
+        
+        .contrast-ratio {
+            font-size: 0.9rem;
+            text-align: center;
+            padding: 4px;
+            background-color: #f8f9fa;
+            border-top: 1px solid #ddd;
+        }
+        
+        .pass-indicator {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-left: 5px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        
+        .pass {
+            background-color: var(--success-color);
+            color: white;
+        }
+        
+        .fail {
+            background-color: var(--accent-color);
+            color: white;
+        }
+        
+        /* Color pair styles */
+        .color-pair {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+        
+        .color-swatch {
+            width: 20px;
+            height: 20px;
+            border: 1px solid #ddd;
+            margin-right: 5px;
+        }
+        
+        .color-hex {
+            font-family: monospace;
+            font-size: 0.9rem;
+        }
+
+        .no-data-message {
+            padding: 20px;
+            text-align: center;
+            background: rgba(231, 76, 60, 0.1);
+            border-radius: 5px;
+            margin: 20px 0;
+            color: #c0392b;
+        }
+        
+        @media (max-width: 768px) {
+            .variance-analysis,
+            .tools-section {
+                grid-template-columns: 1fr;
+            }
+            
+            .global-stats {
+                flex-direction: column;
+            }
+            
+            .category-tab {
+                font-size: 0.8rem;
+                padding: 8px 12px;
+            }
+            
+            .data-table {
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Enhanced Contrast Analysis Exporter</h1>
+            <p class="app-description">Load a contrast analysis JSON file, visualize the data with color samples, and export a summarized HTML report.</p>
+        </header>
+        
+        <div class="file-upload-container">
+            <h2>Upload Contrast Analysis JSON File</h2>
+            <div id="drop-area" class="drop-area">
+                <div class="drop-area-icon">📁</div>
+                <p class="drop-area-text">Drag & drop your JSON file here</p>
+                <p>or</p>
+                <input type="file" id="file-input" class="file-input" accept=".json">
+                <button id="browse-button" class="browse-button">Browse Files</button>
+            </div>
+            <div id="status-message" class="status-message"></div>
+            <button id="export-button" class="export-button">Export HTML Report</button>
+        </div>
+        
+        <div id="preview-container" class="preview-container">
+            <div class="preview-header">
+                <h2 class="preview-title">Data Preview</h2>
+            </div>
+            
+            <h3>Global Analysis</h3>
+            <div class="global-stats">
+                <div class="stat-card">
+                    <h3>Maximum Difference</h3>
+                    <div id="max-difference" class="stat-value">0.00</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Average Difference</h3>
+                    <div id="avg-difference" class="stat-value">0.00</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Threshold Disagreements</h3>
+                    <div id="threshold-disagreements" class="stat-value">0</div>
+                </div>
+            </div>
+            
+            <h3>Tools Used</h3>
+            <div id="tools-list" class="tools-list">
+                <!-- Tools list populated by JavaScript -->
+            </div>
+            
+            <h3>Contrast Ratio Data Tables</h3>
+            <div class="category-selector" id="category-tabs">
+                <!-- Category tabs populated by JavaScript -->
+            </div>
+            
+            <div id="category-content">
+                <!-- Category data populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Elements
+            const dropArea = document.getElementById('drop-area');
+            const fileInput = document.getElementById('file-input');
+            const browseButton = document.getElementById('browse-button');
+            const statusMessage = document.getElementById('status-message');
+            const exportButton = document.getElementById('export-button');
+            const previewContainer = document.getElementById('preview-container');
+            const maxDifferenceElement = document.getElementById('max-difference');
+            const avgDifferenceElement = document.getElementById('avg-difference');
+            const thresholdDisagreementsElement = document.getElementById('threshold-disagreements');
+            const toolsListElement = document.getElementById('tools-list');
+            const categoryTabsElement = document.getElementById('category-tabs');
+            const categoryContentElement = document.getElementById('category-content');
+            
+            // Variables
+            let contrastData = null;
+            
+            // Category names mapping
+            const categoryNames = {
+                belowThree: "Below 3.0 Ratio",
+                aboveThree: "Above 3.0 Ratio",
+                exactlyThree: "Exactly 3.0 Ratio",
+                belowFourPointFive: "Below 4.5 Ratio",
+                aboveFourPointFive: "Above 4.5 Ratio",
+                exactlyFourPointFive: "Exactly 4.5 Ratio",
+                commonDesign: "Common Design Patterns",
+                edgeCases: "Edge Cases"
+            };
+            
+            // Color contrast data - From the JSON file
+            const colorContrastData = {
+                belowThree: [
+                    { fg: "#969696", bg: "#FFFFFF", expected: 2.95 },
+                    { fg: "#747474", bg: "#CCCCCC", expected: 2.9 },
+                    { fg: "#4B8CC8", bg: "#2F5F8A", expected: 2.92 },
+                    { fg: "#E5E5E5", bg: "#A5A5A5", expected: 2.93 },
+                    { fg: "#FF9900", bg: "#FFCC00", expected: 2.89 },
+                    { fg: "#E60011", bg: "#FFFF47", expected: 2.95 }
+                ],
+                aboveThree: [
+                    { fg: "#949494", bg: "#FFFFFF", expected: 3.05 },
+                    { fg: "#727272", bg: "#CCCCCC", expected: 3.07 },
+                    { fg: "#4988C5", bg: "#2F5F8A", expected: 3.03 },
+                    { fg: "#E3E3E3", bg: "#A5A5A5", expected: 3.02 },
+                    { fg: "#FF9500", bg: "#FFCC00", expected: 3.06 }
+                ],
+                exactlyThree: [
+                    { fg: "#949494", bg: "#FFFFFF", expected: 3.00 },
+                    { fg: "#6D6D6D", bg: "#AAAAAA", expected: 3.00 }
+                ],
+                belowFourPointFive: [
+                    { fg: "#787878", bg: "#FFFFFF", expected: 4.48 },
+                    { fg: "#555555", bg: "#CCCCCC", expected: 4.46 },
+                    { fg: "#2E6CA3", bg: "#A5CEF0", expected: 4.47 },
+                    { fg: "#DEDEDE", bg: "#8A8A8A", expected: 4.44 },
+                    { fg: "#FF6C00", bg: "#300E00", expected: 4.42 }
+                ],
+                aboveFourPointFive: [
+                    { fg: "#767676", bg: "#FFFFFF", expected: 4.54 },
+                    { fg: "#535353", bg: "#CCCCCC", expected: 4.52 },
+                    { fg: "#2D6AA0", bg: "#A5CEF0", expected: 4.53 },
+                    { fg: "#DDDDDD", bg: "#8A8A8A", expected: 4.51 },
+                    { fg: "#FF6A00", bg: "#300E00", expected: 4.56 },
+                    { fg: "#3A833C", bg: "#FFFFFF", expected: 4.67 }
+                ],
+                exactlyFourPointFive: [
+                    { fg: "#767676", bg: "#FFFFFF", expected: 4.50 },
+                    { fg: "#424242", bg: "#AAAAAA", expected: 4.50 }
+                ],
+                commonDesign: [
+                    { fg: "#777777", bg: "#FFFFFF", expected: 4.50 },
+                    { fg: "#CC21CE", bg: "#FFFFFF", expected: 5.12 },
+                    { fg: "#3A833C", bg: "#FFFFFF", expected: 4.67 },
+                    { fg: "#E60011", bg: "#FFFF47", expected: 2.95 },
+                    { fg: "#CC21CE", bg: "#808080", expected: 1.87 }
+                ],
+                edgeCases: [
+                    { fg: "#808080", bg: "#FFFFFF", expected: 3.95 },
+                    { fg: "#D0D0D0", bg: "#000000", expected: 12.63 },
+                    { fg: "#FFFF00", bg: "#FFFFFF", expected: 1.07 },
+                    { fg: "#C8C8C8", bg: "#C0C0C0", expected: 1.05 }
+                ]
+            };
+            
+            // Event Listeners for File Upload
+            browseButton.addEventListener('click', () => {
+                fileInput.click();
+            });
+            
+            fileInput.addEventListener('change', handleFileSelect);
+            
+            // Drag and drop events
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                dropArea.addEventListener(eventName, preventDefaults, false);
+            });
+            
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            
+            ['dragenter', 'dragover'].forEach(eventName => {
+                dropArea.addEventListener(eventName, highlight, false);
+            });
+            
+            ['dragleave', 'drop'].forEach(eventName => {
+                dropArea.addEventListener(eventName, unhighlight, false);
+            });
+            
+            function highlight() {
+                dropArea.classList.add('highlight');
+            }
+            
+            function unhighlight() {
+                dropArea.classList.remove('highlight');
+            }
+            
+            dropArea.addEventListener('drop', handleDrop, false);
+            
+            function handleDrop(e) {
+                const dt = e.dataTransfer;
+                const files = dt.files;
+                
+                if (files.length > 0) {
+                    handleFiles(files);
+                }
+            }
+            
+            function handleFileSelect(e) {
+                const files = e.target.files;
+                handleFiles(files);
+            }
+            
+            function handleFiles(files) {
+                if (files.length === 0) return;
+                
+                const file = files[0];
+                
+                // Check if the file is JSON
+                if (!file.name.endsWith('.json')) {
+                    showStatus('Please upload a JSON file.', 'error');
+                    return;
+                }
+                
+                const reader = new FileReader();
+                
+                reader.onload = function(event) {
+                    try {
+                        const jsonData = JSON.parse(event.target.result);
+                        contrastData = jsonData;
+                        
+                        showStatus('File loaded successfully!', 'success');
+                        exportButton.style.display = 'inline-block';
+                        previewContainer.style.display = 'block';
+                        
+                        processData(jsonData);
+                        
+                        // Auto hide success message after 3 seconds
+                        setTimeout(() => {
+                            if (statusMessage.classList.contains('success')) {
+                                statusMessage.style.display = 'none';
+                            }
+                        }, 3000);
+                    } catch (error) {
+                        showStatus('Error parsing JSON file: ' + error.message, 'error');
+                    }
+                };
+                
+                reader.onerror = function() {
+                    showStatus('Error reading file.', 'error');
+                };
+                
+                reader.readAsText(file);
+            }
+            
+            function showStatus(message, type) {
+                statusMessage.textContent = message;
+                statusMessage.className = 'status-message';
+                statusMessage.classList.add(type);
+                statusMessage.style.display = 'block';
+            }
+            
+            // Export functionality
+            exportButton.addEventListener('click', exportHTML);
+            
+            function exportHTML() {
+                if (!contrastData) {
+                    showStatus('No data to export.', 'error');
+                    return;
+                }
+                
+                // Create a new HTML document for export
+                const exportDoc = document.implementation.createHTMLDocument('Contrast Analysis Report');
+                
+                // Add the CSS
+                const style = exportDoc.createElement('style');
+                style.textContent = document.querySelector('style').textContent;
+                exportDoc.head.appendChild(style);
+                
+                // Add title
+                const title = exportDoc.createElement('title');
+                title.textContent = 'Contrast Analysis Report';
+                exportDoc.head.appendChild(title);
+                
+                // Create content container
+                const container = exportDoc.createElement('div');
+                container.className = 'container';
+                exportDoc.body.appendChild(container);
+                
+                // Add header
+                const header = exportDoc.createElement('header');
+                header.innerHTML = `
+                    <h1>Contrast Analysis Report</h1>
+                    <p class="app-description">Summary of contrast ratio measurements across different tools</p>
+                `;
+                container.appendChild(header);
+                
+                // Copy the preview content
+                const previewClone = previewContainer.cloneNode(true);
+                
+                // Ensure all tabs are properly initialized in the exported document
+                const scriptElement = exportDoc.createElement('script');
+                scriptElement.textContent = `
+                    document.addEventListener('DOMContentLoaded', () => {
+                        // Set up tab switching functionality for exported report
+                        document.querySelectorAll('.category-tab').forEach(tab => {
+                            tab.addEventListener('click', function() {
+                                const categoryId = this.getAttribute('data-category');
+                                
+                                // Update active tab
+                                document.querySelectorAll('.category-tab').forEach(t => 
+                                    t.classList.remove('active'));
+                                this.classList.add('active');
+                                
+                                // Update active content
+                                document.querySelectorAll('.data-category').forEach(c => 
+                                    c.classList.remove('active'));
+                                document.getElementById('category-' + categoryId).classList.add('active');
+                            });
+                        });
+                    });
+                `;
+                
+                // Add the preview content and script to the container
+                container.appendChild(previewClone);
+                exportDoc.body.appendChild(scriptElement);
+                
+                // Add timestamp
+                const timestamp = exportDoc.createElement('div');
+                timestamp.style.textAlign = 'center';
+                timestamp.style.margin = '30px 0';
+                timestamp.style.color = '#666';
+                timestamp.innerHTML = `<p>Report generated on ${new Date().toLocaleString()}</p>`;
+                container.appendChild(timestamp);
+                
+                // Create a download link
+                const blob = new Blob([exportDoc.documentElement.outerHTML], { type: 'text/html' });
+                const url = URL.createObjectURL(blob);
+                const downloadLink = document.createElement('a');
+                downloadLink.href = url;
+                downloadLink.download = 'contrast-analysis-report.html';
+                document.body.appendChild(downloadLink);
+                downloadLink.click();
+                document.body.removeChild(downloadLink);
+                URL.revokeObjectURL(url);
+                
+                showStatus('HTML report exported successfully!', 'success');
+                
+                // Auto hide success message after 3 seconds
+                setTimeout(() => {
+                    if (statusMessage.classList.contains('success')) {
+                        statusMessage.style.display = 'none';
+                    }
+                }, 3000);
+            }
+            
+            // Get threshold based on category
+            function getThresholdForCategory(category) {
+                if (category.includes('Three')) {
+                    return 3.0;
+                } else if (category.includes('FourPointFive')) {
+                    return 4.5;
+                } else if (category === 'commonDesign' || category === 'edgeCases') {
+                    // For mixed categories, use 4.5 (standard for normal text)
+                    return 4.5;
+                }
+                return 4.5; // Default to 4.5 if unknown
+            }
+            
+            // Get statistics for a specific category
+            function getCategoryStats(data, categoryKey) {
+                const result = {
+                    values: [],
+                    toolsRoundingUp: [],
+                    toolsRoundingDown: [],
+                    maxDifference: 0,
+                    avgDifference: 0
+                };
+                
+                // Check if we have data
+                if (!data || !data.analysis || !data.analysis.tools) {
+                    return result;
+                }
+                
+                // Track all diffs for statistics
+                const allDiffs = [];
+                
+                // Process each tool's values
+                Object.keys(data.analysis.tools).forEach(toolName => {
+                    const tool = data.analysis.tools[toolName];
+                    
+                    if (tool.values && tool.values.length > 0) {
+                        // Track rounding direction for this tool
+                        let roundingUp = 0;
+                        let roundingDown = 0;
+                        
+                        // Process each value for this tool in the current category
+                        tool.values.forEach(value => {
+                            // Check if this value belongs to the current category
+                            if (value.category === categoryKey) {
+                                // Calculate diff from expected
+                                const diff = value.diff || 0;
+                                
+                                // Track rounding direction
+                                if (diff > 0.01) {
+                                    roundingUp++;
+                                } else if (diff < -0.01) {
+                                    roundingDown++;
+                                }
+                                
+                                // Add to all diffs for statistics
+                                allDiffs.push(Math.abs(diff));
+                                
+                                // Track max difference
+                                if (Math.abs(diff) > result.maxDifference) {
+                                    result.maxDifference = Math.abs(diff);
+                                }
+                                
+                                // Add to values
+                                result.values.push({
+                                    tool: toolName,
+                                    pairIndex: value.pairIndex,
+                                    value: value.value,
+                                    diff: diff
+                                });
+                            }
+                        });
+                        
+                        // Determine rounding tendency for this tool
+                        if (roundingUp > roundingDown && roundingUp > 0) {
+                            result.toolsRoundingUp.push(toolName);
+                        } else if (roundingDown > roundingUp && roundingDown > 0) {
+                            result.toolsRoundingDown.push(toolName);
+                        }
+                    }
+                });
+                
+                // Calculate average difference
+                if (allDiffs.length > 0) {
+                    result.avgDifference = allDiffs.reduce((sum, diff) => sum + diff, 0) / allDiffs.length;
+                }
+                
+                return result;
+            }
+            
+            // Process data for display
+            function processData(data) {
+                // Set global stats
+                if (data.analysis && data.analysis.global) {
+                    maxDifferenceElement.textContent = data.analysis.global.maxDifference?.toFixed(2) || '0.00';
+                    avgDifferenceElement.textContent = data.analysis.global.avgDifference?.toFixed(2) || '0.00';
+                    thresholdDisagreementsElement.textContent = data.analysis.global.thresholdDisagreementCount || '0';
+                }
+                
+                // Get active tools
+                const activeTools = [];
+                if (data.analysis && data.analysis.tools) {
+                    Object.keys(data.analysis.tools).forEach(tool => {
+                        if (data.analysis.tools[tool].values && data.analysis.tools[tool].values.length > 0) {
+                            activeTools.push(tool);
+                        }
+                    });
+                }
+                
+                // Populate tools list
+                toolsListElement.innerHTML = activeTools.map(tool => `
+                    <div class="tool-tag">${tool}</div>
+                `).join('');
+                
+                // Generate category tabs
+                const categoryKeys = Object.keys(categoryNames);
+                categoryTabsElement.innerHTML = categoryKeys.map((key, index) => `
+                    <button 
+                        class="category-tab ${index === 0 ? 'active' : ''}" 
+                        data-category="${key}"
+                    >
+                        ${categoryNames[key]}
+                    </button>
+                `).join('');
+                
+                // Set up category tab click events
+                document.querySelectorAll('.category-tab').forEach(tab => {
+                    tab.addEventListener('click', function() {
+                        // Update active tab
+                        document.querySelectorAll('.category-tab').forEach(t => t.classList.remove('active'));
+                        this.classList.add('active');
+                        
+                        // Show selected category content
+                        document.querySelectorAll('.data-category').forEach(c => c.classList.remove('active'));
+                        document.getElementById(`category-${this.dataset.category}`).classList.add('active');
+                    });
+                });
+                
+                // Generate content for each category
+                categoryContentElement.innerHTML = '';
+                
+                categoryKeys.forEach((categoryKey, index) => {
+                    // Get data for this category
+                    const categoryStats = getCategoryStats(data, categoryKey);
+                    const threshold = getThresholdForCategory(categoryKey);
+                    const isActive = index === 0 ? 'active' : '';
+                    
+                    // Create category content
+                    let categoryHtml = `
+                        <div id="category-${categoryKey}" class="data-category ${isActive}">
+                            <div class="category-header">
+                                <h3 class="category-title">${categoryNames[categoryKey]} Data Collection Table</h3>
+                            </div>
+                    `;
+                    
+                    if (categoryStats.values.length > 0) {
+                        // Add variance analysis
+                        categoryHtml += `
+                            <div class="variance-analysis">
+                                <div class="analysis-card">
+                                    <h4>Maximum Difference</h4>
+                                    <p>${categoryStats.maxDifference.toFixed(2)}</p>
+                                </div>
+                                <div class="analysis-card">
+                                    <h4>Average Difference</h4>
+                                    <p>${categoryStats.avgDifference.toFixed(2)}</p>
+                                </div>
+                            </div>
+                            
+                            <div class="tools-section">
+                                <div class="analysis-card">
+                                    <h4>Tools Rounding Up</h4>
+                                    ${categoryStats.toolsRoundingUp.length > 0 ? `
+                                        <ul class="tool-list">
+                                            ${categoryStats.toolsRoundingUp.map(tool => `
+                                                <li>${tool}</li>
+                                            `).join('')}
+                                        </ul>
+                                    ` : '<p>None</p>'}
+                                </div>
+                                <div class="analysis-card">
+                                    <h4>Tools Rounding Down</h4>
+                                    ${categoryStats.toolsRoundingDown.length > 0 ? `
+                                        <ul class="tool-list">
+                                            ${categoryStats.toolsRoundingDown.map(tool => `
+                                                <li>${tool}</li>
+                                            `).join('')}
+                                        </ul>
+                                    ` : '<p>None</p>'}
+                                </div>
+                            </div>
+                            
+                            <div class="table-container">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Tool</th>
+                                            ${colorContrastData[categoryKey].map((pair, i) => `
+                                                <th>
+                                                    <div class="color-pair">
+                                                        <div class="color-swatch" style="background-color: ${pair.fg}"></div>
+                                                        <div class="color-swatch" style="background-color: ${pair.bg}"></div>
+                                                    </div>
+                                                    <div class="color-hex">
+                                                        ${pair.fg}/${pair.bg}<br>
+                                                        (~${pair.expected.toFixed(2)}:1)
+                                                    </div>
+                                                </th>
+                                            `).join('')}
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${Object.values(categoryStats.values.reduce((toolRows, value) => {
+                                            // Group values by tool
+                                            if (!toolRows[value.tool]) {
+                                                toolRows[value.tool] = {
+                                                    tool: value.tool,
+                                                    values: {}
+                                                };
+                                            }
+                                            
+                                            // Store value by pair index
+                                            if (typeof value.pairIndex === 'number' && value.pairIndex >= 0) {
+                                                toolRows[value.tool].values[value.pairIndex] = value;
+                                            }
+                                            return toolRows;
+                                        }, {})).map(toolData => `
+                                            <tr>
+                                                <td>${toolData.tool}</td>
+                                                ${colorContrastData[categoryKey].map((pair, pairIndex) => {
+                                                    const value = toolData.values[pairIndex];
+                                                    if (!value) return '<td>-</td>';
+                                                    
+                                                    // Determine if difference is significant
+                                                    const isSignificant = Math.abs(value.diff) > 0.1;
+                                                    const diffClass = value.diff > 0 ? 'positive-diff' : value.diff < 0 ? 'negative-diff' : '';
+                                                    const rowClass = isSignificant ? 'highlighted-row' : '';
+                                                    const diffPrefix = value.diff > 0 ? '+' : '';
+                                                    
+                                                    // Determine pass/fail status
+                                                    const passes = value.value >= threshold;
+                                                    const expectedPasses = pair.expected >= threshold;
+                                                    const passFailMatch = passes === expectedPasses;
+                                                    
+                                                    return `
+                                                        <td class="${rowClass}">
+                                                            <div class="contrast-sample">
+                                                                <div class="contrast-sample-text" style="color: ${pair.fg}; background-color: ${pair.bg};">
+                                                                    Sample Text
+                                                                </div>
+                                                                <div class="contrast-ratio">
+                                                                    ${value.value.toFixed(2)}:1
+                                                                    <span class="pass-indicator ${passes ? 'pass' : 'fail'}">
+                                                                        ${passes ? 'PASS' : 'FAIL'}
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="${diffClass}" style="margin-top: 5px; text-align: center;">
+                                                                ${diffPrefix}${value.diff.toFixed(2)}
+                                                                ${isSignificant ? '<span class="significant-indicator">!</span>' : ''}
+                                                            </div>
+                                                        </td>
+                                                    `;
+                                                }).join('')}
+                                            </tr>
+                                        `).join('')}
+                                    </tbody>
+                                    <tfoot>
+                                        <tr class="expected-row">
+                                            <td>Expected Value</td>
+                                            ${colorContrastData[categoryKey].map(pair => `
+                                                <td>${pair.expected.toFixed(2)}:1</td>
+                                            `).join('')}
+                                        </tr>
+                                        <tr class="pass-fail-row">
+                                            <td>WCAG AA Pass/Fail (${threshold}:1)</td>
+                                            ${colorContrastData[categoryKey].map(pair => {
+                                                const passes = pair.expected >= threshold;
+                                                return `
+                                                    <td class="${passes ? 'pass' : 'fail'}">
+                                                        ${passes ? 'PASS' : 'FAIL'}
+                                                    </td>
+                                                `;
+                                            }).join('')}
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        `;
+                    } else {
+                        categoryHtml += `
+                            <div class="no-data-message">
+                                <p>No data available for this category.</p>
+                            </div>
+                        `;
+                    }
+                    
+                    // Close category div
+                    categoryHtml += `</div>`;
+                    
+                    // Add to category content
+                    categoryContentElement.innerHTML += categoryHtml;
+                });
+            }
+            
+            // Optional: Add test data loading for development
+            /*
+            document.addEventListener('keydown', function(e) {
+                // Press Ctrl+Shift+T to load test data
+                if (e.ctrlKey && e.shiftKey && e.key === 'T') {
+                    fetch('contrast-analysis-data.json')
+                        .then(response => response.json())
+                        .then(data => {
+                            contrastData = data;
+                            showStatus('Test data loaded successfully!', 'success');
+                            exportButton.style.display = 'inline-block';
+                            previewContainer.style.display = 'block';
+                            processData(data);
+                        })
+                        .catch(error => {
+                            showStatus('Error loading test data: ' + error.message, 'error');
+                        });
+                }
+            });
+            */
+        });
+    </script>
+</body>
+</html>

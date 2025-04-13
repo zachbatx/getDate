@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+
+        .contrastingColors {
+            padding: 5px 10px;
+            display: inline-block;
+            margin: 5px 0;
+            border-radius: 3px;
+            font-family: sans-serif;
+            font-size: 14px;
+            font-weight: bold;
+        }
+    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+
+<div class name="contrastingColors">
+    <p>Here is a color pair: #FF5733/#C70039</p>
+    </div>{
+    constructor(parameters) {
+        
+    }
+}
+<script>
+/**
+ * Script to find hex color pairs and create contrast sample divs
+ * - Only applies color to the contrastingColors div
+ * - Runs once at page load to prevent freezing
+ */
+ document.addEventListener('DOMContentLoaded', function() {
+  // Add CSS for contrast divs
+  const style = document.createElement('style');
+  style.textContent = `
+    .contrastingColors {
+      padding: 5px 10px;
+      display: inline-block;
+      margin: 5px 0;
+      border-radius: 3px;
+      font-family: sans-serif;
+    }
+  `;
+  document.head.appendChild(style);
+  
+  // Track processed nodes to avoid reprocessing
+  const processedNodes = new WeakSet();
+  
+  // Find all text nodes containing color hex pairs
+  findAndProcessColorPairs();
+  
+  function findAndProcessColorPairs() {
+    // Create a tree walker to find text nodes
+    const treeWalker = document.createTreeWalker(
+      document.body,
+      NodeFilter.SHOW_TEXT,
+      {
+        acceptNode: function(node) {
+          // Skip empty nodes, scripts, styles, and already processed nodes
+          if (node.nodeValue.trim() === '') return NodeFilter.FILTER_SKIP;
+          if (node.parentNode.nodeName === 'SCRIPT' || 
+              node.parentNode.nodeName === 'STYLE' ||
+              node.parentNode.className === 'contrastingColors' ||
+              processedNodes.has(node)) {
+            return NodeFilter.FILTER_SKIP;
+          }
+          return NodeFilter.FILTER_ACCEPT;
+        }
+      }
+    );
+    
+    // Find all text nodes with hex color pairs
+    const nodesToProcess = [];
+    let currentNode;
+    
+    while ((currentNode = treeWalker.nextNode())) {
+      // Match quoted or unquoted hex pairs formatted as #XXXXXX/#YYYYYY
+      if (/["']?#[0-9A-Fa-f]{6}\/#[0-9A-Fa-f]{6}["']?/.test(currentNode.nodeValue)) {
+        nodesToProcess.push(currentNode);
+      }
+    }
+    
+    // Process each node that contains hex color pairs
+    nodesToProcess.forEach(function(textNode) {
+      // Mark as processed to avoid reprocessing
+      processedNodes.add(textNode);
+      processColorPairNode(textNode);
+    });
+  }
+  
+  function processColorPairNode(textNode) {
+    const text = textNode.nodeValue;
+    // Regex to match hex color pairs with capturing groups
+    const regex = /(["']?)(#[0-9A-Fa-f]{6})\/(#[0-9A-Fa-f]{6})(["']?)/g;
+    
+    const fragment = document.createDocumentFragment();
+    let lastIndex = 0;
+    let match;
+    
+    // Process each color pair match in the text
+    while ((match = regex.exec(text)) !== null) {
+      // Add any text before this match
+      if (match.index > lastIndex) {
+        fragment.appendChild(document.createTextNode(text.substring(lastIndex, match.index)));
+      }
+      
+      // Extract the matched parts
+      const openQuote = match[1] || '';
+      const foreground = match[2];    // First hex code (text color)
+      const background = match[3];    // Second hex code (background color)
+      const closeQuote = match[4] || '';
+      
+      // Add the original color pair text
+      const originalText = document.createTextNode(openQuote + foreground + '/' + background + closeQuote);
+      fragment.appendChild(originalText);
+      
+      // Create the sample div with the colors applied
+      const contrastDiv = document.createElement('div');
+      contrastDiv.className = 'contrastingColors';
+      contrastDiv.textContent = 'Sample';
+      contrastDiv.style.color = foreground;         // Set text color
+      contrastDiv.style.backgroundColor = background;  // Set background color
+      
+      // Add the div and a line break
+      fragment.appendChild(contrastDiv);
+      fragment.appendChild(document.createElement('br'));
+      
+      lastIndex = match.index + match[0].length;
+    }
+    
+    // Add any remaining text after the last match
+    if (lastIndex < text.length) {
+      fragment.appendChild(document.createTextNode(text.substring(lastIndex)));
+    }
+    
+    // Replace the original text node with our fragment
+    if (textNode.parentNode) {
+      textNode.parentNode.replaceChild(fragment, textNode);
+    }
+  }
+});
+
+</script>
+    
+</body>
+</html>

@@ -36,3 +36,48 @@ window.addEventListener('message', (event) => {
     document.head.appendChild(styleEl);
   }
 });
+
+
+const myIframe = document.getElementById('mySameOriginIframe');
+
+myIframe.addEventListener('load', function() {
+  try {
+    // Access the iframe's document
+    const iframeDoc = myIframe.contentDocument || myIframe.contentWindow.document;
+
+    if (!iframeDoc) {
+      console.error("Could not access iframe document.");
+      return;
+    }
+
+    // --- Option 1: Inject a <style> tag ---
+    const style = iframeDoc.createElement('style');
+    style.textContent = `
+      body {
+        background-color: lightblue !important;
+        font-family: sans-serif !important;
+      }
+      h1 {
+        color: navy !important;
+      }
+      /* Add more styles here */
+    `;
+    iframeDoc.head.appendChild(style);
+
+    // --- Option 2: Directly manipulate element styles ---
+    const heading = iframeDoc.querySelector('h1');
+    if (heading) {
+      heading.style.borderBottom = '2px solid red';
+    }
+
+    console.log("Styles applied to same-origin iframe.");
+
+  } catch (e) {
+    // This catch block might run if there's an unexpected issue,
+    // even on the same origin, though direct SOP errors are less likely here.
+    console.error("Error accessing or styling same-origin iframe:", e);
+  }
+});
+
+// Make sure the iframe has an ID
+// <iframe id="mySameOriginIframe" src="/path/on/same/domain.html"></iframe>

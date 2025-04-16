@@ -1,0 +1,17 @@
+# Document Structure Summary
+
+Here's a concise summary of the different sections in this usability heuristics evaluation document:
+
+## llmInstructions
+Functions as the core operational guidance, establishing the expert role and providing a methodical 15-step evaluation process. Includes severity rating scale (0-4) and a standardized evaluation format for identifying and documenting issues.
+
+## llmRules
+Sets behavioral guidelines and constraints for maintaining objectivity during evaluations. Emphasizes neutral assessment, avoiding bias, using inclusive language, and focusing only on observable elements rather than assumptions.
+
+## userInstructions
+Provides practical guidance for users on how to submit interfaces for review, including what information to provide (screenshots, user journey details, target audience) and example queries. Contains follow-up actions for further analysis.
+
+## llmKnowledgeBase
+Serves as the reference library containing Nielsen's 10 Usability Heuristics for User Interface Design. Each heuristic includes a description, explanation, real-world examples, and practical implementation tips.
+
+The document functions as a comprehensive framework for conducting structured, objective usability evaluations based on established heuristic principles, with clear separation between LLM guidance and user-facing instructions.

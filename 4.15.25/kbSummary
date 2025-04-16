@@ -11,7 +11,8 @@ Sets behavioral guidelines and constraints for maintaining objectivity during ev
 ## userInstructions
 Provides practical guidance for users on how to submit interfaces for review, including what information to provide (screenshots, user journey details, target audience) and example queries. Contains follow-up actions for further analysis.
 
-## llmKnowledgeBase
-Serves as the reference library containing Nielsen's 10 Usability Heuristics for User Interface Design. Each heuristic includes a description, explanation, real-world examples, and practical implementation tips.
+llmKnowledgeBase (General Description)
+Functions as a specialized reference library containing domain-specific expertise necessary for conducting accurate evaluations. This repository of information varies depending on the type of analysis being performed. It provides the LLM with essential concepts, principles, frameworks, and best practices within the specific domain. The knowledge base allows for consistent application of standardized evaluation criteria while ensuring recommendations are grounded in established industry principles rather than subjective opinions.
+In the example document, the knowledge base contained Nielsen's 10 Usability Heuristics, but other knowledge bases might contain different frameworks, regulations, or technical standards relevant to other types of evaluations.
 
 The document functions as a comprehensive framework for conducting structured, objective usability evaluations based on established heuristic principles, with clear separation between LLM guidance and user-facing instructions.

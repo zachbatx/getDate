@@ -1,0 +1,573 @@
+javascript:(function(){
+    if(document.getElementById('llmPrimer-panel')){
+        const a=document.getElementById('llmPrimer-panel');
+        a.style.display=a.style.display==='none'?'block':'none';
+        return
+    }
+    
+    const b=document.createElement('script');
+    b.src='new_gm_llmPrimer_bkm_kbLoader_v2.0_4.14.25.js';
+    document.head.appendChild(b);
+    b.onload=c;
+    b.onerror=function(){alert('Failed to load knowledge base data.')};
+    
+    function c(){
+        try{
+            const a=document.createElement('div');
+            a.id='llmPrimer-panel';
+            a.style.position='fixed';
+            a.style.top='20px';
+            a.style.right='20px';
+            a.style.width='300px';
+            a.style.backgroundColor='#fff';
+            a.style.border='1px solid #ccc';
+            a.style.borderRadius='5px';
+            a.style.padding='15px';
+            a.style.boxShadow='0 4px 8px rgba(0,0,0,.1)';
+            a.style.zIndex='10000';
+            a.style.fontFamily='Arial,sans-serif';
+            a.style.fontSize='14px';
+            a.style.color='#333';
+            
+            const b=document.createElement('div');
+            b.style.display='flex';
+            b.style.justifyContent='space-between';
+            b.style.alignItems='center';
+            b.style.marginBottom='15px';
+            
+            const c=document.createElement('h3');
+            c.textContent='llmPrimer';
+            c.style.margin='0';
+            c.style.fontSize='16px';
+            c.style.fontWeight='bold';
+            b.appendChild(c);
+            
+            const d=document.createElement('div');
+            d.style.display='flex';
+            d.style.gap='5px';
+            
+            const e=document.createElement('button');
+            e.id='llmPrimer-theme-btn';
+            e.innerHTML='<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>';
+            e.title='Toggle theme';
+            e.style.border='none';
+            e.style.background='none';
+            e.style.cursor='pointer';
+            e.style.fontSize='16px';
+            e.addEventListener('click',u);
+            d.appendChild(e);
+            
+            const f=document.createElement('button');
+            f.id='llmPrimer-toggle-btn';
+            f.innerHTML='<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/></svg>';
+            f.title='Toggle panel';
+            f.style.border='none';
+            f.style.background='none';
+            f.style.cursor='pointer';
+            f.style.fontSize='16px';
+            f.addEventListener('click',v);
+            d.appendChild(f);
+            
+            const g=document.createElement('button');
+            g.id='llmPrimer-close-btn';
+            g.innerText='✕';
+            g.title='Close panel';
+            g.style.border='none';
+            g.style.background='none';
+            g.style.cursor='pointer';
+            g.style.fontSize='16px';
+            g.addEventListener('click',w);
+            d.appendChild(g);
+            
+            b.appendChild(d);
+            a.appendChild(b);
+            
+            const h=document.createElement('label');
+            h.textContent='Select Category:';
+            h.style.display='block';
+            h.style.marginBottom='5px';
+            h.style.fontSize='14px';
+            a.appendChild(h);
+            
+            const i=document.createElement('select');
+            i.className='categorySelect';
+            i.style.width='100%';
+            i.style.padding='5px';
+            i.style.marginBottom='15px';
+            i.style.borderRadius='3px';
+            i.style.border='1px solid #ccc';
+            
+            const j=document.createElement('option');
+            j.value='';
+            j.textContent='-- Select a category --';
+            i.appendChild(j);
+            
+            if(typeof kbCategory==='undefined'||!Array.isArray(kbCategory)){
+                throw new Error('Knowledge base categories not found')
+            }
+            
+            kbCategory.forEach(a=>{
+                const b=document.createElement('option');
+                b.value=a.id;
+                b.textContent=a.title;
+                i.appendChild(b)
+            });
+            
+            a.appendChild(i);
+            
+            const k=document.createElement('label');
+            k.textContent='Select Knowledge Base:';
+            k.style.display='block';
+            k.style.marginBottom='5px';
+            k.style.fontSize='14px';
+            a.appendChild(k);
+            
+            const l=document.createElement('select');
+            l.className='knowledgeBaseSelect';
+            l.style.width='100%';
+            l.style.padding='5px';
+            l.style.marginBottom='15px';
+            l.style.borderRadius='3px';
+            l.style.border='1px solid #ccc';
+            l.disabled=true;
+            
+            const m=document.createElement('option');
+            m.value='';
+            m.textContent='-- Select a knowledge base --';
+            l.appendChild(m);
+            a.appendChild(l);
+            
+            const n=document.createElement('div');
+            n.style.display='flex';
+            n.style.justifyContent='space-between';
+            n.style.gap='10px';
+            
+            const o=document.createElement('button');
+            o.id='llmPrimer-inject-btn';
+            o.innerText='Inject Prompt';
+            o.style.padding='8px 15px';
+            o.style.borderRadius='3px';
+            o.style.border='1px solid #ccc';
+            o.style.backgroundColor='#f0f0f0';
+            o.style.cursor='pointer';
+            o.style.flex='1';
+            o.disabled=true;
+            o.addEventListener('click',r);
+            n.appendChild(o);
+            
+            const p=document.createElement('button');
+            p.id='llmPrimer-copy-btn';
+            p.innerText='Copy Prompt';
+            p.style.padding='8px 15px';
+            p.style.borderRadius='3px';
+            p.style.border='1px solid #ccc';
+            p.style.backgroundColor='#f0f0f0';
+            p.style.cursor='pointer';
+            p.style.flex='1';
+            p.disabled=true;
+            p.addEventListener('click',t);
+            n.appendChild(p);
+            
+            a.appendChild(n);
+            document.body.appendChild(a);
+            
+            i.addEventListener('change',function(){
+                z(this.value);
+                l.disabled=!this.value;
+                o.disabled=true;
+                p.disabled=true
+            });
+            
+            l.addEventListener('change',function(){
+                loadMarkdownContent(this.value).then(() => {
+                    o.disabled=!this.value;
+                    p.disabled=!this.value;
+                }).catch(err => {
+                    console.error("Error loading markdown:", err);
+                    alert('Failed to load knowledge base content.');
+                });
+            });
+            
+            if(typeof kbDomain==='undefined'||!Array.isArray(kbDomain)){
+                throw new Error('Knowledge base domains not found')
+            }
+            
+            if(kbCategory.length>0){
+                i.value=kbCategory[0].id;
+                z(kbCategory[0].id);
+                l.disabled=false
+            }
+            
+            x()
+        }catch(a){
+            console.error('Error:',a);
+            alert('Failed to initialize: '+a.message)
+        }
+    }
+    
+    // Function to load markdown content from external file
+    async function loadMarkdownContent(knowledgeBaseId) {
+        try {
+            if (!knowledgeBaseId) return false;
+            
+            const kb = kbDomain.find(a => a.id === knowledgeBaseId);
+            if (!kb) return false;
+            
+            // If already loaded, don't reload
+            if (kb.markDown && kb.markDown.length > 0) {
+                return true;
+            }
+            
+            // If already loading, wait for it
+            if (kbLoaded[knowledgeBaseId]) {
+                return kbLoaded[knowledgeBaseId];
+            }
+            
+            // Load the markdown file
+            kbLoaded[knowledgeBaseId] = new Promise((resolve, reject) => {
+                const script = document.createElement('script');
+                script.src = kb.markDownUrl;
+                
+                script.onload = function() {
+                    // After loading, the file should have set a global variable with the markdown content
+                    const globalVarName = 'kb_' + knowledgeBaseId;
+                    if (window[globalVarName]) {
+                        kb.markDown = window[globalVarName];
+                        resolve(true);
+                    } else {
+                        reject(new Error('Markdown content not found after loading file'));
+                    }
+                };
+                
+                script.onerror = function() {
+                    reject(new Error('Failed to load markdown file'));
+                };
+                
+                document.head.appendChild(script);
+            });
+            
+            return kbLoaded[knowledgeBaseId];
+        } catch (error) {
+            console.error("Error loading markdown:", error);
+            throw error;
+        }
+    }
+    
+    function z(a){
+        try{
+            const b=document.querySelector('.knowledgeBaseSelect');
+            if(!b){
+                throw new Error('Select element not found')
+            }
+            
+            while(b.options.length>1){
+                b.remove(1)
+            }
+            
+            const c=kbDomain.filter(b=>b.category===a);
+            c.forEach(a=>{
+                const c=document.createElement('option');
+                c.value=a.id;
+                c.textContent=a.title;
+                b.appendChild(c)
+            });
+            
+            if(c.length>0){
+                b.value=c[0].id;
+                loadMarkdownContent(c[0].id).then(() => {
+                    const a=document.getElementById('llmPrimer-inject-btn');
+                    const d=document.getElementById('llmPrimer-copy-btn');
+                    if(a&&d){
+                        a.disabled=false;
+                        d.disabled=false
+                    }
+                }).catch(error => {
+                    console.error("Error loading initial markdown:", error);
+                });
+            }
+        }catch(a){
+            console.error('Error:',a);
+            alert('Failed to populate: '+a.message)
+        }
+    }
+    
+    function q(){
+        try{
+            const a=document.querySelector('.knowledgeBaseSelect');
+            if(!a){
+                throw new Error('Select element not found')
+            }
+            
+            const b=a.value;
+            if(!b){
+                return''
+            }
+            
+            const c=kbDomain.find(a=>a.id===b);
+            return c ? c.markDown : '';
+        }catch(a){
+            console.error('Error:',a);
+            return''
+        }
+    }
+    
+    function p(){
+        console.log('Prompt injected')
+    }
+    
+    function r(){
+        y()
+    }
+    
+    async function y(){
+        try{
+            const a=q();
+            if(!a){
+                alert('No knowledge base selected or markdown content found.');
+                return
+            }
+            
+            const c=document.querySelector("#dialog-input-textarea");
+            if(!c){
+                alert("Target placeholder not found!");
+                return
+            }
+            
+            c.innerText=a;
+            c.dispatchEvent(new Event("input",{bubbles:true}));
+            
+            setTimeout(()=>{
+                const a=document.querySelector('button[data-testid="dialog-input-send"]');
+                if(a){
+                    a.click();
+                    p()
+                }else{
+                    alert("Send button not found!")
+                }
+            },100)
+        }catch(a){
+            console.error('Error:',a);
+            alert('Failed to inject: '+a.message);
+            return
+        }
+    }
+    
+    async function t(){
+        try{
+            const a=q();
+            if(!a){
+                alert('No knowledge base selected!');
+                return
+            }
+            
+            if(navigator.clipboard&&navigator.clipboard.writeText){
+                navigator.clipboard.writeText(a).then(()=>{
+                    const a=document.getElementById('llmPrimer-copy-btn');
+                    if(a){
+                        const b=a.innerText;
+                        a.innerText='✓ Copied!';
+                        setTimeout(()=>{
+                            a.innerText=b
+                        },2000)
+                    }else{
+                        alert('Copied!')
+                    }
+                }).catch(a=>{
+                    console.error('Error:',a);
+                    alert('Failed to copy: '+a.message)
+                })
+            }else{
+                const c=document.createElement('textarea');
+                c.value=a;
+                c.style.position='fixed';
+                c.style.left='-999999px';
+                c.style.top='-999999px';
+                document.body.appendChild(c);
+                c.focus();
+                c.select();
+                let d=false;
+                try{
+                    d=document.execCommand('copy')
+                }catch(a){
+                    console.error('Error:',a)
+                }
+                document.body.removeChild(c);
+                if(d){
+                    const c=document.getElementById('llmPrimer-copy-btn');
+                    if(c){
+                        const a=c.innerText;
+                        c.innerText='✓ Copied!';
+                        setTimeout(()=>{
+                            c.innerText=a
+                        },2000)
+                    }else{
+                        alert('Copied!')
+                    }
+                }else{
+                    alert('Failed to copy text. Try again.')
+                }
+            }
+        }catch(a){
+            console.error('Error:',a);
+            alert('Failed to copy: '+a.message)
+        }
+    }
+    
+    function u(){
+        try{
+            const a=document.getElementById('llmPrimer-panel');
+            if(!a){
+                throw new Error('Panel not found')
+            }
+            
+            const b=a.getAttribute('data-theme')==='dark';
+            if(b){
+                a.setAttribute('data-theme','light');
+                a.style.backgroundColor='#fff';
+                a.style.color='#333';
+                a.style.border='1px solid #ccc';
+                
+                const b=a.querySelectorAll('button:not([id=\"llmPrimer-theme-btn\"]):not([id=\"llmPrimer-toggle-btn\"]):not([id=\"llmPrimer-close-btn\"])');
+                b.forEach(a=>{
+                    a.style.backgroundColor='#f0f0f0';
+                    a.style.color='#333';
+                    a.style.border='1px solid #ccc'
+                });
+                
+                const c=a.querySelectorAll('select');
+                c.forEach(a=>{
+                    a.style.backgroundColor='#fff';
+                    a.style.color='#333';
+                    a.style.border='1px solid #ccc'
+                });
+                
+                const d=document.getElementById('llmPrimer-theme-btn');
+                d.innerHTML='<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"12\" cy=\"12\" r=\"5\"/><line x1=\"12\" y1=\"1\" x2=\"12\" y2=\"3\"/><line x1=\"12\" y1=\"21\" x2=\"12\" y2=\"23\"/><line x1=\"4.22\" y1=\"4.22\" x2=\"5.64\" y2=\"5.64\"/><line x1=\"18.36\" y1=\"18.36\" x2=\"19.78\" y2=\"19.78\"/><line x1=\"1\" y1=\"12\" x2=\"3\" y2=\"12\"/><line x1=\"21\" y1=\"12\" x2=\"23\" y2=\"12\"/><line x1=\"4.22\" y1=\"19.78\" x2=\"5.64\" y2=\"18.36\"/><line x1=\"18.36\" y1=\"5.64\" x2=\"19.78\" y2=\"4.22\"/></svg>'
+            }else{
+                a.setAttribute('data-theme','dark');
+                a.style.backgroundColor='#333';
+                a.style.color='#fff';
+                a.style.border='1px solid #555';
+                
+                const b=a.querySelectorAll('button:not([id=\"llmPrimer-theme-btn\"]):not([id=\"llmPrimer-toggle-btn\"]):not([id=\"llmPrimer-close-btn\"])');
+                b.forEach(a=>{
+                    a.style.backgroundColor='#444';
+                    a.style.color='#fff';
+                    a.style.border='1px solid #666'
+                });
+                
+                const c=a.querySelectorAll('select');
+                c.forEach(a=>{
+                    a.style.backgroundColor='#444';
+                    a.style.color='#fff';
+                    a.style.border='1px solid #666'
+                });
+                
+                const d=document.getElementById('llmPrimer-theme-btn');
+                d.innerHTML='<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z\"/></svg>'
+            }
+            
+            localStorage.setItem('llmPrimer-theme',b?'light':'dark')
+        }catch(a){
+            console.error('Error:',a)
+        }
+    }
+    
+    function x(){
+        try{
+            const a=document.getElementById('llmPrimer-panel');
+            if(!a){
+                throw new Error('Panel not found')
+            }
+            
+            const b=localStorage.getItem('llmPrimer-theme')||'light';
+            if(b==='dark'){
+                a.setAttribute('data-theme','dark');
+                a.style.backgroundColor='#333';
+                a.style.color='#fff';
+                a.style.border='1px solid #555';
+                
+                const b=a.querySelectorAll('button:not([id=\"llmPrimer-theme-btn\"]):not([id=\"llmPrimer-toggle-btn\"]):not([id=\"llmPrimer-close-btn\"])');
+                b.forEach(a=>{
+                    a.style.backgroundColor='#444';
+                    a.style.color='#fff';
+                    a.style.border='1px solid #666'
+                });
+                
+                const c=a.querySelectorAll('select');
+                c.forEach(a=>{
+                    a.style.backgroundColor='#444';
+                    a.style.color='#fff';
+                    a.style.border='#666'
+                });
+                
+                const d=document.getElementById('llmPrimer-theme-btn');
+                d.innerHTML='<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z\"/></svg>'
+            }else{
+                a.setAttribute('data-theme','light');
+                a.style.backgroundColor='#fff';
+                a.style.color='#333';
+                a.style.border='1px solid #ccc';
+                
+                const b=a.querySelectorAll('button:not([id=\"llmPrimer-theme-btn\"]):not([id=\"llmPrimer-toggle-btn\"]):not([id=\"llmPrimer-close-btn\"])');
+                b.forEach(a=>{
+                    a.style.backgroundColor='#f0f0f0';
+                    a.style.color='#333';
+                    a.style.border='1px solid #ccc'
+                });
+                
+                const c=a.querySelectorAll('select');
+                c.forEach(a=>{
+                    a.style.backgroundColor='#fff';
+                    a.style.color='#333';
+                    a.style.border='1px solid #ccc'
+                });
+                
+                const d=document.getElementById('llmPrimer-theme-btn');
+                d.innerHTML='<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"12\" cy=\"12\" r=\"5\"/><line x1=\"12\" y1=\"1\" x2=\"12\" y2=\"3\"/><line x1=\"12\" y1=\"21\" x2=\"12\" y2=\"23\"/><line x1=\"4.22\" y1=\"4.22\" x2=\"5.64\" y2=\"5.64\"/><line x1=\"18.36\" y1=\"18.36\" x2=\"19.78\" y2=\"19.78\"/><line x1=\"1\" y1=\"12\" x2=\"3\" y2=\"12\"/><line x1=\"21\" y1=\"12\" x2=\"23\" y2=\"12\"/><line x1=\"4.22\" y1=\"19.78\" x2=\"5.64\" y2=\"18.36\"/><line x1=\"18.36\" y1=\"5.64\" x2=\"19.78\" y2=\"4.22\"/></svg>'
+            }
+        }catch(a){
+            console.error('Error:',a)
+        }
+    }
+    
+    function v(){
+        try{
+            const a=document.getElementById('llmPrimer-panel');
+            if(!a){
+                throw new Error('Panel not found')
+            }
+            
+            const b=Array.from(a.children).slice(1);
+            const c=a.getAttribute('data-minimized')==='true';
+            const d=document.getElementById('llmPrimer-toggle-btn');
+            
+            if(c){
+                b.forEach(a=>{
+                    a.style.display=''
+                });
+                a.setAttribute('data-minimized','false');
+                d.innerHTML='<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"3\" y=\"3\" width=\"18\" height=\"18\" rx=\"2\" ry=\"2\"/><line x1=\"3\" y1=\"9\" x2=\"21\" y2=\"9\"/></svg>'
+            }else{
+                b.forEach(a=>{
+                    a.style.display='none'
+                });
+                a.setAttribute('data-minimized','true');
+                d.innerHTML='<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"3\" y=\"3\" width=\"18\" height=\"18\" rx=\"2\" ry=\"2\"/><line x1=\"9\" y1=\"3\" x2=\"9\" y2=\"21\"/></svg>'
+            }
+        }catch(a){
+            console.error('Error:',a)
+        }
+    }
+    
+    function w(){
+        try{
+            const a=document.getElementById('llmPrimer-panel');
+            if(a){
+                a.remove()
+            }
+        }catch(a){
+            console.error('Error:',a)
+        }
+    }
+})();

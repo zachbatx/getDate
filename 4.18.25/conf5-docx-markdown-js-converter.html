@@ -413,7 +413,7 @@
             <button id="exportBtn" class="btn" disabled>Export</button>
           </div>
         </div>
-        <div class="export-type-selector">
+        <div class="export-type-selector" style="display: none;">
           <label>Export Type:</label>
           <select id="exportTypeSelector">
             <option value="llm-primer" selected>LLM Primer Format</option>
@@ -1119,10 +1119,9 @@ if (typeof window !== 'undefined') {
       // Export file (JS Object, Markdown JS, or LLM Primer)
       function exportFile() {
         const fileNameToSave = outputFileName.value;
-        const exportType = exportTypeSelector.value;
         let jsContentToSave = '';
         
-        // Make sure we have the latest content from the editor
+        // Always make sure we have the latest content from the editor
         if (document.querySelector('.tab[data-tab="original"]').classList.contains('active')) {
           // If we're on the original tab, update from HTML
           const editedContent = editableContent.innerHTML;
@@ -1142,20 +1141,8 @@ if (typeof window !== 'undefined') {
           jsObject.name = cleanKbName;
         }
         
-        if (exportType === 'llm-primer') {
-          // Export as LLM Primer format (primary export format)
-          jsContentToSave = generateLlmPrimerCode(jsObject.name, markdownContent || '');
-        } else if (exportType === 'js-object') {
-          // Export as JS Object
-          if (currentFileSource === 'dropdown' && document.querySelector('.tab[data-tab="converted"]').classList.contains('active')) {
-            jsContentToSave = document.querySelector('.js-editor').textContent;
-          } else {
-            jsContentToSave = generateJsCode(jsObject);
-          }
-        } else if (exportType === 'markdown-js') {
-          // Export as Markdown JS
-          jsContentToSave = generateMarkdownJs(markdownContent || '', documentTitle || jsObject.name);
-        }
+        // ALWAYS use the LLM Primer format for export, regardless of the selected export type
+        jsContentToSave = generateLlmPrimerCode(jsObject.name, markdownContent || '');
 
         const jsFileBlob = new Blob([jsContentToSave], { type: 'application/javascript' });
         const finalFileName = fileNameToSave.endsWith('.js') ? fileNameToSave : `${fileNameToSave}.js`;

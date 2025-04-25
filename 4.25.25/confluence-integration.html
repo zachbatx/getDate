@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Confluence Text File Manager Integration</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      line-height: 1.5;
+      color: #172B4D;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    
+    h1 {
+      color: #0052CC;
+      border-bottom: 1px solid #DFE1E6;
+      padding-bottom: 10px;
+    }
+    
+    .code-block {
+      background-color: #F4F5F7;
+      border-radius: 4px;
+      padding: 15px;
+      font-family: monospace;
+      overflow-x: auto;
+      margin: 15px 0;
+    }
+    
+    .note {
+      background-color: #E6FCFF;
+      border-left: 4px solid #00B8D9;
+      padding: 10px 15px;
+      margin: 15px 0;
+      border-radius: 3px;
+    }
+    
+    #confluence-text-file-manager {
+      border: 1px solid #DFE1E6;
+      border-radius: 4px;
+      padding: 20px;
+      margin: 20px 0;
+    }
+  </style>
+</head>
+<body>
+  <h1>Confluence Text File Manager</h1>
+  
+  <p>This example shows how to integrate the Confluence Text File Manager into a Confluence page.</p>
+  
+  <div class="note">
+    <strong>Note:</strong> In a real Confluence page, you would add this via the HTML macro.
+  </div>
+  
+  <!-- Container for the Text File Manager -->
+  <div id="confluence-text-file-manager"></div>
+  
+  <!-- Instructions for Confluence Integration -->
+  <h2>How to Integrate into Confluence</h2>
+  
+  <p>To add this Text File Manager to your Confluence page:</p>
+  
+  <ol>
+    <li>Edit your Confluence page</li>
+    <li>Add an HTML macro</li>
+    <li>Paste the following code into the HTML macro:</li>
+  </ol>
+  
+  <div class="code-block">
+    <pre>&lt;div id="confluence-text-file-manager"&gt;&lt;/div&gt;
+
+&lt;script&gt;
+// Configuration
+const textFileManagerConfig = {
+  confluenceUrl: 'https://your-confluence-instance.atlassian.net',
+  apiToken: 'YOUR_API_TOKEN',
+  pageId: 'YOUR_PAGE_ID',
+  containerId: 'confluence-text-file-manager'
+};
+
+// Function to load the script
+function loadTextFileManagerScript() {
+  const script = document.createElement('script');
+  script.src = 'https://path-to-your-hosted-script/confluence-text-file-manager.js';
+  script.onload = function() {
+    // Initialize the Text File Manager when the script is loaded
+    initConfluenceTextFileManager(textFileManagerConfig);
+  };
+  document.head.appendChild(script);
+}
+
+// Load the script when the page is ready
+document.addEventListener('DOMContentLoaded', loadTextFileManagerScript);
+&lt;/script&gt;</pre>
+  </div>
+  
+  <h2>Hosting the Script</h2>
+  
+  <p>You have several options for hosting the JavaScript file:</p>
+  
+  <ol>
+    <li><strong>Attach to the Confluence page:</strong> Upload the JS file as an attachment to your Confluence page, then reference it using the attachment URL.</li>
+    <li><strong>Host on a web server:</strong> Host the file on your organization's web server.</li>
+    <li><strong>Use a CDN:</strong> Host the file on a content delivery network.</li>
+  </ol>
+  
+  <div class="note">
+    <strong>Security Note:</strong> Make sure your API token has appropriate permissions and is securely stored. For production use, consider implementing proper authentication handling rather than embedding the token directly in the script.
+  </div>
+  
+  <h2>Alternative: Embedding the Script</h2>
+  
+  <p>Alternatively, you can embed the entire script in your Confluence page's HTML macro:</p>
+  
+  <div class="code-block">
+    <pre>&lt;div id="confluence-text-file-manager"&gt;&lt;/div&gt;
+
+&lt;script&gt;
+// Paste the entire contents of confluence-text-file-manager.js here
+
+// Then initialize:
+document.addEventListener('DOMContentLoaded', function() {
+  const textFileManager = initConfluenceTextFileManager({
+    confluenceUrl: 'https://your-confluence-instance.atlassian.net',
+    apiToken: 'YOUR_API_TOKEN',
+    pageId: 'YOUR_PAGE_ID',
+    containerId: 'confluence-text-file-manager'
+  });
+});
+&lt;/script&gt;</pre>
+  </div>
+</body>
+</html>

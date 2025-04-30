@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simplified llmPrimer Architecture Map</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        h1, h2 {
+            text-align: center;
+        }
+        
+        .architecture-map {
+            margin-top: 30px;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .legend {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+        }
+        
+        /* Simple table-based layout */
+        .arch-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+        
+        .arch-table td {
+            padding: 10px;
+            text-align: center;
+            vertical-align: middle;
+            position: relative;
+        }
+        
+        .component {
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            padding: 15px;
+            margin: 5px;
+            transition: transform 0.2s;
+            height: 100%;
+        }
+        
+        .component:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        
+        .component h3 {
+            margin-top: 0;
+            margin-bottom: 8px;
+        }
+        
+        .component p {
+            margin: 0;
+            font-size: 0.85rem;
+        }
+        
+        /* Component types */
+        .bookmarklet {
+            background-color: #3498db;
+            color: white;
+        }
+        
+        .loader {
+            background-color: #2ecc71;
+            color: white;
+        }
+        
+        .kb-file {
+            background-color: #e74c3c;
+            color: white;
+        }
+        
+        .ui-component {
+            background-color: #9b59b6;
+            color: white;
+        }
+        
+        /* Arrows */
+        .down-arrow {
+            height: 30px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cline x1='12' y1='5' x2='12' y2='19'%3E%3C/line%3E%3Cpolyline points='19 12 12 19 5 12'%3E%3C/polyline%3E%3C/svg%3E");
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+        
+        .branch {
+            position: relative;
+        }
+        
+        .branch::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 50%;
+            height: 100%;
+            width: 2px;
+            background-color: #666;
+        }
+        
+        /* Component descriptions */
+        .details-section {
+            margin-top: 40px;
+        }
+        
+        .details-section h2 {
+            margin-bottom: 20px;
+        }
+        
+        .tab-container {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .tab-buttons {
+            display: flex;
+            background-color: #f5f5f5;
+        }
+        
+        .tab-button {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        
+        .tab-button.active {
+            background-color: #3498db;
+            color: white;
+        }
+        
+        .tab-content {
+            padding: 20px;
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        ul {
+            margin-top: 0;
+            text-align: left;
+        }
+        
+        ul li {
+            margin-bottom: 8px;
+        }
+        
+        @media (max-width: 768px) {
+            .arch-table {
+                width: 100%;
+                min-width: 500px;
+            }
+            
+            .container {
+                overflow-x: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>llmPrimer Architecture Map</h1>
+        <p style="text-align: center;">A simplified visualization of the llmPrimer application architecture</p>
+        
+        <div class="architecture-map">
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: #3498db;"></div>
+                    <span>Bookmarklet</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: #2ecc71;"></div>
+                    <span>Loader Script</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: #e74c3c;"></div>
+                    <span>Knowledge Base Files</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: #9b59b6;"></div>
+                    <span>UI Components</span>
+                </div>
+            </div>
+            
+            <!-- Main architecture diagram as a simple table for better alignment -->
+            <table class="arch-table">
+                <!-- Row 1: Bookmarklet -->
+                <tr>
+                    <td colspan="3">
+                        <div class="component bookmarklet">
+                            <h3>Bookmarklet</h3>
+                            <p>bkm_llmPrimer_v5.0_4.17.25.js</p>
+                        </div>
+                    </td>
+                </tr>
+                
+                <!-- Arrow -->
+                <tr>
+                    <td colspan="3" class="down-arrow"></td>
+                </tr>
+                
+                <!-- Row 2: Panel Check -->
+                <tr>
+                    <td colspan="3">
+                        <div class="component bookmarklet">
+                            <h3>Panel Check</h3>
+                            <p>Check if panel exists</p>
+                        </div>
+                    </td>
+                </tr>
+                
+                <!-- Splitting path -->
+                <tr>
+                    <td colspan="3" class="branch"></td>
+                </tr>
+                
+                <!-- Row 3: Panel exists or not -->
+                <tr>
+                    <td>
+                        <div class="component bookmarklet">
+                            <h3>Panel Exists</h3>
+                            <p>Toggle panel visibility</p>
+                        </div>
+                    </td>
+                    <td></td>
+                    <td>
+                        <div class="component bookmarklet">
+                            <h3>No Panel</h3>
+                            <p>Load KB loader script</p>
+                        </div>
+                    </td>
+                </tr>
+                
+                <!-- Empty row for the left branch (since it ends) -->
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td class="down-arrow"></td>
+                </tr>
+                
+                <!-- Row 4: KB Loader -->
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td>
+                        <div class="component loader">
+                            <h3>KB Loader</h3>
+                            <p>kbLoader_llmPrimer_v5.3_4.17.25.js</p>
+                        </div>
+                    </td>
+                </tr>
+                
+                <!-- Arrow -->
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td class="down-arrow"></td>
+                </tr>
+                
+                <!-- Row 5: KB Categories -->
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td>
+                        <div class="component loader">
+                            <h3>KB Configuration</h3>
+                            <p>Define categories and domains</p>
+                        </div>
+                    </td>
+                </tr>
+                
+                <!-- Arrow -->
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td class="down-arrow"></td>
+                </tr>
+                
+                <!-- Row 6: Load KB Files -->
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td>
+                        <div class="component kb-file">
+                            <h3>Knowledge Base Files</h3>
+                            <p>Load via JSONP pattern</p>
+                        </div>
+                    </td>
+                </tr>
+                
+                <!-- Arrow -->
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td class="down-arrow"></td>
+                </tr>
+                
+                <!-- Row 7: Register -->
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td>
+                        <div class="component loader">
+                            <h3>Register KB Content</h3>
+                            <p>llmPrimerRegister callback</p>
+                        </div>
+                    </td>
+                </tr>
+                
+                <!-- Arrow -->
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td class="down-arrow"></td>
+                </tr>
+                
+                <!-- Row 8: Initialize Panel -->
+                <tr>
+                    <td></td>
+                    <td colspan="2">
+                        <div class="component loader">
+                            <h3>Initialize Panel</h3>
+                            <p>Setup UI when all KBs are loaded</p>
+                        </div>
+                    </td>
+                </tr>
+                
+                <!-- Arrow -->
+                <tr>
+                    <td></td>
+                    <td colspan="2" class="down-arrow"></td>
+                </tr>
+                
+                <!-- Row 9: UI Panel -->
+                <tr>
+                    <td colspan="3">
+                        <div class="component ui-component">
+                            <h3>UI Panel</h3>
+                            <p>Interactive panel for selection and actions</p>
+                        </div>
+                    </td>
+                </tr>
+                
+                <!-- Split for UI components -->
+                <tr>
+                    <td colspan="3" class="branch"></td>
+                </tr>
+                
+                <!-- Row 10: UI Components -->
+                <tr>
+                    <td>
+                        <div class="component ui-component">
+                            <h3>Category Selection</h3>
+                            <p>Choose KB category</p>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="component ui-component">
+                            <h3>KB Selection</h3>
+                            <p>Select knowledge base</p>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="component ui-component">
+                            <h3>Actions</h3>
+                            <p>Inject or copy content</p>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        
+        <!-- Component details section with tabs -->
+        <div class="details-section">
+            <h2>Component Details</h2>
+            <div class="tab-container">
+                <div class="tab-buttons">
+                    <button class="tab-button active" onclick="openTab(event, 'bookmarklet')">Bookmarklet</button>
+                    <button class="tab-button" onclick="openTab(event, 'loader')">KB Loader</button>
+                    <button class="tab-button" onclick="openTab(event, 'kb-files')">KB Files</button>
+                    <button class="tab-button" onclick="openTab(event, 'ui')">UI Components</button>
+                </div>
+                
+                <div id="bookmarklet" class="tab-content active">
+                    <h3>Bookmarklet (bkm_llmPrimer_v5.0_4.17.25.js)</h3>
+                    <p>The entry point script that executes when the user activates the bookmarklet:</p>
+                    <ul>
+                        <li>Checks if panel already exists in the DOM</li>
+                        <li>Toggles panel visibility if it exists</li>
+                        <li>Loads the KB loader script if panel doesn't exist</li>
+                        <li>Sets up panel initialization once loader is ready</li>
+                        <li>Handles basic UI functions like theme toggling</li>
+                    </ul>
+                </div>
+                
+                <div id="loader" class="tab-content">
+                    <h3>Knowledge Base Loader (kbLoader_llmPrimer_v5.3_4.17.25.js)</h3>
+                    <p>Manages the loading and organization of knowledge base content:</p>
+                    <ul>
+                        <li>Defines knowledge base categories (designReview, research)</li>
+                        <li>Defines knowledge base entries with metadata</li>
+                        <li>Creates the global llmPrimerRegister function as a JSONP callback</li>
+                        <li>Loads KB files via script tags to bypass CORS restrictions</li>
+                        <li>Validates configurations and tracks loading status</li>
+                        <li>Initializes the UI panel once content is loaded</li>
+                        <li>Handles loading errors and timeouts</li>
+                    </ul>
+                </div>
+                
+                <div id="kb-files" class="tab-content">
+                    <h3>Knowledge Base Files (kb_*.js)</h3>
+                    <p>Individual content files containing prompts and templates:</p>
+                    <ul>
+                        <li>Simple structure with a single primary function call</li>
+                        <li>Each file calls llmPrimerRegister with its ID and markdown content</li>
+                        <li>Example files: kb_darkDeceptivePatterns.js, kb_usabilityHeuristics.js</li>
+                        <li>Content is stored as markdown strings for easy formatting</li>
+                        <li>Files are loaded via JSONP to avoid cross-origin restrictions</li>
+                    </ul>
+                </div>
+                
+                <div id="ui" class="tab-content">
+                    <h3>UI Components</h3>
+                    <p>The interface elements displayed to the user:</p>
+                    <ul>
+                        <li>Category selector: Shows available knowledge base categories</li>
+                        <li>KB selector: Shows knowledge bases within the selected category</li>
+                        <li>Action buttons: "Inject Prompt" and "Copy Prompt"</li>
+                        <li>Theme toggle: Switches between light and dark mode</li>
+                        <li>Panel controls: Minimize/maximize and close buttons</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Data flow section -->
+        <div class="details-section">
+            <h2>Data Flow Summary</h2>
+            <ol>
+                <li><strong>Activation</strong>: User clicks bookmarklet, which either toggles existing panel or initiates loading process</li>
+                <li><strong>Configuration</strong>: KB loader defines available categories and knowledge bases</li>
+                <li><strong>Content Loading</strong>: Individual KB files are loaded and register their content</li>
+                <li><strong>Panel Creation</strong>: UI panel is created with dropdowns and buttons</li>
+                <li><strong>User Selection</strong>: User selects category → knowledge base → action</li>
+                <li><strong>Content Delivery</strong>: Selected KB content is injected into target text area or copied to clipboard</li>
+            </ol>
+        </div>
+    </div>
+    
+    <script>
+        function openTab(evt, tabName) {
+            // Hide all tab content
+            var tabContents = document.getElementsByClassName("tab-content");
+            for (var i = 0; i < tabContents.length; i++) {
+                tabContents[i].classList.remove("active");
+            }
+            
+            // Remove "active" class from all tab buttons
+            var tabButtons = document.getElementsByClassName("tab-button");
+            for (var i = 0; i < tabButtons.length; i++) {
+                tabButtons[i].classList.remove("active");
+            }
+            
+            // Show the selected tab content and add "active" class to the button
+            document.getElementById(tabName).classList.add("active");
+            evt.currentTarget.classList.add("active");
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>LLM Primer Application Architecture Map</title>
+  <!-- vis-network visualization library -->
+  <script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+  <style>
+    body { font-family: sans-serif; margin: 20px; }
+    h2 { margin-bottom: 10px; }
+    #network {
+      width: 100%;
+      height: 600px;
+      border: 1px solid #ddd;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+  </style>
+</head>
+<body>
+  <h2>Application Architecture Map</h2>
+  <div id="network"></div>
+
+  <script>
+    // 1) Define the nodes
+    const nodes = new vis.DataSet([
+      { id: 1, label: '🔗 Bookmarklet Entry\nbkm_llmPrimer_v5.0',      color: '#ffcc00' },
+      { id: 2, label: '⚙️ Loader Module\nkbLoader_llmPrimer_v5.3',    color: '#6699cc' },
+      { id: 3, label: '📚 Generic KB Module\nkb_{generic}.js',       color: '#99cc66' }
+    ]);
+
+    // 2) Define the relationships (edges)
+    const edges = new vis.DataSet([
+      { from: 1, to: 2, label: 'loads',         arrows: 'to' },
+      { from: 2, to: 3, label: 'dynamically loads', arrows: 'to' }
+    ]);
+
+    // 3) Instantiate the network
+    const container = document.getElementById('network');
+    const data = { nodes, edges };
+    const options = {
+      layout: { hierarchical: { direction: 'UD', sortMethod: 'directed' } },
+      nodes: { shape: 'box', margin: 10, font: { multi: true } },
+      edges: {
+        smooth: { type: 'cubicBezier', forceDirection: 'vertical' },
+        font: { align: 'middle' }
+      },
+      physics: false
+    };
+
+    new vis.Network(container, data, options);
+  </script>
+</body>
+</html>

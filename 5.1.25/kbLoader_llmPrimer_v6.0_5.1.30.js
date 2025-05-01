@@ -119,15 +119,21 @@
     // Define injectTask in the global scope - REVISED to not trigger click
     window.injectTask = function(text) {
       try {
-        // Get the textarea (try both selectors)
-        const textarea = document.getElementById('dialog-input-textarea') || 
-                        document.querySelector('.gpt-textarea, .gpt-input');
+        // Verify text is coming from a promptInject property
+        const selectedKb = kbDomain.find(kb => kb.promptInject === text);
+        if (!selectedKb) {
+          console.error("Invalid text source - must come from promptInject property");
+          return;
+        }
+        
+        // Get the textarea (only using the ID selector)
+        const textarea = document.getElementById('dialog-input-textarea');
         
         if (!textarea) {
           console.error("Target textarea not found");
           return;
         }
-  
+    
         // Clear existing text
         textarea.value = "";
         
@@ -147,9 +153,9 @@
           const event = new Event(eventType, { bubbles: true });
           textarea.dispatchEvent(event);
         });
-  
+    
         console.log("Text injected successfully without triggering click");
-  
+    
       } catch(error) {
         console.error("Error in injectTask:", error);
       }

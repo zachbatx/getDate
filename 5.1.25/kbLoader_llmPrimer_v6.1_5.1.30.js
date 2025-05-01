@@ -124,32 +124,19 @@
     // Function to update the promptInject link based on selected knowledge base
     window.updatePromptInjectLink = function() {
         try {
-          console.log('[llmPrimer Debug] updatePromptInjectLink called');
-          
           // Get the selected KB option
           const kbSelect = document.querySelector('.knowledgeBaseSelect');
           if (!kbSelect) {
             console.error("Knowledge base select element not found");
             return false;
           }
-          console.log('[llmPrimer Debug] Found knowledgeBaseSelect:', kbSelect.value);
           
-          // Make sure kbDomain is accessible from this scope
-          if (typeof kbDomain === 'undefined' || !kbDomain) {
-            console.error("kbDomain is not accessible in this scope");
-            return false;
-          }
-          
+          // Find the KB entry with that ID
           const selectedKb = kbDomain.find(kb => kb.id === kbSelect.value);
-          if (!selectedKb) {
-            console.error("Selected KB not found:", kbSelect.value);
+          if (!selectedKb || !selectedKb.promptInject) {
+            console.error("Selected KB not found or has no promptInject value");
             return false;
           }
-          if (!selectedKb.promptInject) {
-            console.error("Selected KB has no promptInject value");
-            return false;
-          }
-          console.log('[llmPrimer Debug] Found selectedKb:', selectedKb.id);
           
           // Get the injlinkDiv
           const injlinkDiv = document.querySelector('.injlinkDiv');
@@ -157,14 +144,11 @@
             console.error("injlinkDiv not found");
             return false;
           }
-          console.log('[llmPrimer Debug] Found injlinkDiv');
           
           // Remove any existing promptInject links (preserving the first element)
           const existingLinks = injlinkDiv.querySelectorAll('.injLink');
-          console.log('[llmPrimer Debug] Found existing links:', existingLinks.length);
-          
           if (existingLinks.length > 1) {
-            console.log('[llmPrimer Debug] Removing extra links');
+            // Keep the first link, remove any others
             for (let i = 1; i < existingLinks.length; i++) {
               injlinkDiv.removeChild(existingLinks[i]);
             }
@@ -174,19 +158,21 @@
           const newLink = document.createElement('a');
           newLink.className = 'injLink';
           newLink.href = '#';
-          newLink.textContent = '[promptInject]';
+          
+          // Use the actual promptInject value as the link text
+          newLink.textContent = selectedKb.promptInject;
+          
           newLink.onclick = function() {
-            window.injectTask(selectedKb.promptInject);
-            return false;
+            injectTask(selectedKb.promptInject);
+            return false; // Prevent default link behavior
           };
           
           // Append the new link to injlinkDiv
           injlinkDiv.appendChild(newLink);
-          console.log('[llmPrimer Debug] Added link to injlinkDiv');
-          
+          debugLog(`Added promptInject link for ${selectedKb.title}`);
           return true;
         } catch(error) {
-          console.error("Error in updatePromptInjectLink:", error.message, error.stack);
+          console.error("Error in updatePromptInjectLink:", error);
           return false;
         }
       };

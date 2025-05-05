@@ -1,0 +1,2180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Knowledge Base Manager</title> <!-- Updated Title -->
+  <!-- Font Awesome and Material Icons from CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+  <style>
+    /* Global Styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    }
+    body {
+      background-color: #f5f8fa;
+      color: #333;
+      line-height: 1.6;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+       /* Add padding/margin to account for fixed header */
+      padding-top: 100px; /* Adjust based on header height + desired spacing */
+    }
+    /* Header */
+    .headerArea {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem;
+      background-color: #1e293b;
+      color: #fff !important;
+      position: fixed; /* Changed from absolute to fixed for better scrolling */
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 1000; /* Ensure header is on top */
+    }
+    .headerArea h1 {
+      color: #fff;
+      margin-bottom: 0.5rem;
+      font-weight: 500 !important;
+    }
+
+    /* Main Navigation Tabs (REMOVE IN SPLIT FILES)
+    .main-nav-tabs {
+      display: flex;
+      margin-top: 80px;
+      margin-bottom: 20px;
+      border-bottom: 1px solid #ddd;
+    }
+    .main-nav-tab {
+      padding: 0.75rem 1.5rem;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      color: #6b7280;
+      font-weight: 500;
+    }
+    .main-nav-tab.active {
+      border-bottom-color: #3498db;
+      color: #3498db;
+      font-weight: 600;
+    }
+     (REMOVE IN SPLIT FILES) */
+    .main-tab-content {
+      /* This class will be removed from the outer container div */
+      /* Instead, the content will be directly in .container */
+      /* We keep the .active class logic for content-tab-panel */
+    }
+    .main-tab-content.active {
+      display: block; /* Kept for content-tab-panel (though not strictly needed in Manager file) */
+    }
+
+    /* Upload & Preview Areas (KEEP ALL FOR SCRIPT COMPATIBILITY) */
+    .app-container {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    .upload-area, .preview-area {
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      padding: 1.5rem;
+    }
+    .upload-area {
+      text-align: center;
+      display: flex;
+    }
+    .drop-zone {
+      border: 2px dashed #3498db;
+      border-radius: 5px;
+      padding: 1.5rem;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.2s;
+      flex: 1 1 50%;
+    }
+    .drop-zone:hover, .drop-zone.active {
+      border-color: #2980b9;
+      background-color: #f0f7fc;
+    }
+    .drop-zone-text {
+      font-size: 1.2rem;
+      color: #3498db;
+      margin-bottom: 1rem;
+    }
+    .btn {
+      background-color: #3498db;
+      color: white;
+      border: none;
+      padding: 0.55rem 1.5rem;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 600;
+      transition: background-color 0.2s;
+    }
+    .btn:hover {
+      background-color: #2980b9;
+    }
+    .btn:disabled {
+      background-color: #bdc3c7;
+      cursor: not-allowed;
+    }
+    .btn-browser {
+      background-color: #f8f9fa;
+      color: #3498db;
+      border: 1px solid #3498db;
+    }
+    .btn-browser:hover {
+      background-color: #e9f5fe;
+    }
+    #fileInput {
+      display: none;
+    }
+    .file-info {
+      text-align: left;
+      padding: 0.85rem;
+      border-radius: 5px;
+      transition: opacity 0.3s;
+      flex: 1 1 50%;
+      margin: auto 20px;
+    }
+    .file-info.show {
+      opacity: 1;
+    }
+    .export-options {
+      background-color: white;
+      padding: 0;
+      float: right;
+      display: inline-flex;
+      margin-left: auto; /* Adjusted margin */
+    }
+    .form-group {
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center; /* Align items vertically */
+    }
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      color: #2c3e50;
+      position: relative;
+      margin-right: 8px; /* Increased spacing */
+      white-space: nowrap; /* Prevent label wrapping */
+    }
+    .form-group input {
+      width: auto; /* Adjust width */
+      min-width: 200px; /* Set minimum width */
+      padding: 0.75rem;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      font-size: 1rem;
+    }
+    .alert {
+      padding: 1rem;
+      border-radius: 5px;
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      transition: opacity 0.3s;
+      position: fixed; /* Keep alert visible */
+      top: 90px; /* Position below header */
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 1000;
+      min-width: 300px;
+      text-align: center;
+    }
+    .alert-success {
+      background-color: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+    .alert-error {
+      background-color: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+    .alert.show {
+      opacity: 1;
+    }
+    .preview-content {
+      font-family: 'Courier New', Courier, monospace;
+      white-space: pre-wrap;
+      padding: 1rem;
+      background-color: #f8f9fa;
+      border-radius: 5px;
+      font-size: 0.9rem;
+      line-height: 1.5;
+      min-height: 200px;
+      max-height: 60vh; /* Limit max height */
+      overflow-y: auto;
+      border: 1px solid #ddd; /* Added border */
+    }
+    /* Rich Text Editor */
+    #editableContent {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      white-space: normal;
+      min-height: 300px;
+      border: 1px solid #ddd;
+      outline: none;
+      padding: 1.5rem; /* Consistent padding */
+      background-color: white;
+      max-height: 60vh; /* Limit max height */
+      overflow-y: auto;
+    }
+    .editor-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.3rem;
+      padding: 0.5rem;
+      background-color: #f1f3f4;
+      border: 1px solid #ddd;
+      border-bottom: none;
+      border-radius: 5px 5px 0 0;
+    }
+    .editor-toolbar button {
+      background-color: white;
+      border: 1px solid #ddd;
+      border-radius: 3px;
+      padding: 0.3rem 0.6rem;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    .editor-toolbar button:hover {
+      background-color: #e9ecef;
+    }
+    .editor-toolbar button.active {
+      background-color: #e2f0fd;
+      border-color: #3498db;
+    }
+    .js-editor {
+      font-family: 'Courier New', Courier, monospace;
+      white-space: pre-wrap;
+      background-color: #2d2d2d;
+      color: #f8f8f2;
+      border: 1px solid #444;
+      padding: 1.5rem !important; /* Consistent padding */
+    }
+    .js-editor-toolbar, .markdown-toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.5rem;
+      background-color: #333;
+      border: 1px solid #444;
+      border-bottom: none;
+      border-radius: 5px 5px 0 0;
+    }
+    .js-format-btn, .copy-markdown-btn {
+      background-color: #4caf50;
+      color: white;
+      border: none;
+      border-radius: 3px;
+      padding: 0.4rem 0.8rem;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    .js-format-btn:hover, .copy-markdown-btn:hover {
+      background-color: #45a049;
+    }
+    /* Toggle Switch */
+    .editor-toggle {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: #ddd;
+      font-size: 0.9rem;
+    }
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 50px;
+      height: 24px;
+    }
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      transition: .4s;
+    }
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 16px;
+      width: 16px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      transition: .4s;
+    }
+    input:checked + .slider {
+      background-color: #3498db;
+    }
+    input:focus + .slider {
+      box-shadow: 0 0 1px #3498db;
+    }
+    input:checked + .slider:before {
+      transform: translateX(26px);
+    }
+    .slider.round {
+      border-radius: 24px;
+    }
+    .slider.round:before {
+      border-radius: 50%;
+    }
+    /* Content Tabs */
+    .content-tabs {
+      display: flex;
+      align-items: center; /* Align items vertically */
+      margin-bottom: 1rem;
+      border-bottom: 1px solid #ddd;
+    }
+    .content-tab {
+      padding: 0.75rem 1.5rem;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      white-space: nowrap; /* Prevent wrapping */
+    }
+    .content-tab.active {
+      border-bottom-color: #3498db;
+      color: #3498db;
+      font-weight: 600;
+    }
+    .content-tab-panel {
+      display: none;
+    }
+    .content-tab-panel.active {
+      display: block;
+    }
+    button#exportBtn {
+      position: relative;
+      margin-left: 10px;
+    }
+    /* Additional styles for rich text content */
+    #editableContent h1, #editableContent h2, #editableContent h3,
+    #editableContent h4, #editableContent h5, #editableContent h6,
+    #editableContent ul, #editableContent ol {
+      padding-bottom: 10px;
+      margin-bottom: 0.5em; /* Added margin */
+    }
+    #editableContent ul, #editableContent ol {
+      padding-inline-start: 25px; /* Adjusted padding */
+      margin-bottom: 1em; /* Added margin */
+    }
+    #editableContent li {
+      padding-bottom: 4px; /* Increased padding */
+      margin-bottom: 0.2em; /* Added margin */
+    }
+    /* Export type selector */
+    .export-type-selector {
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .export-type-selector label {
+      margin-right: 1rem;
+      font-weight: 600;
+    }
+    /* Markdown preview styles */
+    #markdownContent {
+      font-family: 'Courier New', Courier, monospace;
+      white-space: pre-wrap;
+      background-color: #f8f9fa;
+      color: #333;
+      border: 1px solid #ddd;
+      padding: 1.5rem !important; /* Consistent padding */
+      max-height: 60vh; /* Limit max height */
+      overflow-y: auto;
+    }
+    .markdown-editor {
+      font-family: 'Courier New', Courier, monospace;
+      white-space: pre-wrap;
+      background-color: #f8f9fa;
+      color: #333;
+      border: 1px solid #ddd;
+      padding: 1.5rem !important; /* Consistent padding */
+      max-height: 60vh; /* Limit max height */
+      overflow-y: auto;
+    }
+    /* File dropdown styles */
+    #fileDropdown {
+      margin: 1rem 0;
+      padding: 0.5rem;
+      border-radius: 4px;
+      border: 1px solid #ddd;
+      width: 100%;
+      max-width: 400px;
+    }
+
+    /* Knowledge Base Manager Styles */
+    .kb-manager-container {
+      max-width: 1000px;
+      margin: 0 auto;
+      background-color: #f3f4f6;
+      padding: 24px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .action-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-bottom: 24px;
+      align-items: flex-end; /* Align items to the bottom */
+    }
+
+    .dropdown-container {
+      flex: 1;
+      min-width: 200px; /* Reduced min-width */
+    }
+
+    .action-buttons {
+      display: flex;
+      align-items: flex-end;
+      gap: 8px;
+      margin-left: auto; /* Push buttons to the right */
+    }
+
+    /* Base button styles */
+    .kb-manager-container button {
+        padding: 8px 12px;
+        border-radius: 6px;
+        border: 1px solid transparent;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+    }
+
+    .primary-button {
+      background-color: #4f46e5;
+      color: white;
+    }
+    .primary-button:hover {
+      background-color: #4338ca;
+    }
+    .primary-button:disabled {
+      background-color: #9ca3af;
+      cursor: not-allowed;
+      opacity: 0.7;
+    }
+
+    .icon-button {
+      padding: 8px;
+      background: none;
+      color: #4f46e5;
+      border: none;
+    }
+    .icon-button:hover {
+      color: #4338ca;
+      background-color: #e0e7ff; /* Light background on hover */
+    }
+    .icon-button svg { /* Ensure SVG scales with button */
+        width: 20px;
+        height: 20px;
+    }
+
+    .red-icon-button {
+      padding: 6px; /* Slightly smaller padding */
+      background: none;
+      color: #ef4444;
+      border: none;
+    }
+    .red-icon-button:hover {
+      color: #dc2626;
+      background-color: #fee2e2; /* Light red background on hover */
+    }
+
+    .green-icon-button {
+      padding: 8px;
+      background-color: #10b981;
+      color: white;
+    }
+    .green-icon-button:hover {
+      background-color: #059669;
+    }
+
+    .red-button {
+      padding: 8px;
+      background-color: #ef4444;
+      color: white;
+    }
+    .red-button:hover {
+      background-color: #dc2626;
+    }
+
+    .section {
+      background-color: white;
+      padding: 16px;
+      border-radius: 6px;
+      border: 1px solid #e5e7eb;
+      margin-bottom: 24px;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      padding-bottom: 10px; /* Add padding below header */
+      border-bottom: 1px solid #e5e7eb; /* Separator line */
+    }
+     .section-header h2 {
+        margin-bottom: 0; /* Remove default h2 margin */
+     }
+     .section-header .icon-button span {
+         margin-left: 4px; /* Space between icon and text */
+     }
+
+    .category-form {
+      margin-bottom: 16px;
+      padding: 12px;
+      background-color: #f9fafb;
+      border-radius: 6px;
+      border: 1px solid #e5e7eb;
+    }
+    .category-form h3 {
+        margin-bottom: 12px; /* Space below heading */
+    }
+
+    .input-group {
+      display: flex;
+      gap: 8px;
+      align-items: center; /* Align items vertically */
+    }
+
+    .kb-manager-container input[type="text"] {
+      flex: 1;
+      padding: 8px 10px; /* Adjusted padding */
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+
+    .category-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 12px; /* Increased gap */
+    }
+
+    .category-item {
+      border: 1px solid #e5e7eb;
+      border-radius: 6px;
+      overflow: hidden;
+      background-color: white; /* Ensure white background */
+    }
+
+    .category-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 16px; /* Consistent padding */
+      background-color: #f9fafb;
+      cursor: pointer;
+      border-bottom: 1px solid #e5e7eb; /* Separator */
+    }
+    .category-header:hover {
+        background-color: #f3f4f6; /* Slight hover effect */
+    }
+    .category-name {
+        font-weight: 600; /* Make name bold */
+        color: #1f2937;
+    }
+
+    .category-header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .chevron-icon {
+        transition: transform 0.2s ease-in-out; /* Smooth transition */
+    }
+    .category-content.hidden + .category-header .chevron-icon {
+        /* Keep default state when hidden */
+    }
+    .category-content:not(.hidden) + .category-header .chevron-icon {
+         transform: rotate(180deg); /* Rotate when open */
+    }
+
+
+    .category-content {
+      padding: 16px; /* Consistent padding */
+      background-color: white;
+    }
+
+    .kb-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px; /* Increased margin */
+    }
+    .kb-header h4 {
+        margin-bottom: 0; /* Remove default h4 margin */
+        font-size: 14px;
+        font-weight: 600;
+        color: #374151;
+    }
+     .kb-header .icon-button span {
+         margin-left: 4px; /* Space between icon and text */
+     }
+
+    .kb-form {
+      margin-bottom: 16px; /* Increased margin */
+      padding: 12px; /* Increased padding */
+      background-color: #f9fafb;
+      border-radius: 6px;
+      border: 1px solid #e5e7eb;
+    }
+
+    .kb-list {
+      list-style: none;
+      padding: 0;
+      margin: 0; /* Remove default margin */
+      display: flex;
+      flex-direction: column;
+      gap: 6px; /* Adjusted gap */
+    }
+    /* Target KB list within a category */
+    .category-kb-list {
+        margin-top: 8px; /* Add space above list in category */
+        min-height: 30px; /* Minimum height for drop target visibility */
+        padding: 8px; /* Padding for drop area */
+        border: 1px dashed transparent; /* Placeholder for dragover */
+        border-radius: 4px;
+    }
+
+
+    .kb-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 10px; /* Adjusted padding */
+      font-size: 14px;
+      background-color: #f9fafb;
+      border: 1px solid #e5e7eb; /* Add border */
+      border-radius: 6px;
+    }
+    /* Style for KB items in the 'All Knowledge Bases' list */
+     #all-kb-list .kb-item {
+        background-color: white; /* Different background */
+     }
+
+
+    /* Drag and drop styles */
+    .kb-item.draggable {
+      cursor: grab;
+    }
+    .kb-item.dragging {
+      opacity: 0.5;
+      cursor: grabbing;
+      background-color: #e0e7ff; /* Highlight while dragging */
+      border-color: #a5b4fc;
+    }
+    .kb-item.draggable:hover {
+      background-color: #eff6ff; /* Light blue hover */
+      border-color: #bfdbfe;
+    }
+    .category-kb-list.dragover {
+      background-color: #eff6ff; /* Highlight drop zone */
+      border: 1px dashed #93c5fd;
+    }
+
+    .kb-badge {
+      display: inline-block;
+      padding: 2px 8px; /* Increased padding */
+      background-color: #e5e7eb;
+      border-radius: 12px; /* Pill shape */
+      margin-right: 6px; /* Increased margin */
+      font-size: 12px;
+      font-weight: 500;
+      color: #4b5563;
+    }
+
+    .icon {
+      width: 20px;
+      height: 20px;
+    }
+    .icon-sm {
+      width: 18px; /* Adjusted size */
+      height: 18px;
+    }
+    .icon-xs {
+      width: 14px;
+      height: 14px;
+    }
+
+    .hidden {
+      display: none !important; /* Use important to override potential conflicts */
+    }
+
+    .text-gray {
+      color: #6b7280;
+      font-style: italic;
+      text-align: center; /* Center placeholder text */
+      padding: 16px; /* Add padding */
+    }
+
+    .kb-categories {
+      margin-left: 12px; /* Increased margin */
+      font-size: 12px;
+      color: #6b7280;
+      display: flex; /* Use flex for badges */
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+
+    .drag-handle {
+      cursor: grab;
+      margin-right: 8px;
+      color: #9ca3af;
+      display: flex; /* Center icon */
+      align-items: center;
+    }
+    .drag-handle svg { /* Ensure handle icon size */
+        width: 16px;
+        height: 16px;
+    }
+
+
+    .kb-info-container {
+      display: flex;
+      align-items: center;
+      flex: 1;
+      overflow: hidden; /* Prevent long names from breaking layout */
+    }
+    .kb-name {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis; /* Add ellipsis for long names */
+        margin-right: 8px; /* Space before categories/buttons */
+    }
+
+    .kb-manager-container h2 {
+      font-size: 18px;
+      font-weight: 600;
+      color: #1f2937;
+      margin-bottom: 0; /* Reset margin, handled by section-header */
+    }
+    .kb-manager-container h3 {
+      font-size: 16px; /* Slightly larger */
+      font-weight: 600; /* Bolder */
+      margin-bottom: 8px;
+      color: #111827;
+    }
+     .kb-manager-container h4 {
+        font-size: 14px;
+        font-weight: 500;
+        margin-bottom: 8px;
+     }
+
+    .kb-manager-container select {
+      width: 100%;
+      padding: 10px;
+      background-color: white;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+      font-size: 14px; /* Consistent font size */
+    }
+
+    .kb-manager-container label {
+      display: block;
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 6px; /* Increased margin */
+      color: #374151; /* Darker label color */
+    }
+
+    /* Ensure icons inside buttons look good */
+    .kb-manager-container button svg {
+        vertical-align: middle;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="headerArea">
+      <h1>Knowledge Base Manager</h1> <!-- Updated Header Title -->
+    </div>
+
+    <!-- Global Alert Box -->
+    <div id="alertBox" class="alert"></div>
+
+    <!-- Manager Section (Content from original #manager-tab) -->
+    <div id="manager-content-wrapper" class="content-wrapper"> <!-- Added wrapper for layout -->
+      <div class="kb-manager-container">
+        <!-- Knowledge Base Loader dropdown & Save -->
+        <div class="action-bar">
+          <div class="dropdown-container">
+            <label for="loader-select">Knowledge Base Loader (kbLoader .js)</label>
+            <select id="loader-select">
+              <option value="">Select a loader file</option>
+            </select>
+          </div>
+           <!-- Save Changes button will be added here dynamically -->
+            <div class="action-buttons"></div>
+        </div>
+
+        <!-- Action Bar for Assignment -->
+        <div class="action-bar">
+          <div class="dropdown-container">
+            <label for="category-select">Assign to Category</label>
+            <select id="category-select">
+              <option value="">Select a category</option>
+            </select>
+          </div>
+
+          <div class="dropdown-container">
+            <label for="kb-select">Select Knowledge Base</label>
+            <select id="kb-select">
+              <option value="">Select a knowledge base</option>
+            </select>
+          </div>
+
+          <div class="action-buttons">
+            <button id="assign-button" class="primary-button" disabled>Assign</button>
+          </div>
+        </div>
+
+        <!-- Category Management -->
+        <div class="section">
+          <div class="section-header">
+            <h2>Categories</h2>
+            <button id="add-category-button" class="icon-button primary-button"> <!-- Style as primary -->
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="16"></line>
+                <line x1="8" y1="12" x2="16" y2="12"></line>
+              </svg>
+              <span>Add Category</span>
+            </button>
+          </div>
+
+          <!-- Add New Category Form -->
+          <div id="add-category-form" class="category-form hidden">
+            <h3>Add New Category</h3>
+            <div class="input-group">
+              <input type="text" id="new-category-input" placeholder="Category name">
+              <button id="save-category-button" class="green-icon-button" title="Save Category">
+                <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+              </button>
+              <button id="cancel-category-button" class="red-button" title="Cancel">
+                <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Category List -->
+          <ul id="category-list" class="category-list">
+            <!-- Categories will be dynamically inserted here -->
+          </ul>
+
+          <p id="no-categories" class="text-gray hidden">No categories loaded or defined. Select a loader file or add a new category.</p>
+        </div>
+
+        <!-- All Knowledge Bases -->
+        <div class="section">
+          <div class="section-header">
+            <h2>All Knowledge Bases</h2>
+          </div>
+
+          <ul id="all-kb-list" class="kb-list">
+            <!-- All KBs will be dynamically inserted here -->
+          </ul>
+
+          <p id="no-kb" class="text-gray hidden">No knowledge bases loaded or defined. Select a loader file.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Templates (for KB Manager) -->
+  <template id="category-template">
+    <li class="category-item" data-id="">
+      <div class="category-header">
+        <span class="category-name"></span>
+        <div class="category-header-actions">
+          <button class="remove-category-button red-icon-button" title="Remove Category">
+            <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="3 6 5 6 21 6"></polyline>
+              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+              <line x1="10" y1="11" x2="10" y2="17"></line>
+              <line x1="14" y1="11" x2="14" y2="17"></line>
+            </svg>
+          </button>
+          <svg class="chevron-icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="6 9 12 15 18 9"></polyline> <!-- Initial state: pointing down -->
+          </svg>
+        </div>
+      </div>
+
+      <div class="category-content hidden"> <!-- Start hidden -->
+        <div class="kb-header">
+          <h4>Knowledge Bases in this Category</h4>
+           <!-- Add KB button removed - use assignment dropdown instead -->
+           <!-- <button class="add-kb-to-category-button icon-button">...</button> -->
+        </div>
+
+        <!-- KB Form removed - adding KBs should happen via the Editor tab -->
+        <!-- <div class="kb-form hidden"> ... </div> -->
+
+        <ul class="kb-list category-kb-list" data-category-id="">
+          <!-- KBs will be dynamically inserted here -->
+        </ul>
+
+        <p class="no-kbs text-gray hidden">No knowledge bases in this category. Use the assignment dropdown above to add.</p>
+      </div>
+    </li>
+  </template>
+
+  <template id="kb-template">
+    <li class="kb-item draggable" data-id="" draggable="true">
+      <div class="kb-info-container">
+        <span class="drag-handle" title="Drag to reorder or move to another category">
+          <svg class="icon-xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="8" y1="6" x2="21" y2="6"></line>
+            <line x1="8" y1="12" x2="21" y2="12"></line>
+            <line x1="8" y1="18" x2="21" y2="18"></line>
+            <line x1="3" y1="6" x2="3.01" y2="6"></line>
+            <line x1="3" y1="12" x2="3.01" y2="12"></line>
+            <line x1="3" y1="18" x2="3.01" y2="18"></line>
+          </svg>
+        </span>
+        <span class="kb-name"></span>
+      </div>
+      <button class="remove-kb-button red-icon-button" title="Remove from this Category">
+        <svg class="icon-xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line> <!-- Changed to simple 'X' -->
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </li>
+  </template>
+
+  <template id="all-kb-template">
+    <li class="kb-item" data-id="">
+      <div class="kb-info-container">
+        <span class="kb-name"></span>
+        <div class="kb-categories"> <!-- Container for category badges -->
+            <!-- Badges added dynamically -->
+        </div>
+      </div>
+      <!-- No actions needed in the 'All KBs' list -->
+    </li>
+  </template>
+
+
+  <!-- Include Mammoth.js for DOCX parsing (KEEP FOR SCRIPT COMPATIBILITY) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.17/mammoth.browser.min.js"></script>
+  <!-- Include Turndown.js for HTML to Markdown conversion (KEEP FOR SCRIPT COMPATIBILITY) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/turndown/7.1.1/turndown.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      // --- Tab switching functionality (REMOVED) ---
+      // const mainNavTabs = document.querySelectorAll('.main-nav-tab');
+      // mainNavTabs.forEach(tab => { /* ... */ });
+
+      /* --- Knowledge Base Editor Code (KEEP ALL FOR SCRIPT COMPATIBILITY) --- */
+
+      // Global Variables (Exist but mostly unused in Manager file)
+      let currentFileSource = null; // 'upload' or 'dropdown'
+      let currentJsObject = null;
+      let currentMarkdownContent = null; // Use a consistent name
+
+      // DOM Elements (Will be null in Manager file, handled by checks)
+      const dropZone = document.getElementById('dropZone');
+      const fileInput = document.getElementById('fileInput');
+      const browseBtn = document.getElementById('browseBtn');
+      const fileInfo = document.getElementById('fileInfo');
+      const fileName = document.getElementById('fileName');
+      const fileSize = document.getElementById('fileSize');
+      const editableContent = document.getElementById('editableContent');
+      const autoUpdateToggle = document.getElementById('autoUpdateToggle');
+      const outputFileName = document.getElementById('outputFileName');
+      const exportBtn = document.getElementById('exportBtn');
+      const alertBox = document.getElementById('alertBox');
+      const fileDropdown = document.getElementById('fileDropdown');
+      const copyMarkdownBtn = document.querySelector('.copy-markdown-btn');
+      const markdownEditor = document.querySelector('.markdown-editor');
+      const jsEditorElement = document.querySelector('.js-editor');
+      const jsFormatBtn = document.querySelector('.js-format-btn');
+      const editorToolbar = document.querySelector('.editor-toolbar');
+
+      // Variables to store content and state (Exist but mostly unused in Manager file)
+      let docxContent = null;
+      let isAutoUpdateEnabled = true;
+      let documentTitle = ''; // Extracted from #Title
+      let documentName = ''; // Extracted from #Name
+      let documentCategory = ''; // Extracted from #Category
+      let loadedJsFilename = null; // Track which JS file is currently loaded
+      let existingFiles = new Set(); // Track loaded files in dropdown to prevent duplicates
+
+
+      // --- Utility Functions (KEEP ALL - USED BY BOTH CONCEPTUALLY) ---
+
+      function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+
+      function formatBytes(bytes, decimals = 2) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const dm = decimals < 0 ? 0 : decimals;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+      }
+
+      function showAlert(message, type = 'info', duration = 4000) {
+           // Check if alertBox exists in THIS file
+           if (!alertBox) {
+                console.warn("Alert box element not found. Cannot show alert:", message);
+                // Fallback to browser alert or simply log
+                // alert(`${type.toUpperCase()}: ${message}`);
+                return;
+           }
+
+          alertBox.textContent = message;
+          alertBox.className = `alert alert-${type} show`; // Ensure 'show' is added last
+          // Clear previous timeouts if any
+          if (alertBox.timeoutId) {
+              clearTimeout(alertBox.timeoutId);
+          }
+          alertBox.timeoutId = setTimeout(() => {
+              alertBox.classList.remove('show');
+              alertBox.timeoutId = null; // Clear the stored timeout ID
+          }, duration);
+      }
+
+      function copyToClipboard(text) {
+        navigator.clipboard.writeText(text)
+          .then(() => showAlert('Content copied to clipboard!', 'success'))
+          .catch(error => {
+            console.error('Error copying to clipboard:', error);
+            showAlert('Error copying to clipboard.', 'error');
+          });
+      }
+
+      // Simulate drag and drop event for Confluence integration
+      function simulateFileDrop(dropZoneElement, file) {
+        if (!dropZoneElement) {
+            console.error("Drop zone element not found for simulation.");
+            showAlert("Error: Could not find the Confluence attachments area to save the file.", "error");
+            return;
+        }
+        const dataTransfer = new DataTransfer();
+        dataTransfer.items.add(file);
+
+        ['dragenter', 'dragover', 'drop'].forEach(eventName => {
+            const event = new DragEvent(eventName, {
+                bubbles: true,
+                cancelable: true,
+                dataTransfer: dataTransfer
+            });
+            dropZoneElement.dispatchEvent(event);
+        });
+         console.log(`Simulated drop of ${file.name} onto`, dropZoneElement);
+      }
+
+       // Fetch Confluence Attachment Content (Robust)
+      async function fetchConfluenceAttachmentContent(filename) {
+          // Try finding link within standard Confluence attachments table first
+          let fileLinkElement = document.querySelector(`table.attachments a.filename[data-filename="${filename}"]`);
+
+          // Fallback: Search all links on the page if not found in the table (less reliable)
+          if (!fileLinkElement) {
+             console.warn(`Standard attachment link not found for "${filename}". Searching all links.`);
+             const allLinks = document.querySelectorAll('a');
+             for (const link of allLinks) {
+                 // Check if the link text *exactly* matches the filename
+                 // or if the href ends with the filename (better for download links)
+                const linkText = link.textContent?.trim();
+                const href = link.getAttribute('href');
+                 if (linkText === filename || (href && href.endsWith('/' + encodeURIComponent(filename)))) {
+                    fileLinkElement = link;
+                    console.log(`Found fallback link for "${filename}":`, fileLinkElement);
+                    break;
+                 }
+             }
+          }
+
+
+          if (!fileLinkElement || !fileLinkElement.href) {
+              return Promise.reject(new Error(`Attachment download link not found for filename: ${filename}`));
+          }
+
+          const fileUrl = fileLinkElement.href; // Use the found href
+          console.log(`Fetching content for ${filename} from URL: ${fileUrl}`);
+
+          try {
+              const response = await fetch(fileUrl);
+              if (!response.ok) {
+                   // Try to get more specific error info if possible
+                   let errorText = `HTTP error! status: ${response.status}`;
+                   try {
+                       const bodyText = await response.text();
+                       errorText += ` - ${bodyText.substring(0, 100)}`; // Show start of error body
+                   } catch (e) {/* Ignore if reading body fails */}
+                   return Promise.reject(new Error(errorText));
+              }
+              const jsContent = await response.text();
+              if (!jsContent) {
+                  return Promise.reject(new Error(`Fetched content for ${filename} is empty.`));
+              }
+               console.log(`Successfully fetched content for ${filename}. Length: ${jsContent.length}`);
+              return jsContent;
+
+          } catch (error) {
+              console.error(`Fetch error for ${filename}:`, error);
+              return Promise.reject(new Error(`Network or fetch error for ${filename}: ${error.message}`));
+          }
+      }
+
+
+      // --- Drag & Drop and File Input (EDITOR ONLY - but kept) ---
+
+      // Check if dropZone element exists before adding listeners
+      if (dropZone) { // This check prevents errors in Manager file
+          ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, preventDefaults, false);
+            // document.body.addEventListener(eventName, preventDefaults, false); // This was preventing drops everywhere, only apply if needed globally
+          });
+          ['dragenter', 'dragover'].forEach(eventName => dropZone.addEventListener(eventName, () => dropZone.classList.add('active'), false));
+          ['dragleave', 'drop'].forEach(eventName => dropZone.addEventListener(eventName, () => dropZone.classList.remove('active'), false));
+
+          dropZone.addEventListener('drop', handleDrop, false);
+          if (browseBtn) browseBtn.addEventListener('click', () => fileInput.click());
+          if (fileInput) fileInput.addEventListener('change', handleFiles);
+      }
+
+
+      // These functions are Editor-specific but kept for script compatibility.
+      // They rely on Editor DOM elements, which will be null, preventing them from doing anything harmful.
+      function handleDrop(e) { /* ... */ }
+      function handleFiles(e) { /* ... */ }
+
+      // --- Content Processing (DOCX -> HTML -> Markdown -> JS) (EDITOR ONLY - but kept) ---
+      // These functions are Editor-specific but kept for script compatibility.
+      // They rely on Editor DOM elements, which will be null, preventing them from doing anything harmful.
+      function processDocxFile(file) { /* ... */ }
+      function processEditorContent() { /* ... */ }
+      function convertHtmlToJsObject(html) { /* ... */ }
+      function generateLlmPrimerCode(name, content) { /* ... */ }
+      function markdownToHtml(markdown) { /* ... */ }
+
+      // This function was used by Editor to extract data from kb_*.js.
+      // The Manager uses regex/Function() to extract data from kbLoader_*.js.
+      // This function is NOT used by the Manager, but kept for script compatibility.
+      function extractDataFromJsCode(jsCode) {
+          try {
+              const primerMatch = jsCode.match(/llmPrimerRegister\s*\(\s*['"]([^'"]+)['"]\s*,\s*`([\s\S]*?)`\s*\)/);
+              if (primerMatch && primerMatch[1] && primerMatch[2]) {
+                  console.log("Extracted from llmPrimerRegister format");
+                  const name = primerMatch[1];
+                  const markdown = primerMatch[2]
+                        .replace(/\\`/g, '`') // Unescape backticks
+                        .replace(/\\\$/g, '$') // Unescape dollars
+                        .replace(/\\\\/g, '\\'); // Unescape backslashes
+                  return { type: 'llmPrimer', name: name, content: markdown };
+              }
+              console.warn("JS file is not in llmPrimerRegister format. Attempting legacy parse.");
+              throw new Error("Unsupported JS file format. Expected llmPrimerRegister(...)");
+          } catch (error) {
+              console.error("Error extracting data from JS code:", error);
+              throw new Error(`Failed to extract valid data from JS code: ${error.message}`);
+          }
+      }
+
+
+      // --- Editor Functionality (EDITOR ONLY - but kept) ---
+      // These listeners and functions rely on Editor DOM elements.
+      const contentTabs = document.querySelectorAll('.content-tab'); // Will be empty NodeList in Manager file
+      contentTabs.forEach(tab => { /* ... */ }); // Loop won't run
+      if (autoUpdateToggle) autoUpdateToggle.addEventListener('change', function () { /* ... */ });
+      if (editableContent) editableContent.addEventListener('input', () => { /* ... */ });
+      if (jsFormatBtn) jsFormatBtn.addEventListener('click', () => { /* ... */ });
+      if (copyMarkdownBtn && markdownEditor) copyMarkdownBtn.addEventListener('click', () => { /* ... */ });
+      if (editorToolbar && editableContent) { /* ... toolbar listeners ... */ }
+       function updateToolbarStates() { /* ... */ } // Called by listeners that won't attach
+
+
+      // --- File Handling (Loading/Saving JS) (EDITOR ONLY - but kept) ---
+      // These functions and listeners rely on Editor DOM elements.
+      function populateFileDropdown() { /* ... */ } // Called in initial setup in kbEditor.html, but not here
+      function addToFileDropdown(filename) { /* ... */ } // Called by populateFileDropdown and exportFile
+      if (fileDropdown) fileDropdown.addEventListener('change', function() { /* ... */ }); // Listener won't attach
+      function loadJSFileContent(filename) { /* ... */ } // Called by fileDropdown change listener
+      function exportFile() { /* ... */ } // Called by exportBtn click listener
+      if (exportBtn) exportBtn.addEventListener('click', exportFile); // Listener won't attach
+      function resetEditorState(clearFileInfo = false) { /* ... */ } // Called by handleFiles, fileDropdown change listener
+
+
+      /* --- Knowledge Base Manager Code --- */
+
+      // DOM elements for KB Manager
+      const loaderSelect = document.getElementById('loader-select');
+      const categorySelect = document.getElementById('category-select');
+      const kbSelect = document.getElementById('kb-select');
+      const assignButton = document.getElementById('assign-button');
+      const addCategoryButton = document.getElementById('add-category-button');
+      const addCategoryForm = document.getElementById('add-category-form');
+      const newCategoryInput = document.getElementById('new-category-input');
+      const saveCategoryButton = document.getElementById('save-category-button');
+      const cancelCategoryButton = document.getElementById('cancel-category-button');
+      const categoryList = document.getElementById('category-list');
+      const noCategories = document.getElementById('no-categories');
+      const allKbList = document.getElementById('all-kb-list');
+      const noKb = document.getElementById('no-kb');
+
+      // Templates (for KB Manager)
+      const categoryTemplate = document.getElementById('category-template');
+      const kbTemplate = document.getElementById('kb-template');
+      const allKbTemplate = document.getElementById('all-kb-template');
+
+
+      // KB Manager state variables
+      let categories = []; // { id: number, name: string, originalId: string }
+      let knowledgeBases = []; // { id: number, name: string, categoryIds: number[], originalId: string, url?: string }
+      let currentLoader = null; // { filename: string, content: string }
+
+      // Drag and drop state variables
+      let draggedElement = null;
+      let sourceCategoryId = null; // ID of the category the KB is being dragged FROM
+
+
+      // Populate loader dropdown with kbLoader_*.js files
+      // Checks added for manager DOM elements
+      function populateLoaderDropdown() {
+          if (!loaderSelect) {
+              console.warn("KB Loader dropdown element not found. Skipping population.");
+              return;
+          }
+          console.log("Populating KB loader dropdown...");
+          // Clear existing options except the first placeholder
+          while (loaderSelect.options.length > 1) {
+              loaderSelect.remove(1);
+          }
+
+          const filenameLinks = document.querySelectorAll('table.attachments a.filename');
+          let loaderCount = 0;
+
+          filenameLinks.forEach(link => {
+              const filename = link.textContent?.trim();
+              if (filename && filename.startsWith('kbLoader_') && filename.endsWith('.js')) {
+                   // Add data-filename attribute for easier fetching later
+                   link.dataset.filename = filename;
+
+                  const option = document.createElement('option');
+                  option.value = filename;
+                  option.textContent = filename;
+                  loaderSelect.appendChild(option);
+                  loaderCount++;
+              }
+          });
+          console.log(`Added ${loaderCount} kbLoader_*.js files to the loader dropdown.`);
+          // Reset manager UI if no loaders found or if selection is cleared
+          if (loaderSelect.value === "") {
+              resetManagerUI();
+          }
+      }
+
+      // Load and parse the selected KB Loader JS file
+       // Checks added for manager DOM elements and templates
+       function loadKBLoaderFile(filename) {
+            if (!loaderSelect || !categorySelect || !kbSelect || !assignButton || !categoryList || !allKbList || !noCategories || !noKb || !categoryTemplate || !kbTemplate || !allKbTemplate) {
+                console.warn("Manager UI elements or templates not found. Cannot load loader file.");
+                return;
+            }
+
+           console.log(`Loading KB Loader file: ${filename}`);
+           showAlert(`Loading ${filename}...`, 'info', 2000);
+           resetManagerUI(); // Clear previous data before loading new (Uses resetManagerUI)
+
+           fetchConfluenceAttachmentContent(filename) // This utility is shared/kept
+               .then(jsContent => {
+                    if (!jsContent) {
+                        throw new Error("Received empty content for loader file.");
+                    }
+                   console.log(`Content loaded for KB Loader ${filename}. Length: ${jsContent.length}`);
+                   currentLoader = { filename: filename, content: jsContent }; // Store raw content
+
+                   try {
+                       // --- Robust Extraction using Regex ---
+                       let kbCategoryData = [];
+                       let kbDomainData = [];
+
+                       // Patterns to find array assignments (const, let, var, or direct assignment)
+                       // It looks for `kbCategory = [` or `kbDomain = [` followed by balanced brackets `[]`.
+                       const categoryPattern = /(?:const|let|var)\s+kbCategory\s*=\s*(\[[\s\S]*?\])\s*;?/i;
+                       const domainPattern = /(?:const|let|var)\s+kbDomain\s*=\s*(\[[\s\S]*?\])\s*;?/i;
+                        // Alternative patterns for assignments without declaration (e.g., within IIFE)
+                        const categoryAssignPattern = /kbCategory\s*=\s*(\[[\s\S]*?\])\s*;?/i;
+                        const domainAssignPattern = /kbDomain\s*=\s*(\[[\s\S]*?\])\s*;?/i;
+
+
+                       let categoryMatch = jsContent.match(categoryPattern) || jsContent.match(categoryAssignPattern);
+                       let domainMatch = jsContent.match(domainPattern) || jsContent.match(domainAssignPattern);
+
+                       if (!categoryMatch || !domainMatch) {
+                           console.error("Could not find kbCategory or kbDomain array declarations in the loader file using regex.");
+                           throw new Error('Failed to locate kbCategory or kbDomain array data in the loader file. Check the file format.');
+                       }
+
+                       console.log("Regex matched kbCategory and kbDomain.");
+                       const categoryString = categoryMatch[1];
+                       const domainString = domainMatch[1];
+
+                       // --- Safe Parsing ---
+                       try {
+                           // Use Function constructor for potentially non-strict JSON arrays
+                           kbCategoryData = Function('return ' + categoryString)();
+                           kbDomainData = Function('return ' + domainString)();
+                           console.log("Successfully parsed extracted data using Function constructor.");
+                       } catch (parseError) {
+                           console.warn("Function constructor parsing failed, attempting JSON.parse fallback.", parseError);
+                           // Fallback: Clean and try standard JSON.parse
+                           try {
+                               const cleanCategoryString = categoryString
+                                   .replace(/,(?=\s*[\]}])/g, '') // Remove trailing commas
+                                   .replace(/;\s*$/,''); // Remove trailing semicolon if captured
+                               const cleanDomainString = domainString
+                                   .replace(/,(?=\s*[\]}])/g, '')
+                                   .replace(/;\s*$/,'');
+
+                               kbCategoryData = JSON.parse(cleanCategoryString);
+                               kbDomainData = JSON.parse(cleanDomainString);
+                               console.log("Successfully parsed extracted data using JSON.parse fallback.");
+                           } catch (jsonError) {
+                               console.error("JSON fallback parsing also failed:", jsonError);
+                               console.error("Category String (problematic):", categoryString);
+                               console.error("Domain String (problematic):", domainString);
+                               throw new Error('Failed to parse extracted category or domain data. Check array syntax (commas, quotes, etc.).');
+                           }
+                       }
+
+                       if (!Array.isArray(kbCategoryData) || !Array.isArray(kbDomainData)) {
+                          throw new Error('Extracted category or domain data is not an array.');
+                       }
+
+                       console.log("Extracted Categories:", kbCategoryData);
+                       console.log("Extracted Knowledge Bases:", kbDomainData);
+
+                       // --- Data Normalization ---
+                       categories = kbCategoryData.map((cat, index) => ({
+                           id: index + 1, // Internal sequential ID
+                           name: cat.title || `Category ${index + 1}`, // Use title or fallback
+                           originalId: cat.id || `temp_cat_${index + 1}` // Store the original ID from the file
+                       }));
+
+                       knowledgeBases = kbDomainData.map((kb, index) => {
+                            // Find internal category ID(s) based on the original category ID string from the file
+                            const matchingCategory = categories.find(cat => cat.originalId === kb.category);
+                            const internalCategoryId = matchingCategory ? matchingCategory.id : null;
+
+                           return {
+                               id: index + 1, // Internal sequential ID
+                               name: kb.title || `KB ${index + 1}`, // Use title or fallback
+                               categoryIds: internalCategoryId ? [internalCategoryId] : [], // Map to internal ID array
+                               originalId: kb.id || `temp_kb_${index + 1}`, // Store the original ID
+                               url: kb.url // Store URL if present
+                           };
+                       });
+
+                       console.log("Normalized Categories:", categories);
+                       console.log("Normalized Knowledge Bases:", knowledgeBases);
+
+                       // --- UI Update ---
+                       refreshCategoryDropdown(); // Uses refreshCategoryDropdown
+                       refreshKbDropdown(); // Populate with all KBs initially (Uses refreshKbDropdown)
+                       refreshCategoryList(); // Uses refreshCategoryList
+                       refreshAllKbList(); // Uses refreshAllKbList
+                       setupDragAndDrop(); // Re-initialize drag/drop listeners (Uses setupDragAndDrop)
+
+                       // Add Save Changes button dynamically if not present
+                       const actionBar = document.querySelector('.kb-manager-container .action-bar:first-child .action-buttons'); // Corrected selector
+                        if (actionBar && !document.getElementById('save-changes-btn')) {
+                            const saveBtn = document.createElement('button');
+                            saveBtn.id = 'save-changes-btn';
+                            saveBtn.className = 'primary-button';
+                            saveBtn.textContent = 'Save Changes';
+                            saveBtn.title = `Save changes back to ${filename}`;
+                            saveBtn.addEventListener('click', saveChangesToLoader); // Uses saveChangesToLoader
+                            actionBar.appendChild(saveBtn); // Add button to the action buttons container
+                        } else if (document.getElementById('save-changes-btn')) {
+                            // Update title if button already exists
+                            document.getElementById('save-changes-btn').title = `Save changes back to ${filename}`;
+                        }
+
+
+                       showAlert(`KB Loader '${filename}' loaded successfully!`, 'success');
+
+                   } catch (error) {
+                       console.error('Error processing KB Loader file content:', error);
+                       showAlert(`Error processing KB Loader '${filename}': ${error.message}`, 'error', 6000);
+                       resetManagerUI(); // Ensure UI is cleared on processing error (Uses resetManagerUI)
+                       currentLoader = null; // Clear loader state
+                   }
+               })
+               .catch(error => {
+                   console.error(`Error loading KB Loader file '${filename}':`, error);
+                   showAlert(`Error loading KB Loader '${filename}': ${error.message}`, 'error', 6000);
+                   resetManagerUI(); // Uses resetManagerUI
+                   currentLoader = null;
+               });
+       }
+
+      // Event listener for loader dropdown selection
+      // This listener will only attach if loaderSelect exists
+      if (loaderSelect) {
+          loaderSelect.addEventListener('change', function() {
+            const selectedFileName = this.value;
+            // Remove existing save button if changing selection
+            const existingSaveBtn = document.getElementById('save-changes-btn');
+            existingSaveBtn?.remove();
+
+            if (selectedFileName) {
+              loadKBLoaderFile(selectedFileName); // Uses loadKBLoaderFile
+            } else {
+              resetManagerUI(); // Clear UI if "Select" is chosen (Uses resetManagerUI)
+              currentLoader = null;
+            }
+          });
+      }
+
+
+      // Reset Manager UI elements and data
+      // Checks added for manager DOM elements
+      function resetManagerUI() {
+           console.log("Resetting Manager UI");
+           categories = [];
+           knowledgeBases = [];
+           // currentLoader is reset by the calling function if needed
+
+           if (categoryList) categoryList.innerHTML = '';
+           if (allKbList) allKbList.innerHTML = '';
+           if (noCategories) noCategories.classList.remove('hidden'); // Show placeholder initially
+           if (noKb) noKb.classList.remove('hidden');      // Show placeholder initially
+           if (categorySelect) refreshCategoryDropdown(); // Clears dropdown (Uses refreshCategoryDropdown)
+           if (kbSelect) refreshKbDropdown();     // Clears dropdown (Uses refreshKbDropdown)
+           if (assignButton) assignButton.disabled = true;
+
+           // Remove Save Changes button if it exists
+           const saveBtn = document.getElementById('save-changes-btn');
+           saveBtn?.remove();
+
+           if (addCategoryForm) addCategoryForm.classList.add('hidden'); // Hide add form
+           if (newCategoryInput) newCategoryInput.value = '';
+      }
+
+
+      // Refresh category dropdown (for assignment)
+      // Checks added for manager DOM elements
+       function refreshCategoryDropdown() {
+           if (!categorySelect) return; // Check element
+           const currentValue = categorySelect.value; // Preserve selection if possible
+           // Clear existing options except the first placeholder
+           while (categorySelect.options.length > 1) {
+             categorySelect.remove(1);
+           }
+           categories.forEach(category => {
+             const option = document.createElement('option');
+             option.value = category.id;
+             option.textContent = category.name;
+             categorySelect.appendChild(option);
+           });
+           categorySelect.value = currentValue; // Restore selection
+           updateAssignButtonState(); // Update button based on current selections (Uses updateAssignButtonState)
+         }
+
+         // Refresh knowledge base dropdown (for assignment)
+         // Filters KBs: shows only those NOT already in the selected category (if a category is selected)
+         // Checks added for manager DOM elements
+         function refreshKbDropdown() {
+              if (!kbSelect || !categorySelect) return; // Check elements
+
+              const selectedCategoryId = parseInt(categorySelect.value);
+              const currentKbValue = kbSelect.value; // Preserve selection if possible
+
+              // Clear existing options except the first placeholder
+              while (kbSelect.options.length > 1) {
+                  kbSelect.remove(1);
+              }
+
+              let kbsToShow = knowledgeBases;
+
+              // If a category is selected in the category dropdown, filter the KB dropdown
+              // to show only KBs that are NOT currently assigned to that category.
+              if (selectedCategoryId) {
+                  kbsToShow = knowledgeBases.filter(kb => !kb.categoryIds.includes(selectedCategoryId));
+              }
+              // Else (no category selected), show all KBs.
+
+              kbsToShow.forEach(kb => {
+                  const option = document.createElement('option');
+                  option.value = kb.id;
+                  option.textContent = kb.name;
+                  kbSelect.appendChild(option);
+              });
+
+              kbSelect.value = currentKbValue; // Restore selection if the option still exists
+              updateAssignButtonState(); // Uses updateAssignButtonState
+         }
+
+
+      // Update assign button state based on dropdown selections
+      // Checks added for manager DOM elements
+      function updateAssignButtonState() {
+          if (assignButton && categorySelect && kbSelect) { // Check elements
+              assignButton.disabled = !categorySelect.value || !kbSelect.value;
+          }
+      }
+
+      // Refresh the main category list display
+      // Checks added for manager DOM elements and templates
+      function refreshCategoryList() {
+           if (!categoryList || !noCategories || !categoryTemplate || !kbTemplate) return; // Check elements/templates
+
+           categoryList.innerHTML = ''; // Clear existing list
+
+           if (categories.length === 0) {
+               noCategories.classList.remove('hidden'); // Show placeholder
+           } else {
+               noCategories.classList.add('hidden'); // Hide placeholder
+
+               categories.forEach(category => {
+                   const categoryElement = createCategoryElement(category); // Uses createCategoryElement
+                    if(categoryElement) categoryList.appendChild(categoryElement);
+               });
+               addCategoryEventListeners(); // Add listeners after rendering (Uses addCategoryEventListeners)
+               setupDragAndDrop(); // Re-setup drag drop listeners (Uses setupDragAndDrop)
+           }
+      }
+
+        // Create HTML element for a single category
+       // Checks added for templates
+       function createCategoryElement(category) {
+           if (!categoryTemplate || !kbTemplate) return null; // Check templates
+
+           const clone = categoryTemplate.content.cloneNode(true);
+           const categoryItem = clone.querySelector('.category-item');
+           const categoryHeader = clone.querySelector('.category-header');
+           const categoryName = clone.querySelector('.category-name');
+           const categoryContent = clone.querySelector('.category-content');
+           const kbList = clone.querySelector('.category-kb-list');
+           const noKbsMessage = clone.querySelector('.no-kbs');
+           const chevronIcon = clone.querySelector('.chevron-icon');
+
+           categoryItem.dataset.id = category.id;
+           categoryName.textContent = category.name;
+           if(kbList) kbList.dataset.categoryId = category.id; // For drop target identification
+
+           // Find KBs belonging to this category
+           const categoryKbs = knowledgeBases.filter(kb => kb.categoryIds.includes(category.id));
+
+           if (noKbsMessage) { // Check element
+               if (categoryKbs.length === 0) {
+                   noKbsMessage.classList.remove('hidden');
+               } else {
+                   noKbsMessage.classList.add('hidden');
+                   if(kbList) { // Check element
+                       categoryKbs.forEach(kb => {
+                           const kbElement = createKbElement(kb, category.id); // Pass categoryId for remove button context (Uses createKbElement)
+                            if(kbElement) kbList.appendChild(kbElement);
+                       });
+                   }
+               }
+           }
+
+
+           // Toggle content visibility
+           if (categoryHeader && categoryContent && chevronIcon) {
+               categoryHeader.addEventListener('click', () => {
+                   categoryContent.classList.toggle('hidden');
+                   // Rotate chevron - remove existing rotation class, add if not hidden
+                   chevronIcon.style.transform = categoryContent.classList.contains('hidden') ? 'rotate(0deg)' : 'rotate(180deg)';
+               });
+           }
+
+
+           return categoryItem;
+       }
+
+        // Create HTML element for a single KB item (within a category)
+        // Checks added for template
+        function createKbElement(kb, categoryId) {
+            if (!kbTemplate) return null; // Check template
+
+            const clone = kbTemplate.content.cloneNode(true);
+            const kbItem = clone.querySelector('.kb-item');
+            const kbName = clone.querySelector('.kb-name');
+            const removeButton = clone.querySelector('.remove-kb-button');
+
+            if (kbItem) kbItem.dataset.id = kb.id;
+            if (kbName) {
+                kbName.textContent = kb.name;
+                kbName.title = kb.name; // Tooltip for long names
+            }
+
+
+             // Event listener for removing KB from this specific category
+             if (removeButton) { // Check element
+                 removeButton.addEventListener('click', (e) => {
+                     e.stopPropagation(); // Prevent category header click
+                     console.log(`Removing KB ${kb.id} from Category ${categoryId}`);
+                     removeKnowledgeBaseFromCategory(kb.id, categoryId); // Uses removeKnowledgeBaseFromCategory
+                 });
+             }
+
+
+            return kbItem;
+        }
+
+
+        // Refresh the list of all knowledge bases
+        // Checks added for manager DOM elements and template
+        function refreshAllKbList() {
+             if (!allKbList || !noKb || !allKbTemplate) return; // Check elements/template
+
+            allKbList.innerHTML = ''; // Clear existing list
+
+            if (knowledgeBases.length === 0) {
+                noKb.classList.remove('hidden'); // Show placeholder
+            } else {
+                noKb.classList.add('hidden'); // Hide placeholder
+
+                knowledgeBases.forEach(kb => {
+                    const kbElement = createAllKbElement(kb); // Uses createAllKbElement
+                     if(kbElement) allKbList.appendChild(kbElement);
+                });
+            }
+        }
+
+
+        // Create HTML element for a KB item in the "All KBs" list
+        // Checks added for template
+        function createAllKbElement(kb) {
+           if (!allKbTemplate) return null; // Check template
+
+           const clone = allKbTemplate.content.cloneNode(true);
+           const kbItem = clone.querySelector('.kb-item');
+           const kbName = clone.querySelector('.kb-name');
+           const categoriesContainer = clone.querySelector('.kb-categories');
+
+            if (kbItem) kbItem.dataset.id = kb.id;
+            if (kbName) {
+                kbName.textContent = kb.name;
+                kbName.title = kb.name; // Tooltip for long names
+            }
+
+
+           // Add category badges
+            if (categoriesContainer) { // Check element
+                categoriesContainer.innerHTML = ''; // Clear any template placeholders
+                if (kb.categoryIds.length > 0) {
+                    kb.categoryIds.forEach(catId => {
+                        const category = categories.find(c => c.id === catId);
+                        if (category) {
+                            const badge = document.createElement('span');
+                            badge.textContent = category.name;
+                            badge.classList.add('kb-badge');
+                            categoriesContainer.appendChild(badge);
+                        }
+                    });
+                } else {
+                    // Optionally show a placeholder if no categories
+                    // const noCatBadge = document.createElement('span');
+                    // noCatBadge.textContent = 'Uncategorized';
+                    // noCatBadge.classList.add('kb-badge', 'text-gray');
+                    // categoriesContainer.appendChild(noCatBadge);
+                }
+            }
+
+           return kbItem;
+       }
+
+      // Add event listeners (delegated for dynamically added elements)
+      // Checks added for manager DOM elements
+      function addCategoryEventListeners() {
+          if (!categoryList) return; // Check element
+          // Remove Category button (delegated to categoryList)
+          categoryList.addEventListener('click', function(event) {
+              if (event.target.closest('.remove-category-button')) {
+                  event.stopPropagation(); // Prevent header click
+                  const categoryItem = event.target.closest('.category-item');
+                  if (categoryItem) {
+                      const categoryId = parseInt(categoryItem.dataset.id);
+                       if (confirm(`Are you sure you want to remove the category "${categories.find(c=>c.id === categoryId)?.name}"? KBs within it will become uncategorized.`)) {
+                           removeCategory(categoryId); // Uses removeCategory
+                       }
+                  }
+              }
+          });
+
+          // Note: KB removal listener is added directly in `createKbElement`
+      }
+
+      // --- KB Manager Actions ---
+
+      // Add a new category
+      // Checks added for manager DOM elements
+      function addCategory(name) {
+           if (!addCategoryForm || !newCategoryInput || !categorySelect || !categoryList || !noCategories) {
+               console.warn("Manager form or list elements not found. Cannot add category.");
+               return;
+           }
+
+          if (!name || categories.some(c => c.name.toLowerCase() === name.toLowerCase())) {
+              showAlert(`Category "${name}" already exists or name is empty.`, 'error');
+              return;
+          }
+
+          const newId = categories.length > 0 ? Math.max(...categories.map(c => c.id)) + 1 : 1;
+          // Generate a unique originalId for new categories (important for saving)
+          const newOriginalId = 'new_cat_' + Date.now() + '_' + name.toLowerCase().replace(/[^a-z0-9]/g, '');
+
+          categories.push({
+              id: newId,
+              name: name,
+              originalId: newOriginalId // Ensure new categories have a unique ID
+          });
+          console.log("Added category:", categories[categories.length - 1]);
+
+          refreshCategoryDropdown(); // Uses refreshCategoryDropdown
+          refreshCategoryList(); // Uses refreshCategoryList
+          // No need to refresh KB list unless KBs were assigned
+      }
+
+      // Remove a category
+      // Checks added for manager DOM elements
+      function removeCategory(categoryId) {
+           if (!categoryList || !noCategories || !allKbList || !categorySelect || !kbSelect) {
+              console.warn("Manager list or dropdown elements not found. Cannot remove category.");
+              return;
+           }
+          const categoryToRemove = categories.find(c => c.id === categoryId);
+          if (!categoryToRemove) return;
+
+          console.log("Removing category:", categoryToRemove);
+          categories = categories.filter(c => c.id !== categoryId);
+
+          // Make KBs previously in this category uncategorized
+          knowledgeBases.forEach(kb => {
+              const index = kb.categoryIds.indexOf(categoryId);
+              if (index > -1) {
+                  kb.categoryIds.splice(index, 1);
+              }
+          });
+
+          refreshCategoryDropdown(); // Uses refreshCategoryDropdown
+          refreshCategoryList(); // Uses refreshCategoryList
+          refreshAllKbList(); // Update badges in all KBs list (Uses refreshAllKbList)
+          refreshKbDropdown(); // KBs might now be available for assignment (Uses refreshKbDropdown)
+      }
+
+
+       // Assign a knowledge base to the selected category
+       // Checks added for manager DOM elements
+       function assignKnowledgeBase() {
+           if (!kbSelect || !categorySelect || !categoryList || !allKbList) {
+               console.warn("Manager dropdown or list elements not found. Cannot assign.");
+               return;
+           }
+
+           const kbId = parseInt(kbSelect.value);
+           const categoryId = parseInt(categorySelect.value);
+
+           if (!kbId || !categoryId) {
+               showAlert("Please select both a category and a knowledge base.", "error");
+               return;
+           }
+
+           const kb = knowledgeBases.find(k => k.id === kbId);
+           const category = categories.find(c => c.id === categoryId);
+
+           if (kb && category) {
+               if (!kb.categoryIds.includes(categoryId)) {
+                   kb.categoryIds.push(categoryId);
+                   console.log(`Assigned KB ${kb.name} (ID: ${kb.id}) to Category ${category.name} (ID: ${categoryId})`);
+
+                   // Refresh relevant UI parts
+                   refreshCategoryList(); // Update the category's KB list (Uses refreshCategoryList)
+                   refreshAllKbList();  // Update badges in the 'All KBs' list (Uses refreshAllKbList)
+                   refreshKbDropdown(); // Re-filter the KB dropdown for the current category (Uses refreshKbDropdown)
+               } else {
+                   showAlert(`Knowledge Base "${kb.name}" is already in category "${category.name}".`, "info");
+               }
+           } else {
+               showAlert("Error: Could not find selected category or knowledge base.", "error");
+           }
+
+           // Reset KB select dropdown after assignment
+           kbSelect.value = "";
+           updateAssignButtonState(); // Disable button again (Uses updateAssignButtonState)
+       }
+
+
+       // Remove a knowledge base from a specific category (called by button in category list)
+       // Checks added for manager DOM elements
+       function removeKnowledgeBaseFromCategory(kbId, categoryId) {
+           if (!categoryList || !allKbList || !kbSelect) {
+               console.warn("Manager list or dropdown elements not found. Cannot remove KB from category.");
+               return;
+           }
+           const kb = knowledgeBases.find(k => k.id === kbId);
+           const category = categories.find(c => c.id === categoryId);
+
+           if (kb && category) {
+               const index = kb.categoryIds.indexOf(categoryId);
+               if (index > -1) {
+                   kb.categoryIds.splice(index, 1);
+                   console.log(`Removed KB ${kb.name} (ID: ${kb.id}) from Category ${category.name} (ID: ${categoryId})`);
+
+                   // Refresh UI
+                   refreshCategoryList(); // Update the category's list (Uses refreshCategoryList)
+                   refreshAllKbList(); // Update badges (Uses refreshAllKbList)
+                   refreshKbDropdown(); // Update assignment dropdown if this category is selected (Uses refreshKbDropdown)
+               }
+           } else {
+                console.error(`Error removing KB ${kbId} from Cat ${categoryId}: KB or Category not found.`);
+           }
+       }
+
+
+       // Save changes back to the currently loaded loader file
+       // Checks added for manager DOM elements
+       function saveChangesToLoader() {
+            if (!currentLoader || !currentLoader.filename || !currentLoader.content || !categoryList || !allKbList) {
+                showAlert('No loader file loaded, or content missing. Cannot save changes.', 'error');
+                console.error("Save aborted: currentLoader data is incomplete or manager UI elements are missing.");
+                return;
+            }
+           console.log(`Saving changes to ${currentLoader.filename}`);
+           showAlert(`Saving changes to ${currentLoader.filename}...`, 'info', 2000);
+
+           try {
+               // 1. Convert internal data back to the loader's expected format
+               const kbCategoryDataToSave = categories.map(category => ({
+                   id: category.originalId, // Use the stored original ID
+                   title: category.name
+               }));
+
+               const kbDomainDataToSave = knowledgeBases.map(kb => {
+                   // Find the original category ID(s)
+                   const categoryOriginalId = kb.categoryIds.length > 0
+                       ? categories.find(c => c.id === kb.categoryIds[0])?.originalId
+                       : null; // Use null if uncategorized
+
+                   // Construct the URL - use existing URL or generate a standard one
+                   // Note: This URL format is specific to your Confluence instance (4722904378)
+                   // If saving to a different page, this would need to be dynamic or configured.
+                   const kbUrl = kb.url || `https://confluence.prod.aws.jpmchase.net/confluence/download/attachments/4722904378/${kb.originalId}.js`;
+
+                   return {
+                       id: kb.originalId, // Use the stored original ID
+                       title: kb.name,
+                       category: categoryOriginalId,
+                       url: kbUrl // Include the URL
+                   };
+               });
+
+               console.log("Data to save (Categories):", kbCategoryDataToSave);
+               console.log("Data to save (Domains):", kbDomainDataToSave);
+
+               // 2. Stringify the data arrays with proper formatting
+               const categoryJsonString = JSON.stringify(kbCategoryDataToSave, null, 2);
+               const domainJsonString = JSON.stringify(kbDomainDataToSave, null, 2);
+
+               // 3. Replace the old arrays in the original content string using regex
+               let updatedContent = currentLoader.content;
+
+               // Regex to find the variable assignment and replace the array part
+               const categoryPattern = /((?:const|let|var)\s+kbCategory\s*=\s*)(\[[\s\S]*?\])\s*;?/i;
+               const domainPattern = /((?:const|let|var)\s+kbDomain\s*=\s*)(\[[\s\S]*?\])\s*;?/i;
+               // Alternative patterns
+               const categoryAssignPattern = /(kbCategory\s*=\s*)(\[[\s\S]*?\])\s*;?/i;
+               const domainAssignPattern = /(kbDomain\s*=\s*)(\[[\s\S]*?\])\s*;?/i; // Corrected regex name
+
+               let replacedCategory = false;
+               let replacedDomain = false;
+
+               if (categoryPattern.test(updatedContent)) {
+                   updatedContent = updatedContent.replace(categoryPattern, `$1${categoryJsonString};`);
+                   replacedCategory = true;
+               } else if (categoryAssignPattern.test(updatedContent)){
+                   updatedContent = updatedContent.replace(categoryAssignPattern, `$1${categoryJsonString};`);
+                   replacedCategory = true;
+               }
+
+               if (domainPattern.test(updatedContent)) {
+                   updatedContent = updatedContent.replace(domainPattern, `$1${domainJsonString};`);
+                   replacedDomain = true;
+               } else if (domainAssignPattern.test(updatedContent)) {
+                   updatedContent = updatedContent.replace(domainAssignPattern, `$1${domainJsonString};`);
+                   replacedDomain = true;
+               }
+
+               if (!replacedCategory || !replacedDomain) {
+                   console.error("Failed to replace category or domain data in the loader content string.");
+                   throw new Error("Could not find the kbCategory or kbDomain arrays to update in the original file content.");
+               }
+
+               // 4. Create a Blob and File object - using same approach as KB Editor
+               const finalFileName = currentLoader.filename;
+               const jsFileBlob = new Blob([updatedContent], { type: 'application/javascript;charset=utf-8' });
+               const jsFile = new File([jsFileBlob], finalFileName, { type: 'application/javascript;charset=utf-8' });
+
+               // 5. Find the Confluence attachments drop zone (more robustly)
+               // This is the part where we're leveraging the working KB Editor approach
+               const attachmentsDropZone = document.querySelector('.attachments-table-drop-zone, div[data-test-id="media-inline-upload-dropzone"]');
+
+               if (!attachmentsDropZone) {
+                   console.error("Attachments drop zone not found");
+                   showAlert("Error: Confluence attachments drop zone not found. Cannot save file automatically.", "error");
+                   return;
+               }
+
+               // 6. Use a simplified drag and drop simulation that matches the KB Editor's approach
+               console.log(`Attempting to save ${finalFileName} using editor's approach...`);
+
+               // Create a DataTransfer object
+               const dataTransfer = new DataTransfer();
+               dataTransfer.items.add(jsFile);
+
+               // Simplified event sequence - matches exactly what the editor does
+               const eventOptions = {
+                   bubbles: true,
+                   cancelable: true,
+                   dataTransfer: dataTransfer
+               };
+
+               // Dispatch events in sequence
+               attachmentsDropZone.dispatchEvent(new DragEvent('dragenter', eventOptions));
+               attachmentsDropZone.dispatchEvent(new DragEvent('dragover', eventOptions));
+               attachmentsDropZone.dispatchEvent(new DragEvent('drop', eventOptions));
+
+               // Update stored content after successful drop
+               currentLoader.content = updatedContent;
+
+               // Show success message
+               showAlert(`Successfully saved changes to ${finalFileName}!`, 'success');
+
+               console.log(`Save operation completed for ${finalFileName}`);
+
+           } catch (error) {
+               console.error('Error saving changes to loader:', error);
+               showAlert(`Error saving changes: ${error.message}`, 'error', 6000);
+           }
+       }
+
+
+      // --- Event Listeners for KB Manager ---
+      // These listeners will only attach if the elements exist
+      if (categorySelect) categorySelect.addEventListener('change', refreshKbDropdown); // Update KB list when category changes (Uses refreshKbDropdown)
+      if (kbSelect) kbSelect.addEventListener('change', updateAssignButtonState); // Enable/disable assign button (Uses updateAssignButtonState)
+      if (assignButton) assignButton.addEventListener('click', assignKnowledgeBase); // Assign action (Uses assignKnowledgeBase)
+
+      if (addCategoryButton && addCategoryForm && newCategoryInput) { // Check elements
+          addCategoryButton.addEventListener('click', () => {
+              addCategoryForm.classList.remove('hidden');
+              newCategoryInput.focus();
+          });
+
+          if (saveCategoryButton) { // Check element
+              saveCategoryButton.addEventListener('click', () => {
+                  const name = newCategoryInput.value.trim();
+                  if (name) {
+                      addCategory(name); // Uses addCategory
+                      newCategoryInput.value = ''; // Clear input
+                      addCategoryForm.classList.add('hidden'); // Hide form
+                  } else {
+                      showAlert("Please enter a category name.", "error");
+                  }
+              });
+          }
+
+          if (cancelCategoryButton) { // Check element
+              cancelCategoryButton.addEventListener('click', () => {
+                  newCategoryInput.value = '';
+                  addCategoryForm.classList.add('hidden');
+              });
+          }
+      }
+
+
+      // --- Drag and Drop Logic for KB Manager ---
+      // These listeners will only attach if categoryList exists
+      // Checks added for manager DOM elements and templates
+      function setupDragAndDrop() {
+          if (!categoryList || !categoryTemplate || !kbTemplate || !allKbTemplate) {
+               console.warn("Manager list or template elements not found. Drag and drop not enabled.");
+               return;
+          }
+          // Use event delegation on the category list container
+          categoryList.addEventListener('dragstart', (event) => {
+              if (event.target.classList.contains('draggable')) {
+                   draggedElement = event.target;
+                   // Find the source category list and get its ID
+                   const sourceList = draggedElement.closest('.category-kb-list');
+                   sourceCategoryId = sourceList ? parseInt(sourceList.dataset.categoryId) : null;
+
+                   event.dataTransfer.setData('text/plain', draggedElement.dataset.id);
+                   event.dataTransfer.effectAllowed = 'move';
+                   // Add styling timeout to ensure it applies after dragstart
+                   setTimeout(() => draggedElement.classList.add('dragging'), 0);
+                   console.log(`Drag Start: KB ID ${draggedElement.dataset.id} from Category ID ${sourceCategoryId}`);
+              }
+          });
+
+          categoryList.addEventListener('dragend', (event) => {
+              if (draggedElement && event.target === draggedElement) {
+                   draggedElement.classList.remove('dragging');
+                   draggedElement = null;
+                   sourceCategoryId = null;
+                   // Clean up any leftover dragover styles
+                   document.querySelectorAll('.category-kb-list.dragover').forEach(el => el.classList.remove('dragover'));
+                   console.log("Drag End");
+              }
+          });
+
+           // Handle entering a potential drop target (category list)
+           categoryList.addEventListener('dragenter', (event) => {
+               const dropTargetList = event.target.closest('.category-kb-list');
+               if (dropTargetList && draggedElement) {
+                   event.preventDefault(); // Necessary to allow drop
+                   // Prevent dropping onto the source list visually (optional)
+                    const targetCategoryId = parseInt(dropTargetList.dataset.categoryId);
+                    if (targetCategoryId !== sourceCategoryId) {
+                       dropTargetList.classList.add('dragover');
+                    }
+               }
+           });
+
+           // Handle moving over a potential drop target
+           categoryList.addEventListener('dragover', (event) => {
+               const dropTargetList = event.target.closest('.category-kb-list');
+               if (dropTargetList && draggedElement) {
+                   event.preventDefault(); // Necessary to allow drop
+                   event.dataTransfer.dropEffect = 'move';
+               }
+           });
+
+
+           // Handle leaving a potential drop target
+           categoryList.addEventListener('dragleave', (event) => {
+               const dropTargetList = event.target.closest('.category-kb-list');
+               if (dropTargetList) {
+                   // Check if the mouse is truly leaving the list, not just moving over child elements
+                    const rect = dropTargetList.getBoundingClientRect();
+                    if (event.clientX < rect.left || event.clientX >= rect.right || event.clientY < rect.top || event.clientY >= rect.bottom) {
+                       dropTargetList.classList.remove('dragover');
+                    }
+               }
+           });
+
+
+           // Handle the actual drop
+           categoryList.addEventListener('drop', (event) => {
+               event.preventDefault(); // Prevent default browser action
+               const dropTargetList = event.target.closest('.category-kb-list');
+
+               if (dropTargetList && draggedElement) {
+                   dropTargetList.classList.remove('dragover');
+                   const targetCategoryId = parseInt(dropTargetList.dataset.categoryId);
+                   const kbId = parseInt(event.dataTransfer.getData('text/plain'));
+
+                   console.log(`Drop: KB ID ${kbId} onto Category ID ${targetCategoryId}. Source was ${sourceCategoryId}`);
+
+                   if (targetCategoryId !== sourceCategoryId) {
+                       moveKnowledgeBase(kbId, sourceCategoryId, targetCategoryId); // Uses moveKnowledgeBase
+                   } else {
+                       console.log("Dropped in the same category, no move needed.");
+                       // Optional: Implement reordering within the same list here if desired
+                   }
+                   draggedElement = null; // Clear dragged element reference
+                   sourceCategoryId = null;
+               }
+           });
+       }
+
+
+       // Move KB between categories (logic)
+       function moveKnowledgeBase(kbId, fromCategoryId, toCategoryId) {
+            if (!categoryList || !allKbList || !kbSelect) {
+               console.warn("Manager list or dropdown elements not found. Cannot move KB.");
+               return;
+           }
+            const kb = knowledgeBases.find(k => k.id === kbId);
+            const targetCategory = categories.find(c => c.id === toCategoryId);
+
+            if (kb && targetCategory) {
+                 console.log(`Moving KB ${kb.name} from ${fromCategoryId} to ${toCategoryId}`);
+                 // Remove from the 'from' category (if it exists)
+                 if (fromCategoryId) {
+                    const index = kb.categoryIds.indexOf(fromCategoryId);
+                    if (index > -1) {
+                        kb.categoryIds.splice(index, 1);
+                    }
+                 }
+                 // Add to the 'to' category if not already there
+                 if (!kb.categoryIds.includes(toCategoryId)) {
+                    kb.categoryIds.push(toCategoryId);
+                 }
+
+                 // Refresh UI
+                 refreshCategoryList(); // Uses refreshCategoryList
+                 refreshAllKbList(); // Uses refreshAllKbList
+                 refreshKbDropdown(); // Update assignment dropdown (Uses refreshKbDropdown)
+            } else {
+                console.error(`Error moving KB ${kbId}: KB or target category ${toCategoryId} not found.`);
+            }
+        }
+
+
+      // --- Initial Setup ---
+      // Remove Editor initial setup calls
+      // populateFileDropdown(); // Editor file dropdown
+
+      // Only populate Manager loader dropdown and reset Manager UI on load
+      populateLoaderDropdown(); // Manager loader dropdown (Uses populateLoaderDropdown)
+      resetManagerUI(); // Ensure manager starts clean (Uses resetManagerUI)
+      // Drag/drop listeners are added when data loads by refreshCategoryList -> setupDragAndDrop
+
+
+    });
+  </script>
+</body>
+</html>

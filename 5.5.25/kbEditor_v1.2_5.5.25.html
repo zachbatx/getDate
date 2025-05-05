@@ -987,7 +987,6 @@
   <!-- Include Turndown.js for HTML to Markdown conversion -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/turndown/7.1.1/turndown.min.js"></script>
   <script>
-
 document.addEventListener('DOMContentLoaded', function () {
   // ===============================
   // GLOBAL VARIABLES
@@ -1085,78 +1084,29 @@ document.addEventListener('DOMContentLoaded', function () {
   // FILE HANDLING FUNCTIONS
   // ===============================
   
-  // Enhanced simulate file drop with improved Confluence compatibility
+  // Simplified simulate file drop function for Confluence integration
   function simulateFileDrop(dropZoneElement, file) {
-  if (!dropZoneElement) {
-    console.error("Drop zone element not found for simulation.");
-    showAlert("Error: Could not find the Confluence attachments area to save the file.", "error");
-    return;
-  }
-  
-  // Create a simple DataTransfer object
-  const dataTransfer = new DataTransfer();
-  dataTransfer.items.add(file);
-
-  // Dispatch events in sequence
-  ['dragenter', 'dragover', 'drop'].forEach(eventName => {
-    const event = new DragEvent(eventName, {
-      bubbles: true,
-      cancelable: true,
-      dataTransfer: dataTransfer
-    });
-    dropZoneElement.dispatchEvent(event);
-  });
-  
-  console.log(`Simulated drop of ${file.name} onto`, dropZoneElement);
-}
     if (!dropZoneElement) {
       console.error("Drop zone element not found for simulation.");
       showAlert("Error: Could not find the Confluence attachments area to save the file.", "error");
-      offerDirectDownload(file);
-      return false;
+      return;
     }
     
-    try {
-      console.log(`Attempting to simulate drop of ${file.name} using DataTransfer API`);
-      
-      // Create a clean DataTransfer object
-      const dataTransfer = new DataTransfer();
-      dataTransfer.items.add(file);
-      
-      // Event options with DataTransfer
-      const eventOptions = {
+    // Create a simple DataTransfer object
+    const dataTransfer = new DataTransfer();
+    dataTransfer.items.add(file);
+
+    // Dispatch events in sequence
+    ['dragenter', 'dragover', 'drop'].forEach(eventName => {
+      const event = new DragEvent(eventName, {
         bubbles: true,
         cancelable: true,
         dataTransfer: dataTransfer
-      };
-      
-      // Clear any existing focus
-      if (document.activeElement && document.activeElement.blur) {
-        document.activeElement.blur();
-      }
-      
-      // Clear any existing drag states
-      document.querySelectorAll('.dragging, .dragover').forEach(el => {
-        el.classList.remove('dragging', 'dragover');
       });
-      
-      // Dispatch events in sequence with small delays
-      return new Promise((resolve) => {
-        dropZoneElement.dispatchEvent(new DragEvent('dragenter', eventOptions));
-        
-        setTimeout(() => {
-          dropZoneElement.dispatchEvent(new DragEvent('dragover', eventOptions));
-          
-          setTimeout(() => {
-            dropZoneElement.dispatchEvent(new DragEvent('drop', eventOptions));
-            resolve(true);
-          }, 50);
-        }, 50);
-      });
-    } catch (error) {
-      console.error("File drop simulation failed:", error);
-      return false;
-    }
+      dropZoneElement.dispatchEvent(event);
+    });
+    
+    console.log(`Simulated drop of ${file.name} onto`, dropZoneElement);
   }
 
   // Fallback direct download if Confluence attachment fails
@@ -1670,67 +1620,8 @@ ${escapedContent}
   // EXPORT/SAVE FUNCTIONS
   // ===============================
   
-  // Enhanced export file function with improved rename handling
+  // Simplified export file function (revised)
   function exportFile() {
-  if (!currentJsObject || !currentMarkdownContent || !outputFileName || !exportBtn) {
-    showAlert("Cannot export/save: Content is missing or hasn't been processed.", "error");
-    console.error("Export aborted: currentJsObject or currentMarkdownContent is null/undefined.");
-    return;
-  }
-  console.log("Export/Save initiated");
-
-  // Ensure content is up-to-date before saving
-  processEditorContent();
-
-  // Generate the final JS content (LLM Primer)
-  const kbNameForExport = currentJsObject.name || 'unnamed_kb';
-  const jsContentToSave = generateLlmPrimerCode(kbNameForExport, currentMarkdownContent);
-
-  // Final filename validation
-  let finalFileName = outputFileName.value.trim();
-  if (!finalFileName) {
-    finalFileName = `kb_${kbNameForExport}.js`; // Generate filename if empty
-    outputFileName.value = finalFileName; // Update input field
-  }
-  if (!finalFileName.startsWith('kb_')) {
-    finalFileName = 'kb_' + finalFileName.replace(/^kb_/i, ''); // Ensure prefix
-  }
-  if (!finalFileName.endsWith('.js')) {
-    finalFileName += '.js'; // Ensure suffix
-  }
-  outputFileName.value = finalFileName; // Update input field with final name
-
-  const jsFileBlob = new Blob([jsContentToSave], { type: 'application/javascript;charset=utf-8' });
-  const jsFile = new File([jsFileBlob], finalFileName, { type: 'application/javascript;charset=utf-8' });
-
-  // Find the Confluence attachments drop zone
-  const attachmentsDropZone = document.querySelector('.attachments-table-drop-zone, div[data-test-id="media-inline-upload-dropzone"]');
-
-  if (!attachmentsDropZone) {
-    showAlert("Error: Confluence attachments drop zone not found. Cannot save file automatically.", "error");
-    offerDirectDownload(jsFile);
-    return;
-  }
-
-  console.log(`Attempting to drop ${finalFileName} onto:`, attachmentsDropZone);
-  simulateFileDrop(attachmentsDropZone, jsFile);
-
-  // Update the file dropdown if this is a new file or rename
-  addToFileDropdown(finalFileName);
-  if (loadedJsFilename && loadedJsFilename !== finalFileName) {
-    // If renamed, log the change
-    console.log(`File renamed from ${loadedJsFilename} to ${finalFileName}`);
-    loadedJsFilename = finalFileName; // Update loaded filename track
-    fileDropdown.value = finalFileName; // Select the new name in dropdown
-  } else if (!loadedJsFilename) {
-    loadedJsFilename = finalFileName; // Track newly exported file
-    fileDropdown.value = finalFileName;
-  }
-
-  showAlert(`Successfully saved '${finalFileName}' to Confluence Attachments!`, 'success');
-  exportBtn.textContent = 'Save'; // Keep as 'Save' after successful save
-  currentFileSource = 'dropdown'; // Treat it as loaded from dropdown now
-}
     if (!currentJsObject || !currentMarkdownContent || !outputFileName || !exportBtn) {
       showAlert("Cannot export/save: Content is missing or hasn't been processed.", "error");
       console.error("Export aborted: currentJsObject or currentMarkdownContent is null/undefined.");
@@ -1762,60 +1653,33 @@ ${escapedContent}
     const jsFileBlob = new Blob([jsContentToSave], { type: 'application/javascript;charset=utf-8' });
     const jsFile = new File([jsFileBlob], finalFileName, { type: 'application/javascript;charset=utf-8' });
 
-    // Check if this is a rename operation
-    const isRename = loadedJsFilename && loadedJsFilename !== finalFileName;
-    if (isRename) {
-      console.log(`Attempting to save renamed file from ${loadedJsFilename} to ${finalFileName}`);
-    }
-
     // Find the Confluence attachments drop zone
     const attachmentsDropZone = document.querySelector('.attachments-table-drop-zone, div[data-test-id="media-inline-upload-dropzone"]');
+
     if (!attachmentsDropZone) {
       showAlert("Error: Confluence attachments drop zone not found. Cannot save file automatically.", "error");
       offerDirectDownload(jsFile);
       return;
     }
 
-    try {
-      // If renaming, we need special handling
-      if (isRename) {
-        // Clear any drag states that might interfere
-        document.querySelectorAll('.dragging, .dragover').forEach(el => {
-          el.classList.remove('dragging', 'dragover');
-        });
-        
-        // A brief delay can help Confluence handle things cleanly
-        await new Promise(resolve => setTimeout(resolve, 100));
-      }
-      
-      // Attempt the file drop
-      const success = await simulateFileDrop(attachmentsDropZone, jsFile);
-      
-      if (success) {
-        // Update UI and state
-        addToFileDropdown(finalFileName);
-        
-        // Update tracking variables
-        if (isRename) {
-          console.log(`File renamed from ${loadedJsFilename} to ${finalFileName}`);
-          if (fileDropdown) fileDropdown.value = finalFileName;
-          showAlert(`Saved as new file '${finalFileName}' to Confluence Attachments!`, 'success');
-        } else {
-          showAlert(`Successfully saved '${finalFileName}' to Confluence Attachments!`, 'success');
-        }
-        
-        loadedJsFilename = finalFileName;
-        exportBtn.textContent = 'Save';
-        currentFileSource = 'dropdown';
-      } else {
-        // Fallback to direct download if simulation failed
-        offerDirectDownload(jsFile);
-      }
-    } catch (error) {
-      console.error("Error during file save:", error);
-      showAlert(`Error saving file: ${error.message}`, 'error');
-      offerDirectDownload(jsFile);
+    console.log(`Attempting to drop ${finalFileName} onto:`, attachmentsDropZone);
+    simulateFileDrop(attachmentsDropZone, jsFile);
+
+    // Update the file dropdown if this is a new file or rename
+    addToFileDropdown(finalFileName);
+    if (loadedJsFilename && loadedJsFilename !== finalFileName) {
+      // If renamed, log the change
+      console.log(`File renamed from ${loadedJsFilename} to ${finalFileName}`);
+      loadedJsFilename = finalFileName; // Update loaded filename track
+      fileDropdown.value = finalFileName; // Select the new name in dropdown
+    } else if (!loadedJsFilename) {
+      loadedJsFilename = finalFileName; // Track newly exported file
+      fileDropdown.value = finalFileName;
     }
+
+    showAlert(`Successfully saved '${finalFileName}' to Confluence Attachments!`, 'success');
+    exportBtn.textContent = 'Save'; // Keep as 'Save' after successful save
+    currentFileSource = 'dropdown'; // Treat it as loaded from dropdown now
   }
 
   // ===============================
@@ -2007,7 +1871,7 @@ ${escapedContent}
 
   // Run initialization
   initializeEditor();
-}); 
+});
 
   </script>
 </body>

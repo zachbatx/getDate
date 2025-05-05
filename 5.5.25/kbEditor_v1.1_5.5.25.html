@@ -1,0 +1,1229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Knowledge Base Editor (.DOCX to .JS/Markdown)</title>
+  <!-- Font Awesome and Material Icons from CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+  <style>
+    /* Global Styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    }
+    body {
+      background-color: #f5f8fa;
+      color: #333;
+      line-height: 1.6;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+       /* Add padding/margin to account for fixed header */
+      padding-top: 100px; /* Adjust based on header height + desired spacing */
+    }
+    /* Header */
+    .headerArea {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem;
+      background-color: #1e293b;
+      color: #fff !important;
+      position: fixed; /* Changed from absolute to fixed for better scrolling */
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 1000; /* Ensure header is on top */
+    }
+    .headerArea h1 {
+      color: #fff;
+      margin-bottom: 0.5rem;
+      font-weight: 500 !important;
+    }
+
+    /* Main Navigation Tabs (REMOVE IN SPLIT FILES)
+    .main-nav-tabs {
+      display: flex;
+      margin-top: 80px;
+      margin-bottom: 20px;
+      border-bottom: 1px solid #ddd;
+    }
+    .main-nav-tab {
+      padding: 0.75rem 1.5rem;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      color: #6b7280;
+      font-weight: 500;
+    }
+    .main-nav-tab.active {
+      border-bottom-color: #3498db;
+      color: #3498db;
+      font-weight: 600;
+    }
+     (REMOVE IN SPLIT FILES) */
+    .main-tab-content {
+      /* This class will be removed from the outer container div */
+      /* Instead, the content will be directly in .container */
+      /* We keep the .active class logic for content-tab-panel */
+    }
+    .main-tab-content.active {
+      display: block; /* Kept for content-tab-panel */
+    }
+
+    /* Upload & Preview Areas */
+    .app-container {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    .upload-area, .preview-area {
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      padding: 1.5rem;
+    }
+    .upload-area {
+      text-align: center;
+      display: flex;
+    }
+    .drop-zone {
+      border: 2px dashed #3498db;
+      border-radius: 5px;
+      padding: 1.5rem;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.2s;
+      flex: 1 1 50%;
+    }
+    .drop-zone:hover, .drop-zone.active {
+      border-color: #2980b9;
+      background-color: #f0f7fc;
+    }
+    .drop-zone-text {
+      font-size: 1.2rem;
+      color: #3498db;
+      margin-bottom: 1rem;
+    }
+    .btn {
+      background-color: #3498db;
+      color: white;
+      border: none;
+      padding: 0.55rem 1.5rem;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 600;
+      transition: background-color 0.2s;
+    }
+    .btn:hover {
+      background-color: #2980b9;
+    }
+    .btn:disabled {
+      background-color: #bdc3c7;
+      cursor: not-allowed;
+    }
+    .btn-browser {
+      background-color: #f8f9fa;
+      color: #3498db;
+      border: 1px solid #3498db;
+    }
+    .btn-browser:hover {
+      background-color: #e9f5fe;
+    }
+    #fileInput {
+      display: none;
+    }
+    .file-info {
+      text-align: left;
+      padding: 0.85rem;
+      border-radius: 5px;
+      transition: opacity 0.3s;
+      flex: 1 1 50%;
+      margin: auto 20px;
+    }
+    .file-info.show {
+      opacity: 1;
+    }
+    .export-options {
+      background-color: white;
+      padding: 0;
+      float: right;
+      display: inline-flex;
+      margin-left: auto; /* Adjusted margin */
+    }
+    .form-group {
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center; /* Align items vertically */
+    }
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      color: #2c3e50;
+      position: relative;
+      margin-right: 8px; /* Increased spacing */
+      white-space: nowrap; /* Prevent label wrapping */
+    }
+    .form-group input {
+      width: auto; /* Adjust width */
+      min-width: 200px; /* Set minimum width */
+      padding: 0.75rem;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      font-size: 1rem;
+    }
+    .alert {
+      padding: 1rem;
+      border-radius: 5px;
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      transition: opacity 0.3s;
+      position: fixed; /* Keep alert visible */
+      top: 90px; /* Position below header */
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 1000;
+      min-width: 300px;
+      text-align: center;
+    }
+    .alert-success {
+      background-color: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+    .alert-error {
+      background-color: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+    .alert.show {
+      opacity: 1;
+    }
+    .preview-content {
+      font-family: 'Courier New', Courier, monospace;
+      white-space: pre-wrap;
+      padding: 1rem;
+      background-color: #f8f9fa;
+      border-radius: 5px;
+      font-size: 0.9rem;
+      line-height: 1.5;
+      min-height: 200px;
+      max-height: 60vh; /* Limit max height */
+      overflow-y: auto;
+      border: 1px solid #ddd; /* Added border */
+    }
+    /* Rich Text Editor */
+    #editableContent {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      white-space: normal;
+      min-height: 300px;
+      border: 1px solid #ddd;
+      outline: none;
+      padding: 1.5rem; /* Consistent padding */
+      background-color: white;
+      max-height: 60vh; /* Limit max height */
+      overflow-y: auto;
+    }
+    .editor-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.3rem;
+      padding: 0.5rem;
+      background-color: #f1f3f4;
+      border: 1px solid #ddd;
+      border-bottom: none;
+      border-radius: 5px 5px 0 0;
+    }
+    .editor-toolbar button {
+      background-color: white;
+      border: 1px solid #ddd;
+      border-radius: 3px;
+      padding: 0.3rem 0.6rem;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    .editor-toolbar button:hover {
+      background-color: #e9ecef;
+    }
+    .editor-toolbar button.active {
+      background-color: #e2f0fd;
+      border-color: #3498db;
+    }
+    .js-editor {
+      font-family: 'Courier New', Courier, monospace;
+      white-space: pre-wrap;
+      background-color: #2d2d2d;
+      color: #f8f8f2;
+      border: 1px solid #444;
+      padding: 1.5rem !important; /* Consistent padding */
+    }
+    .js-editor-toolbar, .markdown-toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.5rem;
+      background-color: #333;
+      border: 1px solid #444;
+      border-bottom: none;
+      border-radius: 5px 5px 0 0;
+    }
+    .js-format-btn, .copy-markdown-btn {
+      background-color: #4caf50;
+      color: white;
+      border: none;
+      border-radius: 3px;
+      padding: 0.4rem 0.8rem;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    .js-format-btn:hover, .copy-markdown-btn:hover {
+      background-color: #45a049;
+    }
+    /* Toggle Switch */
+    .editor-toggle {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: #ddd;
+      font-size: 0.9rem;
+    }
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 50px;
+      height: 24px;
+    }
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      transition: .4s;
+    }
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 16px;
+      width: 16px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      transition: .4s;
+    }
+    input:checked + .slider {
+      background-color: #3498db;
+    }
+    input:focus + .slider {
+      box-shadow: 0 0 1px #3498db;
+    }
+    input:checked + .slider:before {
+      transform: translateX(26px);
+    }
+    .slider.round {
+      border-radius: 24px;
+    }
+    .slider.round:before {
+      border-radius: 50%;
+    }
+    /* Content Tabs */
+    .content-tabs {
+      display: flex;
+      align-items: center; /* Align items vertically */
+      margin-bottom: 1rem;
+      border-bottom: 1px solid #ddd;
+    }
+    .content-tab {
+      padding: 0.75rem 1.5rem;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      white-space: nowrap; /* Prevent wrapping */
+    }
+    .content-tab.active {
+      border-bottom-color: #3498db;
+      color: #3498db;
+      font-weight: 600;
+    }
+    .content-tab-panel {
+      display: none;
+    }
+    .content-tab-panel.active {
+      display: block;
+    }
+    button#exportBtn {
+      position: relative;
+      margin-left: 10px;
+    }
+    /* Additional styles for rich text content */
+    #editableContent h1, #editableContent h2, #editableContent h3,
+    #editableContent h4, #editableContent h5, #editableContent h6,
+    #editableContent ul, #editableContent ol {
+      padding-bottom: 10px;
+      margin-bottom: 0.5em; /* Added margin */
+    }
+    #editableContent ul, #editableContent ol {
+      padding-inline-start: 25px; /* Adjusted padding */
+      margin-bottom: 1em; /* Added margin */
+    }
+    #editableContent li {
+      padding-bottom: 4px; /* Increased padding */
+      margin-bottom: 0.2em; /* Added margin */
+    }
+    /* Export type selector */
+    .export-type-selector {
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .export-type-selector label {
+      margin-right: 1rem;
+      font-weight: 600;
+    }
+    /* Markdown preview styles */
+    #markdownContent {
+      font-family: 'Courier New', Courier, monospace;
+      white-space: pre-wrap;
+      background-color: #f8f9fa;
+      color: #333;
+      border: 1px solid #ddd;
+      padding: 1.5rem !important; /* Consistent padding */
+      max-height: 60vh; /* Limit max height */
+      overflow-y: auto;
+    }
+    .markdown-editor {
+      font-family: 'Courier New', Courier, monospace;
+      white-space: pre-wrap;
+      background-color: #f8f9fa;
+      color: #333;
+      border: 1px solid #ddd;
+      padding: 1.5rem !important; /* Consistent padding */
+      max-height: 60vh; /* Limit max height */
+      overflow-y: auto;
+    }
+    /* File dropdown styles */
+    #fileDropdown {
+      margin: 1rem 0;
+      padding: 0.5rem;
+      border-radius: 4px;
+      border: 1px solid #ddd;
+      width: 100%;
+      max-width: 400px;
+    }
+
+    /* Knowledge Base Manager Styles (KEEP ALL FOR SCRIPT COMPATIBILITY) */
+    .kb-manager-container {
+      max-width: 1000px;
+      margin: 0 auto;
+      background-color: #f3f4f6;
+      padding: 24px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .action-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-bottom: 24px;
+      align-items: flex-end; /* Align items to the bottom */
+    }
+
+    .dropdown-container {
+      flex: 1;
+      min-width: 200px; /* Reduced min-width */
+    }
+
+    .action-buttons {
+      display: flex;
+      align-items: flex-end;
+      gap: 8px;
+      margin-left: auto; /* Push buttons to the right */
+    }
+
+    /* Base button styles */
+    .kb-manager-container button {
+        padding: 8px 12px;
+        border-radius: 6px;
+        border: 1px solid transparent;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+    }
+
+    .primary-button {
+      background-color: #4f46e5;
+      color: white;
+    }
+    .primary-button:hover {
+      background-color: #4338ca;
+    }
+    .primary-button:disabled {
+      background-color: #9ca3af;
+      cursor: not-allowed;
+      opacity: 0.7;
+    }
+
+    .icon-button {
+      padding: 8px;
+      background: none;
+      color: #4f46e5;
+      border: none;
+    }
+    .icon-button:hover {
+      color: #4338ca;
+      background-color: #e0e7ff; /* Light background on hover */
+    }
+    .icon-button svg { /* Ensure SVG scales with button */
+        width: 20px;
+        height: 20px;
+    }
+
+    .red-icon-button {
+      padding: 6px; /* Slightly smaller padding */
+      background: none;
+      color: #ef4444;
+      border: none;
+    }
+    .red-icon-button:hover {
+      color: #dc2626;
+      background-color: #fee2e2; /* Light red background on hover */
+    }
+
+    .green-icon-button {
+      padding: 8px;
+      background-color: #10b981;
+      color: white;
+    }
+    .green-icon-button:hover {
+      background-color: #059669;
+    }
+
+    .red-button {
+      padding: 8px;
+      background-color: #ef4444;
+      color: white;
+    }
+    .red-button:hover {
+      background-color: #dc2626;
+    }
+
+    .section {
+      background-color: white;
+      padding: 16px;
+      border-radius: 6px;
+      border: 1px solid #e5e7eb;
+      margin-bottom: 24px;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      padding-bottom: 10px; /* Add padding below header */
+      border-bottom: 1px solid #e5e7eb; /* Separator line */
+    }
+     .section-header h2 {
+        margin-bottom: 0; /* Remove default h2 margin */
+     }
+     .section-header .icon-button span {
+         margin-left: 4px; /* Space between icon and text */
+     }
+
+    .category-form {
+      margin-bottom: 16px;
+      padding: 12px;
+      background-color: #f9fafb;
+      border-radius: 6px;
+      border: 1px solid #e5e7eb;
+    }
+    .category-form h3 {
+        margin-bottom: 12px; /* Space below heading */
+    }
+
+    .input-group {
+      display: flex;
+      gap: 8px;
+      align-items: center; /* Align items vertically */
+    }
+
+    .kb-manager-container input[type="text"] {
+      flex: 1;
+      padding: 8px 10px; /* Adjusted padding */
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+
+    .category-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 12px; /* Increased gap */
+    }
+
+    .category-item {
+      border: 1px solid #e5e7eb;
+      border-radius: 6px;
+      overflow: hidden;
+      background-color: white; /* Ensure white background */
+    }
+
+    .category-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 16px; /* Consistent padding */
+      background-color: #f9fafb;
+      cursor: pointer;
+      border-bottom: 1px solid #e5e7eb; /* Separator */
+    }
+    .category-header:hover {
+        background-color: #f3f4f6; /* Slight hover effect */
+    }
+    .category-name {
+        font-weight: 600; /* Make name bold */
+        color: #1f2937;
+    }
+
+    .category-header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .chevron-icon {
+        transition: transform 0.2s ease-in-out; /* Smooth transition */
+    }
+    .category-content.hidden + .category-header .chevron-icon {
+        /* Keep default state when hidden */
+    }
+    .category-content:not(.hidden) + .category-header .chevron-icon {
+         transform: rotate(180deg); /* Rotate when open */
+    }
+
+
+    .category-content {
+      padding: 16px; /* Consistent padding */
+      background-color: white;
+    }
+
+    .kb-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px; /* Increased margin */
+    }
+    .kb-header h4 {
+        margin-bottom: 0; /* Remove default h4 margin */
+        font-size: 14px;
+        font-weight: 600;
+        color: #374151;
+    }
+     .kb-header .icon-button span {
+         margin-left: 4px; /* Space between icon and text */
+     }
+
+    .kb-form {
+      margin-bottom: 16px; /* Increased margin */
+      padding: 12px; /* Increased padding */
+      background-color: #f9fafb;
+      border-radius: 6px;
+      border: 1px solid #e5e7eb;
+    }
+
+    .kb-list {
+      list-style: none;
+      padding: 0;
+      margin: 0; /* Remove default margin */
+      display: flex;
+      flex-direction: column;
+      gap: 6px; /* Adjusted gap */
+    }
+    /* Target KB list within a category */
+    .category-kb-list {
+        margin-top: 8px; /* Add space above list in category */
+        min-height: 30px; /* Minimum height for drop target visibility */
+        padding: 8px; /* Padding for drop area */
+        border: 1px dashed transparent; /* Placeholder for dragover */
+        border-radius: 4px;
+    }
+
+
+    .kb-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 10px; /* Adjusted padding */
+      font-size: 14px;
+      background-color: #f9fafb;
+      border: 1px solid #e5e7eb; /* Add border */
+      border-radius: 6px;
+    }
+    /* Style for KB items in the 'All Knowledge Bases' list */
+     #all-kb-list .kb-item {
+        background-color: white; /* Different background */
+     }
+
+
+    /* Drag and drop styles */
+    .kb-item.draggable {
+      cursor: grab;
+    }
+    .kb-item.dragging {
+      opacity: 0.5;
+      cursor: grabbing;
+      background-color: #e0e7ff; /* Highlight while dragging */
+      border-color: #a5b4fc;
+    }
+    .kb-item.draggable:hover {
+      background-color: #eff6ff; /* Light blue hover */
+      border-color: #bfdbfe;
+    }
+    .category-kb-list.dragover {
+      background-color: #eff6ff; /* Highlight drop zone */
+      border: 1px dashed #93c5fd;
+    }
+
+    .kb-badge {
+      display: inline-block;
+      padding: 2px 8px; /* Increased padding */
+      background-color: #e5e7eb;
+      border-radius: 12px; /* Pill shape */
+      margin-right: 6px; /* Increased margin */
+      font-size: 12px;
+      font-weight: 500;
+      color: #4b5563;
+    }
+
+    .icon {
+      width: 20px;
+      height: 20px;
+    }
+    .icon-sm {
+      width: 18px; /* Adjusted size */
+      height: 18px;
+    }
+    .icon-xs {
+      width: 14px;
+      height: 14px;
+    }
+
+    .hidden {
+      display: none !important; /* Use important to override potential conflicts */
+    }
+
+    .text-gray {
+      color: #6b7280;
+      font-style: italic;
+      text-align: center; /* Center placeholder text */
+      padding: 16px; /* Add padding */
+    }
+
+    .kb-categories {
+      margin-left: 12px; /* Increased margin */
+      font-size: 12px;
+      color: #6b7280;
+      display: flex; /* Use flex for badges */
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+
+    .drag-handle {
+      cursor: grab;
+      margin-right: 8px;
+      color: #9ca3af;
+      display: flex; /* Center icon */
+      align-items: center;
+    }
+    .drag-handle svg { /* Ensure handle icon size */
+        width: 16px;
+        height: 16px;
+    }
+
+
+    .kb-info-container {
+      display: flex;
+      align-items: center;
+      flex: 1;
+      overflow: hidden; /* Prevent long names from breaking layout */
+    }
+    .kb-name {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis; /* Add ellipsis for long names */
+        margin-right: 8px; /* Space before categories/buttons */
+    }
+
+    .kb-manager-container h2 {
+      font-size: 18px;
+      font-weight: 600;
+      color: #1f2937;
+      margin-bottom: 0; /* Reset margin, handled by section-header */
+    }
+    .kb-manager-container h3 {
+      font-size: 16px; /* Slightly larger */
+      font-weight: 600; /* Bolder */
+      margin-bottom: 8px;
+      color: #111827;
+    }
+     .kb-manager-container h4 {
+        font-size: 14px;
+        font-weight: 500;
+        margin-bottom: 8px;
+     }
+
+    .kb-manager-container select {
+      width: 100%;
+      padding: 10px;
+      background-color: white;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+      font-size: 14px; /* Consistent font size */
+    }
+
+    .kb-manager-container label {
+      display: block;
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 6px; /* Increased margin */
+      color: #374151; /* Darker label color */
+    }
+
+    /* Ensure icons inside buttons look good */
+    .kb-manager-container button svg {
+        vertical-align: middle;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="headerArea">
+      <h1>Knowledge Base Editor (.DOCX to .JS/Markdown)</h1>
+    </div>
+
+    <!-- Global Alert Box -->
+    <div id="alertBox" class="alert"></div>
+
+    <!-- Editor Section (Content from original #editor-tab) -->
+    <div id="editor-content-wrapper" class="content-wrapper"> <!-- Added wrapper for layout -->
+      <select id="fileDropdown">
+        <option value="">Select a kb_*.js file to edit</option>
+      </select>
+      <div class="app-container">
+        <div class="upload-area">
+          <div id="dropZone" class="drop-zone">
+            <i class="fas fa-cloud-upload-alt" style="font-size:32px;"></i>
+            <p class="drop-zone-text">Drag & Drop your DOCX file here</p>
+            <button id="browseBtn" class="btn btn-browser">Browse Files</button>
+            <input type="file" id="fileInput" accept=".docx" />
+          </div>
+          <div id="fileInfo" class="file-info">
+            <h3>File Information</h3>
+            <p id="fileName">No file selected</p>
+            <p id="fileSize"></p>
+          </div>
+        </div>
+        <div class="preview-area">
+          <div class="content-tabs">
+            <div class="content-tab active" data-content-tab="original">Original Content</div>
+            <div class="content-tab" data-content-tab="markdown">Markdown</div>
+            <div class="content-tab" data-content-tab="converted">Converted JS</div>
+            <!-- Export Options moved inside -->
+            <div class="export-options">
+              <div class="form-group">
+                <label for="outputFileName">Name:</label>
+                <input type="text" id="outputFileName" placeholder="kb_knowledge-base.js" value="kb_knowledge-base.js" />
+              </div>
+              <button id="exportBtn" class="btn" disabled>Export</button>
+            </div>
+          </div>
+          <div id="originalContent" class="content-tab-panel active">
+            <div class="editor-toolbar">
+              <button type="button" data-command="bold" title="Bold"><b>B</b></button>
+              <button type="button" data-command="italic" title="Italic"><i>I</i></button>
+              <button type="button" data-command="underline" title="Underline"><u>U</u></button>
+              <button type="button" data-command="formatBlock" data-value="H1" title="Heading 1">H1</button>
+              <button type="button" data-command="formatBlock" data-value="H2" title="Heading 2">H2</button>
+              <button type="button" data-command="formatBlock" data-value="H3" title="Heading 3">H3</button>
+              <button type="button" data-command="formatBlock" data-value="H4" title="Heading 4">H4</button>
+              <button type="button" data-command="formatBlock" data-value="H5" title="Heading 5">H5</button>
+              <button type="button" data-command="formatBlock" data-value="H6" title="Heading 6">H6</button>
+              <button type="button" data-command="insertUnorderedList" title="Bullet List">• List</button>
+              <button type="button" data-command="insertOrderedList" title="Numbered List">1. List</button>
+              <button type="button" data-command="justifyLeft" title="Align Left"><i class="material-icons">format_align_left</i></button>
+              <button type="button" data-command="justifyCenter" title="Align Center"><i class="material-icons">format_align_center</i></button>
+              <button type="button" data-command="justifyRight" title="Align Right"><i class="material-icons">format_align_right</i></button>
+              <button type="button" data-command="removeFormat" title="Clear Formatting"><i class="material-icons">format_clear</i></button>
+            </div>
+            <div class="preview-content" id="editableContent" contenteditable="true">
+              No content to preview yet. Please upload a DOCX file or select a JS file from dropdown.
+            </div>
+          </div>
+          <div id="markdownContent" class="content-tab-panel">
+            <div class="markdown-toolbar">
+              <button type="button" class="copy-markdown-btn" title="Copy Markdown">Copy Markdown</button>
+            </div>
+            <div class="preview-content markdown-editor" contenteditable="true">
+              No markdown content yet.
+            </div>
+          </div>
+          <div id="convertedContent" class="content-tab-panel">
+            <div class="js-editor-toolbar">
+              <button type="button" class="js-format-btn" title="Format JS">Format Code</button>
+              <div class="editor-toggle">
+                <span>Auto-update from content:</span>
+                <label class="switch">
+                  <input type="checkbox" id="autoUpdateToggle" checked>
+                  <span class="slider round"></span>
+                </label>
+              </div>
+            </div>
+            <div class="preview-content js-editor" contenteditable="true">
+              No converted content yet.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Knowledge Base Manager Templates (Keep for script compatibility) -->
+    <template id="category-template">
+      <li class="category-item" data-id="">
+        <div class="category-header">
+          <span class="category-name"></span>
+          <div class="category-header-actions">
+            <button class="remove-category-button red-icon-button" title="Remove Category">
+              <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="3 6 5 6 21 6"></polyline>
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                <line x1="10" y1="11" x2="10" y2="17"></line>
+                <line x1="14" y1="11" x2="14" y2="17"></line>
+              </svg>
+            </button>
+            <svg class="chevron-icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 12 15 18 9"></polyline> <!-- Initial state: pointing down -->
+            </svg>
+          </div>
+        </div>
+
+        <div class="category-content hidden"> <!-- Start hidden -->
+          <div class="kb-header">
+            <h4>Knowledge Bases in this Category</h4>
+          </div>
+
+          <ul class="kb-list category-kb-list" data-category-id="">
+            <!-- KBs will be dynamically inserted here -->
+          </ul>
+
+          <p class="no-kbs text-gray hidden">No knowledge bases in this category. Use the assignment dropdown above to add.</p>
+        </div>
+      </li>
+    </template>
+
+    <template id="kb-template">
+      <li class="kb-item draggable" data-id="" draggable="true">
+        <div class="kb-info-container">
+          <span class="drag-handle" title="Drag to reorder or move to another category">
+            <svg class="icon-xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="8" y1="6" x2="21" y2="6"></line>
+              <line x1="8" y1="12" x2="21" y2="12"></line>
+              <line x1="8" y1="18" x2="21" y2="18"></line>
+              <line x1="3" y1="6" x2="3.01" y2="6"></line>
+              <line x1="3" y1="12" x2="3.01" y2="12"></line>
+              <line x1="3" y1="18" x2="3.01" y2="18"></line>
+            </svg>
+          </span>
+          <span class="kb-name"></span>
+        </div>
+        <button class="remove-kb-button red-icon-button" title="Remove from this Category">
+          <svg class="icon-xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line> <!-- Changed to simple 'X' -->
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </li>
+    </template>
+
+    <template id="all-kb-template">
+      <li class="kb-item" data-id="">
+        <div class="kb-info-container">
+          <span class="kb-name"></span>
+          <div class="kb-categories"> <!-- Container for category badges -->
+              <!-- Badges added dynamically -->
+          </div>
+        </div>
+        <!-- No actions needed in the 'All KBs' list -->
+      </li>
+    </template>
+
+  </div>
+
+  <!-- Include Mammoth.js for DOCX parsing -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.17/mammoth.browser.min.js"></script>
+  <!-- Include Turndown.js for HTML to Markdown conversion -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/turndown/7.1.1/turndown.min.js"></script>
+  <script>
+
+// --- File Export Functions ---
+
+// Export/Save file (improved for better renaming support)
+function exportFile() {
+  if (!currentJsObject || !currentMarkdownContent || !outputFileName || !exportBtn) {
+    showAlert("Cannot export/save: Content is missing or hasn't been processed.", "error");
+    console.error("Export aborted: currentJsObject or currentMarkdownContent is null/undefined.");
+    return;
+  }
+  console.log("Export/Save initiated");
+
+  // Ensure content is up-to-date before saving
+  processEditorContent();
+
+  // Generate the final JS content (LLM Primer)
+  const kbNameForExport = currentJsObject.name || 'unnamed_kb';
+  const jsContentToSave = generateLlmPrimerCode(kbNameForExport, currentMarkdownContent);
+
+  // Final filename validation
+  let finalFileName = outputFileName.value.trim();
+  if (!finalFileName) {
+    finalFileName = `kb_${kbNameForExport}.js`; // Generate filename if empty
+    outputFileName.value = finalFileName; // Update input field
+  }
+  if (!finalFileName.startsWith('kb_')) {
+    finalFileName = 'kb_' + finalFileName.replace(/^kb_/i, ''); // Ensure prefix
+  }
+  if (!finalFileName.endsWith('.js')) {
+    finalFileName += '.js'; // Ensure suffix
+  }
+  outputFileName.value = finalFileName; // Update input field with final name
+
+  const jsFileBlob = new Blob([jsContentToSave], { type: 'application/javascript;charset=utf-8' });
+  const jsFile = new File([jsFileBlob], finalFileName, { type: 'application/javascript;charset=utf-8' });
+
+  // Find the Confluence attachments drop zone (more robustly)
+  const attachmentsDropZone = document.querySelector('.attachments-table-drop-zone, div[data-test-id="media-inline-upload-dropzone"]');
+
+  if (!attachmentsDropZone) {
+    // Fallback to direct download if we can't find the drop zone
+    offerDirectDownload(jsFile, jsFileBlob);
+    return;
+  }
+
+  // Check if this is a rename operation
+  const isRename = loadedJsFilename && loadedJsFilename !== finalFileName;
+  
+  if (isRename) {
+    console.log(`Attempting to save renamed file from ${loadedJsFilename} to ${finalFileName}`);
+    // Try the enhanced file drop for renamed files
+    enhancedFileDrop(attachmentsDropZone, jsFile, finalFileName, jsFileBlob, isRename);
+  } else {
+    // Regular save - use standard approach
+    console.log(`Attempting to drop ${finalFileName} onto:`, attachmentsDropZone);
+    simulateFileDrop(attachmentsDropZone, jsFile, finalFileName, jsFileBlob);
+  }
+}
+
+// Enhanced file drop with multiple methods to improve rename reliability
+function enhancedFileDrop(dropZoneElement, file, fileName, fileBlob, isRename) {
+  // Method 1: First try a cleanup approach to force Confluence to see it as a new file
+  try {
+    // Clear any existing drag data
+    document.querySelectorAll('.dragging, .dragover').forEach(el => {
+      el.classList.remove('dragging', 'dragover');
+    });
+    
+    // Wait a brief moment to ensure any pending operations complete
+    setTimeout(() => {
+      // Try the standard file drop first
+      simulateFileDrop(dropZoneElement, file, fileName, fileBlob);
+      
+      // Add the new file to the dropdown regardless
+      addToFileDropdown(fileName);
+      
+      // Update tracking variables
+      updateFileTrackingAfterSave(fileName, isRename);
+    }, 100);
+  } catch (error) {
+    console.error("Enhanced file drop failed:", error);
+    // Fall back to direct download
+    offerDirectDownload(file, fileBlob);
+  }
+}
+
+// Improved simulate file drop with fallback options
+function simulateFileDrop(dropZoneElement, file, fileName, fileBlob) {
+  if (!dropZoneElement) {
+    console.error("Drop zone element not found for simulation.");
+    showAlert("Error: Could not find the Confluence attachments area to save the file.", "error");
+    offerDirectDownload(file, fileBlob);
+    return;
+  }
+  
+  try {
+    console.log(`Attempting to simulate drop of ${fileName} using DataTransfer API`);
+    
+    // Create a clean DataTransfer object
+    const dataTransfer = new DataTransfer();
+    dataTransfer.items.add(file);
+    
+    // More complete event sequence to improve Confluence compatibility
+    const eventOptions = {
+      bubbles: true,
+      cancelable: true,
+      dataTransfer: dataTransfer
+    };
+    
+    // Clear any existing focus to avoid interference
+    if (document.activeElement && document.activeElement.blur) {
+      document.activeElement.blur();
+    }
+    
+    // Dispatch a more complete event sequence
+    dropZoneElement.dispatchEvent(new DragEvent('dragenter', eventOptions));
+    dropZoneElement.dispatchEvent(new DragEvent('dragover', eventOptions));
+    dropZoneElement.dispatchEvent(new DragEvent('drop', eventOptions));
+    
+    console.log(`Simulated drop completed for ${fileName}`);
+    
+    // Give more specific feedback about the operation
+    if (loadedJsFilename && loadedJsFilename !== fileName) {
+      showAlert(`Saved as new file '${fileName}' to Confluence Attachments!`, 'success');
+    } else {
+      showAlert(`Successfully saved '${fileName}' to Confluence Attachments!`, 'success');
+    }
+    
+    // Update UI state
+    if (exportBtn) exportBtn.textContent = 'Save';
+    currentFileSource = 'dropdown';
+    
+  } catch (error) {
+    console.error("File drop simulation failed:", error);
+    offerDirectDownload(file, fileBlob);
+  }
+}
+
+// Fallback function to offer direct download if Confluence attachment fails
+function offerDirectDownload(file, fileBlob) {
+  console.log("Offering direct download as fallback");
+  showAlert("Could not automatically save to Confluence. Preparing download instead.", "info");
+  
+  try {
+    // Create download link
+    const downloadLink = document.createElement('a');
+    downloadLink.href = URL.createObjectURL(fileBlob);
+    downloadLink.download = file.name;
+    downloadLink.style.display = 'none';
+    document.body.appendChild(downloadLink);
+    
+    // Trigger download
+    downloadLink.click();
+    
+    // Clean up
+    setTimeout(() => {
+      URL.revokeObjectURL(downloadLink.href);
+      document.body.removeChild(downloadLink);
+      showAlert(`Download prepared for '${file.name}'. Please manually upload to Confluence.`, 'success');
+    }, 100);
+  } catch (error) {
+    console.error("Direct download fallback failed:", error);
+    showAlert("Could not prepare download. Check console for details.", "error");
+  }
+}
+
+// Helper function to update tracking variables after save
+function updateFileTrackingAfterSave(fileName, isRename) {
+  // Update the file dropdown
+  if (fileDropdown) {
+    // If this is a renamed file, update selection
+    if (isRename) {
+      console.log(`File renamed from ${loadedJsFilename} to ${fileName}`);
+      fileDropdown.value = fileName;
+    } else if (!loadedJsFilename) {
+      // If this is a new file, select it
+      fileDropdown.value = fileName;
+    }
+  }
+  
+  // Update tracking variable
+  loadedJsFilename = fileName;
+}
+
+// --- Additional Helper Functions ---
+
+// Improved function to add a file to the dropdown
+function addToFileDropdown(filename) {
+  if (!fileDropdown) return; // Check if element exists
+  
+  // First check if the file already exists in the dropdown
+  let fileExists = false;
+  for (let i = 0; i < fileDropdown.options.length; i++) {
+    if (fileDropdown.options[i].value === filename) {
+      fileExists = true;
+      break;
+    }
+  }
+  
+  // Only add if not already present
+  if (!fileExists) {
+    console.log(`Adding new file to dropdown: ${filename}`);
+    const option = document.createElement('option');
+    option.value = filename;
+    option.textContent = filename;
+    fileDropdown.appendChild(option);
+    existingFiles.add(filename); // Track it
+  }
+}
+
+// Improved alert function with better visibility
+function showAlert(message, type = 'info', duration = 4000) {
+  // Check if alertBox exists
+  if (!alertBox) {
+    console.warn("Alert box element not found. Cannot show alert:", message);
+    // Fallback to console
+    console.log(`${type.toUpperCase()}: ${message}`);
+    return;
+  }
+
+  alertBox.textContent = message;
+  alertBox.className = `alert alert-${type} show`; // Ensure 'show' is added last
+  
+  // Make sure alert is visible (adjust styles if needed)
+  alertBox.style.opacity = "1";
+  alertBox.style.zIndex = "2000"; // Ensure it's above other elements
+  
+  // Clear previous timeouts if any
+  if (alertBox.timeoutId) {
+    clearTimeout(alertBox.timeoutId);
+  }
+  
+  alertBox.timeoutId = setTimeout(() => {
+    alertBox.classList.remove('show');
+    alertBox.timeoutId = null; // Clear the stored timeout ID
+  }, duration);
+}
+  </script>
+</body>
+</html>

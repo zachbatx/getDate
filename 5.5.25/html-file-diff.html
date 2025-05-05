@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Diff Viewer</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        header {
+            background-color: #1f2937;
+            color: white;
+            padding: 1rem;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        h1 {
+            font-size: 1.25rem;
+            font-weight: bold;
+        }
+
+        .icon {
+            width: 24px;
+            height: 24px;
+        }
+
+        button {
+            cursor: pointer;
+            border: none;
+            border-radius: 0.25rem;
+            padding: 0.5rem 1rem;
+            background-color: #2563eb;
+            color: white;
+            font-weight: 500;
+            transition: background-color 0.2s;
+        }
+
+        button:hover {
+            background-color: #1d4ed8;
+        }
+
+        .input-section {
+            padding: 1rem;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .file-input {
+            width: 50%;
+        }
+
+        .file-upload {
+            margin-bottom: 0.5rem;
+        }
+
+        .file-upload label {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.5rem 1rem;
+            background-color: #2563eb;
+            color: white;
+            border-radius: 0.25rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .file-upload label:hover {
+            background-color: #1d4ed8;
+        }
+
+        .file-upload input {
+            display: none;
+        }
+
+        textarea {
+            width: 100%;
+            height: 8rem;
+            padding: 0.5rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.25rem;
+            resize: vertical;
+            font-family: monospace;
+        }
+
+        .diff-container {
+            flex: 1;
+            padding: 1rem;
+            overflow: auto;
+        }
+
+        .diff-view {
+            border: 1px solid #d1d5db;
+            border-radius: 0.25rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+            overflow: hidden;
+        }
+
+        .file-headers {
+            display: flex;
+            background-color: #e5e7eb;
+            border-bottom: 1px solid #d1d5db;
+        }
+
+        .file-header-spacer {
+            width: 3rem;
+            flex-shrink: 0;
+            border-right: 1px solid #d1d5db;
+        }
+
+        .file-header {
+            width: 50%;
+            padding: 0.5rem 1rem;
+            font-weight: 600;
+        }
+
+        .file-header:first-of-type {
+            border-right: 1px solid #d1d5db;
+        }
+
+        .diff-content {
+            display: flex;
+        }
+
+        .line-numbers {
+            width: 3rem;
+            flex-shrink: 0;
+            text-align: right;
+            padding-right: 0.5rem;
+            border-right: 1px solid #d1d5db;
+            background-color: #f3f4f6;
+        }
+
+        .line-number {
+            color: #6b7280;
+            font-size: 0.75rem;
+            padding: 0.25rem 0;
+            font-family: monospace;
+        }
+
+        .content-panel {
+            width: 50%;
+            overflow: hidden;
+        }
+
+        .content-panel:first-of-type {
+            border-right: 1px solid #d1d5db;
+        }
+
+        .diff-line {
+            padding: 0.25rem 1rem;
+            white-space: pre-wrap;
+            font-family: monospace;
+            font-size: 0.875rem;
+        }
+
+        .diff-line-removed {
+            background-color: #fee2e2;
+        }
+
+        .diff-line-added {
+            background-color: #ecfdf5;
+        }
+
+        .diff-content-removed {
+            background-color: #fecaca;
+            color: #991b1b;
+        }
+
+        .diff-content-added {
+            background-color: #d1fae5;
+            color: #065f46;
+        }
+
+        .empty-line {
+            background-color: #f3f4f6;
+            height: 1.5rem;
+        }
+
+        .legend {
+            margin-top: 1rem;
+            padding: 1rem;
+            background-color: #f3f4f6;
+            border-radius: 0.25rem;
+        }
+
+        .legend h3 {
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .legend-items {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+        }
+
+        .legend-color {
+            width: 1rem;
+            height: 1rem;
+            margin-right: 0.5rem;
+            border: 1px solid #d1d5db;
+        }
+
+        .legend-removed {
+            background-color: #fecaca;
+        }
+
+        .legend-added {
+            background-color: #d1fae5;
+        }
+
+        .legend-unchanged {
+            background-color: white;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <div class="header-title">
+                <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                    <line x1="10" y1="9" x2="8" y2="9"></line>
+                </svg>
+                <h1>File Diff Viewer</h1>
+            </div>
+            <button id="sample-data-btn">Load Sample Data</button>
+        </div>
+    </header>
+
+    <div class="input-section">
+        <div class="file-input">
+            <div class="file-upload">
+                <label for="file1">
+                    Upload File 1
+                </label>
+                <input type="file" id="file1" accept=".txt,.js,.html,.css,.json,.md,.py,.java,.jsx,.ts,.tsx">
+            </div>
+            <textarea id="content1" placeholder="Paste original content here..."></textarea>
+        </div>
+
+        <div class="file-input">
+            <div class="file-upload">
+                <label for="file2">
+                    Upload File 2
+                </label>
+                <input type="file" id="file2" accept=".txt,.js,.html,.css,.json,.md,.py,.java,.jsx,.ts,.tsx">
+            </div>
+            <textarea id="content2" placeholder="Paste modified content here..."></textarea>
+        </div>
+    </div>
+
+    <div class="diff-container">
+        <div id="diff-view" class="diff-view hidden">
+            <div class="file-headers">
+                <div class="file-header-spacer"></div>
+                <div class="file-header">File 1</div>
+                <div class="file-header-spacer"></div>
+                <div class="file-header">File 2</div>
+            </div>
+            <div class="diff-content">
+                <div id="line-numbers1" class="line-numbers"></div>
+                <div id="content-panel1" class="content-panel"></div>
+                <div id="line-numbers2" class="line-numbers"></div>
+                <div id="content-panel2" class="content-panel"></div>
+            </div>
+        </div>
+
+        <div id="legend" class="legend hidden">
+            <h3>Legend:</h3>
+            <div class="legend-items">
+                <div class="legend-item">
+                    <div class="legend-color legend-removed"></div>
+                    <span>Removed lines</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color legend-added"></div>
+                    <span>Added lines</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color legend-unchanged"></div>
+                    <span>Unchanged lines</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Main elements
+        const content1 = document.getElementById('content1');
+        const content2 = document.getElementById('content2');
+        const file1Input = document.getElementById('file1');
+        const file2Input = document.getElementById('file2');
+        const sampleDataBtn = document.getElementById('sample-data-btn');
+        const diffView = document.getElementById('diff-view');
+        const legend = document.getElementById('legend');
+        
+        // Diff display elements
+        const lineNumbers1 = document.getElementById('line-numbers1');
+        const lineNumbers2 = document.getElementById('line-numbers2');
+        const contentPanel1 = document.getElementById('content-panel1');
+        const contentPanel2 = document.getElementById('content-panel2');
+
+        // File upload handlers
+        file1Input.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                content1.value = event.target.result;
+                updateDiff();
+            };
+            reader.readAsText(file);
+        });
+
+        file2Input.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                content2.value = event.target.result;
+                updateDiff();
+            };
+            reader.readAsText(file);
+        });
+
+        // Text input change handlers
+        content1.addEventListener('input', updateDiff);
+        content2.addEventListener('input', updateDiff);
+
+        // Sample data button
+        sampleDataBtn.addEventListener('click', function() {
+            const sample1 = `function hello() {
+  console.log("Hello, world!");
+  return true;
+}
+
+// This is a comment
+const value = 42;
+const message = "Welcome!";
+
+if (value > 40) {
+  console.log("Value is greater than 40");
+}`;
+
+            const sample2 = `function hello() {
+  console.log("Hello, JavaScript!");
+  return true;
+}
+
+// This is a new comment
+const value = 42;
+const message = "Welcome to our app!";
+
+if (value >= 40) {
+  console.log("Value is 40 or greater");
+  console.log("This is new");
+}
+
+// Added function
+function goodbye() {
+  console.log("Goodbye!");
+}`;
+
+            content1.value = sample1;
+            content2.value = sample2;
+            updateDiff();
+        });
+
+        // Main diff algorithm implementation
+        function computeDiff(text1, text2) {
+            if (!text1 && !text2) return [];
+            
+            const lines1 = (text1 || '').split('\n');
+            const lines2 = (text2 || '').split('\n');
+            const result = [];
+            
+            // Simple LCS-based diff implementation
+            const lcsMatrix = Array(lines1.length + 1).fill().map(() => Array(lines2.length + 1).fill(0));
+            
+            // Build LCS matrix
+            for (let i = 1; i <= lines1.length; i++) {
+                for (let j = 1; j <= lines2.length; j++) {
+                    if (lines1[i - 1] === lines2[j - 1]) {
+                        lcsMatrix[i][j] = lcsMatrix[i - 1][j - 1] + 1;
+                    } else {
+                        lcsMatrix[i][j] = Math.max(lcsMatrix[i - 1][j], lcsMatrix[i][j - 1]);
+                    }
+                }
+            }
+            
+            // Backtrack to find the diff
+            let i = lines1.length;
+            let j = lines2.length;
+            const diffSteps = [];
+
+            while (i > 0 || j > 0) {
+                if (i > 0 && j > 0 && lines1[i - 1] === lines2[j - 1]) {
+                    diffSteps.push({ type: 'equal', line1: i - 1, line2: j - 1 });
+                    i--;
+                    j--;
+                } else if (j > 0 && (i === 0 || lcsMatrix[i][j - 1] >= lcsMatrix[i - 1][j])) {
+                    diffSteps.push({ type: 'add', line2: j - 1 });
+                    j--;
+                } else if (i > 0 && (j === 0 || lcsMatrix[i][j - 1] < lcsMatrix[i - 1][j])) {
+                    diffSteps.push({ type: 'remove', line1: i - 1 });
+                    i--;
+                }
+            }
+            
+            diffSteps.reverse();
+            
+            // Convert diff steps to side-by-side view
+            let line1Count = 0;
+            let line2Count = 0;
+            
+            for (const step of diffSteps) {
+                if (step.type === 'equal') {
+                    result.push({
+                        type: 'equal',
+                        line1: line1Count,
+                        line2: line2Count,
+                        content1: lines1[step.line1],
+                        content2: lines2[step.line2]
+                    });
+                    line1Count++;
+                    line2Count++;
+                } else if (step.type === 'add') {
+                    result.push({
+                        type: 'add',
+                        line1: null,
+                        line2: line2Count,
+                        content1: null,
+                        content2: lines2[step.line2]
+                    });
+                    line2Count++;
+                } else if (step.type === 'remove') {
+                    result.push({
+                        type: 'remove',
+                        line1: line1Count,
+                        line2: null,
+                        content1: lines1[step.line1],
+                        content2: null
+                    });
+                    line1Count++;
+                }
+            }
+            
+            return result;
+        }
+
+        // Update the diff display
+        function updateDiff() {
+            const text1 = content1.value;
+            const text2 = content2.value;
+            
+            if (!text1 && !text2) {
+                diffView.classList.add('hidden');
+                legend.classList.add('hidden');
+                return;
+            }
+            
+            const diffResult = computeDiff(text1, text2);
+            
+            // Show the diff view and legend
+            diffView.classList.remove('hidden');
+            legend.classList.remove('hidden');
+            
+            // Clear previous content
+            lineNumbers1.innerHTML = '';
+            lineNumbers2.innerHTML = '';
+            contentPanel1.innerHTML = '';
+            contentPanel2.innerHTML = '';
+            
+            // Count lines that have content for accurate line numbers
+            const leftLineCount = diffResult.filter(diff => diff.line1 !== null).length || 1;
+            const rightLineCount = diffResult.filter(diff => diff.line2 !== null).length || 1;
+            
+            // Generate line numbers
+            for (let i = 0; i < leftLineCount; i++) {
+                const lineNumber = document.createElement('div');
+                lineNumber.classList.add('line-number');
+                lineNumber.textContent = i + 1;
+                lineNumbers1.appendChild(lineNumber);
+            }
+            
+            for (let i = 0; i < rightLineCount; i++) {
+                const lineNumber = document.createElement('div');
+                lineNumber.classList.add('line-number');
+                lineNumber.textContent = i + 1;
+                lineNumbers2.appendChild(lineNumber);
+            }
+            
+            // Generate diff content
+            diffResult.forEach(diff => {
+                if (diff.line1 !== null) {
+                    const line = document.createElement('div');
+                    line.classList.add('diff-line');
+                    if (diff.type === 'remove') {
+                        line.classList.add('diff-line-removed');
+                        line.classList.add('diff-content-removed');
+                    }
+                    line.textContent = diff.content1;
+                    contentPanel1.appendChild(line);
+                } else {
+                    const emptyLine = document.createElement('div');
+                    emptyLine.classList.add('empty-line');
+                    contentPanel1.appendChild(emptyLine);
+                }
+                
+                if (diff.line2 !== null) {
+                    const line = document.createElement('div');
+                    line.classList.add('diff-line');
+                    if (diff.type === 'add') {
+                        line.classList.add('diff-line-added');
+                        line.classList.add('diff-content-added');
+                    }
+                    line.textContent = diff.content2;
+                    contentPanel2.appendChild(line);
+                } else {
+                    const emptyLine = document.createElement('div');
+                    emptyLine.classList.add('empty-line');
+                    contentPanel2.appendChild(emptyLine);
+                }
+            });
+        }
+    </script>
+</body>
+</html>

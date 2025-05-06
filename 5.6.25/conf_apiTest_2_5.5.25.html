@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Confluence Attachment API Test</title>
+  <title>JPM Confluence Attachment API Test</title>
   <style>
     * {
       box-sizing: border-box;
@@ -42,7 +42,7 @@
       font-weight: 600;
       margin-bottom: 5px;
     }
-    input, textarea {
+    input, textarea, select {
       width: 100%;
       padding: 10px;
       border: 1px solid #ddd;
@@ -98,25 +98,62 @@
     .hidden {
       display: none;
     }
+    .log-area {
+      font-family: 'Courier New', Courier, monospace;
+      background-color: #f8f9fa;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      padding: 15px;
+      margin-top: 15px;
+      max-height: 200px;
+      overflow-y: auto;
+      font-size: 12px;
+    }
+    .error-message {
+      color: #e74c3c;
+      font-weight: 600;
+    }
+    .success-message {
+      color: #2ecc71;
+      font-weight: 600;
+    }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>Confluence Attachment API Test</h1>
+    <h1>JPM Confluence Attachment API Test</h1>
     
     <div class="section">
       <h2>Configuration</h2>
       <div class="form-group">
-        <label for="confluenceUrl">Confluence URL:</label>
-        <input type="text" id="confluenceUrl" placeholder="https://your-domain.atlassian.net/wiki">
+        <label for="confluenceUrl">Confluence Base URL:</label>
+        <input type="text" id="confluenceUrl" placeholder="https://confluence.prod.aws.jpmchase.net/confluence" value="https://confluence.prod.aws.jpmchase.net/confluence">
       </div>
       <div class="form-group">
         <label for="pageId">Page ID:</label>
-        <input type="text" id="pageId" placeholder="123456">
+        <input type="text" id="pageId" placeholder="4822703777" value="4822703777">
       </div>
       <div class="form-group">
-        <label for="authToken">Auth Token (Base64 encoded username:api_token):</label>
-        <input type="password" id="authToken" placeholder="Enter your auth token">
+        <label for="authMethod">Authentication Method:</label>
+        <select id="authMethod">
+          <option value="basic">Basic Auth</option>
+          <option value="token">Bearer Token</option>
+          <option value="cookie">Cookie Auth</option>
+        </select>
+      </div>
+      <div class="form-group" id="basicAuthFields">
+        <label for="username">Username:</label>
+        <input type="text" id="username" placeholder="your.username">
+        <label for="password" style="margin-top: 10px;">API Token/Password:</label>
+        <input type="password" id="password">
+      </div>
+      <div class="form-group hidden" id="tokenAuthField">
+        <label for="bearerToken">Bearer Token:</label>
+        <input type="password" id="bearerToken" placeholder="Enter your bearer token">
+      </div>
+      <div class="form-group hidden" id="cookieAuthField">
+        <label for="cookieValue">Cookie Value:</label>
+        <textarea id="cookieValue" placeholder="Paste your full cookie string here"></textarea>
       </div>
     </div>
     
@@ -153,11 +190,17 @@ export default kb_sample;</textarea>
         <label for="retrieveFileName">File Name to Retrieve:</label>
         <input type="text" id="retrieveFileName" placeholder="kb_sample.js" value="kb_sample.js">
       </div>
-      <div class="form-group hidden">
+      <div class="form-group">
         <label for="attachmentId">Attachment ID (optional):</label>
         <input type="text" id="attachmentId" placeholder="Leave empty to search by filename">
       </div>
       <button id="retrieveBtn" class="btn btn-secondary">Retrieve from Confluence</button>
+    </div>
+    
+    <div id="logSection" class="section">
+      <h2>Console Log</h2>
+      <div id="logArea" class="log-area"></div>
+      <button id="clearLogBtn" class="btn" style="margin-top: 10px;">Clear Log</button>
     </div>
     
     <div id="resultsSection" class="section hidden">
@@ -172,43 +215,139 @@ export default kb_sample;</textarea>
   </div>
 
   <script>
-    // Confluence Attachment API Test Utility
-    // Configuration is taken from form inputs
+    // Custom logging function to display logs in the UI
+    const originalConsoleLog = console.log;
+    const originalConsoleError = console.error;
+    
+    console.log = function() {
+      // Call the original console.log
+      originalConsoleLog.apply(console, arguments);
+      
+      // Add to the log area
+      const logArea = document.getElementById('logArea');
+      const args = Array.from(arguments);
+      const logMessage = args.map(arg => {
+        if (typeof arg === 'object') {
+          return JSON.stringify(arg, null, 2);
+        }
+        return arg;
+      }).join(' ');
+      
+      logArea.innerHTML += `<div>${new Date().toLocaleTimeString()} - ${logMessage}</div>`;
+      logArea.scrollTop = logArea.scrollHeight;
+    };
+    
+    console.error = function() {
+      // Call the original console.error
+      originalConsoleError.apply(console, arguments);
+      
+      // Add to the log area with error styling
+      const logArea = document.getElementById('logArea');
+      const args = Array.from(arguments);
+      const logMessage = args.map(arg => {
+        if (typeof arg === 'object' && arg instanceof Error) {
+          return arg.stack || arg.message;
+        }
+        if (typeof arg === 'object') {
+          return JSON.stringify(arg, null, 2);
+        }
+        return arg;
+      }).join(' ');
+      
+      logArea.innerHTML += `<div style="color: red;">${new Date().toLocaleTimeString()} - ERROR: ${logMessage}</div>`;
+      logArea.scrollTop = logArea.scrollHeight;
+    };
+    
+    /**
+     * Get authentication headers based on selected method
+     */
+    function getAuthHeaders() {
+      const authMethod = document.getElementById('authMethod').value;
+      
+      if (authMethod === 'basic') {
+        const username = document.getElementById('username').value.trim();
+        const password = document.getElementById('password').value.trim();
+        if (!username || !password) {
+          throw new Error('Username and password are required for Basic Auth');
+        }
+        
+        const authString = `${username}:${password}`;
+        const base64Auth = btoa(authString);
+        return {
+          'Authorization': `Basic ${base64Auth}`,
+          'X-Atlassian-Token': 'no-check'
+        };
+      } else if (authMethod === 'token') {
+        const token = document.getElementById('bearerToken').value.trim();
+        if (!token) {
+          throw new Error('Bearer token is required');
+        }
+        return {
+          'Authorization': `Bearer ${token}`,
+          'X-Atlassian-Token': 'no-check'
+        };
+      } else if (authMethod === 'cookie') {
+        const cookieValue = document.getElementById('cookieValue').value.trim();
+        if (!cookieValue) {
+          throw new Error('Cookie value is required');
+        }
+        return {
+          'Cookie': cookieValue,
+          'X-Atlassian-Token': 'no-check'
+        };
+      }
+      
+      throw new Error('Invalid authentication method');
+    }
+    
+    /**
+     * Construct properly formatted Confluence API URL
+     */
+    function constructApiUrl(baseUrl, endpoint) {
+      // Remove trailing slashes from baseUrl
+      const cleanBaseUrl = baseUrl.replace(/\/+$/, '');
+      // Remove leading slashes from endpoint
+      const cleanEndpoint = endpoint.replace(/^\/+/, '');
+      
+      return `${cleanBaseUrl}/${cleanEndpoint}`;
+    }
     
     /**
      * Upload a .js file to Confluence as an attachment
-     * @param {string} confluenceUrl - Confluence base URL
-     * @param {string} pageId - Page ID to attach to
-     * @param {string} authToken - Base64 encoded auth token
-     * @param {string} fileName - Name of the file to upload
-     * @param {string} fileContent - Content of the JS file
-     * @returns {Promise} - Promise resolving to the API response
      */
-    async function uploadJsFileToConfluence(confluenceUrl, pageId, authToken, fileName, fileContent) {
+    async function uploadJsFileToConfluence(confluenceUrl, pageId, fileName, fileContent) {
       try {
         console.log(`Uploading file ${fileName} to Confluence...`);
         
+        // Construct proper API URL
+        const apiUrl = constructApiUrl(confluenceUrl, `rest/api/content/${pageId}/child/attachment`);
+        console.log(`API URL: ${apiUrl}`);
+        
+        // Get authentication headers
+        const headers = getAuthHeaders();
+        console.log('Headers prepared (auth details hidden)');
+        
         // Create blob from file content
         const blob = new Blob([fileContent], { type: 'application/javascript' });
+        console.log(`Created blob with size: ${blob.size} bytes`);
         
         // Create FormData and append file
         const formData = new FormData();
         formData.append('file', blob, fileName);
         
         // Make API request
-        const response = await fetch(
-          `${confluenceUrl}/rest/api/content/${pageId}/child/attachment`,
-          {
-            method: 'POST',
-            headers: {
-              'Authorization': `Basic ${authToken}`,
-              'X-Atlassian-Token': 'no-check'
-            },
-            body: formData
-          }
-        );
+        console.log('Sending POST request...');
+        const response = await fetch(apiUrl, {
+          method: 'POST',
+          headers: headers,
+          body: formData
+        });
+        
+        console.log(`Response status: ${response.status} ${response.statusText}`);
         
         if (!response.ok) {
+          const errorText = await response.text();
+          console.error('Response error details:', errorText);
           throw new Error(`Upload failed: ${response.status} ${response.statusText}`);
         }
         
@@ -223,38 +362,41 @@ export default kb_sample;</textarea>
     
     /**
      * Get a .js file from Confluence attachments
-     * @param {string} confluenceUrl - Confluence base URL
-     * @param {string} pageId - Page ID containing the attachment
-     * @param {string} authToken - Base64 encoded auth token
-     * @param {string} attachmentId - ID of the attachment to retrieve (if known)
-     * @param {string} fileName - Name of the file to retrieve (alternative to ID)
-     * @returns {Promise} - Promise resolving to the file content
      */
-    async function getJsFileFromConfluence(confluenceUrl, pageId, authToken, attachmentId = null, fileName = null) {
+    async function getJsFileFromConfluence(confluenceUrl, pageId, attachmentId = null, fileName = null) {
       try {
         console.log('Retrieving file from Confluence...');
+        
+        // Get authentication headers
+        const headers = getAuthHeaders();
         
         // If no attachment ID is provided, get attachments list and find by filename
         if (!attachmentId && fileName) {
           console.log(`Looking for attachment with filename: ${fileName}`);
           
+          // Construct proper API URL for listing attachments
+          const listApiUrl = constructApiUrl(confluenceUrl, `rest/api/content/${pageId}/child/attachment`);
+          console.log(`List API URL: ${listApiUrl}`);
+          
           // Get list of attachments
-          const listResponse = await fetch(
-            `${confluenceUrl}/rest/api/content/${pageId}/child/attachment`,
-            {
-              method: 'GET',
-              headers: {
-                'Authorization': `Basic ${authToken}`,
-                'Accept': 'application/json'
-              }
+          const listResponse = await fetch(listApiUrl, {
+            method: 'GET',
+            headers: {
+              ...headers,
+              'Accept': 'application/json'
             }
-          );
+          });
+          
+          console.log(`List response status: ${listResponse.status} ${listResponse.statusText}`);
           
           if (!listResponse.ok) {
+            const errorText = await listResponse.text();
+            console.error('List response error details:', errorText);
             throw new Error(`Failed to get attachments list: ${listResponse.status} ${listResponse.statusText}`);
           }
           
           const attachments = await listResponse.json();
+          console.log(`Found ${attachments.results.length} attachments`);
           
           // Find attachment by filename
           const attachment = attachments.results.find(att => att.title === fileName);
@@ -271,18 +413,21 @@ export default kb_sample;</textarea>
           throw new Error('Either attachment ID or filename must be provided');
         }
         
+        // Construct proper API URL for getting attachment content
+        const contentApiUrl = constructApiUrl(confluenceUrl, `rest/api/content/${attachmentId}/data`);
+        console.log(`Content API URL: ${contentApiUrl}`);
+        
         // Get the attachment content
-        const response = await fetch(
-          `${confluenceUrl}/rest/api/content/${attachmentId}/data`,
-          {
-            method: 'GET',
-            headers: {
-              'Authorization': `Basic ${authToken}`
-            }
-          }
-        );
+        const response = await fetch(contentApiUrl, {
+          method: 'GET',
+          headers: headers
+        });
+        
+        console.log(`Content response status: ${response.status} ${response.statusText}`);
         
         if (!response.ok) {
+          const errorText = await response.text();
+          console.error('Content response error details:', errorText);
           throw new Error(`Failed to get attachment: ${response.status} ${response.statusText}`);
         }
         
@@ -297,24 +442,47 @@ export default kb_sample;</textarea>
     
     // Event Listeners
     document.addEventListener('DOMContentLoaded', function() {
+      const authMethodSelect = document.getElementById('authMethod');
+      const basicAuthFields = document.getElementById('basicAuthFields');
+      const tokenAuthField = document.getElementById('tokenAuthField');
+      const cookieAuthField = document.getElementById('cookieAuthField');
       const uploadBtn = document.getElementById('uploadBtn');
       const retrieveBtn = document.getElementById('retrieveBtn');
       const copyBtn = document.getElementById('copyBtn');
       const clearBtn = document.getElementById('clearBtn');
+      const clearLogBtn = document.getElementById('clearLogBtn');
       const resultsSection = document.getElementById('resultsSection');
       const resultMessage = document.getElementById('resultMessage');
       const retrievedContent = document.getElementById('retrievedContent');
+      
+      // Authentication method change handler
+      authMethodSelect.addEventListener('change', function() {
+        const method = this.value;
+        
+        // Hide all auth fields first
+        basicAuthFields.classList.add('hidden');
+        tokenAuthField.classList.add('hidden');
+        cookieAuthField.classList.add('hidden');
+        
+        // Show relevant fields based on selection
+        if (method === 'basic') {
+          basicAuthFields.classList.remove('hidden');
+        } else if (method === 'token') {
+          tokenAuthField.classList.remove('hidden');
+        } else if (method === 'cookie') {
+          cookieAuthField.classList.remove('hidden');
+        }
+      });
       
       // Handle Upload
       uploadBtn.addEventListener('click', async function() {
         const confluenceUrl = document.getElementById('confluenceUrl').value.trim();
         const pageId = document.getElementById('pageId').value.trim();
-        const authToken = document.getElementById('authToken').value.trim();
         const fileName = document.getElementById('fileName').value.trim();
         const fileContent = document.getElementById('fileContent').value;
         
         // Validate inputs
-        if (!confluenceUrl || !pageId || !authToken || !fileName || !fileContent) {
+        if (!confluenceUrl || !pageId || !fileName || !fileContent) {
           showResult('Please fill in all required fields', 'error');
           return;
         }
@@ -325,8 +493,7 @@ export default kb_sample;</textarea>
           
           const result = await uploadJsFileToConfluence(
             confluenceUrl, 
-            pageId, 
-            authToken, 
+            pageId,
             fileName, 
             fileContent
           );
@@ -347,12 +514,11 @@ export default kb_sample;</textarea>
       retrieveBtn.addEventListener('click', async function() {
         const confluenceUrl = document.getElementById('confluenceUrl').value.trim();
         const pageId = document.getElementById('pageId').value.trim();
-        const authToken = document.getElementById('authToken').value.trim();
         const fileName = document.getElementById('retrieveFileName').value.trim();
         const attachmentId = document.getElementById('attachmentId').value.trim();
         
         // Validate inputs
-        if (!confluenceUrl || !pageId || !authToken || (!fileName && !attachmentId)) {
+        if (!confluenceUrl || !pageId || (!fileName && !attachmentId)) {
           showResult('Please fill in all required fields', 'error');
           return;
         }
@@ -363,8 +529,7 @@ export default kb_sample;</textarea>
           
           const content = await getJsFileFromConfluence(
             confluenceUrl, 
-            pageId, 
-            authToken, 
+            pageId,
             attachmentId || null, 
             fileName || null
           );
@@ -405,6 +570,11 @@ export default kb_sample;</textarea>
         resultMessage.innerHTML = '';
       });
       
+      // Clear Log
+      clearLogBtn.addEventListener('click', function() {
+        document.getElementById('logArea').innerHTML = '';
+      });
+      
       function showResult(message, type, content = null) {
         resultsSection.classList.remove('hidden');
         resultMessage.innerHTML = message;
@@ -416,6 +586,9 @@ export default kb_sample;</textarea>
           retrievedContent.textContent = '';
         }
       }
+      
+      // Initialize the auth fields based on default selection
+      authMethodSelect.dispatchEvent(new Event('change'));
     });
   </script>
 </body>

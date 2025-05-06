@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Confluence Attachment API Test</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    }
+    body {
+      background-color: #f5f8fa;
+      color: #333;
+      line-height: 1.6;
+      padding: 20px;
+    }
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+    }
+    h1 {
+      color: #1e293b;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    .section {
+      margin-bottom: 20px;
+      padding: 15px;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 5px;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      font-size: 14px;
+    }
+    textarea {
+      min-height: 150px;
+      font-family: 'Courier New', Courier, monospace;
+    }
+    .btn {
+      background-color: #3498db;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      transition: background-color 0.2s;
+    }
+    .btn:hover {
+      background-color: #2980b9;
+    }
+    .btn-secondary {
+      background-color: #2ecc71;
+    }
+    .btn-secondary:hover {
+      background-color: #27ae60;
+    }
+    .results {
+      margin-top: 20px;
+      padding: 15px;
+      background-color: #f8f9fa;
+      border-radius: 5px;
+      border: 1px solid #ddd;
+    }
+    .code-display {
+      background-color: #f8f9fa;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      padding: 15px;
+      margin-top: 15px;
+      font-family: 'Courier New', Courier, monospace;
+      white-space: pre-wrap;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    .btn-container {
+      display: flex;
+      gap: 10px;
+    }
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Confluence Attachment API Test</h1>
+    
+    <div class="section">
+      <h2>Configuration</h2>
+      <div class="form-group">
+        <label for="confluenceUrl">Confluence URL:</label>
+        <input type="text" id="confluenceUrl" placeholder="https://your-domain.atlassian.net/wiki">
+      </div>
+      <div class="form-group">
+        <label for="pageId">Page ID:</label>
+        <input type="text" id="pageId" placeholder="123456">
+      </div>
+      <div class="form-group">
+        <label for="authToken">Auth Token (Base64 encoded username:api_token):</label>
+        <input type="password" id="authToken" placeholder="Enter your auth token">
+      </div>
+    </div>
+    
+    <div class="section">
+      <h2>Upload JS File</h2>
+      <div class="form-group">
+        <label for="fileName">File Name:</label>
+        <input type="text" id="fileName" placeholder="kb_sample.js" value="kb_sample.js">
+      </div>
+      <div class="form-group">
+        <label for="fileContent">JS Content:</label>
+        <textarea id="fileContent">// Knowledge Base Sample
+const kb_sample = {
+  title: "Sample Knowledge Base",
+  categories: [
+    {
+      name: "Getting Started",
+      items: [
+        { title: "Introduction", content: "This is an introduction to our product." },
+        { title: "Installation", content: "Steps to install the application." }
+      ]
+    }
+  ]
+};
+
+export default kb_sample;</textarea>
+      </div>
+      <button id="uploadBtn" class="btn">Upload to Confluence</button>
+    </div>
+    
+    <div class="section">
+      <h2>Retrieve JS File</h2>
+      <div class="form-group">
+        <label for="retrieveFileName">File Name to Retrieve:</label>
+        <input type="text" id="retrieveFileName" placeholder="kb_sample.js" value="kb_sample.js">
+      </div>
+      <div class="form-group hidden">
+        <label for="attachmentId">Attachment ID (optional):</label>
+        <input type="text" id="attachmentId" placeholder="Leave empty to search by filename">
+      </div>
+      <button id="retrieveBtn" class="btn btn-secondary">Retrieve from Confluence</button>
+    </div>
+    
+    <div id="resultsSection" class="section hidden">
+      <h2>Results</h2>
+      <div id="resultMessage"></div>
+      <div id="retrievedContent" class="code-display"></div>
+      <div class="btn-container">
+        <button id="copyBtn" class="btn">Copy Content</button>
+        <button id="clearBtn" class="btn">Clear</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Confluence Attachment API Test Utility
+    // Configuration is taken from form inputs
+    
+    /**
+     * Upload a .js file to Confluence as an attachment
+     * @param {string} confluenceUrl - Confluence base URL
+     * @param {string} pageId - Page ID to attach to
+     * @param {string} authToken - Base64 encoded auth token
+     * @param {string} fileName - Name of the file to upload
+     * @param {string} fileContent - Content of the JS file
+     * @returns {Promise} - Promise resolving to the API response
+     */
+    async function uploadJsFileToConfluence(confluenceUrl, pageId, authToken, fileName, fileContent) {
+      try {
+        console.log(`Uploading file ${fileName} to Confluence...`);
+        
+        // Create blob from file content
+        const blob = new Blob([fileContent], { type: 'application/javascript' });
+        
+        // Create FormData and append file
+        const formData = new FormData();
+        formData.append('file', blob, fileName);
+        
+        // Make API request
+        const response = await fetch(
+          `${confluenceUrl}/rest/api/content/${pageId}/child/attachment`,
+          {
+            method: 'POST',
+            headers: {
+              'Authorization': `Basic ${authToken}`,
+              'X-Atlassian-Token': 'no-check'
+            },
+            body: formData
+          }
+        );
+        
+        if (!response.ok) {
+          throw new Error(`Upload failed: ${response.status} ${response.statusText}`);
+        }
+        
+        const data = await response.json();
+        console.log('Upload successful:', data);
+        return data;
+      } catch (error) {
+        console.error('Error uploading file:', error);
+        throw error;
+      }
+    }
+    
+    /**
+     * Get a .js file from Confluence attachments
+     * @param {string} confluenceUrl - Confluence base URL
+     * @param {string} pageId - Page ID containing the attachment
+     * @param {string} authToken - Base64 encoded auth token
+     * @param {string} attachmentId - ID of the attachment to retrieve (if known)
+     * @param {string} fileName - Name of the file to retrieve (alternative to ID)
+     * @returns {Promise} - Promise resolving to the file content
+     */
+    async function getJsFileFromConfluence(confluenceUrl, pageId, authToken, attachmentId = null, fileName = null) {
+      try {
+        console.log('Retrieving file from Confluence...');
+        
+        // If no attachment ID is provided, get attachments list and find by filename
+        if (!attachmentId && fileName) {
+          console.log(`Looking for attachment with filename: ${fileName}`);
+          
+          // Get list of attachments
+          const listResponse = await fetch(
+            `${confluenceUrl}/rest/api/content/${pageId}/child/attachment`,
+            {
+              method: 'GET',
+              headers: {
+                'Authorization': `Basic ${authToken}`,
+                'Accept': 'application/json'
+              }
+            }
+          );
+          
+          if (!listResponse.ok) {
+            throw new Error(`Failed to get attachments list: ${listResponse.status} ${listResponse.statusText}`);
+          }
+          
+          const attachments = await listResponse.json();
+          
+          // Find attachment by filename
+          const attachment = attachments.results.find(att => att.title === fileName);
+          
+          if (!attachment) {
+            throw new Error(`Attachment with filename ${fileName} not found`);
+          }
+          
+          attachmentId = attachment.id;
+          console.log(`Found attachment ID: ${attachmentId}`);
+        }
+        
+        if (!attachmentId) {
+          throw new Error('Either attachment ID or filename must be provided');
+        }
+        
+        // Get the attachment content
+        const response = await fetch(
+          `${confluenceUrl}/rest/api/content/${attachmentId}/data`,
+          {
+            method: 'GET',
+            headers: {
+              'Authorization': `Basic ${authToken}`
+            }
+          }
+        );
+        
+        if (!response.ok) {
+          throw new Error(`Failed to get attachment: ${response.status} ${response.statusText}`);
+        }
+        
+        const content = await response.text();
+        console.log('File retrieved successfully');
+        return content;
+      } catch (error) {
+        console.error('Error retrieving file:', error);
+        throw error;
+      }
+    }
+    
+    // Event Listeners
+    document.addEventListener('DOMContentLoaded', function() {
+      const uploadBtn = document.getElementById('uploadBtn');
+      const retrieveBtn = document.getElementById('retrieveBtn');
+      const copyBtn = document.getElementById('copyBtn');
+      const clearBtn = document.getElementById('clearBtn');
+      const resultsSection = document.getElementById('resultsSection');
+      const resultMessage = document.getElementById('resultMessage');
+      const retrievedContent = document.getElementById('retrievedContent');
+      
+      // Handle Upload
+      uploadBtn.addEventListener('click', async function() {
+        const confluenceUrl = document.getElementById('confluenceUrl').value.trim();
+        const pageId = document.getElementById('pageId').value.trim();
+        const authToken = document.getElementById('authToken').value.trim();
+        const fileName = document.getElementById('fileName').value.trim();
+        const fileContent = document.getElementById('fileContent').value;
+        
+        // Validate inputs
+        if (!confluenceUrl || !pageId || !authToken || !fileName || !fileContent) {
+          showResult('Please fill in all required fields', 'error');
+          return;
+        }
+        
+        try {
+          uploadBtn.disabled = true;
+          uploadBtn.textContent = 'Uploading...';
+          
+          const result = await uploadJsFileToConfluence(
+            confluenceUrl, 
+            pageId, 
+            authToken, 
+            fileName, 
+            fileContent
+          );
+          
+          showResult(
+            `Successfully uploaded "${fileName}" to Confluence.<br>Attachment ID: ${result.results[0].id}`,
+            'success'
+          );
+        } catch (error) {
+          showResult(`Error: ${error.message}`, 'error');
+        } finally {
+          uploadBtn.disabled = false;
+          uploadBtn.textContent = 'Upload to Confluence';
+        }
+      });
+      
+      // Handle Retrieve
+      retrieveBtn.addEventListener('click', async function() {
+        const confluenceUrl = document.getElementById('confluenceUrl').value.trim();
+        const pageId = document.getElementById('pageId').value.trim();
+        const authToken = document.getElementById('authToken').value.trim();
+        const fileName = document.getElementById('retrieveFileName').value.trim();
+        const attachmentId = document.getElementById('attachmentId').value.trim();
+        
+        // Validate inputs
+        if (!confluenceUrl || !pageId || !authToken || (!fileName && !attachmentId)) {
+          showResult('Please fill in all required fields', 'error');
+          return;
+        }
+        
+        try {
+          retrieveBtn.disabled = true;
+          retrieveBtn.textContent = 'Retrieving...';
+          
+          const content = await getJsFileFromConfluence(
+            confluenceUrl, 
+            pageId, 
+            authToken, 
+            attachmentId || null, 
+            fileName || null
+          );
+          
+          showResult(
+            `Successfully retrieved "${fileName || 'file'}" from Confluence.`,
+            'success',
+            content
+          );
+        } catch (error) {
+          showResult(`Error: ${error.message}`, 'error');
+        } finally {
+          retrieveBtn.disabled = false;
+          retrieveBtn.textContent = 'Retrieve from Confluence';
+        }
+      });
+      
+      // Copy Content
+      copyBtn.addEventListener('click', function() {
+        const content = retrievedContent.textContent;
+        navigator.clipboard.writeText(content)
+          .then(() => {
+            const originalText = copyBtn.textContent;
+            copyBtn.textContent = 'Copied!';
+            setTimeout(() => {
+              copyBtn.textContent = originalText;
+            }, 2000);
+          })
+          .catch(err => {
+            console.error('Could not copy text: ', err);
+          });
+      });
+      
+      // Clear Results
+      clearBtn.addEventListener('click', function() {
+        resultsSection.classList.add('hidden');
+        retrievedContent.textContent = '';
+        resultMessage.innerHTML = '';
+      });
+      
+      function showResult(message, type, content = null) {
+        resultsSection.classList.remove('hidden');
+        resultMessage.innerHTML = message;
+        resultMessage.className = type === 'error' ? 'error-message' : 'success-message';
+        
+        if (content) {
+          retrievedContent.textContent = content;
+        } else {
+          retrievedContent.textContent = '';
+        }
+      }
+    });
+  </script>
+</body>
+</html>

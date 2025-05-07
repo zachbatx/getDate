@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JPM Confluence Attachment API Test</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    }
+    body {
+      background-color: #f5f8fa;
+      color: #333;
+      line-height: 1.6;
+      padding: 20px;
+    }
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+    }
+    h1 {
+      color: #1e293b;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    .section {
+      margin-bottom: 20px;
+      padding: 15px;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 5px;
+    }
+    input, textarea, select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      font-size: 14px;
+    }
+    textarea {
+      min-height: 150px;
+      font-family: 'Courier New', Courier, monospace;
+    }
+    .btn {
+      background-color: #3498db;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      transition: background-color 0.2s;
+    }
+    .btn:hover {
+      background-color: #2980b9;
+    }
+    .btn-secondary {
+      background-color: #2ecc71;
+    }
+    .btn-secondary:hover {
+      background-color: #27ae60;
+    }
+    .code-display {
+      background-color: #f8f9fa;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      padding: 15px;
+      margin-top: 15px;
+      font-family: 'Courier New', Courier, monospace;
+      white-space: pre-wrap;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    .btn-container {
+      display: flex;
+      gap: 10px;
+    }
+    .hidden {
+      display: none;
+    }
+    .log-area {
+      font-family: 'Courier New', Courier, monospace;
+      background-color: #f8f9fa;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      padding: 15px;
+      margin-top: 15px;
+      max-height: 200px;
+      overflow-y: auto;
+      font-size: 12px;
+    }
+    .error-message {
+      color: #e74c3c;
+      font-weight: 600;
+    }
+    .success-message {
+      color: #2ecc71;
+      font-weight: 600;
+    }
+    .flex-row {
+      display: flex;
+      gap: 10px;
+      align-items: flex-end;
+    }
+    .flex-grow {
+      flex-grow: 1;
+    }
+    .info-text {
+      font-size: 12px;
+      color: #666;
+      margin-top: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>JPM Confluence Attachment API Test</h1>
+    
+    <div class="section">
+      <h2>Configuration</h2>
+      <div class="form-group">
+        <label for="confluenceUrl">Confluence Base URL:</label>
+        <input type="text" id="confluenceUrl" placeholder="https://confluence.prod.aws.jpmchase.net/confluence" value="https://confluence.prod.aws.jpmchase.net/confluence">
+      </div>
+      <div class="form-group">
+        <label for="pageId">Page ID:</label>
+        <input type="text" id="pageId" placeholder="4822703777" value="">
+        <p class="info-text">Page ID will be automatically detected if this tool is run from a Confluence page.</p>
+      </div>
+      <div class="form-group">
+        <label for="bearerToken">Bearer Token:</label>
+        <input type="password" id="bearerToken" placeholder="Enter your bearer token">
+      </div>
+    </div>
+    
+    <div class="section">
+      <h2>Upload JS File</h2>
+      <div class="form-group">
+        <label for="fileName">File Name:</label>
+        <input type="text" id="fileName" placeholder="kb_sample.js" value="kb_sample.js">
+      </div>
+      <div class="form-group">
+        <label for="fileContent">JS Content:</label>
+        <textarea id="fileContent">// Knowledge Base Sample
+const kb_sample = {
+  title: "Sample Knowledge Base",
+  categories: [
+    {
+      name: "Getting Started",
+      items: [
+        { title: "Introduction", content: "This is an introduction to our product." },
+        { title: "Installation", content: "Steps to install the application." }
+      ]
+    }
+  ]
+};
+
+export default kb_sample;</textarea>
+      </div>
+      <button id="uploadBtn" class="btn">Upload to Confluence</button>
+    </div>
+    
+    <div class="section">
+      <h2>Retrieve JS File</h2>
+      <div class="flex-row">
+        <div class="form-group flex-grow">
+          <label for="attachmentDropdown">Select File to Retrieve:</label>
+          <select id="attachmentDropdown">
+            <option value="">-- Select a file --</option>
+          </select>
+        </div>
+        <button id="listAttachmentsBtn" class="btn">List Attachments</button>
+      </div>
+      
+      <div class="form-group">
+        <label for="fileContentView">File Content:</label>
+        <textarea id="fileContentView" readonly placeholder="Selected file content will appear here"></textarea>
+      </div>
+      
+      <div class="btn-container">
+        <button id="retrieveBtn" class="btn btn-secondary">View Selected File</button>
+        <button id="copyContentBtn" class="btn">Copy Content</button>
+      </div>
+    </div>
+    
+    <div id="logSection" class="section">
+      <h2>Console Log</h2>
+      <div id="logArea" class="log-area"></div>
+      <button id="clearLogBtn" class="btn" style="margin-top: 10px;">Clear Log</button>
+    </div>
+  </div>
+
+  <script>
+    // Custom logging function to display logs in the UI
+    const originalConsoleLog = console.log;
+    const originalConsoleError = console.error;
+    
+    console.log = function() {
+      // Call the original console.log
+      originalConsoleLog.apply(console, arguments);
+      
+      // Add to the log area
+      const logArea = document.getElementById('logArea');
+      const args = Array.from(arguments);
+      const logMessage = args.map(arg => {
+        if (typeof arg === 'object') {
+          return JSON.stringify(arg, null, 2);
+        }
+        return arg;
+      }).join(' ');
+      
+      logArea.innerHTML += `<div>${new Date().toLocaleTimeString()} - ${logMessage}</div>`;
+      logArea.scrollTop = logArea.scrollHeight;
+    };
+    
+    console.error = function() {
+      // Call the original console.error
+      originalConsoleError.apply(console, arguments);
+      
+      // Add to the log area with error styling
+      const logArea = document.getElementById('logArea');
+      const args = Array.from(arguments);
+      const logMessage = args.map(arg => {
+        if (typeof arg === 'object' && arg instanceof Error) {
+          return arg.stack || arg.message;
+        }
+        if (typeof arg === 'object') {
+          return JSON.stringify(arg, null, 2);
+        }
+        return arg;
+      }).join(' ');
+      
+      logArea.innerHTML += `<div style="color: red;">${new Date().toLocaleTimeString()} - ERROR: ${logMessage}</div>`;
+      logArea.scrollTop = logArea.scrollHeight;
+    };
+    
+    /**
+     * Extract page ID from Confluence meta tags
+     * Looks for <meta name="ajs-page-id" content="[pageId]">
+     */
+    function extractConfluencePageId() {
+      try {
+        console.log('Attempting to extract Confluence page ID from meta tags...');
+        
+        // Check if we're in an iframe
+        if (window.parent && window.parent !== window) {
+          try {
+            // Try to access parent frame (might fail due to same-origin policy)
+            const parentMeta = window.parent.document.querySelector('meta[name="ajs-page-id"]');
+            if (parentMeta) {
+              const pageId = parentMeta.getAttribute('content');
+              console.log(`Found page ID in parent frame: ${pageId}`);
+              return pageId;
+            }
+          } catch (e) {
+            console.log('Could not access parent frame due to same-origin policy');
+          }
+        }
+        
+        // Check in current document
+        const meta = document.querySelector('meta[name="ajs-page-id"]');
+        if (meta) {
+          const pageId = meta.getAttribute('content');
+          console.log(`Found page ID in current document: ${pageId}`);
+          return pageId;
+        }
+        
+        // If we're in a Confluence page but can't find the meta tag
+        if (window.location.href.includes('confluence')) {
+          // Try to extract from URL - common Confluence URL pattern
+          const matches = window.location.href.match(/\/pages\/(\d+)\//);
+          if (matches && matches[1]) {
+            console.log(`Extracted page ID from URL: ${matches[1]}`);
+            return matches[1];
+          }
+          
+          // Another pattern
+          const viewPageMatches = window.location.href.match(/pageId=(\d+)/);
+          if (viewPageMatches && viewPageMatches[1]) {
+            console.log(`Extracted page ID from URL query param: ${viewPageMatches[1]}`);
+            return viewPageMatches[1];
+          }
+        }
+        
+        console.log('Could not find Confluence page ID');
+        return null;
+      } catch (error) {
+        console.error('Error extracting page ID:', error);
+        return null;
+      }
+    }
+    
+    /**
+     * Get authentication headers for Bearer Token authentication
+     */
+    function getAuthHeaders() {
+      const token = document.getElementById('bearerToken').value.trim();
+      
+      if (!token) {
+        throw new Error('Bearer token is required');
+      }
+      
+      return {
+        'Authorization': `Bearer ${token}`,
+        'X-Atlassian-Token': 'no-check'
+      };
+    }
+    
+    /**
+     * Construct properly formatted Confluence API URL
+     */
+    function constructApiUrl(baseUrl, endpoint) {
+      // Remove trailing slashes from baseUrl
+      const cleanBaseUrl = baseUrl.replace(/\/+$/, '');
+      // Remove leading slashes from endpoint
+      const cleanEndpoint = endpoint.replace(/^\/+/, '');
+      
+      return `${cleanBaseUrl}/${cleanEndpoint}`;
+    }
+    
+    /**
+     * Get list of attachments from Confluence
+     */
+    async function listAttachments(confluenceUrl, pageId) {
+      try {
+        console.log('Fetching attachment list from Confluence...');
+        
+        // Construct proper API URL for listing attachments
+        const listApiUrl = constructApiUrl(confluenceUrl, `rest/api/content/${pageId}/child/attachment`);
+        console.log(`List API URL: ${listApiUrl}`);
+        
+        // Get authentication headers
+        const headers = getAuthHeaders();
+        
+        // Get list of attachments
+        const listResponse = await fetch(listApiUrl, {
+          method: 'GET',
+          headers: {
+            ...headers,
+            'Accept': 'application/json'
+          }
+        });
+        
+        console.log(`List response status: ${listResponse.status} ${listResponse.statusText}`);
+        
+        if (!listResponse.ok) {
+          const errorText = await listResponse.text();
+          console.error('List response error details:', errorText);
+          throw new Error(`Failed to get attachments list: ${listResponse.status} ${listResponse.statusText}`);
+        }
+        
+        const attachments = await listResponse.json();
+        console.log(`Found ${attachments.results.length} attachments`);
+        
+        // Log first attachment to see the structure
+        if (attachments.results.length > 0) {
+          console.log('First attachment structure:', JSON.stringify(attachments.results[0], null, 2));
+        }
+        
+        return attachments.results;
+      } catch (error) {
+        console.error('Error listing attachments:', error);
+        throw error;
+      }
+    }
+    
+    /**
+     * Upload a .js file to Confluence as an attachment
+     */
+    async function uploadJsFileToConfluence(confluenceUrl, pageId, fileName, fileContent) {
+      try {
+        console.log(`Uploading file ${fileName} to Confluence...`);
+        
+        // Construct proper API URL
+        const apiUrl = constructApiUrl(confluenceUrl, `rest/api/content/${pageId}/child/attachment`);
+        console.log(`API URL: ${apiUrl}`);
+        
+        // Get authentication headers
+        const headers = getAuthHeaders();
+        console.log('Headers prepared (auth details hidden)');
+        
+        // Create blob from file content
+        const blob = new Blob([fileContent], { type: 'application/javascript' });
+        console.log(`Created blob with size: ${blob.size} bytes`);
+        
+        // Create FormData and append file
+        const formData = new FormData();
+        formData.append('file', blob, fileName);
+        
+        // Make API request
+        console.log('Sending POST request...');
+        const response = await fetch(apiUrl, {
+          method: 'POST',
+          headers: headers,
+          body: formData
+        });
+        
+        console.log(`Response status: ${response.status} ${response.statusText}`);
+        
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error('Response error details:', errorText);
+          throw new Error(`Upload failed: ${response.status} ${response.statusText}`);
+        }
+        
+        const data = await response.json();
+        console.log('Upload successful:', data);
+        return data;
+      } catch (error) {
+        console.error('Error uploading file:', error);
+        throw error;
+      }
+    }
+    
+    /**
+     * Get a .js file from Confluence attachments - Updated with multiple download methods
+     */
+    async function getJsFileFromConfluence(confluenceUrl, pageId, attachmentId) {
+      try {
+        console.log(`Retrieving file with ID: ${attachmentId} from Confluence...`);
+        
+        // Get authentication headers
+        const headers = getAuthHeaders();
+        
+        // Try different URL patterns for attachment download
+        const urlPatterns = [
+          // Standard pattern (which failed with 404)
+          `${confluenceUrl}/rest/api/content/${attachmentId}/data`,
+          
+          // Alternative pattern 1: Include page ID in path
+          `${confluenceUrl}/rest/api/content/${pageId}/child/attachment/${attachmentId}/data`,
+          
+          // Alternative pattern 2: Download URL format
+          `${confluenceUrl}/download/attachments/${pageId}/${attachmentId}`,
+          
+          // Alternative pattern 3: Sometimes used in custom Confluence setups
+          `${confluenceUrl}/rest/api/content/${attachmentId}/child/attachment/data`
+        ];
+        
+        let content = null;
+        let successUrl = null;
+        
+        // Try each URL pattern until one works
+        for (const url of urlPatterns) {
+          try {
+            console.log(`Trying URL: ${url}`);
+            
+            const response = await fetch(url, {
+              method: 'GET',
+              headers: headers
+            });
+            
+            console.log(`Response status for ${url}: ${response.status} ${response.statusText}`);
+            
+            if (response.ok) {
+              content = await response.text();
+              successUrl = url;
+              break;
+            }
+          } catch (innerError) {
+            console.log(`Failed with URL ${url}: ${innerError.message}`);
+            // Continue to the next URL pattern
+          }
+        }
+        
+        if (!content) {
+          throw new Error('All attachment download URL patterns failed. Verify permissions and attachment ID.');
+        }
+        
+        console.log(`File retrieved successfully using: ${successUrl}`);
+        return content;
+      } catch (error) {
+        console.error('Error retrieving file:', error);
+        throw error;
+      }
+    }
+    
+    /**
+     * Format date for display or use fallback
+     */
+    function formatDate(attachment) {
+      try {
+        // Handle different Confluence API versions
+        let dateString = '';
+        
+        // Try to get the date from various possible paths in the attachment object
+        if (attachment.version && attachment.version.when) {
+          dateString = new Date(attachment.version.when).toLocaleString();
+        } else if (attachment.metadata && attachment.metadata.lastModified) {
+          dateString = new Date(attachment.metadata.lastModified).toLocaleString();
+        } else if (attachment.lastModified) {
+          dateString = new Date(attachment.lastModified).toLocaleString();
+        } else if (attachment.created) {
+          dateString = new Date(attachment.created).toLocaleString();
+        } else {
+          dateString = 'Unknown date';
+        }
+        
+        return dateString;
+      } catch (e) {
+        console.log('Error formatting date', e);
+        return 'Unknown date';
+      }
+    }
+    
+    // Event Listeners
+    document.addEventListener('DOMContentLoaded', function() {
+      const uploadBtn = document.getElementById('uploadBtn');
+      const retrieveBtn = document.getElementById('retrieveBtn');
+      const listAttachmentsBtn = document.getElementById('listAttachmentsBtn');
+      const attachmentDropdown = document.getElementById('attachmentDropdown');
+      const fileContentView = document.getElementById('fileContentView');
+      const copyContentBtn = document.getElementById('copyContentBtn');
+      const clearLogBtn = document.getElementById('clearLogBtn');
+      const pageIdInput = document.getElementById('pageId');
+      
+      // Try to auto-detect page ID
+      const pageId = extractConfluencePageId();
+      if (pageId) {
+        pageIdInput.value = pageId;
+        console.log(`Auto-detected Confluence page ID: ${pageId}`);
+      }
+      
+      // Handle Upload
+      uploadBtn.addEventListener('click', async function() {
+        const confluenceUrl = document.getElementById('confluenceUrl').value.trim();
+        const pageId = document.getElementById('pageId').value.trim();
+        const fileName = document.getElementById('fileName').value.trim();
+        const fileContent = document.getElementById('fileContent').value;
+        
+        // Validate inputs
+        if (!confluenceUrl || !pageId || !fileName || !fileContent) {
+          alert('Please fill in all required fields');
+          return;
+        }
+        
+        try {
+          uploadBtn.disabled = true;
+          uploadBtn.textContent = 'Uploading...';
+          
+          const result = await uploadJsFileToConfluence(
+            confluenceUrl, 
+            pageId,
+            fileName, 
+            fileContent
+          );
+          
+          alert(`Successfully uploaded "${fileName}" to Confluence.`);
+          
+          // Refresh attachment list
+          listAttachmentsBtn.click();
+        } catch (error) {
+          alert(`Error: ${error.message}`);
+        } finally {
+          uploadBtn.disabled = false;
+          uploadBtn.textContent = 'Upload to Confluence';
+        }
+      });
+      
+      // Handle List Attachments
+      listAttachmentsBtn.addEventListener('click', async function() {
+        const confluenceUrl = document.getElementById('confluenceUrl').value.trim();
+        const pageId = document.getElementById('pageId').value.trim();
+        
+        // Validate inputs
+        if (!confluenceUrl || !pageId) {
+          alert('Please fill in Confluence URL and Page ID');
+          return;
+        }
+        
+        try {
+          listAttachmentsBtn.disabled = true;
+          listAttachmentsBtn.textContent = 'Loading...';
+          
+          // Clear the dropdown first
+          attachmentDropdown.innerHTML = '<option value="">-- Select a file --</option>';
+          
+          const attachments = await listAttachments(confluenceUrl, pageId);
+          
+          // Populate dropdown with attachments
+          if (attachments.length === 0) {
+            alert('No attachments found on this page');
+          } else {
+            attachments.forEach(attachment => {
+              const option = document.createElement('option');
+              option.value = attachment.id;
+              option.dataset.filename = attachment.title;
+              
+              // Safely format the date
+              const dateString = formatDate(attachment);
+              
+              option.textContent = `${attachment.title} (${dateString})`;
+              attachmentDropdown.appendChild(option);
+            });
+            
+            console.log(`Populated dropdown with ${attachments.length} attachments`);
+          }
+        } catch (error) {
+          alert(`Error: ${error.message}`);
+        } finally {
+          listAttachmentsBtn.disabled = false;
+          listAttachmentsBtn.textContent = 'List Attachments';
+        }
+      });
+      
+      // Handle View Selected File
+      retrieveBtn.addEventListener('click', async function() {
+        const confluenceUrl = document.getElementById('confluenceUrl').value.trim();
+        const pageId = document.getElementById('pageId').value.trim();
+        const attachmentId = attachmentDropdown.value;
+        
+        // Validate inputs
+        if (!confluenceUrl || !pageId) {
+          alert('Please fill in Confluence URL and Page ID');
+          return;
+        }
+        
+        if (!attachmentId) {
+          alert('Please select a file from the dropdown');
+          return;
+        }
+        
+        try {
+          retrieveBtn.disabled = true;
+          retrieveBtn.textContent = 'Loading...';
+          
+          const content = await getJsFileFromConfluence(
+            confluenceUrl, 
+            pageId,
+            attachmentId
+          );
+          
+          // Display the content
+          fileContentView.value = content;
+          
+          console.log('File content loaded into view');
+        } catch (error) {
+          alert(`Error: ${error.message}`);
+        } finally {
+          retrieveBtn.disabled = false;
+          retrieveBtn.textContent = 'View Selected File';
+        }
+      });
+      
+      // Copy Content
+      copyContentBtn.addEventListener('click', function() {
+        const content = fileContentView.value;
+        
+        if (!content) {
+          alert('No content to copy');
+          return;
+        }
+        
+        navigator.clipboard.writeText(content)
+          .then(() => {
+            const originalText = copyContentBtn.textContent;
+            copyContentBtn.textContent = 'Copied!';
+            setTimeout(() => {
+              copyContentBtn.textContent = originalText;
+            }, 2000);
+          })
+          .catch(err => {
+            console.error('Could not copy text: ', err);
+            alert('Failed to copy to clipboard');
+          });
+      });
+      
+      // Clear Log
+      clearLogBtn.addEventListener('click', function() {
+        document.getElementById('logArea').innerHTML = '';
+      });
+      
+      // Auto-select dropdown item
+      attachmentDropdown.addEventListener('change', function() {
+        // Clear the file content view when selection changes
+        fileContentView.value = '';
+      });
+    });
+  </script>
+</body>
+</html>

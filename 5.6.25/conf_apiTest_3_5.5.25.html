@@ -417,12 +417,7 @@ export default kb_sample;</textarea>
     /**
      * Get a .js file from Confluence attachments
      */
-     <!-- Replace the existing getJsFileFromConfluence function with this updated version -->
-<script>
-/**
- * Get a .js file from Confluence attachments - Updated with multiple download methods
- */
-async function getJsFileFromConfluence(confluenceUrl, pageId, attachmentId) {
+     async function getJsFileFromConfluence(confluenceUrl, pageId, attachmentId) {
   try {
     console.log(`Retrieving file with ID: ${attachmentId} from Confluence...`);
     
@@ -481,7 +476,7 @@ async function getJsFileFromConfluence(confluenceUrl, pageId, attachmentId) {
     throw error;
   }
 }
-</script>
+
       try {
         console.log(`Retrieving file with ID: ${attachmentId} from Confluence...`);
         

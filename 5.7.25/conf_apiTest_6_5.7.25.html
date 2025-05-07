@@ -123,23 +123,6 @@
       color: #666;
       margin-top: 5px;
     }
-    .details-section {
-      margin-top: 10px;
-      border-top: 1px solid #eee;
-      padding-top: 10px;
-    }
-    .details-section h4 {
-      margin-bottom: 5px;
-    }
-    .text-pre {
-      white-space: pre-wrap;
-      font-family: monospace;
-      background: #f5f5f5;
-      padding: 5px;
-      margin-top: 5px;
-      font-size: 12px;
-      overflow-x: auto;
-    }
   </style>
 </head>
 <body>
@@ -202,11 +185,6 @@ export default kb_sample;</textarea>
         <button id="listAttachmentsBtn" class="btn">List Attachments</button>
       </div>
       
-      <div id="attachmentDetails" class="details-section hidden">
-        <h4>Selected Attachment Details:</h4>
-        <div id="attachmentDetailsContent" class="text-pre"></div>
-      </div>
-      
       <div class="form-group">
         <label for="customDownloadUrl">Custom Download URL (Optional):</label>
         <input type="text" id="customDownloadUrl" placeholder="Enter a custom URL pattern to try">
@@ -243,16 +221,18 @@ export default kb_sample;</textarea>
       
       // Add to the log area
       const logArea = document.getElementById('logArea');
-      const args = Array.from(arguments);
-      const logMessage = args.map(arg => {
-        if (typeof arg === 'object') {
-          return JSON.stringify(arg, null, 2);
-        }
-        return arg;
-      }).join(' ');
-      
-      logArea.innerHTML += `<div>${new Date().toLocaleTimeString()} - ${logMessage}</div>`;
-      logArea.scrollTop = logArea.scrollHeight;
+      if (logArea) {
+        const args = Array.from(arguments);
+        const logMessage = args.map(arg => {
+          if (typeof arg === 'object') {
+            return JSON.stringify(arg, null, 2);
+          }
+          return arg;
+        }).join(' ');
+        
+        logArea.innerHTML += `<div>${new Date().toLocaleTimeString()} - ${logMessage}</div>`;
+        logArea.scrollTop = logArea.scrollHeight;
+      }
     };
     
     console.error = function() {
@@ -261,19 +241,21 @@ export default kb_sample;</textarea>
       
       // Add to the log area with error styling
       const logArea = document.getElementById('logArea');
-      const args = Array.from(arguments);
-      const logMessage = args.map(arg => {
-        if (typeof arg === 'object' && arg instanceof Error) {
-          return arg.stack || arg.message;
-        }
-        if (typeof arg === 'object') {
-          return JSON.stringify(arg, null, 2);
-        }
-        return arg;
-      }).join(' ');
-      
-      logArea.innerHTML += `<div style="color: red;">${new Date().toLocaleTimeString()} - ERROR: ${logMessage}</div>`;
-      logArea.scrollTop = logArea.scrollHeight;
+      if (logArea) {
+        const args = Array.from(arguments);
+        const logMessage = args.map(arg => {
+          if (typeof arg === 'object' && arg instanceof Error) {
+            return arg.stack || arg.message;
+          }
+          if (typeof arg === 'object') {
+            return JSON.stringify(arg, null, 2);
+          }
+          return arg;
+        }).join(' ');
+        
+        logArea.innerHTML += `<div style="color: red;">${new Date().toLocaleTimeString()} - ERROR: ${logMessage}</div>`;
+        logArea.scrollTop = logArea.scrollHeight;
+      }
     };
     
     // Store attachments globally for easy access
@@ -472,7 +454,7 @@ export default kb_sample;</textarea>
     }
     
     /**
-     * Get a .js file from Confluence attachments - Updated with JPM specific patterns
+     * Get a .js file from Confluence attachments - Updated with  specific patterns
      */
     async function getJsFileFromConfluence(confluenceUrl, pageId, attachmentId, fileName, customUrl = null) {
       try {
@@ -497,14 +479,14 @@ export default kb_sample;</textarea>
           console.log(`Added custom URL pattern: ${processedUrl}`);
         }
         
-        // Add JPM-specific patterns
+        // Add specific patterns
         urlPatterns.push(
           // Standard patterns
           `${confluenceUrl}/rest/api/content/${attachmentId}/data`,
           `${confluenceUrl}/rest/api/content/${pageId}/child/attachment/${attachmentId}/data`,
           `${confluenceUrl}/download/attachments/${pageId}/${attachmentId}`,
           
-          // JPM-specific patterns
+          // specific patterns
           `${confluenceUrl}/download/attachments/${pageId}/${attachmentId}/${fileName}`,
           `${confluenceUrl}/download/attachments/${pageId}/${fileName}`,
           `${confluenceUrl}/rest/api/content/${pageId}/child/attachment/${attachmentId}/download`,
@@ -612,26 +594,6 @@ export default kb_sample;</textarea>
       if (!attachmentId) return null;
       
       return currentAttachments.find(att => att.id === attachmentId) || null;
-    }
-    
-    /**
-     * Update the attachment details section
-     */
-    function updateAttachmentDetails(attachment) {
-      const detailsSection = document.getElementById('attachmentDetails');
-      const detailsContent = document.getElementById('attachmentDetailsContent');
-      
-      if (!attachment) {
-        detailsSection.classList.add('hidden');
-        return;
-      }
-      
-      // Show the details
-      detailsSection.classList.remove('hidden');
-      
-      // Format the details for display
-      const details = JSON.stringify(attachment, null, 2);
-      detailsContent.textContent = details;
     }
     
     // Event Listeners
@@ -762,9 +724,6 @@ export default kb_sample;</textarea>
             throw new Error('Selected attachment not found in the current list');
           }
           
-          // Update the details section
-          updateAttachmentDetails(selectedAttachment);
-          
           // Get the file name
           const fileName = selectedAttachment.title;
           
@@ -868,17 +827,18 @@ export default kb_sample;</textarea>
       
       // Clear Log
       clearLogBtn.addEventListener('click', function() {
-        document.getElementById('logArea').innerHTML = '';
+        const logArea = document.getElementById('logArea');
+        if (logArea) {
+          logArea.innerHTML = '';
+        }
       });
       
       // Attachment dropdown change handler
       attachmentDropdown.addEventListener('change', function() {
         // Clear the file content view when selection changes
-        fileContentView.value = '';
-        
-        // Update attachment details
-        const selectedAttachment = getSelectedAttachment();
-        updateAttachmentDetails(selectedAttachment);
+        if (fileContentView) {
+          fileContentView.value = '';
+        }
       });
     });
   </script>

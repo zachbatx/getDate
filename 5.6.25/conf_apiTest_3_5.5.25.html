@@ -417,7 +417,71 @@ export default kb_sample;</textarea>
     /**
      * Get a .js file from Confluence attachments
      */
-    async function getJsFileFromConfluence(confluenceUrl, pageId, attachmentId) {
+     <!-- Replace the existing getJsFileFromConfluence function with this updated version -->
+<script>
+/**
+ * Get a .js file from Confluence attachments - Updated with multiple download methods
+ */
+async function getJsFileFromConfluence(confluenceUrl, pageId, attachmentId) {
+  try {
+    console.log(`Retrieving file with ID: ${attachmentId} from Confluence...`);
+    
+    // Get authentication headers
+    const headers = getAuthHeaders();
+    
+    // Try different URL patterns for attachment download
+    const urlPatterns = [
+      // Standard pattern (which failed with 404)
+      `${confluenceUrl}/rest/api/content/${attachmentId}/data`,
+      
+      // Alternative pattern 1: Include page ID in path
+      `${confluenceUrl}/rest/api/content/${pageId}/child/attachment/${attachmentId}/data`,
+      
+      // Alternative pattern 2: Download URL format
+      `${confluenceUrl}/download/attachments/${pageId}/${attachmentId}`,
+      
+      // Alternative pattern 3: Sometimes used in custom Confluence setups
+      `${confluenceUrl}/rest/api/content/${attachmentId}/child/attachment/data`
+    ];
+    
+    let content = null;
+    let successUrl = null;
+    
+    // Try each URL pattern until one works
+    for (const url of urlPatterns) {
+      try {
+        console.log(`Trying URL: ${url}`);
+        
+        const response = await fetch(url, {
+          method: 'GET',
+          headers: headers
+        });
+        
+        console.log(`Response status for ${url}: ${response.status} ${response.statusText}`);
+        
+        if (response.ok) {
+          content = await response.text();
+          successUrl = url;
+          break;
+        }
+      } catch (innerError) {
+        console.log(`Failed with URL ${url}: ${innerError.message}`);
+        // Continue to the next URL pattern
+      }
+    }
+    
+    if (!content) {
+      throw new Error('All attachment download URL patterns failed. Verify permissions and attachment ID.');
+    }
+    
+    console.log(`File retrieved successfully using: ${successUrl}`);
+    return content;
+  } catch (error) {
+    console.error('Error retrieving file:', error);
+    throw error;
+  }
+}
+</script>
       try {
         console.log(`Retrieving file with ID: ${attachmentId} from Confluence...`);
         

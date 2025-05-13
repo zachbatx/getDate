@@ -1,34 +1,4 @@
-// ===============================
-  // INITIALIZATION
-  // ===============================
-  
-  // Initialize the editor
-  async function initializeEditor() {
-    // Try to get Confluence page ID
-    confluencePageId = extractConfluencePageId();
-    if (confluencePageId) {
-      console.log(`Auto-detected Confluence page ID: ${confluencePageId}`);
-    } else {
-      console.warn("Confluence page ID not detected. Some features may not work properly.");
-    }
-    
-    // Try to get bearer token
-    confluenceBearerToken = getBearerToken();
-    if (confluenceBearerToken) {
-      console.log("Auto-detected bearer token.");
-    } else {
-      console.warn("Bearer token not detected. API access may be limited.");
-    }
-    
-    // Populate file dropdown
-    await populateFileDropdown();
-    
-    // Add any additional initialization here
-    console.log("KB Editor initialized with Confluence API integration");
-  }
-
-  // Run initialization
-  initializeEditor();<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -927,8 +897,9 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.17/mammoth.browser.min.js"></script>
   <!-- Include Turndown.js for HTML to Markdown conversion -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/turndown/7.1.1/turndown.min.js"></script>
+  
   <script>
-document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function () {
   // ===============================
   // GLOBAL VARIABLES
   // ===============================
@@ -1586,6 +1557,54 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   }
 
+  // Function to extract data from JS code (llmPrimerRegister format)
+  function extractDataFromJsCode(jsCode) {
+    // Check for llmPrimerRegister format
+    const llmPrimerPattern = /llmPrimerRegister\s*\(\s*['"]([^'"]+)['"]\s*,\s*`([\s\S]*?)`\s*\)/i;
+    const llmPrimerMatch = jsCode.match(llmPrimerPattern);
+    
+    if (llmPrimerMatch) {
+      return {
+        type: 'llmPrimer',
+        name: llmPrimerMatch[1],
+        content: llmPrimerMatch[2]
+      };
+    }
+    
+    // If no match, return an error or default
+    return { 
+      type: 'unknown',
+      error: 'Unsupported JS format'
+    };
+  }
+
+  // Convert Markdown to HTML (for rich text editor)
+  function markdownToHtml(markdown) {
+    // Simple conversion for basic markdown
+    // Note: In a real application, you would use a proper markdown to HTML converter
+    let html = markdown
+      .replace(/# (.*?)\n/g, '<h1>$1</h1>\n')
+      .replace(/## (.*?)\n/g, '<h2>$1</h2>\n')
+      .replace(/### (.*?)\n/g, '<h3>$1</h3>\n')
+      .replace(/#### (.*?)\n/g, '<h4>$1</h4>\n')
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\*(.*?)\*/g, '<em>$1</em>')
+      .replace(/__(.*?)__/g, '<strong>$1</strong>')
+      .replace(/_(.*?)_/g, '<em>$1</em>')
+      .replace(/\n- (.*)/g, '\n<ul><li>$1</li></ul>')
+      .replace(/<\/ul>\n<ul>/g, '');
+      
+    // Convert paragraphs (lines with no formatting)
+    const paragraphs = html.split('\n\n');
+    html = paragraphs.map(p => {
+      if (!p.trim()) return '';
+      if (p.trim().startsWith('<')) return p; // Already has HTML tag
+      return `<p>${p}</p>`;
+    }).join('\n');
+    
+    return html;
+  }
+
   // ===============================
   // CONTENT PROCESSING FUNCTIONS
   // ===============================
@@ -2040,12 +2059,61 @@ ${escapedContent}
     editableContent.addEventListener('click', updateToolbarStates); // Also update on click
   }
 
+  // Copy markdown button
+  if (copyMarkdownBtn && markdownEditor) {
+    copyMarkdownBtn.addEventListener('click', () => {
+      copyToClipboard(markdownEditor.textContent);
+    });
+  }
+
+  // Auto-update toggle
+  if (autoUpdateToggle) {
+    autoUpdateToggle.addEventListener('change', function() {
+      isAutoUpdateEnabled = this.checked;
+      console.log(`Auto-update ${isAutoUpdateEnabled ? 'enabled' : 'disabled'}`);
+    });
+  }
+
   // ===============================
-  // INITIALIZATION - This would be updated with mock data/UI
+  // INITIALIZATION
   // ===============================
-  
+
+  // Extract page ID and token on page load
+  confluencePageId = extractConfluencePageId();
+  if (confluencePageId) {
+    console.log(`Auto-detected Confluence page ID: ${confluencePageId}`);
+  }
+
+  // Try to auto-populate bearer token
+  confluenceBearerToken = getBearerToken();
+  if (confluenceBearerToken) {
+    console.log('Auto-populated bearer token');
+  }
+
+  // Populate the file dropdown with kb_*.js files from Confluence on page load
+  try {
+    populateFileDropdown();
+  } catch (error) {
+    console.error('Error during initialization:', error);
+    showAlert('Failed to load files from Confluence. Check console for details.', 'error');
+  }
+
+  // File dropdown change event
+  if (fileDropdown) {
+    fileDropdown.addEventListener('change', function(e) {
+      const selectedFile = e.target.value;
+      if (selectedFile) {
+        loadJSFileContent(selectedFile);
+      } else {
+        // Clear the editor when no file is selected
+        resetEditorState(true);
+      }
+    });
+  }
+
   console.log("KB Editor initialized with updated filename handling");
 });
   </script>
+
 </body>
 </html>

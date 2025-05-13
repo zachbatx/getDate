@@ -1,0 +1,2833 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Knowledge Base Editor (.DOCX to .JS/Markdown)</title>
+  <!-- Font Awesome and Material Icons from CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+  <style>
+    /* Global Styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    }
+
+  // Log console event listeners
+  if (clearLogBtn) {
+    clearLogBtn.addEventListener('click', () => {
+      Logger.clear();
+    });
+  }
+
+  if (closeLogBtn) {
+    closeLogBtn.addEventListener('click', () => {
+      Logger.hide();
+    });
+  }
+
+  // ===============================
+  // INITIALIZATION
+  // ===============================
+  
+  // Initialize the editor
+  async function initializeEditor() {
+    Logger.info("Initializing KB Editor with Confluence API integration...");
+    
+    // Try to detect Confluence page ID
+    const detectedPageId = extractConfluencePageId();
+    if (detectedPageId) {
+      Logger.info(`Auto-detected Confluence page ID: ${detectedPageId}`);
+      apiSettings.pageId = detectedPageId;
+      if (apiPageIdInput) apiPageIdInput.value = detectedPageId;
+    }
+    
+    // Load API settings from storage
+    const settingsLoaded = loadApiSettingsFromStorage();
+    
+    // If we have settings, try to connect
+    if (settingsLoaded && apiSettings.baseUrl && apiSettings.pageId) {
+      Logger.info("Attempting to connect with saved API settings...");
+      
+      // We don't have the token from storage, so show the API settings modal
+      // to prompt the user to enter their token
+      if (apiSettingsBtn) {
+        apiSettingsBtn.click();
+        
+        if (testResultElement) {
+          testResultElement.textContent = 'Please enter your API token to connect';
+          testResultElement.className = 'test-result';
+        }
+      }
+    }
+    
+    Logger.info("KB Editor initialized and ready for use");
+  }
+
+  // Run initialization
+  initializeEditor();
+});
+  </script>
+</body>
+</html>
+
+  // Test API connection
+  if (testApiBtn) {
+    testApiBtn.addEventListener('click', async () => {
+      // Clear previous test results
+      if (testResultElement) {
+        testResultElement.className = 'test-result';
+        testResultElement.textContent = 'Testing connection...';
+        testResultElement.classList.add('test-result'); // Ensure it's visible
+      }
+      
+      // Update button state
+      testApiBtn.disabled = true;
+      testApiBtn.innerHTML = 'Testing... <span class="working-indicator">⋯</span>';
+      
+      try {
+        // Run the test
+        const testResult = await testApiConnection();
+        
+        // Update UI based on result
+        if (testResult.success) {
+          if (testResultElement) {
+            testResultElement.textContent = testResult.message;
+            testResultElement.className = 'test-result test-success';
+          }
+          Logger.success('API connection test successful');
+        } else {
+          if (testResultElement) {
+            testResultElement.textContent = testResult.message;
+            testResultElement.className = 'test-result test-error';
+          }
+          Logger.error('API connection test failed: ' + testResult.message);
+        }
+      } catch (error) {
+        // Handle unexpected errors
+        if (testResultElement) {
+          testResultElement.textContent = 'Error during test: ' + error.message;
+          testResultElement.className = 'test-result test-error';
+        }
+        Logger.error('API test error: ' + error.message);
+      } finally {
+        // Reset button state
+        testApiBtn.disabled = false;
+        testApiBtn.textContent = 'Test Connection';
+      }
+    });
+  }
+
+  // Save API settings
+  if (saveApiBtn) {
+    saveApiBtn.addEventListener('click', async () => {
+      // Get values from inputs
+      const baseUrl = apiBaseUrlInput.value.trim();
+      const pageId = apiPageIdInput.value.trim();
+      const bearerToken = apiBearerTokenInput.value.trim();
+      
+      // Validate
+      if (!baseUrl || !pageId || !bearerToken) {
+        if (testResultElement) {
+          testResultElement.textContent = 'All fields are required!';
+          testResultElement.className = 'test-result test-error';
+        }
+        return;
+      }
+      
+      // Save settings
+      apiSettings.baseUrl = baseUrl;
+      apiSettings.pageId = pageId;
+      apiSettings.bearerToken = bearerToken;
+      
+      // Save non-sensitive settings to storage
+      saveApiSettingsToStorage();
+      
+      // Test connection with new settings
+      saveApiBtn.disabled = true;
+      saveApiBtn.innerHTML = 'Saving... <span class="working-indicator">⋯</span>';
+      
+      try {
+        const testResult = await testApiConnection();
+        
+        if (testResult.success) {
+          // Update connection status
+          updateApiConnectionStatus(true);
+          
+          // Close modal
+          apiSettingsModal.classList.remove('show');
+          
+          showAlert('API connection established successfully!', 'success');
+          
+          // Populate the file dropdown with the new connection
+          await populateFileDropdown();
+        } else {
+          if (testResultElement) {
+            testResultElement.textContent = 'Settings saved, but connection failed: ' + testResult.message;
+            testResultElement.className = 'test-result test-error';
+          }
+          updateApiConnectionStatus(false);
+        }
+      } catch (error) {
+        if (testResultElement) {
+          testResultElement.textContent = 'Error: ' + error.message;
+          testResultElement.className = 'test-result test-error';
+        }
+        updateApiConnectionStatus(false);
+        Logger.error('Error saving API settings: ' + error.message);
+      } finally {
+        saveApiBtn.disabled = false;
+        saveApiBtn.textContent = 'Save Settings';
+      }
+    });
+  }
+
+  // API Settings Modal event listeners
+  if (apiSettingsBtn) {
+    apiSettingsBtn.addEventListener('click', () => {
+      // Show the API settings modal
+      if (apiSettingsModal) {
+        // Fill in current values
+        if (apiBaseUrlInput) apiBaseUrlInput.value = apiSettings.baseUrl;
+        if (apiPageIdInput) apiPageIdInput.value = apiSettings.pageId;
+        if (apiBearerTokenInput) apiBearerTokenInput.value = apiSettings.bearerToken;
+        
+        // Clear previous test results
+        if (testResultElement) testResultElement.className = 'test-result';
+        
+        // Show the modal
+        apiSettingsModal.classList.add('show');
+      }
+    });
+  }
+
+  // Close API settings modal
+  if (closeModalBtn) {
+    closeModalBtn.addEventListener('click', () => {
+      if (apiSettingsModal) apiSettingsModal.classList.remove('show');
+    });
+  }
+
+  // Cancel API settings button
+  if (cancelApiBtn) {
+    cancelApiBtn.addEventListener('click', () => {
+      if (apiSettingsModal) apiSettingsModal.classList.remove('show');
+    });
+  }
+
+  // Toggle password visibility
+  if (togglePasswordBtn && apiBearerTokenInput) {
+    togglePasswordBtn.addEventListener('click', () => {
+      const type = apiBearerTokenInput.getAttribute('type') === 'password' ? 'text' : 'password';
+      apiBearerTokenInput.setAttribute('type', type);
+      togglePasswordBtn.innerHTML = type === 'password' ? '<i class="fas fa-eye"></i>' : '<i class="fas fa-eye-slash"></i>';
+    });
+  }
+    body {
+      background-color: #f5f8fa;
+      color: #333;
+      line-height: 1.6;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+       /* Add padding/margin to account for fixed header */
+      padding-top: 100px; /* Adjust based on header height + desired spacing */
+    }
+    /* Header */
+    .headerArea {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem;
+      background-color: #1e293b;
+      color: #fff !important;
+      position: fixed; /* Changed from absolute to fixed for better scrolling */
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 1000; /* Ensure header is on top */
+    }
+    .headerArea h1 {
+      color: #fff;
+      margin-bottom: 0.5rem;
+      font-weight: 500 !important;
+    }
+    .api-status {
+      color: #fff;
+      font-size: 0.85rem;
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      margin-left: auto;
+      margin-right: 1rem;
+    }
+    .api-status.connected {
+      background-color: #22c55e;
+    }
+    .api-status.disconnected {
+      background-color: #ef4444;
+    }
+    .api-settings-btn {
+      background: none;
+      border: 1px solid #fff;
+      color: #fff;
+      padding: 0.25rem 0.75rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: all 0.2s;
+    }
+    .api-settings-btn:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .main-tab-content {
+      /* This class will be removed from the outer container div */
+      /* Instead, the content will be directly in .container */
+      /* We keep the .active class logic for content-tab-panel */
+    }
+    .main-tab-content.active {
+      display: block; /* Kept for content-tab-panel */
+    }
+
+    /* Upload & Preview Areas */
+    .app-container {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    .upload-area, .preview-area {
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      padding: 1.5rem;
+    }
+    .upload-area {
+      text-align: center;
+      display: flex;
+    }
+    .drop-zone {
+      border: 2px dashed #3498db;
+      border-radius: 5px;
+      padding: 1.5rem;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.2s;
+      flex: 1 1 50%;
+    }
+    .drop-zone:hover, .drop-zone.active {
+      border-color: #2980b9;
+      background-color: #f0f7fc;
+    }
+    .drop-zone-text {
+      font-size: 1.2rem;
+      color: #3498db;
+      margin-bottom: 1rem;
+    }
+    .btn {
+      background-color: #3498db;
+      color: white;
+      border: none;
+      padding: 0.55rem 1.5rem;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 600;
+      transition: background-color 0.2s;
+    }
+    .btn:hover {
+      background-color: #2980b9;
+    }
+    .btn:disabled {
+      background-color: #bdc3c7;
+      cursor: not-allowed;
+    }
+    .btn-browser {
+      background-color: #f8f9fa;
+      color: #3498db;
+      border: 1px solid #3498db;
+    }
+    .btn-browser:hover {
+      background-color: #e9f5fe;
+    }
+    #fileInput {
+      display: none;
+    }
+    .file-info {
+      text-align: left;
+      padding: 0.85rem;
+      border-radius: 5px;
+      transition: opacity 0.3s;
+      flex: 1 1 50%;
+      margin: auto 20px;
+    }
+    .file-info.show {
+      opacity: 1;
+    }
+    .export-options {
+      background-color: white;
+      padding: 0;
+      float: right;
+      display: inline-flex;
+      margin-left: auto; /* Adjusted margin */
+    }
+    .form-group {
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center; /* Align items vertically */
+    }
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      color: #2c3e50;
+      position: relative;
+      margin-right: 8px; /* Increased spacing */
+      white-space: nowrap; /* Prevent label wrapping */
+    }
+    .form-group input {
+      width: auto; /* Adjust width */
+      min-width: 200px; /* Set minimum width */
+      padding: 0.75rem;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      font-size: 1rem;
+    }
+    .alert {
+      padding: 1rem;
+      border-radius: 5px;
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      transition: opacity 0.3s;
+      position: fixed; /* Keep alert visible */
+      top: 90px; /* Position below header */
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 1000;
+      min-width: 300px;
+      text-align: center;
+    }
+    .alert-success {
+      background-color: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+    .alert-error {
+      background-color: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+    .alert.show {
+      opacity: 1;
+    }
+    .preview-content {
+      font-family: 'Courier New', Courier, monospace;
+      white-space: pre-wrap;
+      padding: 1rem;
+      background-color: #f8f9fa;
+      border-radius: 5px;
+      font-size: 0.9rem;
+      line-height: 1.5;
+      min-height: 200px;
+      max-height: 60vh; /* Limit max height */
+      overflow-y: auto;
+      border: 1px solid #ddd; /* Added border */
+    }
+    /* Rich Text Editor */
+    #editableContent {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      white-space: normal;
+      min-height: 300px;
+      border: 1px solid #ddd;
+      outline: none;
+      padding: 1.5rem; /* Consistent padding */
+      background-color: white;
+      max-height: 60vh; /* Limit max height */
+      overflow-y: auto;
+    }
+    .editor-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.3rem;
+      padding: 0.5rem;
+      background-color: #f1f3f4;
+      border: 1px solid #ddd;
+      border-bottom: none;
+      border-radius: 5px 5px 0 0;
+    }
+    .editor-toolbar button {
+      background-color: white;
+      border: 1px solid #ddd;
+      border-radius: 3px;
+      padding: 0.3rem 0.6rem;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    .editor-toolbar button:hover {
+      background-color: #e9ecef;
+    }
+    .editor-toolbar button.active {
+      background-color: #e2f0fd;
+      border-color: #3498db;
+    }
+    .js-editor {
+      font-family: 'Courier New', Courier, monospace;
+      white-space: pre-wrap;
+      background-color: #2d2d2d;
+      color: #f8f8f2;
+      border: 1px solid #444;
+      padding: 1.5rem !important; /* Consistent padding */
+    }
+    .js-editor-toolbar, .markdown-toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.5rem;
+      background-color: #333;
+      border: 1px solid #444;
+      border-bottom: none;
+      border-radius: 5px 5px 0 0;
+    }
+    .js-format-btn, .copy-markdown-btn {
+      background-color: #4caf50;
+      color: white;
+      border: none;
+      border-radius: 3px;
+      padding: 0.4rem 0.8rem;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    .js-format-btn:hover, .copy-markdown-btn:hover {
+      background-color: #45a049;
+    }
+    /* Toggle Switch */
+    .editor-toggle {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: #ddd;
+      font-size: 0.9rem;
+    }
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 50px;
+      height: 24px;
+    }
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      transition: .4s;
+    }
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 16px;
+      width: 16px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      transition: .4s;
+    }
+    input:checked + .slider {
+      background-color: #3498db;
+    }
+    input:focus + .slider {
+      box-shadow: 0 0 1px #3498db;
+    }
+    input:checked + .slider:before {
+      transform: translateX(26px);
+    }
+    .slider.round {
+      border-radius: 24px;
+    }
+    .slider.round:before {
+      border-radius: 50%;
+    }
+    /* Content Tabs */
+    .content-tabs {
+      display: flex;
+      align-items: center; /* Align items vertically */
+      margin-bottom: 1rem;
+      border-bottom: 1px solid #ddd;
+    }
+    .content-tab {
+      padding: 0.75rem 1.5rem;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      white-space: nowrap; /* Prevent wrapping */
+    }
+    .content-tab.active {
+      border-bottom-color: #3498db;
+      color: #3498db;
+      font-weight: 600;
+    }
+    .content-tab-panel {
+      display: none;
+    }
+    .content-tab-panel.active {
+      display: block;
+    }
+    button#exportBtn {
+      position: relative;
+      margin-left: 10px;
+    }
+    /* Additional styles for rich text content */
+    #editableContent h1, #editableContent h2, #editableContent h3,
+    #editableContent h4, #editableContent h5, #editableContent h6,
+    #editableContent ul, #editableContent ol {
+      padding-bottom: 10px;
+      margin-bottom: 0.5em; /* Added margin */
+    }
+    #editableContent ul, #editableContent ol {
+      padding-inline-start: 25px; /* Adjusted padding */
+      margin-bottom: 1em; /* Added margin */
+    }
+    #editableContent li {
+      padding-bottom: 4px; /* Increased padding */
+      margin-bottom: 0.2em; /* Added margin */
+    }
+    /* Export type selector */
+    .export-type-selector {
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .export-type-selector label {
+      margin-right: 1rem;
+      font-weight: 600;
+    }
+    /* Markdown preview styles */
+    #markdownContent {
+      font-family: 'Courier New', Courier, monospace;
+      white-space: pre-wrap;
+      background-color: #f8f9fa;
+      color: #333;
+      border: 1px solid #ddd;
+      padding: 1.5rem !important; /* Consistent padding */
+      max-height: 60vh; /* Limit max height */
+      overflow-y: auto;
+    }
+    .markdown-editor {
+      font-family: 'Courier New', Courier, monospace;
+      white-space: pre-wrap;
+      background-color: #f8f9fa;
+      color: #333;
+      border: 1px solid #ddd;
+      padding: 1.5rem !important; /* Consistent padding */
+      max-height: 60vh; /* Limit max height */
+      overflow-y: auto;
+    }
+    /* File dropdown styles */
+    #fileDropdown {
+      margin: 1rem 0;
+      padding: 0.5rem;
+      border-radius: 4px;
+      border: 1px solid #ddd;
+      width: 100%;
+      max-width: 400px;
+    }
+
+    /* New API Settings Modal */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 1050;
+      justify-content: center;
+      align-items: center;
+    }
+    .modal-overlay.show {
+      display: flex;
+    }
+    .modal-content {
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+      width: 90%;
+      max-width: 500px;
+      padding: 1.5rem;
+      position: relative;
+    }
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid #eee;
+    }
+    .modal-header h2 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin: 0;
+    }
+    .close-modal {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: #666;
+    }
+    .close-modal:hover {
+      color: #333;
+    }
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.75rem;
+      margin-top: 1.5rem;
+      padding-top: 0.75rem;
+      border-top: 1px solid #eee;
+    }
+    .form-group-vertical {
+      margin-bottom: 1rem;
+    }
+    .form-group-vertical label {
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+    .form-group-vertical input {
+      width: 100%;
+      padding: 0.5rem;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+    .toggle-password {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      color: #666;
+      background: none;
+      border: none;
+      display: flex;
+      align-items: center;
+    }
+    .password-container {
+      position: relative;
+    }
+    .form-info {
+      color: #666;
+      font-size: 0.75rem;
+      margin-top: 0.25rem;
+    }
+    .cancel-btn {
+      background-color: #f1f5f9;
+      color: #334155;
+      border: 1px solid #e2e8f0;
+    }
+    .cancel-btn:hover {
+      background-color: #e2e8f0;
+    }
+    .save-btn {
+      background-color: #3b82f6;
+    }
+    .save-btn:hover {
+      background-color: #2563eb;
+    }
+    .test-btn {
+      background-color: #22c55e;
+    }
+    .test-btn:hover {
+      background-color: #16a34a;
+    }
+    .test-result {
+      margin-top: 0.5rem;
+      padding: 0.5rem;
+      border-radius: 4px;
+      font-size: 0.875rem;
+      display: none;
+    }
+    .test-success {
+      background-color: #dcfce7;
+      color: #166534;
+      display: block;
+    }
+    .test-error {
+      background-color: #fee2e2;
+      color: #b91c1c;
+      display: block;
+    }
+    .working-indicator {
+      display: inline-flex;
+      margin-left: 0.5rem;
+      align-items: center;
+      animation: pulse 1.5s infinite;
+    }
+    @keyframes pulse {
+      0% { opacity: 0.5; }
+      50% { opacity: 1; }
+      100% { opacity: 0.5; }
+    }
+    
+    /* Knowledge Base Manager Styles (KEEP ALL FOR SCRIPT COMPATIBILITY) */
+    .kb-manager-container {
+      max-width: 1000px;
+      margin: 0 auto;
+      background-color: #f3f4f6;
+      padding: 24px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .action-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-bottom: 24px;
+      align-items: flex-end; /* Align items to the bottom */
+    }
+
+    .dropdown-container {
+      flex: 1;
+      min-width: 200px; /* Reduced min-width */
+    }
+
+    .action-buttons {
+      display: flex;
+      align-items: flex-end;
+      gap: 8px;
+      margin-left: auto; /* Push buttons to the right */
+    }
+
+    /* Base button styles */
+    .kb-manager-container button {
+        padding: 8px 12px;
+        border-radius: 6px;
+        border: 1px solid transparent;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+    }
+
+    .primary-button {
+      background-color: #4f46e5;
+      color: white;
+    }
+    .primary-button:hover {
+      background-color: #4338ca;
+    }
+    .primary-button:disabled {
+      background-color: #9ca3af;
+      cursor: not-allowed;
+      opacity: 0.7;
+    }
+
+    .icon-button {
+      padding: 8px;
+      background: none;
+      color: #4f46e5;
+      border: none;
+    }
+    .icon-button:hover {
+      color: #4338ca;
+      background-color: #e0e7ff; /* Light background on hover */
+    }
+    .icon-button svg { /* Ensure SVG scales with button */
+        width: 20px;
+        height: 20px;
+    }
+
+    .red-icon-button {
+      padding: 6px; /* Slightly smaller padding */
+      background: none;
+      color: #ef4444;
+      border: none;
+    }
+    .red-icon-button:hover {
+      color: #dc2626;
+      background-color: #fee2e2; /* Light red background on hover */
+    }
+
+    .green-icon-button {
+      padding: 8px;
+      background-color: #10b981;
+      color: white;
+    }
+    .green-icon-button:hover {
+      background-color: #059669;
+    }
+
+    .red-button {
+      padding: 8px;
+      background-color: #ef4444;
+      color: white;
+    }
+    .red-button:hover {
+      background-color: #dc2626;
+    }
+
+    .section {
+      background-color: white;
+      padding: 16px;
+      border-radius: 6px;
+      border: 1px solid #e5e7eb;
+      margin-bottom: 24px;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      padding-bottom: 10px; /* Add padding below header */
+      border-bottom: 1px solid #e5e7eb; /* Separator line */
+    }
+     .section-header h2 {
+        margin-bottom: 0; /* Remove default h2 margin */
+     }
+     .section-header .icon-button span {
+         margin-left: 4px; /* Space between icon and text */
+     }
+
+    .category-form {
+      margin-bottom: 16px;
+      padding: 12px;
+      background-color: #f9fafb;
+      border-radius: 6px;
+      border: 1px solid #e5e7eb;
+    }
+    .category-form h3 {
+        margin-bottom: 12px; /* Space below heading */
+    }
+
+    .input-group {
+      display: flex;
+      gap: 8px;
+      align-items: center; /* Align items vertically */
+    }
+
+    .kb-manager-container input[type="text"] {
+      flex: 1;
+      padding: 8px 10px; /* Adjusted padding */
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+
+    .category-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 12px; /* Increased gap */
+    }
+
+    .category-item {
+      border: 1px solid #e5e7eb;
+      border-radius: 6px;
+      overflow: hidden;
+      background-color: white; /* Ensure white background */
+    }
+
+    .category-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 16px; /* Consistent padding */
+      background-color: #f9fafb;
+      cursor: pointer;
+      border-bottom: 1px solid #e5e7eb; /* Separator */
+    }
+    .category-header:hover {
+        background-color: #f3f4f6; /* Slight hover effect */
+    }
+    .category-name {
+        font-weight: 600; /* Make name bold */
+        color: #1f2937;
+    }
+
+    .category-header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .chevron-icon {
+        transition: transform 0.2s ease-in-out; /* Smooth transition */
+    }
+    .category-content.hidden + .category-header .chevron-icon {
+        /* Keep default state when hidden */
+    }
+    .category-content:not(.hidden) + .category-header .chevron-icon {
+         transform: rotate(180deg); /* Rotate when open */
+    }
+
+
+    .category-content {
+      padding: 16px; /* Consistent padding */
+      background-color: white;
+    }
+
+    .kb-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px; /* Increased margin */
+    }
+    .kb-header h4 {
+        margin-bottom: 0; /* Remove default h4 margin */
+        font-size: 14px;
+        font-weight: 600;
+        color: #374151;
+    }
+     .kb-header .icon-button span {
+         margin-left: 4px; /* Space between icon and text */
+     }
+
+    .kb-form {
+      margin-bottom: 16px; /* Increased margin */
+      padding: 12px; /* Increased padding */
+      background-color: #f9fafb;
+      border-radius: 6px;
+      border: 1px solid #e5e7eb;
+    }
+
+    .kb-list {
+      list-style: none;
+      padding: 0;
+      margin: 0; /* Remove default margin */
+      display: flex;
+      flex-direction: column;
+      gap: 6px; /* Adjusted gap */
+    }
+    /* Target KB list within a category */
+    .category-kb-list {
+        margin-top: 8px; /* Add space above list in category */
+        min-height: 30px; /* Minimum height for drop target visibility */
+        padding: 8px; /* Padding for drop area */
+        border: 1px dashed transparent; /* Placeholder for dragover */
+        border-radius: 4px;
+    }
+
+
+    .kb-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 10px; /* Adjusted padding */
+      font-size: 14px;
+      background-color: #f9fafb;
+      border: 1px solid #e5e7eb; /* Add border */
+      border-radius: 6px;
+    }
+    /* Style for KB items in the 'All Knowledge Bases' list */
+     #all-kb-list .kb-item {
+        background-color: white; /* Different background */
+     }
+
+
+    /* Drag and drop styles */
+    .kb-item.draggable {
+      cursor: grab;
+    }
+    .kb-item.dragging {
+      opacity: 0.5;
+      cursor: grabbing;
+      background-color: #e0e7ff; /* Highlight while dragging */
+      border-color: #a5b4fc;
+    }
+    .kb-item.draggable:hover {
+      background-color: #eff6ff; /* Light blue hover */
+      border-color: #bfdbfe;
+    }
+    .category-kb-list.dragover {
+      background-color: #eff6ff; /* Highlight drop zone */
+      border: 1px dashed #93c5fd;
+    }
+
+    .kb-badge {
+      display: inline-block;
+      padding: 2px 8px; /* Increased padding */
+      background-color: #e5e7eb;
+      border-radius: 12px; /* Pill shape */
+      margin-right: 6px; /* Increased margin */
+      font-size: 12px;
+      font-weight: 500;
+      color: #4b5563;
+    }
+
+    .icon {
+      width: 20px;
+      height: 20px;
+    }
+    .icon-sm {
+      width: 18px; /* Adjusted size */
+      height: 18px;
+    }
+    .icon-xs {
+      width: 14px;
+      height: 14px;
+    }
+
+    .hidden {
+      display: none !important; /* Use important to override potential conflicts */
+    }
+
+    .text-gray {
+      color: #6b7280;
+      font-style: italic;
+      text-align: center; /* Center placeholder text */
+      padding: 16px; /* Add padding */
+    }
+
+    .kb-categories {
+      margin-left: 12px; /* Increased margin */
+      font-size: 12px;
+      color: #6b7280;
+      display: flex; /* Use flex for badges */
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+
+    .drag-handle {
+      cursor: grab;
+      margin-right: 8px;
+      color: #9ca3af;
+      display: flex; /* Center icon */
+      align-items: center;
+    }
+    .drag-handle svg { /* Ensure handle icon size */
+        width: 16px;
+        height: 16px;
+    }
+
+
+    .kb-info-container {
+      display: flex;
+      align-items: center;
+      flex: 1;
+      overflow: hidden; /* Prevent long names from breaking layout */
+    }
+    .kb-name {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis; /* Add ellipsis for long names */
+        margin-right: 8px; /* Space before categories/buttons */
+    }
+
+    .kb-manager-container h2 {
+      font-size: 18px;
+      font-weight: 600;
+      color: #1f2937;
+      margin-bottom: 0; /* Reset margin, handled by section-header */
+    }
+    .kb-manager-container h3 {
+      font-size: 16px; /* Slightly larger */
+      font-weight: 600; /* Bolder */
+      margin-bottom: 8px;
+      color: #111827;
+    }
+     .kb-manager-container h4 {
+        font-size: 14px;
+        font-weight: 500;
+        margin-bottom: 8px;
+     }
+
+    .kb-manager-container select {
+      width: 100%;
+      padding: 10px;
+      background-color: white;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+      font-size: 14px; /* Consistent font size */
+    }
+
+    .kb-manager-container label {
+      display: block;
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 6px; /* Increased margin */
+      color: #374151; /* Darker label color */
+    }
+
+    /* Ensure icons inside buttons look good */
+    .kb-manager-container button svg {
+        vertical-align: middle;
+    }
+
+    /* Log console styles */
+    .log-console {
+      margin-top: 2rem;
+      background-color: #1e1e1e;
+      color: #fff;
+      border-radius: 6px;
+      overflow: hidden;
+      font-family: 'Consolas', 'Courier New', Courier, monospace;
+      font-size: 0.85rem;
+      display: none; /* Hidden by default */
+    }
+    .log-console.show {
+      display: block;
+    }
+    .log-console-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #333;
+      padding: 0.5rem 1rem;
+      border-bottom: 1px solid #555;
+    }
+    .log-console-title {
+      font-weight: 600;
+      color: #fff;
+    }
+    .log-console-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+    .log-console-actions button {
+      background: none;
+      border: none;
+      color: #ccc;
+      cursor: pointer;
+      font-size: 0.875rem;
+      padding: 0.25rem 0.5rem;
+      border-radius: 3px;
+    }
+    .log-console-actions button:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+      color: #fff;
+    }
+    .log-console-content {
+      padding: 0.75rem;
+      max-height: 200px;
+      overflow-y: auto;
+      line-height: 1.4;
+    }
+    .log-entry {
+      margin-bottom: 0.25rem;
+      padding-bottom: 0.25rem;
+      border-bottom: 1px solid #333;
+      word-break: break-word;
+    }
+    .log-time {
+      color: #888;
+      font-size: 0.75rem;
+      margin-right: 0.5rem;
+    }
+    .log-info {
+      color: #4dabf7;
+    }
+    .log-success {
+      color: #51cf66;
+    }
+    .log-warn {
+      color: #fcc419;
+    }
+    .log-error {
+      color: #ff6b6b;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="headerArea">
+      <h1>Knowledge Base Editor (.DOCX to .JS/Markdown)</h1>
+      <div class="api-status disconnected" id="apiStatus">API Disconnected</div>
+      <button class="api-settings-btn" id="apiSettingsBtn">API Settings</button>
+    </div>
+
+    <!-- Global Alert Box -->
+    <div id="alertBox" class="alert"></div>
+
+    <!-- Editor Section (Content from original #editor-tab) -->
+    <div id="editor-content-wrapper" class="content-wrapper"> <!-- Added wrapper for layout -->
+      <select id="fileDropdown">
+        <option value="">Select a kb_*.js file to edit</option>
+      </select>
+      <div class="app-container">
+        <div class="upload-area">
+          <div id="dropZone" class="drop-zone">
+            <i class="fas fa-cloud-upload-alt" style="font-size:32px;"></i>
+            <p class="drop-zone-text">Drag & Drop your DOCX file here</p>
+            <button id="browseBtn" class="btn btn-browser">Browse Files</button>
+            <input type="file" id="fileInput" accept=".docx" />
+          </div>
+          <div id="fileInfo" class="file-info">
+            <h3>File Information</h3>
+            <p id="fileName">No file selected</p>
+            <p id="fileSize"></p>
+          </div>
+        </div>
+        <div class="preview-area">
+          <div class="content-tabs">
+            <div class="content-tab active" data-content-tab="original">Original Content</div>
+            <div class="content-tab" data-content-tab="markdown">Markdown</div>
+            <div class="content-tab" data-content-tab="converted">Converted JS</div>
+            <!-- Export Options moved inside -->
+            <div class="export-options">
+              <div class="form-group">
+                <label for="outputFileName">Name:</label>
+                <input type="text" id="outputFileName" placeholder="kb_knowledge-base.js" value="kb_knowledge-base.js" />
+              </div>
+              <button id="exportBtn" class="btn" disabled>Export</button>
+            </div>
+          </div>
+          <div id="originalContent" class="content-tab-panel active">
+            <div class="editor-toolbar">
+              <button type="button" data-command="bold" title="Bold"><b>B</b></button>
+              <button type="button" data-command="italic" title="Italic"><i>I</i></button>
+              <button type="button" data-command="underline" title="Underline"><u>U</u></button>
+              <button type="button" data-command="formatBlock" data-value="H1" title="Heading 1">H1</button>
+              <button type="button" data-command="formatBlock" data-value="H2" title="Heading 2">H2</button>
+              <button type="button" data-command="formatBlock" data-value="H3" title="Heading 3">H3</button>
+              <button type="button" data-command="formatBlock" data-value="H4" title="Heading 4">H4</button>
+              <button type="button" data-command="formatBlock" data-value="H5" title="Heading 5">H5</button>
+              <button type="button" data-command="formatBlock" data-value="H6" title="Heading 6">H6</button>
+              <button type="button" data-command="insertUnorderedList" title="Bullet List">• List</button>
+              <button type="button" data-command="insertOrderedList" title="Numbered List">1. List</button>
+              <button type="button" data-command="justifyLeft" title="Align Left"><i class="material-icons">format_align_left</i></button>
+              <button type="button" data-command="justifyCenter" title="Align Center"><i class="material-icons">format_align_center</i></button>
+              <button type="button" data-command="justifyRight" title="Align Right"><i class="material-icons">format_align_right</i></button>
+              <button type="button" data-command="removeFormat" title="Clear Formatting"><i class="material-icons">format_clear</i></button>
+            </div>
+            <div class="preview-content" id="editableContent" contenteditable="true">
+              No content to preview yet. Please upload a DOCX file or select a JS file from dropdown.
+            </div>
+          </div>
+          <div id="markdownContent" class="content-tab-panel">
+            <div class="markdown-toolbar">
+              <button type="button" class="copy-markdown-btn" title="Copy Markdown">Copy Markdown</button>
+            </div>
+            <div class="preview-content markdown-editor" contenteditable="true">
+              No markdown content yet.
+            </div>
+          </div>
+          <div id="convertedContent" class="content-tab-panel">
+            <div class="js-editor-toolbar">
+              <button type="button" class="js-format-btn" title="Format JS">Format Code</button>
+              <div class="editor-toggle">
+                <span>Auto-update from content:</span>
+                <label class="switch">
+                  <input type="checkbox" id="autoUpdateToggle" checked>
+                  <span class="slider round"></span>
+                </label>
+              </div>
+            </div>
+            <div class="preview-content js-editor" contenteditable="true">
+              No converted content yet.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Knowledge Base Manager Templates (Keep for script compatibility) -->
+    <template id="category-template">
+      <li class="category-item" data-id="">
+        <div class="category-header">
+          <span class="category-name"></span>
+          <div class="category-header-actions">
+            <button class="remove-category-button red-icon-button" title="Remove Category">
+              <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="3 6 5 6 21 6"></polyline>
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                <line x1="10" y1="11" x2="10" y2="17"></line>
+                <line x1="14" y1="11" x2="14" y2="17"></line>
+              </svg>
+            </button>
+            <svg class="chevron-icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 12 15 18 9"></polyline> <!-- Initial state: pointing down -->
+            </svg>
+          </div>
+        </div>
+
+        <div class="category-content hidden"> <!-- Start hidden -->
+          <div class="kb-header">
+            <h4>Knowledge Bases in this Category</h4>
+          </div>
+
+          <ul class="kb-list category-kb-list" data-category-id="">
+            <!-- KBs will be dynamically inserted here -->
+          </ul>
+
+          <p class="no-kbs text-gray hidden">No knowledge bases in this category. Use the assignment dropdown above to add.</p>
+        </div>
+      </li>
+    </template>
+
+    <template id="kb-template">
+      <li class="kb-item draggable" data-id="" draggable="true">
+        <div class="kb-info-container">
+          <span class="drag-handle" title="Drag to reorder or move to another category">
+            <svg class="icon-xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="8" y1="6" x2="21" y2="6"></line>
+              <line x1="8" y1="12" x2="21" y2="12"></line>
+              <line x1="8" y1="18" x2="21" y2="18"></line>
+              <line x1="3" y1="6" x2="3.01" y2="6"></line>
+              <line x1="3" y1="12" x2="3.01" y2="12"></line>
+              <line x1="3" y1="18" x2="3.01" y2="18"></line>
+            </svg>
+          </span>
+          <span class="kb-name"></span>
+        </div>
+        <button class="remove-kb-button red-icon-button" title="Remove from this Category">
+          <svg class="icon-xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line> <!-- Changed to simple 'X' -->
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </li>
+    </template>
+
+    <template id="all-kb-template">
+      <li class="kb-item" data-id="">
+        <div class="kb-info-container">
+          <span class="kb-name"></span>
+          <div class="kb-categories"> <!-- Container for category badges -->
+              <!-- Badges added dynamically -->
+          </div>
+        </div>
+        <!-- No actions needed in the 'All KBs' list -->
+      </li>
+    </template>
+
+    <!-- API Settings Modal -->
+    <div id="apiSettingsModal" class="modal-overlay">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Confluence API Settings</h2>
+          <button class="close-modal" id="closeModal">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group-vertical">
+            <label for="apiBaseUrl">Confluence Base URL</label>
+            <input type="text" id="apiBaseUrl" placeholder="https://confluence.example.com">
+            <p class="form-info">The base URL of your Confluence instance</p>
+          </div>
+          <div class="form-group-vertical">
+            <label for="apiPageId">Page ID</label>
+            <input type="text" id="apiPageId" placeholder="123456789">
+            <p class="form-info">The ID of the Confluence page where attachments are stored</p>
+          </div>
+          <div class="form-group-vertical">
+            <label for="apiBearerToken">Bearer Token</label>
+            <div class="password-container">
+              <input type="password" id="apiBearerToken" placeholder="Enter your bearer token">
+              <button type="button" class="toggle-password" id="togglePassword">
+                <i class="fas fa-eye"></i>
+              </button>
+            </div>
+            <p class="form-info">Your Confluence API authorization token</p>
+          </div>
+          <div id="testResult" class="test-result"></div>
+        </div>
+        <div class="modal-footer">
+          <button id="cancelApiBtn" class="btn cancel-btn">Cancel</button>
+          <button id="testApiBtn" class="btn test-btn">Test Connection</button>
+          <button id="saveApiBtn" class="btn save-btn">Save Settings</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Log Console -->
+    <div id="logConsole" class="log-console">
+      <div class="log-console-header">
+        <span class="log-console-title">API Console</span>
+        <div class="log-console-actions">
+          <button id="clearLogBtn">Clear</button>
+          <button id="closeLogBtn">Close</button>
+        </div>
+      </div>
+      <div id="logContent" class="log-console-content">
+        <!-- Log entries will be added here -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Include Mammoth.js for DOCX parsing -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.17/mammoth.browser.min.js"></script>
+  <!-- Include Turndown.js for HTML to Markdown conversion -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/turndown/7.1.1/turndown.min.js"></script>
+  <script>
+document.addEventListener('DOMContentLoaded', function () {
+  // ===============================
+  // GLOBAL VARIABLES
+  // ===============================
+  
+  // State variables
+  let currentFileSource = null; // 'upload' or 'dropdown'
+  let currentJsObject = null;
+  let currentMarkdownContent = null;
+  let docxContent = null;
+  let isAutoUpdateEnabled = true;
+  let documentTitle = '';
+  let documentName = '';
+  let documentCategory = '';
+  let loadedJsFilename = null;
+  let existingFiles = new Set();
+
+  // API Variables
+  let apiSettings = {
+    baseUrl: '',
+    pageId: '',
+    bearerToken: ''
+  };
+  let isApiConnected = false;
+  let currentAttachments = []; // Stores attachments list
+
+  // DOM Elements
+  const dropZone = document.getElementById('dropZone');
+  const fileInput = document.getElementById('fileInput');
+  const browseBtn = document.getElementById('browseBtn');
+  const fileInfo = document.getElementById('fileInfo');
+  const fileName = document.getElementById('fileName');
+  const fileSize = document.getElementById('fileSize');
+  const editableContent = document.getElementById('editableContent');
+  const autoUpdateToggle = document.getElementById('autoUpdateToggle');
+  const outputFileName = document.getElementById('outputFileName');
+  const exportBtn = document.getElementById('exportBtn');
+  const alertBox = document.getElementById('alertBox');
+  const fileDropdown = document.getElementById('fileDropdown');
+  const copyMarkdownBtn = document.querySelector('.copy-markdown-btn');
+  const markdownEditor = document.querySelector('.markdown-editor');
+  const jsEditorElement = document.querySelector('.js-editor');
+  const jsFormatBtn = document.querySelector('.js-format-btn');
+  const editorToolbar = document.querySelector('.editor-toolbar');
+  const contentTabs = document.querySelectorAll('.content-tab');
+  
+  // API settings modal elements
+  const apiStatusElement = document.getElementById('apiStatus');
+  const apiSettingsBtn = document.getElementById('apiSettingsBtn');
+  const apiSettingsModal = document.getElementById('apiSettingsModal');
+  const closeModalBtn = document.getElementById('closeModal');
+  const apiBaseUrlInput = document.getElementById('apiBaseUrl');
+  const apiPageIdInput = document.getElementById('apiPageId');
+  const apiBearerTokenInput = document.getElementById('apiBearerToken');
+  const togglePasswordBtn = document.getElementById('togglePassword');
+  const testApiBtn = document.getElementById('testApiBtn');
+  const saveApiBtn = document.getElementById('saveApiBtn');
+  const cancelApiBtn = document.getElementById('cancelApiBtn');
+  const testResultElement = document.getElementById('testResult');
+  
+  // Log console elements
+  const logConsole = document.getElementById('logConsole');
+  const logContent = document.getElementById('logContent');
+  const clearLogBtn = document.getElementById('clearLogBtn');
+  const closeLogBtn = document.getElementById('closeLogBtn');
+
+  // ===============================
+  // LOG UTILITIES
+  // ===============================
+  
+  // Enhanced logging function that displays logs in console and UI
+  const Logger = {
+    show: function() {
+      if (logConsole) logConsole.classList.add('show');
+    },
+    
+    hide: function() {
+      if (logConsole) logConsole.classList.remove('show');
+    },
+    
+    clear: function() {
+      if (logContent) logContent.innerHTML = '';
+    },
+    
+    log: function(message, type = 'info') {
+      // Always log to browser console
+      console.log(message);
+      
+      // Then add to the UI log if available
+      if (logContent) {
+        const now = new Date();
+        const timeString = now.toLocaleTimeString();
+        
+        // Create the log entry element
+        const logEntry = document.createElement('div');
+        logEntry.className = `log-entry log-${type}`;
+        
+        // Add the timestamp
+        const timeElement = document.createElement('span');
+        timeElement.className = 'log-time';
+        timeElement.textContent = timeString;
+        logEntry.appendChild(timeElement);
+        
+        // Add the message
+        const messageText = document.createTextNode(message);
+        logEntry.appendChild(messageText);
+        
+        // Add to the log content and scroll to bottom
+        logContent.appendChild(logEntry);
+        logContent.scrollTop = logContent.scrollHeight;
+        
+        // Show the console if it's hidden
+        this.show();
+      }
+    },
+    
+    info: function(message) {
+      this.log(message, 'info');
+    },
+    
+    success: function(message) {
+      this.log(message, 'success');
+    },
+    
+    warn: function(message) {
+      console.warn(message);
+      this.log(message, 'warn');
+    },
+    
+    error: function(message) {
+      console.error(message);
+      this.log(message, 'error');
+    }
+  };
+
+  // ===============================
+  // UTILITY FUNCTIONS
+  // ===============================
+  
+  // Prevent default event behavior
+  function preventDefaults(e) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+
+  // Format file size into human-readable string
+  function formatBytes(bytes, decimals = 2) {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const dm = decimals < 0 ? 0 : decimals;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+  }
+
+  // Show alert notification
+  function showAlert(message, type = 'info', duration = 4000) {
+    if (!alertBox) {
+      console.warn("Alert box element not found. Cannot show alert:", message);
+      console.log(`${type.toUpperCase()}: ${message}`);
+      return;
+    }
+
+    alertBox.textContent = message;
+    alertBox.className = `alert alert-${type} show`;
+    
+    // Ensure alert is visible
+    alertBox.style.opacity = "1";
+    alertBox.style.zIndex = "2000";
+    
+    // Clear previous timeouts
+    if (alertBox.timeoutId) {
+      clearTimeout(alertBox.timeoutId);
+    }
+    
+    alertBox.timeoutId = setTimeout(() => {
+      alertBox.classList.remove('show');
+      alertBox.timeoutId = null;
+    }, duration);
+  }
+
+  // Copy text to clipboard
+  function copyToClipboard(text) {
+    navigator.clipboard.writeText(text)
+      .then(() => showAlert('Content copied to clipboard!', 'success'))
+      .catch(error => {
+        console.error('Error copying to clipboard:', error);
+        showAlert('Error copying to clipboard.', 'error');
+      });
+  }
+
+  // Save API settings to local storage
+  function saveApiSettingsToStorage() {
+    try {
+      const settingsToSave = {
+        baseUrl: apiSettings.baseUrl,
+        pageId: apiSettings.pageId,
+        // We don't store the token for security
+      };
+      localStorage.setItem('kbEditorApiSettings', JSON.stringify(settingsToSave));
+      Logger.info('API settings saved to local storage');
+    } catch (error) {
+      Logger.error('Error saving API settings to storage: ' + error.message);
+    }
+  }
+
+  // Load API settings from local storage
+  function loadApiSettingsFromStorage() {
+    try {
+      const savedSettings = localStorage.getItem('kbEditorApiSettings');
+      if (savedSettings) {
+        const parsedSettings = JSON.parse(savedSettings);
+        apiSettings.baseUrl = parsedSettings.baseUrl || '';
+        apiSettings.pageId = parsedSettings.pageId || '';
+        // Token is not stored
+        
+        // Update UI
+        if (apiBaseUrlInput) apiBaseUrlInput.value = apiSettings.baseUrl;
+        if (apiPageIdInput) apiPageIdInput.value = apiSettings.pageId;
+        
+        Logger.info('API settings loaded from local storage');
+        return true;
+      }
+    } catch (error) {
+      Logger.error('Error loading API settings from storage: ' + error.message);
+    }
+    return false;
+  }
+
+  // ===============================
+  // API FUNCTIONS
+  // ===============================
+  
+  // Extract page ID from Confluence meta tags
+  function extractConfluencePageId() {
+    try {
+      Logger.info('Attempting to extract Confluence page ID from meta tags...');
+      
+      // Check if we're in an iframe
+      if (window.parent && window.parent !== window) {
+        try {
+          // Try to access parent frame (might fail due to same-origin policy)
+          const parentMeta = window.parent.document.querySelector('meta[name="ajs-page-id"]');
+          if (parentMeta) {
+            const pageId = parentMeta.getAttribute('content');
+            Logger.info(`Found page ID in parent frame: ${pageId}`);
+            return pageId;
+          }
+        } catch (e) {
+          Logger.info('Could not access parent frame due to same-origin policy');
+        }
+      }
+      
+      // Check in current document
+      const meta = document.querySelector('meta[name="ajs-page-id"]');
+      if (meta) {
+        const pageId = meta.getAttribute('content');
+        Logger.info(`Found page ID in current document: ${pageId}`);
+        return pageId;
+      }
+      
+      // If we're in a Confluence page but can't find the meta tag
+      if (window.location.href.includes('confluence')) {
+        // Try to extract from URL - common Confluence URL pattern
+        const matches = window.location.href.match(/\/pages\/(\d+)\//);
+        if (matches && matches[1]) {
+          Logger.info(`Extracted page ID from URL: ${matches[1]}`);
+          return matches[1];
+        }
+        
+        // Another pattern
+        const viewPageMatches = window.location.href.match(/pageId=(\d+)/);
+        if (viewPageMatches && viewPageMatches[1]) {
+          Logger.info(`Extracted page ID from URL query param: ${viewPageMatches[1]}`);
+          return viewPageMatches[1];
+        }
+      }
+      
+      Logger.info('Could not find Confluence page ID');
+      return null;
+    } catch (error) {
+      Logger.error('Error extracting page ID: ' + error.message);
+      return null;
+    }
+  }
+
+  // Get authentication headers for API requests
+  function getAuthHeaders() {
+    if (!apiSettings.bearerToken) {
+      throw new Error('Bearer token is required for API access');
+    }
+    
+    return {
+      'Authorization': `Bearer ${apiSettings.bearerToken}`,
+      'X-Atlassian-Token': 'no-check'
+    };
+  }
+
+  // Construct properly formatted Confluence API URL
+  function constructApiUrl(baseUrl, endpoint) {
+    // Remove trailing slashes from baseUrl
+    const cleanBaseUrl = baseUrl.replace(/\/+$/, '');
+    // Remove leading slashes from endpoint
+    const cleanEndpoint = endpoint.replace(/^\/+/, '');
+    
+    return `${cleanBaseUrl}/${cleanEndpoint}`;
+  }
+
+  // Test API connection
+  async function testApiConnection() {
+    try {
+      // Take values from the form
+      const baseUrl = apiBaseUrlInput.value.trim();
+      const pageId = apiPageIdInput.value.trim();
+      const bearerToken = apiBearerTokenInput.value.trim();
+      
+      if (!baseUrl || !pageId || !bearerToken) {
+        throw new Error('Please fill in all API connection fields');
+      }
+      
+      // Construct API URL for testing (list attachments endpoint)
+      const testUrl = constructApiUrl(baseUrl, `rest/api/content/${pageId}/child/attachment`);
+      Logger.info(`Testing API connection to: ${testUrl}`);
+      
+      // Set up headers with the provided token
+      const headers = {
+        'Authorization': `Bearer ${bearerToken}`,
+        'Accept': 'application/json'
+      };
+      
+      // Make the request
+      const response = await fetch(testUrl, {
+        method: 'GET',
+        headers: headers
+      });
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        Logger.error(`API test failed (${response.status} ${response.statusText}): ${errorText}`);
+        throw new Error(`API test failed: ${response.status} ${response.statusText}`);
+      }
+      
+      // Parse response
+      const data = await response.json();
+      Logger.success(`API connection successful! Found ${data.results?.length || 0} attachments.`);
+      
+      return {
+        success: true,
+        message: `Connection successful! Found ${data.results?.length || 0} attachments.`,
+        data: data
+      };
+    } catch (error) {
+      Logger.error('API connection test failed: ' + error.message);
+      return {
+        success: false,
+        message: `Connection failed: ${error.message}`,
+        error: error
+      };
+    }
+  }
+
+  // Update API connection status
+  function updateApiConnectionStatus(isConnected) {
+    isApiConnected = isConnected;
+    
+    if (apiStatusElement) {
+      if (isConnected) {
+        apiStatusElement.textContent = "API Connected";
+        apiStatusElement.className = "api-status connected";
+      } else {
+        apiStatusElement.textContent = "API Disconnected";
+        apiStatusElement.className = "api-status disconnected";
+      }
+    }
+  }
+
+  // Get list of attachments from Confluence
+  async function listAttachments() {
+    try {
+      if (!isApiConnected) {
+        throw new Error('API is not connected. Please set up and test the API connection first.');
+      }
+      
+      Logger.info('Fetching attachment list from Confluence...');
+      
+      // Construct proper API URL for listing attachments
+      const listApiUrl = constructApiUrl(apiSettings.baseUrl, `rest/api/content/${apiSettings.pageId}/child/attachment`);
+      Logger.info(`List API URL: ${listApiUrl}`);
+      
+      // Get authentication headers
+      const headers = getAuthHeaders();
+      
+      // Get list of attachments
+      const listResponse = await fetch(listApiUrl, {
+        method: 'GET',
+        headers: {
+          ...headers,
+          'Accept': 'application/json'
+        }
+      });
+      
+      Logger.info(`List response status: ${listResponse.status} ${listResponse.statusText}`);
+      
+      if (!listResponse.ok) {
+        const errorText = await listResponse.text();
+        Logger.error('List response error details: ' + errorText);
+        throw new Error(`Failed to get attachments list: ${listResponse.status} ${listResponse.statusText}`);
+      }
+      
+      const attachments = await listResponse.json();
+      Logger.info(`Found ${attachments.results.length} attachments`);
+      
+      // Log first attachment to see the structure
+      if (attachments.results.length > 0) {
+        Logger.info('First attachment structure: ' + JSON.stringify(attachments.results[0], null, 2));
+      }
+      
+      // Store attachments globally
+      currentAttachments = attachments.results;
+      
+      return attachments.results;
+    } catch (error) {
+      Logger.error('Error listing attachments: ' + error.message);
+      throw error;
+    }
+  }
+
+  // Get JS file content from Confluence attachment
+  async function getJsFileFromConfluence(attachmentId, fileName) {
+    try {
+      if (!isApiConnected) {
+        throw new Error('API is not connected. Please set up and test the API connection first.');
+      }
+      
+      Logger.info(`Retrieving file with ID: ${attachmentId} from Confluence...`);
+      
+      // Get authentication headers
+      const headers = getAuthHeaders();
+      
+      // Generate URL patterns to try
+      const urlPatterns = [
+        // Standard patterns
+        `${apiSettings.baseUrl}/rest/api/content/${attachmentId}/data`,
+        `${apiSettings.baseUrl}/rest/api/content/${apiSettings.pageId}/child/attachment/${attachmentId}/data`,
+        `${apiSettings.baseUrl}/download/attachments/${apiSettings.pageId}/${attachmentId}`,
+        
+        // Specific patterns
+        `${apiSettings.baseUrl}/download/attachments/${apiSettings.pageId}/${attachmentId}/${fileName}`,
+        `${apiSettings.baseUrl}/download/attachments/${apiSettings.pageId}/${fileName}`,
+        `${apiSettings.baseUrl}/rest/api/content/${apiSettings.pageId}/child/attachment/${attachmentId}/download`,
+        `${apiSettings.baseUrl}/plugins/servlet/confluence/placeholder/attachment?pageId=${apiSettings.pageId}&fileName=${fileName}`,
+        
+        // Some enterprises use servlets
+        `${apiSettings.baseUrl}/plugins/servlet/confluence/file/${apiSettings.pageId}/${attachmentId}`,
+        
+        // Legacy pattern
+        `${apiSettings.baseUrl}/download/attachments/${apiSettings.pageId}/${encodeURIComponent(fileName)}`
+      ];
+      
+      let content = null;
+      let successUrl = null;
+      let errorDetails = [];
+      
+      // Try each URL pattern until one works
+      for (const url of urlPatterns) {
+        try {
+          Logger.info(`Trying URL: ${url}`);
+          
+          const response = await fetch(url, {
+            method: 'GET',
+            headers: headers
+          });
+          
+          Logger.info(`Response status for ${url}: ${response.status} ${response.statusText}`);
+          
+          if (response.ok) {
+            // Try to get the content type
+            const contentType = response.headers.get('content-type');
+            Logger.info(`Content type: ${contentType}`);
+            
+            // Get the content as text
+            content = await response.text();
+            successUrl = url;
+            Logger.info(`Successfully retrieved content (${content.length} bytes)`);
+            break;
+          } else {
+            // Store error details for debugging
+            const errorText = await response.text();
+            errorDetails.push({
+              url: url,
+              status: response.status,
+              statusText: response.statusText,
+              errorText: errorText
+            });
+          }
+        } catch (innerError) {
+          Logger.warn(`Failed with URL ${url}: ${innerError.message}`);
+          errorDetails.push({
+            url: url,
+            error: innerError.message
+          });
+          // Continue to the next URL pattern
+        }
+      }
+      
+      if (!content) {
+        Logger.error('All download attempts failed. Error details: ' + JSON.stringify(errorDetails, null, 2));
+        throw new Error('All attachment download URL patterns failed. Verify permissions and attachment ID.');
+      }
+      
+      Logger.success(`File retrieved successfully using: ${successUrl}`);
+      return content;
+    } catch (error) {
+      Logger.error('Error retrieving file: ' + error.message);
+      throw error;
+    }
+  }
+
+  // Upload JS file to Confluence as an attachment
+  async function uploadJsFileToConfluence(fileName, fileContent) {
+    try {
+      if (!isApiConnected) {
+        throw new Error('API is not connected. Please set up and test the API connection first.');
+      }
+      
+      Logger.info(`Uploading file ${fileName} to Confluence...`);
+      
+      // Check if file with the same name already exists
+      const existingAttachment = currentAttachments.find(att => att.title === fileName);
+      
+      // Construct proper API URL
+      let apiUrl;
+      let method;
+      
+      if (existingAttachment) {
+        // Use update endpoint with attachment ID for overwriting
+        apiUrl = constructApiUrl(apiSettings.baseUrl, `rest/api/content/${apiSettings.pageId}/child/attachment/${existingAttachment.id}/data`);
+        method = 'POST'; // Some Confluence instances use POST for updates too
+        Logger.info(`Existing file found, will overwrite ${fileName} with ID: ${existingAttachment.id}`);
+      } else {
+        // Use standard endpoint for new attachments
+        apiUrl = constructApiUrl(apiSettings.baseUrl, `rest/api/content/${apiSettings.pageId}/child/attachment`);
+        method = 'POST';
+        Logger.info(`No existing file found, uploading new file ${fileName}`);
+      }
+      
+      Logger.info(`API URL: ${apiUrl}`);
+      
+      // Get authentication headers
+      const headers = getAuthHeaders();
+      Logger.info('Headers prepared (auth details hidden)');
+      
+      // Create blob from file content
+      const blob = new Blob([fileContent], { type: 'application/javascript' });
+      Logger.info(`Created blob with size: ${blob.size} bytes`);
+      
+      // Create FormData and append file
+      const formData = new FormData();
+      formData.append('file', blob, fileName);
+      
+      // Make API request
+      Logger.info(`Sending ${method} request...`);
+      const response = await fetch(apiUrl, {
+        method: method,
+        headers: headers,
+        body: formData
+      });
+      
+      Logger.info(`Response status: ${response.status} ${response.statusText}`);
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        Logger.error('Response error details: ' + errorText);
+        throw new Error(`Upload failed: ${response.status} ${response.statusText}`);
+      }
+      
+      const data = await response.json();
+      Logger.success('Upload successful: ' + JSON.stringify(data, null, 2));
+      
+      // Refresh the attachments list after successful upload
+      await listAttachments();
+      
+      return data;
+    } catch (error) {
+      Logger.error('Error uploading file: ' + error.message);
+      throw error;
+    }
+  }
+
+  // ===============================
+  // FILE HANDLING FUNCTIONS
+  // ===============================
+
+  // Handle file drop on drop zone
+  function handleDrop(e) {
+    const dt = e.dataTransfer;
+    const files = dt.files;
+    handleFiles({ target: { files } });
+  }
+
+  // Process files from input or drop
+  function handleFiles(e) {
+    const files = e.target.files;
+    if (files.length > 0) {
+      const file = files[0];
+      resetEditorState(); // Clear previous state
+      if (file.name.endsWith('.docx')) {
+        const baseName = file.name.replace(/\.docx$/i, '');
+        // Standardize kb file naming convention
+        outputFileName.value = `kb_${baseName.toLowerCase().replace(/[^a-z0-9_]+/g, '_')}.js`;
+        processDocxFile(file);
+        currentFileSource = 'upload';
+      } else {
+        showAlert('Please upload a .docx file.', 'error');
+        resetEditorState(true); // Also clear file info
+      }
+      // Reset file input value to allow uploading the same file again
+      if (fileInput) fileInput.value = null;
+    }
+  }
+
+  // Populate dropdown with kb_*.js files from Confluence attachments
+  async function populateFileDropdown() {
+    if (!fileDropdown) {
+      Logger.warn("File dropdown element not found");
+      return;
+    }
+    
+    if (!isApiConnected) {
+      Logger.warn("Cannot populate file dropdown: API not connected");
+      showAlert("Please set up the API connection to view available files", "error");
+      return;
+    }
+    
+    Logger.info("Populating file dropdown with attachments...");
+    
+    try {
+      // Clear existing options except the first placeholder
+      while (fileDropdown.options.length > 1) {
+        fileDropdown.remove(1);
+      }
+      existingFiles.clear(); // Reset tracked files
+      
+      // Get attachments using the API
+      const attachments = await listAttachments();
+      let fileCount = 0;
+      
+      // Filter for kb_*.js files and add to dropdown
+      for (const attachment of attachments) {
+        const filename = attachment.title;
+        if (filename && filename.startsWith('kb_') && filename.endsWith('.js')) {
+          addToFileDropdown(filename, attachment.id);
+          fileCount++;
+        }
+      }
+      
+      Logger.info(`Added ${fileCount} kb_*.js files to the dropdown`);
+      
+      if (fileCount === 0) {
+        showAlert("No knowledge base files (kb_*.js) found in this Confluence page", "info");
+      } else {
+        showAlert(`Found ${fileCount} knowledge base files`, "success", 2000);
+      }
+    } catch (error) {
+      Logger.error("Error populating file dropdown: " + error.message);
+      showAlert("Error loading files: " + error.message, "error");
+    }
+  }
+
+  // Add a single file to the editor dropdown if it's not already there
+  function addToFileDropdown(filename, attachmentId) {
+    if (!fileDropdown) return; // Check if element exists
+    
+    // Check if the file already exists in the dropdown
+    let fileExists = false;
+    for (let i = 0; i < fileDropdown.options.length; i++) {
+      if (fileDropdown.options[i].value === filename) {
+        fileExists = true;
+        break;
+      }
+    }
+    
+    // Only add if not already present
+    if (!fileExists) {
+      Logger.info(`Adding new file to dropdown: ${filename} (ID: ${attachmentId})`);
+      const option = document.createElement('option');
+      option.value = filename;
+      option.textContent = filename;
+      option.dataset.attachmentId = attachmentId; // Store attachment ID
+      fileDropdown.appendChild(option);
+      existingFiles.add(filename); // Track it
+    }
+  }
+
+  // Load JS file content from Confluence Attachment
+  async function loadJSFileContent(filename) {
+    if (!editableContent || !jsEditorElement || !outputFileName || !exportBtn || !fileInfo) return; // Check elements
+
+    Logger.info(`Loading JS file: ${filename}`);
+    loadedJsFilename = filename; // Track loaded file
+    showAlert(`Loading ${filename}...`, 'info', 2000);
+    
+    try {
+      // Get the attachment ID from the dropdown
+      const selectedOption = Array.from(fileDropdown.options).find(opt => opt.value === filename);
+      if (!selectedOption || !selectedOption.dataset.attachmentId) {
+        throw new Error(`Could not find attachment ID for ${filename}`);
+      }
+      
+      const attachmentId = selectedOption.dataset.attachmentId;
+      
+      // Fetch the content using the API
+      const jsContent = await getJsFileFromConfluence(attachmentId, filename);
+      
+      if (!jsContent) {
+        throw new Error("Received empty content.");
+      }
+      
+      Logger.info(`Content loaded for ${filename}. Length: ${jsContent.length}`);
+      jsEditorElement.textContent = jsContent; // Show raw content in JS view first
+
+      try {
+        const extractedData = extractDataFromJsCode(jsContent);
+        Logger.info("Extracted data: " + JSON.stringify(extractedData, null, 2));
+
+        if (extractedData.type === 'llmPrimer') {
+          currentMarkdownContent = extractedData.content;
+          currentJsObject = { // Create a basic JS object representation
+            name: extractedData.name,
+            title: extractedData.name.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()), // Infer title
+            category: '', // Category not stored in llmPrimer, leave empty
+            content: '' // Will be populated by markdown->html conversion
+          };
+          documentName = currentJsObject.name; // Update global var if needed
+
+          // Convert Markdown to HTML for the rich text editor
+          const htmlContent = markdownToHtml(currentMarkdownContent);
+          editableContent.innerHTML = htmlContent;
+          currentJsObject.content = htmlContent; // Store HTML in object
+
+          // Update Markdown view
+          markdownEditor.textContent = currentMarkdownContent;
+
+          // Switch to the original content tab by default when loading
+          contentTabs.forEach(t => t.classList.remove('active'));
+          document.querySelectorAll('.content-tab-panel').forEach(c => c.classList.remove('active'));
+          document.querySelector('.content-tab[data-content-tab="original"]').classList.add('active');
+          document.getElementById('originalContent').classList.add('active');
+        } else {
+          // Handle other potential types if needed in the future
+          throw new Error("Loaded JS file is not in the expected llmPrimerRegister format.");
+        }
+
+        outputFileName.value = filename; // Ensure filename matches loaded file
+        exportBtn.disabled = false;
+        exportBtn.textContent = 'Save'; // Change button text to 'Save'
+        fileInfo.classList.remove('show'); // Hide DOCX info area
+
+        showAlert(`JS File '${filename}' loaded successfully!`, 'success');
+      } catch (e) {
+        Logger.error("Error processing loaded JS content: " + e.message);
+        editableContent.innerHTML = `<p>Error displaying content. Invalid or unsupported JS file format.<br><i>${e.message}</i></p>`;
+        if (markdownEditor) markdownEditor.textContent = "Error processing JS file.";
+        if (jsEditorElement) jsEditorElement.textContent = jsContent; // Keep raw content on error
+        showAlert(`Error processing JS file '${filename}': ${e.message}`, 'error');
+        exportBtn.disabled = true; // Disable saving if processing failed
+      }
+    } catch (error) {
+      Logger.error(`Error loading JS file '${filename}': ${error.message}`);
+      showAlert(`Error loading JS File '${filename}': ${error.message}`, 'error', 6000);
+      resetEditorState(true); // Clear everything on load failure
+    }
+  }
+
+  // Reset editor state (clears content areas, variables)
+  function resetEditorState(clearFileInfo = false) {
+    Logger.info("Resetting editor state...");
+    // Check if elements exist before trying to modify them
+    if (editableContent) editableContent.innerHTML = 'No content to preview yet. Please upload a DOCX file or select a JS file from dropdown.';
+    if (jsEditorElement) jsEditorElement.textContent = 'No converted content yet.';
+    if (markdownEditor) markdownEditor.textContent = 'No markdown content yet.';
+    docxContent = null;
+    currentJsObject = null;
+    currentMarkdownContent = null;
+    documentTitle = '';
+    documentName = '';
+    documentCategory = '';
+    loadedJsFilename = null; // Clear loaded filename track
+    currentFileSource = null;
+    if (exportBtn) {
+      exportBtn.disabled = true;
+      exportBtn.textContent = 'Export';
+    }
+
+    if (clearFileInfo && fileInfo && fileName && fileSize) {
+      fileInfo.classList.remove('show');
+      fileName.textContent = 'No file selected';
+      fileSize.textContent = '';
+    }
+  }
+
+  // ===============================
+  // CONTENT PROCESSING FUNCTIONS
+  // ===============================
+  
+  // Process DOCX file
+  function processDocxFile(file) {
+    if (!editableContent || !fileInfo || !fileName || !fileSize || !exportBtn) return; // Check if elements exist
+
+    Logger.info("Processing DOCX file: " + file.name);
+    fileInfo.classList.add('show');
+    fileName.textContent = `File: ${file.name}`;
+    fileSize.textContent = `Size: ${formatBytes(file.size)}`;
+    editableContent.innerHTML = '<p><i>Processing DOCX...</i></p>'; // Provide feedback
+
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      const arrayBuffer = e.target.result;
+      const styleMap = [
+        "p[style-name='Title'] => h1:fresh", // Use :fresh to ensure it's always a new h1
+        "p[style-name='Heading 1'] => h1:fresh",
+        "p[style-name='Heading 2'] => h2:fresh",
+        "p[style-name='Heading 3'] => h3:fresh",
+        "p[style-name='Heading 4'] => h4:fresh",
+        "p[style-name='Heading 5'] => h5:fresh",
+        "p[style-name='Heading 6'] => h6:fresh",
+        "p[style-name='List Paragraph'] => li:fresh", // Map list paragraphs to li
+        "r[style-name='Emphasis'] => em", // Handle character style
+        "r[style-name='Strong'] => strong", // Handle character style
+        "b => strong", // Map bold
+        "i => em"      // Map italic
+      ];
+
+      mammoth.convertToHtml({ arrayBuffer: arrayBuffer }, { styleMap: styleMap })
+        .then(result => {
+          docxContent = result.value; // Store original HTML
+          Logger.info("Mammoth HTML Output (first 100 chars): " + docxContent.substring(0, 100) + "...");
+          // Clean up potential empty paragraphs Mammoth might leave
+          let cleanedHtml = docxContent.replace(/<p>\s*<\/p>/gi, '');
+          editableContent.innerHTML = cleanedHtml;
+
+          // Process the content immediately
+          processEditorContent();
+
+          exportBtn.disabled = false;
+          exportBtn.textContent = 'Export'; // Changed from Save initially
+          showAlert('DOCX loaded successfully! Review and edit before exporting.', 'success');
+        })
+        .catch(error => {
+          Logger.error('Error converting docx: ' + error.message);
+          showAlert('Error processing DOCX file. Check console for details.', 'error');
+          editableContent.innerHTML = '<p>Error loading DOCX content.</p>';
+        });
+    };
+    reader.onerror = (error) => {
+      Logger.error("FileReader error: " + error);
+      showAlert("Error reading the DOCX file.", "error");
+      editableContent.innerHTML = '<p>Error reading file.</p>';
+    };
+    reader.readAsArrayBuffer(file);
+  }
+
+  // Central function to process editor content (HTML -> Markdown -> JS Object)
+  function processEditorContent() {
+    if (!editableContent || !markdownEditor || !jsEditorElement || !outputFileName) return; // Check if elements exist
+
+    const currentHtml = editableContent.innerHTML;
+    // 1. Convert HTML to Markdown
+    const turndownService = new TurndownService({
+      headingStyle: 'atx',
+      codeBlockStyle: 'fenced',
+      emDelimiter: '_',
+      bulletListMarker: '-' // Consistent bullet marker
+    });
+    currentMarkdownContent = turndownService.turndown(currentHtml);
+    markdownEditor.textContent = currentMarkdownContent; // Update Markdown view
+
+    // 2. Extract Metadata and create JS Object from HTML
+    currentJsObject = convertHtmlToJsObject(currentHtml);
+    Logger.info("Generated JS Object: " + JSON.stringify(currentJsObject, null, 2));
+
+    // 3. Generate the JS code for the JS view (always LLM Primer format)
+    const llmPrimerCode = generateLlmPrimerCode(currentJsObject.name, currentMarkdownContent);
+    jsEditorElement.textContent = llmPrimerCode; // Update JS view
+
+    // Update filename based on extracted name if available and source was upload
+    if (currentFileSource === 'upload' && currentJsObject.name) {
+      outputFileName.value = `kb_${currentJsObject.name}.js`;
+    } else if (currentFileSource === 'dropdown' && loadedJsFilename) {
+      // Keep the loaded filename
+      outputFileName.value = loadedJsFilename;
+    }
+    else if (!outputFileName.value || outputFileName.value === 'kb_knowledge-base.js') {
+      // Fallback if name extraction fails or wasn't from upload
+      const fallbackName = loadedJsFilename ? loadedJsFilename.replace(/\.js$/,'').replace(/^kb_/,'') : 'knowledge_base';
+      outputFileName.value = `kb_${fallbackName}.js`;
+    }
+  }
+
+  // Convert HTML from editor to a JS object, extracting metadata
+  function convertHtmlToJsObject(html) {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(`<body>${html}</body>`, 'text/html'); // Wrap in body for proper parsing
+    const result = {
+      title: '',
+      name: '',
+      category: '',
+      content: html // Store the raw HTML content for now, might refine later
+    };
+
+    // Regex for metadata extraction (case-insensitive)
+    const titleRegex = /#Title:\s*(.*)/i;
+    const nameRegex = /#Name:\s*(.*)/i;
+    const categoryRegex = /#Category:\s*(.*)/i;
+
+    // Find potential metadata elements (usually H1 or strong P)
+    const potentialMetaElements = doc.querySelectorAll('h1, h2, h3, p > strong, p > b');
+    const elementsToRemove = [];
+
+    potentialMetaElements.forEach(el => {
+      const text = el.textContent.trim();
+      let matched = false;
+
+      const titleMatch = text.match(titleRegex);
+      if (titleMatch && !result.title) {
+        result.title = titleMatch[1].trim();
+        elementsToRemove.push(el.closest('h1, h2, h3, p')); // Mark parent block for removal
+        matched = true;
+      }
+
+      const nameMatch = text.match(nameRegex);
+      if (nameMatch && !result.name) {
+        result.name = nameMatch[1].trim().toLowerCase().replace(/[^a-z0-9_]+/g, '_'); // Sanitize name
+        elementsToRemove.push(el.closest('h1, h2, h3, p'));
+        matched = true;
+      }
+
+      const categoryMatch = text.match(categoryRegex);
+      if (categoryMatch && !result.category) {
+        result.category = categoryMatch[1].trim();
+        elementsToRemove.push(el.closest('h1, h2, h3, p'));
+        matched = true;
+      }
+    });
+
+    // Remove extracted metadata elements from the document body before getting final content
+    elementsToRemove.forEach(el => el?.remove());
+
+    // Update result.content with cleaned HTML
+    result.content = doc.body.innerHTML;
+
+    // Fallback name generation if #Name tag wasn't found
+    if (!result.name) {
+      const baseFileName = (loadedJsFilename || outputFileName.value || 'knowledge_base.js')
+                          .replace(/\.js$/i, '').replace(/^kb_/i, '');
+      result.name = baseFileName.toLowerCase().replace(/[^a-z0-9_]+/g, '_');
+      Logger.info("No #Name found, generated fallback name: " + result.name);
+    }
+
+    // Extract Title from first H1 if #Title tag wasn't found
+    if (!result.title) {
+      const firstH1 = doc.querySelector('h1');
+      if (firstH1) {
+        result.title = firstH1.textContent.trim();
+      } else {
+        // Fallback title from name
+        result.title = result.name.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()); // Capitalize
+      }
+    }
+
+    // Store extracted values globally if needed (though prefer passing object)
+    documentTitle = result.title;
+    documentName = result.name;
+    documentCategory = result.category;
+
+    return result;
+  }
+
+  // Generate llmPrimerRegister code (always used for JS view and export)
+  function generateLlmPrimerCode(name, content) {
+    const kbName = name || 'unknown_kb'; // Ensure name is present
+    const escapedContent = content
+      .replace(/\\/g, '\\\\') // Escape backslashes first
+      .replace(/`/g, '\\`')  // Escape backticks
+      .replace(/\$/g, '\\$'); // Escape dollars (for template literal safety)
+
+    return `// Knowledge Base generated by Editor - ${new Date().toISOString()}
+llmPrimerRegister('${kbName}', \`
+${escapedContent}
+\`);`;
+  }
+
+  // Convert markdown to HTML (Simplified)
+  function markdownToHtml(markdown) {
+    // Basic conversion - assumes simple markdown, might need a library for complex cases
+    let html = markdown
+      .replace(/^###### (.*$)/gim, '<h6>$1</h6>')
+      .replace(/^##### (.*$)/gim, '<h5>$1</h5>')
+      .replace(/^#### (.*$)/gim, '<h4>$1</h4>')
+      .replace(/^### (.*$)/gim, '<h3>$1</h3>')
+      .replace(/^## (.*$)/gim, '<h2>$1</h2>')
+      .replace(/^# (.*$)/gim, '<h1>$1</h1>')
+      .replace(/^\* (.*$)/gim, '<li>$1</li>') // Basic unordered list
+      .replace(/^\d+\. (.*$)/gim, '<li>$1</li>') // Basic ordered list (no number tracking)
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // Bold
+      .replace(/__(.*?)__/g, '<strong>$1</strong>') // Bold (alt)
+      .replace(/\*(.*?)\*/g, '<em>$1</em>') // Italic
+      .replace(/_(.*?)_/g, '<em>$1</em>'); // Italic (alt)
+
+    // Wrap list items
+    html = html.replace(/<li>.*?<\/li>/gs, (match) => `<ul>${match}</ul>`).replace(/<\/ul>\s*<ul>/g, ''); // Naive wrap
+    // Paragraphs (split by double newline, then wrap non-list/heading lines)
+    return html.split(/\n\n+/).map(p => {
+      const trimmed = p.trim();
+      if (!trimmed) return '';
+      if (trimmed.startsWith('<h') || trimmed.startsWith('<ul') || trimmed.startsWith('<ol')) {
+        return p; // Already block element
+      }
+      return `<p>${p.replace(/\n/g, '<br>')}</p>`; // Wrap in p, convert single newlines to <br>
+    }).join('\n');
+  }
+
+  // Extract JS object or markdown from JS code string
+  function extractDataFromJsCode(jsCode) {
+    try {
+      // 1. Try to match llmPrimerRegister format
+      const primerMatch = jsCode.match(/llmPrimerRegister\s*\(\s*['"]([^'"]+)['"]\s*,\s*`([\s\S]*?)`\s*\)/);
+      if (primerMatch && primerMatch[1] && primerMatch[2]) {
+        Logger.info("Extracted from llmPrimerRegister format");
+        const name = primerMatch[1];
+        const markdown = primerMatch[2]
+          .replace(/\\`/g, '`') // Unescape backticks
+          .replace(/\\\$/g, '$') // Unescape dollars
+          .replace(/\\\\/g, '\\'); // Unescape backslashes
+        return {
+          type: 'llmPrimer',
+          name: name,
+          content: markdown // Markdown content
+        };
+      }
+
+      // If not llmPrimer, try other formats or show error
+      Logger.warn("JS file is not in llmPrimerRegister format. Attempting legacy parse.");
+      throw new Error("Unsupported JS file format. Expected llmPrimerRegister(...)");
+
+    } catch (error) {
+      Logger.error("Error extracting data from JS code: " + error.message);
+      throw new Error(`Failed to extract valid data from JS code: ${error.message}`);
+    }
+  }
+
+  // ===============================
+  // EXPORT/SAVE FUNCTIONS
+  // ===============================
+  
+  // Export file - uses Confluence API to save attachment
+  // Export file - uses Confluence API to save attachment
+  async function exportFile() {
+    if (!currentJsObject || !currentMarkdownContent || !outputFileName || !exportBtn) {
+      showAlert("Cannot export/save: Content is missing or hasn't been processed.", "error");
+      Logger.error("Export aborted: currentJsObject or currentMarkdownContent is null/undefined.");
+      return;
+    }
+
+    // First check if API is connected
+    if (!isApiConnected) {
+      showAlert("API is not connected. Please set up the API connection to save files.", "error");
+      apiSettingsModal.classList.add('show'); // Show API settings modal
+      return;
+    }
+    
+    Logger.info("Export/Save initiated");
+    
+    try {
+      // Ensure content is up-to-date before saving
+      processEditorContent();
+  
+      // Generate the final JS content (LLM Primer)
+      const kbNameForExport = currentJsObject.name || 'unnamed_kb';
+      const jsContentToSave = generateLlmPrimerCode(kbNameForExport, currentMarkdownContent);
+  
+      // Final filename validation
+      let finalFileName = outputFileName.value.trim();
+      if (!finalFileName) {
+        finalFileName = `kb_${kbNameForExport}.js`; // Generate filename if empty
+        outputFileName.value = finalFileName; // Update input field
+      }
+      if (!finalFileName.startsWith('kb_')) {
+        finalFileName = 'kb_' + finalFileName.replace(/^kb_/i, ''); // Ensure prefix
+      }
+      if (!finalFileName.endsWith('.js')) {
+        finalFileName += '.js'; // Ensure suffix
+      }
+      outputFileName.value = finalFileName; // Update input field with final name
+  
+      // Disable the export button while saving
+      exportBtn.disabled = true;
+      exportBtn.textContent = 'Saving...';
+
+      // Save to Confluence using the API
+      Logger.info(`Uploading ${finalFileName} to Confluence...`);
+      await uploadJsFileToConfluence(finalFileName, jsContentToSave);
+      
+      // Update the UI after successful save
+      showAlert(`Successfully saved '${finalFileName}' to Confluence!`, 'success');
+      exportBtn.textContent = 'Save'; // Keep as 'Save' after successful save
+      currentFileSource = 'dropdown'; // Treat it as loaded from dropdown now
+      loadedJsFilename = finalFileName; // Track newly exported file
+
+      // Refresh the file dropdown
+      await populateFileDropdown();
+      
+      // Select the new file in the dropdown
+      if (fileDropdown) {
+        fileDropdown.value = finalFileName;
+      }
+      
+      Logger.success(`File ${finalFileName} saved successfully`);
+    } catch (error) {
+      showAlert(`Error saving file: ${error.message}`, 'error');
+      Logger.error(`Error saving file: ${error.message}`);
+    } finally {
+      // Re-enable the export button
+      exportBtn.disabled = false;
+      
+      // Ensure button text is correct
+      if (exportBtn.textContent === 'Saving...') {
+        exportBtn.textContent = 'Save';
+      }
+    }
+  }
+
+  // ===============================
+  // EVENT LISTENERS
+  // ===============================
+  
+  // Content Tab Switcher
+  contentTabs.forEach(tab => {
+    tab.addEventListener('click', function() {
+      // Remove active class from all tabs
+      contentTabs.forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.content-tab-panel').forEach(c => c.classList.remove('active'));
+      
+      // Add active class to clicked tab
+      this.classList.add('active');
+      
+      // Get the content panel to show
+      const tabType = this.getAttribute('data-content-tab');
+      const contentPanel = document.getElementById(tabType + 'Content');
+      if (contentPanel) {
+        contentPanel.classList.add('active');
+      }
+      
+      // Update content when switching tabs
+      if (tabType === 'markdown' || tabType === 'converted') {
+        processEditorContent();
+      }
+    });
+  });
+
+  // Export Button
+  if (exportBtn) {
+    exportBtn.addEventListener('click', exportFile);
+  }
+
+  // Rich Text Editor Buttons
+  if (editorToolbar) {
+    editorToolbar.addEventListener('click', function(e) {
+      const target = e.target.closest('button');
+      if (!target) return;
+      
+      const command = target.getAttribute('data-command');
+      if (!command) return;
+      
+      const value = target.getAttribute('data-value') || null;
+      
+      // Execute the command
+      document.execCommand(command, false, value);
+      
+      // Update active state for formatting commands
+      if (command === 'bold' || command === 'italic' || command === 'underline') {
+        const isActive = document.queryCommandState(command);
+        if (isActive) {
+          target.classList.add('active');
+        } else {
+          target.classList.remove('active');
+        }
+      }
+      
+      // Update content views
+      if (isAutoUpdateEnabled) {
+        processEditorContent();
+      }
+    });
+  }
+
+  // File Dropdown
+  if (fileDropdown) {
+    fileDropdown.addEventListener('change', function() {
+      const selectedFile = this.value;
+      if (selectedFile) {
+        loadJSFileContent(selectedFile);
+      } else {
+        resetEditorState(true);
+      }
+    });
+  }
+
+  // Auto Update Toggle
+  if (autoUpdateToggle) {
+    autoUpdateToggle.addEventListener('change', function() {
+      isAutoUpdateEnabled = this.checked;
+      
+      if (isAutoUpdateEnabled && currentJsObject) {
+        // Update content if toggled on
+        processEditorContent();
+      }
+    });
+  }
+
+  // Copy Markdown Button
+  if (copyMarkdownBtn) {
+    copyMarkdownBtn.addEventListener('click', function() {
+      if (currentMarkdownContent) {
+        copyToClipboard(currentMarkdownContent);
+      } else {
+        showAlert('No markdown content to copy.', 'error');
+      }
+    });
+  }
+
+  // JS Format Button
+  if (jsFormatBtn) {
+    jsFormatBtn.addEventListener('click', function() {
+      if (!jsEditorElement || !currentJsObject) {
+        showAlert('No JS content to format.', 'error');
+        return;
+      }
+      
+      // Process the content and update the view
+      processEditorContent();
+      showAlert('JS code formatted.', 'success', 1500);
+    });
+  }
+
+  // Editable Content Change Listener
+  if (editableContent) {
+    editableContent.addEventListener('input', function() {
+      if (isAutoUpdateEnabled) {
+        processEditorContent();
+      }
+    });
+  }
+
+  // Drag and Drop Event Listeners
+  if (dropZone) {
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+      dropZone.addEventListener(eventName, preventDefaults, false);
+    });
+    
+    ['dragenter', 'dragover'].forEach(eventName => {
+      dropZone.addEventListener(eventName, function() {
+        dropZone.classList.add('active');
+      }, false);
+    });
+    
+    ['dragleave', 'drop'].forEach(eventName => {
+      dropZone.addEventListener(eventName, function() {
+        dropZone.classList.remove('active');
+      }, false);
+    });
+    
+    dropZone.addEventListener('drop', handleDrop, false);
+  }
+
+  // Browse Button
+  if (browseBtn && fileInput) {
+    browseBtn.addEventListener('click', function() {
+      fileInput.click();
+    });
+  }
+
+  // File Input
+  if (fileInput) {
+    fileInput.addEventListener('change', handleFiles);
+  }
+
+  // API Settings Modal Events
+  if (apiSettingsBtn) {
+    apiSettingsBtn.addEventListener('click', () => {
+      if (apiSettingsModal) {
+        // Fill in current values
+        if (apiBaseUrlInput) apiBaseUrlInput.value = apiSettings.baseUrl;
+        if (apiPageIdInput) apiPageIdInput.value = apiSettings.pageId;
+        if (apiBearerTokenInput) apiBearerTokenInput.value = apiSettings.bearerToken;
+        
+        // Clear previous test results
+        if (testResultElement) testResultElement.className = 'test-result';
+        
+        // Show the modal
+        apiSettingsModal.classList.add('show');
+      }
+    });
+  }
+
+  // Log Console Buttons Events
+  if (clearLogBtn) {
+    clearLogBtn.addEventListener('click', () => {
+      Logger.clear();
+    });
+  }
+
+  if (closeLogBtn) {
+    closeLogBtn.addEventListener('click', () => {
+      Logger.hide();
+    });
+  }
+
+  // ===============================
+  // INITIALIZATION
+  // ===============================
+  
+  // Initialize the editor
+  async function initializeEditor() {
+    Logger.info("Initializing KB Editor with Confluence API integration...");
+    
+    // Try to detect Confluence page ID
+    const detectedPageId = extractConfluencePageId();
+    if (detectedPageId) {
+      Logger.info(`Auto-detected Confluence page ID: ${detectedPageId}`);
+      apiSettings.pageId = detectedPageId;
+      if (apiPageIdInput) apiPageIdInput.value = detectedPageId;
+    }
+    
+    // Load API settings from storage
+    const settingsLoaded = loadApiSettingsFromStorage();
+    
+    // If we have settings, try to connect
+    if (settingsLoaded && apiSettings.baseUrl && apiSettings.pageId) {
+      Logger.info("Attempting to connect with saved API settings...");
+      
+      // We don't have the token from storage, so show the API settings modal
+      // to prompt the user to enter their token
+      if (apiSettingsBtn) {
+        apiSettingsBtn.click();
+        
+        if (testResultElement) {
+          testResultElement.textContent = 'Please enter your API token to connect';
+          testResultElement.className = 'test-result';
+        }
+      }
+    }
+    
+    Logger.info("KB Editor initialized and ready for use");
+  }
+
+  // Run initialization when DOM is loaded
+  initializeEditor();
+});
+</script>
+</body>
+</html>

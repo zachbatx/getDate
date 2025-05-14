@@ -1492,7 +1492,74 @@
   }
 
   // Load JS file content from Confluence API
-  async function loadJSFileContent(filename) {
+ async function loadJSFileContent(filename) {
+  if (!editableContent || !jsEditorElement || !outputFileName || !exportBtn || !fileInfo) return; // Check elements
+
+  console.log(`Loading JS file: ${filename}`);
+  
+  // Reset editor state before loading new content
+  resetEditorState(); // Add this line to clear state before loading new content
+  
+  loadedJsFilename = filename; // Track loaded file
+  showAlert(`Loading ${filename}...`, 'info', 2000);
+
+  try {
+    const jsContent = await getJsFileFromConfluence(filename);
+    
+    if (!jsContent) {
+      throw new Error("Received empty content.");
+    }
+    console.log(`Content loaded for ${filename}. Length: ${jsContent.length}`);
+    jsEditorElement.textContent = jsContent; // Show raw content in JS view first
+
+    const extractedData = extractDataFromJsCode(jsContent);
+    console.log("Extracted data:", extractedData);
+
+    if (extractedData.type === 'llmPrimer') {
+      currentMarkdownContent = extractedData.content;
+      currentJsObject = { // Create a basic JS object representation
+        name: extractedData.name,
+        title: extractedData.name.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()), // Infer title
+        category: '', // Category not stored in llmPrimer, leave empty
+        content: '' // Will be populated by markdown->html conversion
+      };
+      documentName = currentJsObject.name; // Update global var if needed
+
+      // Convert Markdown to HTML for the rich text editor
+      const htmlContent = markdownToHtml(currentMarkdownContent);
+      editableContent.innerHTML = htmlContent;
+      currentJsObject.content = htmlContent; // Store HTML in object
+
+      // Update Markdown view
+      markdownEditor.textContent = currentMarkdownContent;
+
+      // Switch to the original content tab by default when loading
+      contentTabs.forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.content-tab-panel').forEach(c => c.classList.remove('active'));
+      document.querySelector('.content-tab[data-content-tab="original"]').classList.add('active');
+      document.getElementById('originalContent').classList.add('active');
+    } else {
+      // Handle other potential types if needed in the future
+      throw new Error("Loaded JS file is not in the expected llmPrimerRegister format.");
+    }
+
+    outputFileName.value = filename; // Ensure filename matches loaded file
+    exportBtn.disabled = false;
+    exportBtn.textContent = 'Save'; // Change button text to 'Save'
+    fileInfo.classList.remove('show'); // Hide DOCX info area
+    userModifiedFilename = false; // Reset after successful load
+
+    showAlert(`JS File '${filename}' loaded successfully!`, 'success');
+  } catch (error) {
+    console.error(`Error loading JS file '${filename}':`, error);
+    editableContent.innerHTML = `<p>Error displaying content. Invalid or unsupported JS file format.<br><i>${error.message}</i></p>`;
+    if (markdownEditor) markdownEditor.textContent = "Error processing JS file.";
+    if (jsEditorElement) jsEditorElement.textContent = error.message; // Show error in JS view
+    showAlert(`Error loading JS File '${filename}': ${error.message}`, 'error', 6000);
+    exportBtn.disabled = true; // Disable saving if processing failed
+    resetEditorState(true); // Clear everything on load failure
+  }
+}
     if (!editableContent || !jsEditorElement || !outputFileName || !exportBtn || !fileInfo) return; // Check elements
 
     console.log(`Loading JS file: ${filename}`);
@@ -1579,7 +1646,49 @@
   }
 
   // Convert Markdown to HTML (for rich text editor)
-  function markdownToHtml(markdown) {
+ function markdownToHtml(markdown) {
+  // First check if the content appears to already be HTML
+  const containsHtmlTags = /<[a-z][\s\S]*>/i.test(markdown);
+  
+  if (containsHtmlTags) {
+    // If it contains HTML tags, try to clean it up to avoid nested tags
+    console.log("Content appears to already contain HTML tags, performing minimal conversion");
+    
+    // Just ensure paragraphs are wrapped properly
+    const paragraphs = markdown.split('\n\n');
+    const processedHtml = paragraphs.map(p => {
+      if (!p.trim()) return '';
+      // Only wrap in <p> if it doesn't already start with an HTML tag
+      if (p.trim().match(/^<([a-z][a-z0-9]*)\b[^>]*>/i)) return p;
+      return `<p>${p}</p>`;
+    }).join('\n');
+    
+    return processedHtml;
+  }
+  
+  // If it's regular markdown, proceed with normal conversion
+  let html = markdown
+    .replace(/# (.*?)(\n|$)/g, '<h1>$1</h1>$2')
+    .replace(/## (.*?)(\n|$)/g, '<h2>$1</h2>$2')
+    .replace(/### (.*?)(\n|$)/g, '<h3>$1</h3>$2')
+    .replace(/#### (.*?)(\n|$)/g, '<h4>$1</h4>$2')
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.*?)\*/g, '<em>$1</em>')
+    .replace(/__(.*?)__/g, '<strong>$1</strong>')
+    .replace(/_(.*?)_/g, '<em>$1</em>')
+    .replace(/\n- (.*)/g, '\n<ul><li>$1</li></ul>')
+    .replace(/<\/ul>\n<ul>/g, '');
+    
+  // Convert paragraphs (lines with no formatting)
+  const paragraphs = html.split('\n\n');
+  html = paragraphs.map(p => {
+    if (!p.trim()) return '';
+    if (p.trim().match(/^<([a-z][a-z0-9]*)\b[^>]*>/i)) return p; // Already has HTML tag
+    return `<p>${p}</p>`;
+  }).join('\n');
+  
+  return html;
+}
     // Simple conversion for basic markdown
     // Note: In a real application, you would use a proper markdown to HTML converter
     let html = markdown
@@ -1709,72 +1818,7 @@
   }
 
   // Modified exportFile function - respects user filenames while preserving API functionality
-   async function exportFile() {
-    if (!currentJsObject || !currentMarkdownContent || !outputFileName || !exportBtn) {
-      showAlert("Cannot export/save: Content is missing or hasn't been processed.", "error");
-      console.error("Export aborted: currentJsObject or currentMarkdownContent is null/undefined.");
-      return;
-    }
-
-    console.log("Export/Save initiated");
-
-    // Ensure content is up-to-date before saving
-    processEditorContent();
-
-    // Generate the final JS content (LLM Primer)
-    const kbNameForExport = currentJsObject.name || 'unnamed_kb';
-    const jsContentToSave = generateLlmPrimerCode(kbNameForExport, currentMarkdownContent);
-
-    // Normalize user-entered filename: strip any existing prefix or extension, then prepend 'kb_'
-    const rawName = outputFileName.value.trim();
-    const baseName = rawName.replace(/^kb_/, '').replace(/\.js$/i, '') || kbNameForExport;
-    const finalFileName = `kb_${baseName}.js`;
-    outputFileName.value = finalFileName;
-
-    // Determine if this is a new file or an update
-    const isNewFile = !loadedJsFilename || loadedJsFilename !== finalFileName;
-    if (isNewFile && loadedJsFilename) {
-      const confirmMessage = `You're about to create a new file '${finalFileName}' instead of updating '${loadedJsFilename}'. Continue?`;
-      if (!confirm(confirmMessage)) {
-        console.log("File creation cancelled by user");
-        return;
-      }
-    }
-
-    // Disable button during save
-    exportBtn.disabled = true;
-    exportBtn.textContent = isNewFile ? 'Creating...' : 'Updating...';
-
-    try {
-      // Use Confluence API to upload the file
-      await uploadJsFileToConfluence(finalFileName, jsContentToSave);
-
-      // Update the file dropdown if this is a new file
-      addToFileDropdown(finalFileName);
-
-      // Show success alert
-      if (isNewFile) {
-        showAlert(`Created new file '${finalFileName}'`, 'success');
-      } else {
-        showAlert(`Updated '${finalFileName}' successfully!`, 'success');
-      }
-
-      // Update loaded filename track and dropdown selection
-      loadedJsFilename = finalFileName;
-      if (fileDropdown) fileDropdown.value = finalFileName;
-    } catch (error) {
-      console.error(error);
-      showAlert(`Error saving file: ${error.message}`, 'error');
-      // Fallback: offer direct download
-      const jsFileBlob = new Blob([jsContentToSave], { type: 'application/javascript;charset=utf-8' });
-      const jsFile = new File([jsFileBlob], finalFileName, { type: 'application/javascript;charset=utf-8' });
-      offerDirectDownload(jsFile);
-    } finally {
-      exportBtn.disabled = false;
-      exportBtn.textContent = 'Save';
-    }
-  }
-
+  async function exportFile() {
     if (!currentJsObject || !currentMarkdownContent || !outputFileName || !exportBtn) {
       showAlert("Cannot export/save: Content is missing or hasn't been processed.", "error");
       console.error("Export aborted: currentJsObject or currentMarkdownContent is null/undefined.");

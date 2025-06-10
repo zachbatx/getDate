@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Overdraft Fee Refund - Salt Banking System</title>
+    <style>
+        /* Salt Design System Token-based Styling */
+        :root {
+            /* Color tokens */
+            --salt-color-primary: #2563eb;
+            --salt-color-primary-hover: #1d4ed8;
+            --salt-color-primary-active: #1e40af;
+            --salt-color-secondary: #64748b;
+            --salt-color-success: #10b981;
+            --salt-color-warning: #f59e0b;
+            --salt-color-error: #ef4444;
+            --salt-color-background: #ffffff;
+            --salt-color-surface: #f8fafc;
+            --salt-color-border: #e2e8f0;
+            --salt-color-text-primary: #0f172a;
+            --salt-color-text-secondary: #475569;
+            --salt-color-text-disabled: #94a3b8;
+
+```
+        /* Spacing tokens (4px grid system) */
+        --salt-spacing-xs: 4px;
+        --salt-spacing-sm: 8px;
+        --salt-spacing-md: 16px;
+        --salt-spacing-lg: 24px;
+        --salt-spacing-xl: 32px;
+        --salt-spacing-2xl: 48px;
+        
+        /* Typography tokens */
+        --salt-typography-heading-large: 28px;
+        --salt-typography-heading-medium: 20px;
+        --salt-typography-heading-small: 16px;
+        --salt-typography-body: 14px;
+        --salt-typography-caption: 12px;
+        
+        /* Border radius */
+        --salt-border-radius: 4px;
+        --salt-border-radius-lg: 8px;
+        
+        /* Shadows */
+        --salt-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        --salt-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        --salt-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    }
+
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        background-color: var(--salt-color-surface);
+        color: var(--salt-color-text-primary);
+        line-height: 1.5;
+        font-size: var(--salt-typography-body);
+    }
+
+    /* Layout Components */
+    .salt-app-container {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .salt-header {
+        background-color: var(--salt-color-background);
+        border-bottom: 1px solid var(--salt-color-border);
+        padding: var(--salt-spacing-md) var(--salt-spacing-xl);
+        box-shadow: var(--salt-shadow-sm);
+    }
+
+    .salt-header-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .salt-logo {
+        font-size: var(--salt-typography-heading-medium);
+        font-weight: 600;
+        color: var(--salt-color-primary);
+    }
+
+    .salt-user-info {
+        display: flex;
+        align-items: center;
+        gap: var(--salt-spacing-md);
+        color: var(--salt-color-text-secondary);
+    }
+
+    .salt-main {
+        flex: 1;
+        padding: var(--salt-spacing-2xl);
+        max-width: 1200px;
+        margin: 0 auto;
+        width: 100%;
+    }
+
+    /* Card Component */
+    .salt-card {
+        background-color: var(--salt-color-background);
+        border: 1px solid var(--salt-color-border);
+        border-radius: var(--salt-border-radius-lg);
+        box-shadow: var(--salt-shadow-md);
+        overflow: hidden;
+    }
+
+    .salt-card-header {
+        padding: var(--salt-spacing-lg);
+        border-bottom: 1px solid var(--salt-color-border);
+        background-color: var(--salt-color-surface);
+    }
+
+    .salt-card-content {
+        padding: var(--salt-spacing-lg);
+    }
+
+    /* Typography */
+    .salt-heading-large {
+        font-size: var(--salt-typography-heading-large);
+        font-weight: 600;
+        margin-bottom: var(--salt-spacing-md);
+    }
+
+    .salt-heading-medium {
+        font-size: var(--salt-typography-heading-medium);
+        font-weight: 600;
+        margin-bottom: var(--salt-spacing-sm);
+    }
+
+    .salt-heading-small {
+        font-size: var(--salt-typography-heading-small);
+        font-weight: 600;
+        margin-bottom: var(--salt-spacing-sm);
+    }
+
+    /* Form Components */
+    .salt-form-group {
+        margin-bottom: var(--salt-spacing-lg);
+    }
+
+    .salt-form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: var(--salt-spacing-lg);
+        margin-bottom: var(--salt-spacing-lg);
+    }
+
+    .salt-label {
+        display: block;
+        font-weight: 500;
+        margin-bottom: var(--salt-spacing-xs);
+        color: var(--salt-color-text-primary);
+    }
+
+    .salt-input {
+        width: 100%;
+        padding: var(--salt-spacing-sm) var(--salt-spacing-md);
+        border: 1px solid var(--salt-color-border);
+        border-radius: var(--salt-border-radius);
+        font-size: var(--salt-typography-body);
+        transition: all 0.2s ease;
+    }
+
+    .salt-input:focus {
+        outline: none;
+        border-color: var(--salt-color-primary);
+        box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+    }
+
+    .salt-input:disabled {
+        background-color: var(--salt-color-surface);
+        color: var(--salt-color-text-disabled);
+        cursor: not-allowed;
+    }
+
+    .salt-textarea {
+        min-height: 80px;
+        resize: vertical;
+        font-family: inherit;
+    }
+
+    .salt-select {
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+        background-position: right var(--salt-spacing-sm) center;
+        background-repeat: no-repeat;
+        background-size: 1.5em 1.5em;
+        padding-right: var(--salt-spacing-xl);
+    }
+
+    /* Button Components */
+    .salt-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: var(--salt-spacing-xs);
+        padding: var(--salt-spacing-sm) var(--salt-spacing-md);
+        border: 1px solid transparent;
+        border-radius: var(--salt-border-radius);
+        font-size: var(--salt-typography-body);
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-decoration: none;
+        min-height: 36px;
+    }
+
+    .salt-button-primary {
+        background-color: var(--salt-color-primary);
+        color: white;
+    }
+
+    .salt-button-primary:hover {
+        background-color: var(--salt-color-primary-hover);
+    }
+
+    .salt-button-primary:active {
+        background-color: var(--salt-color-primary-active);
+    }
+
+    .salt-button-secondary {
+        background-color: transparent;
+        color: var(--salt-color-text-primary);
+        border-color: var(--salt-color-border);
+    }
+
+    .salt-button-secondary:hover {
+        background-color: var(--salt-color-surface);
+    }
+
+    .salt-button-success {
+        background-color: var(--salt-color-success);
+        color: white;
+    }
+
+    .salt-button-success:hover {
+        background-color: #059669;
+    }
+
+    .salt-button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    /* Alert Components */
+    .salt-alert {
+        padding: var(--salt-spacing-md);
+        border-radius: var(--salt-border-radius);
+        margin-bottom: var(--salt-spacing-lg);
+        display: flex;
+        align-items: flex-start;
+        gap: var(--salt-spacing-sm);
+    }
+
+    .salt-alert-success {
+        background-color: #ecfdf5;
+        border: 1px solid #a7f3d0;
+        color: #065f46;
+    }
+
+    .salt-alert-warning {
+        background-color: #fffbeb;
+        border: 1px solid #fde68a;
+        color: #92400e;
+    }
+
+    .salt-alert-error {
+        background-color: #fef2f2;
+        border: 1px solid #fecaca;
+        color: #991b1b;
+    }
+
+    /* Table Components */
+    .salt-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: var(--salt-spacing-lg);
+    }
+
+    .salt-table th,
+    .salt-table td {
+        padding: var(--salt-spacing-sm) var(--salt-spacing-md);
+        text-align: left;
+        border-bottom: 1px solid var(--salt-color-border);
+    }
+
+    .salt-table th {
+        background-color: var(--salt-color-surface);
+        font-weight: 600;
+        color: var(--salt-color-text-secondary);
+        font-size: var(--salt-typography-caption);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .salt-table tr:hover {
+        background-color: var(--salt-color-surface);
+    }
+
+    /* Badge Components */
+    .salt-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: var(--salt-spacing-xs) var(--salt-spacing-sm);
+        border-radius: var(--salt-border-radius);
+        font-size: var(--salt-typography-caption);
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .salt-badge-error {
+        background-color: #fef2f2;
+        color: #991b1b;
+    }
+
+    .salt-badge-success {
+        background-color: #ecfdf5;
+        color: #065f46;
+    }
+
+    /* Utility Classes */
+    .salt-flex {
+        display: flex;
+    }
+
+    .salt-flex-between {
+        justify-content: space-between;
+    }
+
+    .salt-flex-center {
+        align-items: center;
+    }
+
+    .salt-gap-md {
+        gap: var(--salt-spacing-md);
+    }
+
+    .salt-text-right {
+        text-align: right;
+    }
+
+    .salt-text-success {
+        color: var(--salt-color-success);
+    }
+
+    .salt-text-error {
+        color: var(--salt-color-error);
+    }
+
+    .salt-hidden {
+        display: none;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .salt-form-row {
+            grid-template-columns: 1fr;
+        }
+        
+        .salt-main {
+            padding: var(--salt-spacing-md);
+        }
+    }
+</style>
+```
+
+</head>
+<body>
+    <div class="salt-app-container">
+        <!-- Header -->
+        <header class="salt-header">
+            <div class="salt-header-content">
+                <div class="salt-logo">J.P. Morgan Banking System</div>
+                <div class="salt-user-info">
+                    <span>Employee ID: EMP12345</span>
+                    <span>|</span>
+                    <span>Sarah Chen</span>
+                </div>
+            </div>
+        </header>
+
+```
+    <!-- Main Content -->
+    <main class="salt-main">
+        <div class="salt-heading-large">Overdraft Fee Refund Request</div>
+
+        <!-- Customer Search -->
+        <div class="salt-card" style="margin-bottom: var(--salt-spacing-xl);">
+            <div class="salt-card-header">
+                <div class="salt-heading-medium">Customer Lookup</div>
+            </div>
+            <div class="salt-card-content">
+                <div class="salt-form-row">
+                    <div class="salt-form-group">
+                        <label class="salt-label" for="accountNumber">Account Number</label>
+                        <input type="text" id="accountNumber" class="salt-input" placeholder="Enter account number">
+                    </div>
+                    <div class="salt-form-group">
+                        <label class="salt-label" for="customerId">Customer ID</label>
+                        <input type="text" id="customerId" class="salt-input" placeholder="Enter customer ID">
+                    </div>
+                </div>
+                <button class="salt-button salt-button-primary" onclick="searchCustomer()">
+                    Search Customer
+                </button>
+            </div>
+        </div>
+
+        <!-- Customer Information (Initially Hidden) -->
+        <div id="customerInfo" class="salt-card salt-hidden" style="margin-bottom: var(--salt-spacing-xl);">
+            <div class="salt-card-header">
+                <div class="salt-heading-medium">Customer Information</div>
+            </div>
+            <div class="salt-card-content">
+                <div class="salt-form-row">
+                    <div>
+                        <div class="salt-heading-small">Account Holder</div>
+                        <p id="customerName">Michael Rodriguez</p>
+                        <p id="customerEmail">michael.rodriguez@email.com</p>
+                    </div>
+                    <div>
+                        <div class="salt-heading-small">Account Details</div>
+                        <p><strong>Account:</strong> <span id="displayAccountNumber">****-****-1234</span></p>
+                        <p><strong>Current Balance:</strong> <span id="currentBalance">-$127.45</span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Overdraft Fees Table (Initially Hidden) -->
+        <div id="overdraftFeesSection" class="salt-card salt-hidden" style="margin-bottom: var(--salt-spacing-xl);">
+            <div class="salt-card-header">
+                <div class="salt-heading-medium">Recent Overdraft Fees</div>
+            </div>
+            <div class="salt-card-content">
+                <table class="salt-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Transaction</th>
+                            <th>Fee Amount</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="overdraftFeesTable">
+                        <!-- Populated dynamically -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Refund Form (Initially Hidden) -->
+        <div id="refundForm" class="salt-card salt-hidden" style="margin-bottom: var(--salt-spacing-xl);">
+            <div class="salt-card-header">
+                <div class="salt-heading-medium">Process Refund</div>
+            </div>
+            <div class="salt-card-content">
+                <div id="refundAlert" class="salt-alert salt-alert-warning">
+                    <span>⚠️</span>
+                    <div>
+                        <strong>Review Required:</strong> Please verify all details before processing the refund.
+                    </div>
+                </div>
+
+                <div class="salt-form-row">
+                    <div class="salt-form-group">
+                        <label class="salt-label" for="refundAmount">Refund Amount</label>
+                        <input type="text" id="refundAmount" class="salt-input" readonly>
+                    </div>
+                    <div class="salt-form-group">
+                        <label class="salt-label" for="refundReason">Refund Reason</label>
+                        <select id="refundReason" class="salt-input salt-select">
+                            <option value="">Select reason</option>
+                            <option value="bank_error">Bank Processing Error</option>
+                            <option value="customer_goodwill">Customer Goodwill</option>
+                            <option value="first_occurrence">First Time Occurrence</option>
+                            <option value="system_issue">System Technical Issue</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="salt-form-group">
+                    <label class="salt-label" for="refundNotes">Additional Notes</label>
+                    <textarea id="refundNotes" class="salt-input salt-textarea" placeholder="Enter any additional notes or explanation for the refund..."></textarea>
+                </div>
+
+                <div class="salt-form-group">
+                    <label class="salt-label" for="managerApproval">Manager Approval Required</label>
+                    <select id="managerApproval" class="salt-input salt-select">
+                        <option value="no">No - Within Authority Limit</option>
+                        <option value="yes">Yes - Requires Manager Approval</option>
+                    </select>
+                </div>
+
+                <div class="salt-flex salt-gap-md">
+                    <button class="salt-button salt-button-success" onclick="processRefund()" id="processBtn">
+                        Process Refund
+                    </button>
+                    <button class="salt-button salt-button-secondary" onclick="cancelRefund()">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Success Message (Initially Hidden) -->
+        <div id="successMessage" class="salt-alert salt-alert-success salt-hidden">
+            <span>✓</span>
+            <div>
+                <strong>Refund Processed Successfully!</strong>
+                <p>Refund ID: <span id="refundId"></span> has been processed and will appear in the customer's account within 1-2 business days.</p>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script>
+    // Sample data
+    const sampleOverdraftFees = [
+        {
+            id: 'OF001',
+            date: '2025-06-08',
+            transaction: 'Debit Card Purchase - Grocery Store',
+            amount: 35.00,
+            status: 'Active'
+        },
+        {
+            id: 'OF002',
+            date: '2025-06-07',
+            transaction: 'ACH Payment - Utility Bill',
+            amount: 35.00,
+            status: 'Active'
+        },
+        {
+            id: 'OF003',
+            date: '2025-06-05',
+            transaction: 'Check Payment #1234',
+            amount: 35.00,
+            status: 'Refunded'
+        }
+    ];
+
+    let selectedFee = null;
+
+    function searchCustomer() {
+        const accountNumber = document.getElementById('accountNumber').value;
+        const customerId = document.getElementById('customerId').value;
+
+        if (!accountNumber && !customerId) {
+            alert('Please enter either an account number or customer ID');
+            return;
+        }
+
+        // Simulate API call
+        setTimeout(() => {
+            showCustomerInfo();
+            loadOverdraftFees();
+        }, 500);
+    }
+
+    function showCustomerInfo() {
+        document.getElementById('customerInfo').classList.remove('salt-hidden');
+        document.getElementById('overdraftFeesSection').classList.remove('salt-hidden');
+    }
+
+    function loadOverdraftFees() {
+        const tableBody = document.getElementById('overdraftFeesTable');
+        tableBody.innerHTML = '';
+
+        sampleOverdraftFees.forEach(fee => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${new Date(fee.date).toLocaleDateString()}</td>
+                <td>${fee.transaction}</td>
+                <td class="salt-text-error">$${fee.amount.toFixed(2)}</td>
+                <td>
+                    <span class="salt-badge ${fee.status === 'Active' ? 'salt-badge-error' : 'salt-badge-success'}">
+                        ${fee.status}
+                    </span>
+                </td>
+                <td>
+                    ${fee.status === 'Active' ? 
+                        `<button class="salt-button salt-button-primary" onclick="selectFeeForRefund('${fee.id}', ${fee.amount})">Refund</button>` :
+                        '<span class="salt-text-success">Refunded</span>'
+                    }
+                </td>
+            `;
+            tableBody.appendChild(row);
+        });
+    }
+
+    function selectFeeForRefund(feeId, amount) {
+        selectedFee = { id: feeId, amount: amount };
+        document.getElementById('refundAmount').value = `$${amount.toFixed(2)}`;
+        document.getElementById('refundForm').classList.remove('salt-hidden');
+        
+        // Scroll to refund form
+        document.getElementById('refundForm').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function processRefund() {
+        const reason = document.getElementById('refundReason').value;
+        const notes = document.getElementById('refundNotes').value;
+        const managerApproval = document.getElementById('managerApproval').value;
+
+        if (!reason) {
+            alert('Please select a refund reason');
+            return;
+        }
+
+        if (managerApproval === 'yes') {
+            alert('Manager approval required. Request has been sent to your manager for approval.');
+            return;
+        }
+
+        // Simulate processing
+        const processBtn = document.getElementById('processBtn');
+        processBtn.textContent = 'Processing...';
+        processBtn.disabled = true;
+
+        setTimeout(() => {
+            // Generate refund ID
+            const refundId = 'REF' + Date.now().toString().slice(-6);
+            document.getElementById('refundId').textContent = refundId;
+            
+            // Show success message
+            document.getElementById('successMessage').classList.remove('salt-hidden');
+            
+            // Hide refund form
+            document.getElementById('refundForm').classList.add('salt-hidden');
+            
+            // Update the table to show refunded status
+            updateFeeStatus(selectedFee.id);
+            
+            // Scroll to success message
+            document.getElementById('successMessage').scrollIntoView({ behavior: 'smooth' });
+            
+            // Reset form
+            resetForm();
+        }, 2000);
+    }
+
+    function updateFeeStatus(feeId) {
+        const fee = sampleOverdraftFees.find(f => f.id === feeId);
+        if (fee) {
+            fee.status = 'Refunded';
+            loadOverdraftFees();
+        }
+    }
+
+    function cancelRefund() {
+        document.getElementById('refundForm').classList.add('salt-hidden');
+        resetForm();
+    }
+
+    function resetForm() {
+        document.getElementById('refundAmount').value = '';
+        document.getElementById('refundReason').value = '';
+        document.getElementById('refundNotes').value = '';
+        document.getElementById('managerApproval').value = 'no';
+        
+        const processBtn = document.getElementById('processBtn');
+        processBtn.textContent = 'Process Refund';
+        processBtn.disabled = false;
+        
+        selectedFee = null;
+    }
+
+    // Auto-populate account number field for demo
+    document.getElementById('accountNumber').value = '1234567890';
+</script>
+```
+
+</body>
+</html>

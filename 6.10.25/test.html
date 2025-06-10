@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bank Credit Card Replacement Tool</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            margin: auto;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        input[type="text"] {
+            width: calc(100% - 22px); /* Adjust for padding and border */
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1em;
+        }
+        button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        #status {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 4px;
+            min-height: 1.2em; /* Reserve space */
+        }
+        .status-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .status-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .status-info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Credit Card Replacement Tool</h1>
+
+        <div class="form-group">
+            <label for="customerId">Customer ID:</label>
+            <input type="text" id="customerId" placeholder="Enter Customer ID">
+        </div>
+
+        <div class="form-group">
+            <label for="cardIdentifier">Card Identifier:</label>
+            <input type="text" id="cardIdentifier" placeholder="e.g., last 4 digits or internal Card ID">
+        </div>
+
+        <button id="replaceButton">Initiate Card Replacement</button>
+
+        <div id="status"></div>
+    </div>
+
+    <script>
+        // Get references to HTML elements
+        const customerIdInput = document.getElementById('customerId');
+        const cardIdentifierInput = document.getElementById('cardIdentifier');
+        const replaceButton = document.getElementById('replaceButton');
+        const statusDiv = document.getElementById('status');
+
+        // Add event listener to the button
+        replaceButton.addEventListener('click', initiateReplacement);
+
+        /**
+         * Displays a status message in the status area.
+         * @param {string} message - The message to display.
+         * @param {'success' | 'error' | 'info'} type - The type of message (determines styling).
+         */
+        function displayStatus(message, type) {
+            statusDiv.textContent = message;
+            statusDiv.className = ''; // Clear previous classes
+            statusDiv.classList.add('status-' + type);
+        }
+
+        /**
+         * Simulates the process of initiating a card replacement.
+         */
+        function initiateReplacement() {
+            const customerId = customerIdInput.value.trim();
+            const cardIdentifier = cardIdentifierInput.value.trim();
+
+            // Basic front-end validation
+            if (!customerId || !cardIdentifier) {
+                displayStatus('Error: Please enter both Customer ID and Card Identifier.', 'error');
+                return; // Stop the function
+            }
+
+            // Disable the button and show processing message
+            replaceButton.disabled = true;
+            displayStatus('Processing request...', 'info');
+
+            // --- SIMULATED BACKEND CALL ---
+            // In a real application, you would use `fetch` or `XMLHttpRequest` here
+            // to send a POST request to a secure backend API endpoint.
+            // Example:
+            // fetch('/api/replace-card', {
+            //     method: 'POST',
+            //     headers: { 'Content-Type': 'application/json' },
+            //     body: JSON.stringify({ customerId: customerId, cardIdentifier: cardIdentifier })
+            // })
+            // .then(response => response.json())
+            // .then(data => {
+            //     if (data.success) {
+            //         displayStatus('Replacement initiated successfully! New card will be sent.', 'success');
+            //     } else {
+            //         displayStatus('Error: ' + data.message, 'error');
+            //     }
+            // })
+            // .catch(error => {
+            //     console.error('API Error:', error);
+            //     displayStatus('An unexpected error occurred. Please try again.', 'error');
+            // })
+            // .finally(() => {
+            //     replaceButton.disabled = false; // Re-enable button
+            // });
+            // --- END SIMULATED BACKEND CALL ---
+
+
+            // --- SIMULATION LOGIC (for this example) ---
+            // We'll use setTimeout to mimic network latency and
+            // simple logic to simulate different outcomes based on input.
+            setTimeout(() => {
+                let success = false;
+                let message = '';
+                let type = '';
+
+                // Simulate different scenarios based on the card identifier
+                if (cardIdentifier === '1234') { // Simulate success for a known identifier
+                    success = true;
+                    message = `Successfully initiated replacement for card ending in ${cardIdentifier} for Customer ${customerId}. A new card will be processed.`;
+                    type = 'success';
+                } else if (cardIdentifier === '5678') { // Simulate a failure scenario
+                    success = false;
+                    message = `Error: Card identifier ${cardIdentifier} is blocked and cannot be replaced.`;
+                    type = 'error';
+                } else if (cardIdentifier === '9999') { // Simulate card not found
+                     success = false;
+                    message = `Error: Card identifier ${cardIdentifier} not found for Customer ${customerId}. Please verify details.`;
+                    type = 'error';
+                }
+                 else { // Default successful outcome for other inputs
+                    success = true;
+                    message = `Simulated Success: Replacement requested for card ${cardIdentifier} for Customer ${customerId}. Processing initiated.`;
+                    type = 'success';
+                }
+
+                // Display the result of the simulation
+                displayStatus(message, type);
+
+                // Re-enable the button
+                replaceButton.disabled = false;
+
+            }, 2000); // Simulate a 2-second delay for processing
+            // --- END SIMULATION LOGIC ---
+        }
+
+    </script>
+
+</body>
+</html>

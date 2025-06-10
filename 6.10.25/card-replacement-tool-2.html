@@ -1,0 +1,1015 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Card Replacement System - Bank Employee Portal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #1a73e8;
+            --secondary-color: #34a853;
+            --danger-color: #ea4335;
+            --warning-color: #fbbc04;
+            --dark-bg: #1f2937;
+            --light-bg: #f8f9fa;
+            --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --hover-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .header {
+            background-color: #1f2937;
+            color: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .employee-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: #1f2937;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #555;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: border-color 0.3s ease;
+            background-color: white;
+        }
+
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #1a73e8;
+        }
+
+        input[type="checkbox"] {
+            margin-right: 0.5rem;
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+
+        .input-error {
+            border-color: #ea4335 !important;
+        }
+
+        .error-message {
+            color: #ea4335;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+            display: block;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            font-family: inherit;
+        }
+
+        .btn-primary {
+            background-color: #1a73e8;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #1557b0;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+
+        .btn-danger {
+            background-color: #ea4335;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #d33b2c;
+        }
+
+        .btn-success {
+            background-color: #34a853;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background-color: #2d9048;
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .customer-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .credit-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            min-height: 150px;
+        }
+
+        .credit-card.selected {
+            box-shadow: 0 0 0 3px #34a853;
+            transform: scale(1.02);
+        }
+
+        .credit-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .credit-card.selected:hover {
+            transform: scale(1.02) translateY(-4px);
+        }
+
+        .card-number {
+            font-size: 1.2rem;
+            letter-spacing: 2px;
+            margin-bottom: 1rem;
+            font-family: 'Courier New', monospace;
+        }
+
+        .card-details {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .card-status {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            background-color: rgba(255, 255, 255, 0.9);
+        }
+
+        .status-active {
+            color: #34a853;
+        }
+
+        .status-blocked {
+            color: #ea4335;
+        }
+
+        .progress-bar {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 3rem;
+            position: relative;
+            padding: 0 20px;
+        }
+
+        .progress-bar::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 40px;
+            right: 40px;
+            height: 2px;
+            background-color: #e0e0e0;
+            z-index: 0;
+        }
+
+        .progress-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .step-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            color: #666;
+        }
+
+        .step-circle.active {
+            background-color: #1a73e8;
+            color: white;
+        }
+
+        .step-circle.completed {
+            background-color: #34a853;
+            color: white;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            overflow: auto;
+        }
+
+        .modal-content {
+            position: relative;
+            margin: 50px auto;
+            background-color: white;
+            padding: 2rem;
+            border-radius: 12px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            width: 30px;
+            height: 30px;
+            border: none;
+            background-color: transparent;
+            cursor: pointer;
+            font-size: 1.5rem;
+            color: #666;
+            line-height: 1;
+        }
+
+        .close-modal:hover {
+            color: #333;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .summary-item:last-child {
+            border-bottom: none;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #1a73e8;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .success-message {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border: 1px solid #4caf50;
+        }
+
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .two-column {
+                grid-template-columns: 1fr;
+            }
+            
+            .customer-cards {
+                grid-template-columns: 1fr;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .progress-bar {
+                padding: 0 10px;
+            }
+
+            .progress-bar::before {
+                left: 30px;
+                right: 30px;
+            }
+
+            .progress-step span {
+                font-size: 0.75rem;
+                text-align: center;
+            }
+        }
+
+        /* Chrome-specific fixes */
+        @media screen and (-webkit-min-device-pixel-ratio:0) {
+            select {
+                background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+                background-repeat: no-repeat;
+                background-position: right 0.75rem center;
+                background-size: 1rem;
+                padding-right: 2.5rem;
+                -webkit-appearance: none;
+                -moz-appearance: none;
+                appearance: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">🏦 SecureBank Employee Portal</div>
+            <div class="employee-info">
+                <span>Employee ID: E12345</span>
+                <span>|</span>
+                <span>Jane Smith</span>
+                <button class="btn btn-secondary" onclick="logout()">Logout</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="progress-bar">
+            <div class="progress-step">
+                <div class="step-circle active" id="step1">1</div>
+                <span>Customer Search</span>
+            </div>
+            <div class="progress-step">
+                <div class="step-circle" id="step2">2</div>
+                <span>Select Card</span>
+            </div>
+            <div class="progress-step">
+                <div class="step-circle" id="step3">3</div>
+                <span>Replacement Details</span>
+            </div>
+            <div class="progress-step">
+                <div class="step-circle" id="step4">4</div>
+                <span>Confirm & Submit</span>
+            </div>
+        </div>
+
+        <!-- Step 1: Customer Search -->
+        <div class="card" id="customerSearchSection">
+            <h2 class="section-title">
+                <span>🔍</span>
+                Customer Search
+            </h2>
+            <form id="customerSearchForm" onsubmit="searchCustomer(event)">
+                <div class="two-column">
+                    <div class="form-group">
+                        <label for="accountNumber">Account Number</label>
+                        <input type="text" id="accountNumber" placeholder="Enter account number">
+                        <span class="error-message" id="accountNumberError"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="customerId">Customer ID</label>
+                        <input type="text" id="customerId" placeholder="Enter customer ID">
+                        <span class="error-message" id="customerIdError"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="phoneNumber">Phone Number (Last 4 digits for verification)</label>
+                    <input type="text" id="phoneNumber" placeholder="Enter last 4 digits" maxlength="4">
+                    <span class="error-message" id="phoneNumberError"></span>
+                </div>
+                <button type="submit" class="btn btn-primary">
+                    Search Customer
+                </button>
+            </form>
+        </div>
+
+        <!-- Step 2: Select Card -->
+        <div class="card" id="selectCardSection" style="display: none;">
+            <h2 class="section-title">
+                <span>💳</span>
+                Select Card to Replace
+            </h2>
+            <div id="customerInfo" class="summary-item">
+                <strong>Customer:</strong>
+                <span id="customerName"></span>
+            </div>
+            <div class="customer-cards" id="cardsList">
+                <!-- Cards will be dynamically added here -->
+            </div>
+            <button class="btn btn-secondary" onclick="goToStep(1)">Back</button>
+            <button class="btn btn-primary" onclick="goToStep(3)" disabled id="continueToDetails">
+                Continue
+            </button>
+        </div>
+
+        <!-- Step 3: Replacement Details -->
+        <div class="card" id="replacementDetailsSection" style="display: none;">
+            <h2 class="section-title">
+                <span>📝</span>
+                Replacement Details
+            </h2>
+            <form id="replacementForm" onsubmit="reviewOrder(event)">
+                <div class="form-group">
+                    <label for="replacementReason">Reason for Replacement</label>
+                    <select id="replacementReason" required onchange="handleReasonChange()">
+                        <option value="">Select a reason</option>
+                        <option value="lost">Lost Card</option>
+                        <option value="stolen">Stolen Card</option>
+                        <option value="damaged">Damaged Card</option>
+                        <option value="fraud">Fraudulent Activity</option>
+                        <option value="expired">Card Expired</option>
+                        <option value="other">Other</option>
+                    </select>
+                    <span class="error-message" id="replacementReasonError"></span>
+                </div>
+                
+                <div class="form-group" id="otherReasonGroup" style="display: none;">
+                    <label for="otherReason">Please specify</label>
+                    <textarea id="otherReason" rows="3" placeholder="Enter reason"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="shippingMethod">Shipping Method</label>
+                    <select id="shippingMethod" required>
+                        <option value="">Select shipping method</option>
+                        <option value="standard">Standard (5-7 business days)</option>
+                        <option value="express">Express (2-3 business days)</option>
+                        <option value="overnight">Overnight (Next business day)</option>
+                    </select>
+                    <span class="error-message" id="shippingMethodError"></span>
+                </div>
+
+                <div class="two-column">
+                    <div class="form-group">
+                        <label for="shippingAddress">Shipping Address</label>
+                        <select id="shippingAddress" required>
+                            <option value="primary">Primary Address on File</option>
+                            <option value="alternate">Alternate Address</option>
+                            <option value="branch">Branch Pickup</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="contactPreference">Contact Preference</label>
+                        <select id="contactPreference" required>
+                            <option value="email">Email</option>
+                            <option value="sms">SMS</option>
+                            <option value="phone">Phone Call</option>
+                            <option value="all">All Methods</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="additionalNotes">Additional Notes</label>
+                    <textarea id="additionalNotes" rows="3" placeholder="Enter any additional information"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="blockOldCard" checked>
+                        Immediately block old card
+                    </label>
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="rushOrder">
+                        Mark as rush order (additional fee applies)
+                    </label>
+                </div>
+
+                <button type="button" class="btn btn-secondary" onclick="goToStep(2)">Back</button>
+                <button type="submit" class="btn btn-primary">Review Order</button>
+            </form>
+        </div>
+
+        <!-- Step 4: Confirm & Submit -->
+        <div class="card" id="confirmSection" style="display: none;">
+            <h2 class="section-title">
+                <span>✔️</span>
+                Review and Confirm
+            </h2>
+            <div id="orderSummary">
+                <!-- Summary will be dynamically added here -->
+            </div>
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" id="confirmVerification" onchange="handleVerificationChange()">
+                    I have verified the customer's identity and authorize this card replacement
+                </label>
+            </div>
+            <button class="btn btn-secondary" onclick="goToStep(3)">Back</button>
+            <button class="btn btn-success" onclick="submitReplacement()" disabled id="submitButton">
+                <span id="submitButtonText">Submit Replacement Order</span>
+                <span class="loading" style="display: none;" id="submitLoading"></span>
+            </button>
+        </div>
+
+        <!-- Success Message -->
+        <div class="success-message" id="successMessage" style="display: none;">
+            <span>✅</span>
+            <div>
+                <strong>Card replacement order submitted successfully!</strong>
+                <p>Order ID: <span id="orderId"></span></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for additional confirmations -->
+    <div class="modal" id="confirmModal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeModal()">&times;</button>
+            <h3>Confirm High-Risk Action</h3>
+            <p id="modalMessage"></p>
+            <div style="margin-top: 2rem; display: flex; gap: 1rem;">
+                <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                <button class="btn btn-danger" onclick="confirmHighRiskAction()">Proceed</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // State management
+        var currentStep = 1;
+        var selectedCard = null;
+        var customerData = null;
+        var replacementData = {};
+
+        // Mock data - In production, this would come from your API
+        var mockCustomerData = {
+            customerId: 'C123456',
+            name: 'John Doe',
+            accountNumber: 'ACC789012',
+            cards: [
+                {
+                    id: 'CARD001',
+                    number: '•••• •••• •••• 4532',
+                    type: 'Visa Platinum',
+                    expiry: '08/26',
+                    status: 'active',
+                    limit: '$10,000'
+                },
+                {
+                    id: 'CARD002',
+                    number: '•••• •••• •••• 7891',
+                    type: 'Mastercard Gold',
+                    expiry: '12/25',
+                    status: 'active',
+                    limit: '$5,000'
+                },
+                {
+                    id: 'CARD003',
+                    number: '•••• •••• •••• 2468',
+                    type: 'Visa Signature',
+                    expiry: '03/24',
+                    status: 'blocked',
+                    limit: '$15,000'
+                }
+            ]
+        };
+
+        function searchCustomer(e) {
+            e.preventDefault();
+            
+            // Clear previous errors
+            clearErrors();
+            
+            // Validate inputs
+            var accountNumber = document.getElementById('accountNumber').value;
+            var customerId = document.getElementById('customerId').value;
+            var phoneNumber = document.getElementById('phoneNumber').value;
+            
+            var hasError = false;
+            
+            if (!accountNumber && !customerId) {
+                showError('accountNumberError', 'Please enter either account number or customer ID');
+                hasError = true;
+            }
+            
+            if (!phoneNumber || phoneNumber.length !== 4) {
+                showError('phoneNumberError', 'Please enter last 4 digits of phone number');
+                hasError = true;
+            }
+            
+            if (hasError) return;
+            
+            // Simulate API call
+            setTimeout(function() {
+                customerData = mockCustomerData;
+                document.getElementById('customerName').textContent = customerData.name;
+                displayCards(customerData.cards);
+                goToStep(2);
+            }, 500);
+        }
+
+        function displayCards(cards) {
+            var cardsList = document.getElementById('cardsList');
+            cardsList.innerHTML = '';
+            
+            cards.forEach(function(card) {
+                var cardElement = document.createElement('div');
+                cardElement.className = 'credit-card';
+                cardElement.onclick = function() { selectCard(card, cardElement); };
+                
+                var statusClass = card.status === 'active' ? 'status-active' : 'status-blocked';
+                
+                cardElement.innerHTML = 
+                    '<div class="card-status ' + statusClass + '">' + card.status.toUpperCase() + '</div>' +
+                    '<div class="card-number">' + card.number + '</div>' +
+                    '<div class="card-details">' +
+                        '<div>' +
+                            '<div>' + card.type + '</div>' +
+                            '<div>Limit: ' + card.limit + '</div>' +
+                        '</div>' +
+                        '<div>' +
+                            '<div>Exp: ' + card.expiry + '</div>' +
+                        '</div>' +
+                    '</div>';
+                
+                cardsList.appendChild(cardElement);
+            });
+        }
+
+        function selectCard(card, element) {
+            selectedCard = card;
+            
+            // Update UI
+            var allCards = document.querySelectorAll('.credit-card');
+            allCards.forEach(function(el) {
+                el.classList.remove('selected');
+            });
+            element.classList.add('selected');
+            
+            // Enable continue button
+            document.getElementById('continueToDetails').disabled = false;
+        }
+
+        function handleReasonChange() {
+            var reason = document.getElementById('replacementReason').value;
+            var otherGroup = document.getElementById('otherReasonGroup');
+            
+            if (reason === 'other') {
+                otherGroup.style.display = 'block';
+            } else {
+                otherGroup.style.display = 'none';
+            }
+            
+            // Show warning for high-risk reasons
+            if (reason === 'stolen' || reason === 'fraud') {
+                showModal('This card will be immediately blocked and flagged for ' + reason + '. Continue?');
+            }
+        }
+
+        function handleVerificationChange() {
+            var checked = document.getElementById('confirmVerification').checked;
+            document.getElementById('submitButton').disabled = !checked;
+        }
+
+        function reviewOrder(e) {
+            e.preventDefault();
+            
+            // Validate form
+            var reason = document.getElementById('replacementReason').value;
+            var shipping = document.getElementById('shippingMethod').value;
+            
+            if (!reason) {
+                showError('replacementReasonError', 'Please select a reason');
+                return;
+            }
+            
+            if (!shipping) {
+                showError('shippingMethodError', 'Please select shipping method');
+                return;
+            }
+            
+            // Collect replacement data
+            replacementData = {
+                reason: reason,
+                otherReason: document.getElementById('otherReason').value,
+                shippingMethod: shipping,
+                shippingAddress: document.getElementById('shippingAddress').value,
+                contactPreference: document.getElementById('contactPreference').value,
+                additionalNotes: document.getElementById('additionalNotes').value,
+                blockOldCard: document.getElementById('blockOldCard').checked,
+                rushOrder: document.getElementById('rushOrder').checked
+            };
+            
+            // Display summary
+            displayOrderSummary();
+            goToStep(4);
+        }
+
+        function displayOrderSummary() {
+            var summary = document.getElementById('orderSummary');
+            
+            var shippingText = {
+                'standard': 'Standard (5-7 business days)',
+                'express': 'Express (2-3 business days)',
+                'overnight': 'Overnight (Next business day)'
+            };
+            
+            var reasonText = replacementData.reason === 'other' ? 
+                replacementData.otherReason : 
+                document.querySelector('#replacementReason option[value="' + replacementData.reason + '"]').text;
+            
+            var summaryHTML = 
+                '<div class="summary-item">' +
+                    '<strong>Customer:</strong>' +
+                    '<span>' + customerData.name + '</span>' +
+                '</div>' +
+                '<div class="summary-item">' +
+                    '<strong>Card:</strong>' +
+                    '<span>' + selectedCard.number + ' (' + selectedCard.type + ')</span>' +
+                '</div>' +
+                '<div class="summary-item">' +
+                    '<strong>Reason:</strong>' +
+                    '<span>' + reasonText + '</span>' +
+                '</div>' +
+                '<div class="summary-item">' +
+                    '<strong>Shipping:</strong>' +
+                    '<span>' + shippingText[replacementData.shippingMethod] + '</span>' +
+                '</div>' +
+                '<div class="summary-item">' +
+                    '<strong>Block old card:</strong>' +
+                    '<span>' + (replacementData.blockOldCard ? 'Yes' : 'No') + '</span>' +
+                '</div>' +
+                '<div class="summary-item">' +
+                    '<strong>Rush order:</strong>' +
+                    '<span>' + (replacementData.rushOrder ? 'Yes ($25 fee)' : 'No') + '</span>' +
+                '</div>';
+                
+            if (replacementData.additionalNotes) {
+                summaryHTML += 
+                '<div class="summary-item">' +
+                    '<strong>Notes:</strong>' +
+                    '<span>' + replacementData.additionalNotes + '</span>' +
+                '</div>';
+            }
+            
+            summary.innerHTML = summaryHTML;
+        }
+
+        function submitReplacement() {
+            var submitButton = document.getElementById('submitButton');
+            var submitButtonText = document.getElementById('submitButtonText');
+            var submitLoading = document.getElementById('submitLoading');
+            
+            // Show loading state
+            submitButton.disabled = true;
+            submitButtonText.style.display = 'none';
+            submitLoading.style.display = 'inline-block';
+            
+            // Simulate API call
+            setTimeout(function() {
+                // Generate order ID
+                var orderId = 'ORD' + Date.now();
+                
+                // Log the action (in production, this would be sent to your audit system)
+                console.log('Card replacement submitted:', {
+                    orderId: orderId,
+                    customerId: customerData.customerId,
+                    cardId: selectedCard.id,
+                    replacementData: replacementData,
+                    employeeId: 'E12345',
+                    timestamp: new Date().toISOString()
+                });
+                
+                // Show success message
+                document.getElementById('orderId').textContent = orderId;
+                document.getElementById('successMessage').style.display = 'flex';
+                
+                // Hide form
+                document.getElementById('confirmSection').style.display = 'none';
+                
+                // Reset after delay
+                setTimeout(function() {
+                    resetForm();
+                }, 5000);
+            }, 2000);
+        }
+
+        function goToStep(step) {
+            // Hide all sections
+            document.getElementById('customerSearchSection').style.display = 'none';
+            document.getElementById('selectCardSection').style.display = 'none';
+            document.getElementById('replacementDetailsSection').style.display = 'none';
+            document.getElementById('confirmSection').style.display = 'none';
+            
+            // Show requested section
+            var sections = ['', 'customerSearchSection', 'selectCardSection', 'replacementDetailsSection', 'confirmSection'];
+            document.getElementById(sections[step]).style.display = 'block';
+            
+            // Update progress bar
+            for (var i = 1; i <= 4; i++) {
+                var stepCircle = document.getElementById('step' + i);
+                stepCircle.classList.remove('active', 'completed');
+                
+                if (i < step) {
+                    stepCircle.classList.add('completed');
+                    stepCircle.innerHTML = '✓';
+                } else if (i === step) {
+                    stepCircle.classList.add('active');
+                    stepCircle.innerHTML = i;
+                } else {
+                    stepCircle.innerHTML = i;
+                }
+            }
+            
+            currentStep = step;
+        }
+
+        function showError(elementId, message) {
+            document.getElementById(elementId).textContent = message;
+            var input = document.getElementById(elementId.replace('Error', ''));
+            if (input) input.classList.add('input-error');
+        }
+
+        function clearErrors() {
+            var errorMessages = document.querySelectorAll('.error-message');
+            errorMessages.forEach(function(el) { el.textContent = ''; });
+            
+            var errorInputs = document.querySelectorAll('.input-error');
+            errorInputs.forEach(function(el) { el.classList.remove('input-error'); });
+        }
+
+        function showModal(message) {
+            document.getElementById('modalMessage').textContent = message;
+            document.getElementById('confirmModal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('confirmModal').style.display = 'none';
+        }
+
+        function confirmHighRiskAction() {
+            closeModal();
+            // Continue with the action
+        }
+
+        function resetForm() {
+            // Reset all form data
+            document.getElementById('customerSearchForm').reset();
+            document.getElementById('replacementForm').reset();
+            selectedCard = null;
+            customerData = null;
+            replacementData = {};
+            
+            // Reset UI
+            document.getElementById('successMessage').style.display = 'none';
+            document.getElementById('confirmVerification').checked = false;
+            document.getElementById('submitButton').disabled = true;
+            document.getElementById('submitButtonText').style.display = 'inline';
+            document.getElementById('submitLoading').style.display = 'none';
+            
+            // Go back to step 1
+            goToStep(1);
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                // In production, this would clear session and redirect
+                alert('Logged out successfully');
+            }
+        }
+
+        // Auto-save functionality
+        var autoSaveTimer;
+        function autoSave() {
+            clearTimeout(autoSaveTimer);
+            autoSaveTimer = setTimeout(function() {
+                // In production, save form state to prevent data loss
+                console.log('Auto-saving form data...');
+            }, 2000);
+        }
+
+        // Add auto-save to all inputs
+        document.addEventListener('DOMContentLoaded', function() {
+            var inputs = document.querySelectorAll('input, select, textarea');
+            inputs.forEach(function(input) {
+                input.addEventListener('input', autoSave);
+            });
+        });
+    </script>
+</body>
+</html>

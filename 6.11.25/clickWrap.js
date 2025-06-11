@@ -1,160 +1,166 @@
-Solution 1: Prevent Default Clipboard Actions
 javascriptdocument.addEventListener("DOMContentLoaded", function() {
     setTimeout(function() {
-        const buttons = document.querySelectorAll("button.css-117n0sn");
-        
-        buttons.forEach(function(button) {
-            // Clone the button to remove all event listeners
-            const newButton = button.cloneNode(true);
-            button.parentNode.replaceChild(newButton, button);
-            
-            // Add a new click handler that prevents clipboard access
-            newButton.addEventListener('click', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                
-                // If you need to trigger some other action, do it here
-                console.log('Button clicked without clipboard access');
-            });
-            
-            // Trigger the click
-            newButton.click();
-        });
-    }, 2000);
-});
-Solution 2: Override Clipboard API Temporarily
-javascriptdocument.addEventListener("DOMContentLoaded", function() {
-    setTimeout(function() {
-        // Temporarily override clipboard methods
-        const originalWriteText = navigator.clipboard.writeText;
-        const originalWrite = navigator.clipboard.write;
-        
-        navigator.clipboard.writeText = function() {
-            console.log('Clipboard write prevented');
-            return Promise.resolve();
+        // Store original clipboard methods
+        const originalClipboard = {
+            writeText: navigator.clipboard?.writeText,
+            write: navigator.clipboard?.write,
+            readText: navigator.clipboard?.readText,
+            read: navigator.clipboard?.read
         };
         
-        navigator.clipboard.write = function() {
-            console.log('Clipboard write prevented');
-            return Promise.resolve();
-        };
-        
-        // Also override the older execCommand method
+        // Store original execCommand
         const originalExecCommand = document.execCommand;
+        
+        // Override clipboard API to prevent the prompt
+        if (navigator.clipboard) {
+            navigator.clipboard.writeText = () => Promise.resolve();
+            navigator.clipboard.write = () => Promise.resolve();
+            navigator.clipboard.readText = () => Promise.resolve('');
+            navigator.clipboard.read = () => Promise.resolve([]);
+        }
+        
+        // Override execCommand to block copy/cut operations
         document.execCommand = function(command) {
-            if (command === 'copy' || command === 'cut') {
-                console.log('Clipboard operation prevented:', command);
-                return true;
+            if (command === 'copy' || command === 'cut' || command === 'paste') {
+                return true; // Pretend it succeeded
             }
             return originalExecCommand.apply(document, arguments);
         };
         
-        // Click the buttons
-        const buttons = document.querySelectorAll("button.css-117n0sn");
-        buttons.forEach(button => button.click());
+        // Also intercept copy events
+        const preventCopy = (e) => {
+            e.stopImmediatePropagation();
+            e.preventDefault();
+            return false;
+        };
         
-        // Restore original functions after a delay
-        setTimeout(function() {
-            navigator.clipboard.writeText = originalWriteText;
-            navigator.clipboard.write = originalWrite;
-            document.execCommand = originalExecCommand;
-        }, 1000);
-    }, 2000);
-});
-Solution 3: Target Specific Confluence Functionality
-If these are "Copy" buttons in Confluence (for copying code blocks or content), you might want to expand/collapse content instead:
-javascriptdocument.addEventListener("DOMContentLoaded", function() {
-    setTimeout(function() {
-        // Instead of clicking copy buttons, find what you actually need
-        // For example, if you want to expand all code blocks:
-        const codeBlocks = document.querySelectorAll('.code-block, .expand-control');
-        codeBlocks.forEach(block => {
-            if (block.classList.contains('collapsed')) {
-                block.click();
+        document.addEventListener('copy', preventCopy, true);
+        document.addEventListener('cut', preventCopy, true);
+        
+        // Now click all the buttons
+        const buttons = document.querySelectorAll("button.css-117n0sn");
+        console.log(`Found ${buttons.length} buttons to click`);
+        
+        buttons.forEach((button, index) => {
+            try {
+                button.click();
+                console.log(`Clicked button ${index + 1}`);
+            } catch (error) {
+                console.error(`Error clicking button ${index + 1}:`, error);
             }
         });
         
-        // Or if you want to select all text without copying:
-        const codeContents = document.querySelectorAll('pre code, .code-content');
-        codeContents.forEach(code => {
-            const range = document.createRange();
-            range.selectNodeContents(code);
-            const selection = window.getSelection();
-            selection.removeAllRanges();
-            selection.addRange(range);
-            // Don't execute copy command
-        });
+        // Restore everything after a short delay
+        setTimeout(function() {
+            // Restore clipboard API
+            if (navigator.clipboard && originalClipboard.writeText) {
+                navigator.clipboard.writeText = originalClipboard.writeText;
+                navigator.clipboard.write = originalClipboard.write;
+                navigator.clipboard.readText = originalClipboard.readText;
+                navigator.clipboard.read = originalClipboard.read;
+            }
+            
+            // Restore execCommand
+            document.execCommand = originalExecCommand;
+            
+            // Remove copy event listener
+            document.removeEventListener('copy', preventCopy, true);
+            document.removeEventListener('cut', preventCopy, true);
+            
+            console.log('Clipboard functionality restored');
+        }, 500);
+        
     }, 2000);
 });
-Solution 4: Intercept and Modify Button Behavior
+Alternative: More Aggressive Approach
+If the above doesn't work, here's a more aggressive version that completely neuters clipboard access during the operation:
 javascriptdocument.addEventListener("DOMContentLoaded", function() {
-    // Intercept all click events at the document level
-    document.addEventListener('click', function(e) {
-        if (e.target.matches('button.css-117n0sn')) {
+    setTimeout(function() {
+        // Create a completely fake clipboard object
+        const fakeClipboard = {
+            writeText: () => Promise.resolve(),
+            write: () => Promise.resolve(),
+            readText: () => Promise.resolve(''),
+            read: () => Promise.resolve([])
+        };
+        
+        // Save the real clipboard
+        const realClipboard = navigator.clipboard;
+        
+        // Replace with fake
+        Object.defineProperty(navigator, 'clipboard', {
+            value: fakeClipboard,
+            writable: true,
+            configurable: true
+        });
+        
+        // Block all clipboard-related events
+        const blockEvent = (e) => {
+            e.stopImmediatePropagation();
             e.preventDefault();
-            e.stopPropagation();
-            
-            // Perform alternative action
-            const buttonText = e.target.textContent;
-            console.log('Intercepted button click:', buttonText);
-            
-            // You can still trigger other actions here if needed
-            // Just avoid clipboard operations
-        }
-    }, true); // Use capture phase
-    
-    setTimeout(function() {
-        const buttons = document.querySelectorAll("button.css-117n0sn");
+            if (e.clipboardData) {
+                e.clipboardData.setData('text/plain', '');
+                e.clipboardData.setData('text/html', '');
+            }
+            return false;
+        };
         
-        buttons.forEach(function(button) {
-            // Create a synthetic click that won't trigger clipboard
-            const event = new MouseEvent('click', {
-                bubbles: false, // Don't bubble to avoid other handlers
-                cancelable: true
-            });
-            button.dispatchEvent(event);
+        // Add blocking listeners with highest priority
+        ['copy', 'cut', 'paste', 'beforecopy', 'beforecut', 'beforepaste'].forEach(eventType => {
+            document.addEventListener(eventType, blockEvent, true);
+            window.addEventListener(eventType, blockEvent, true);
         });
-    }, 2000);
-});
-Recommended Approach for Confluence
-Since you're in Confluence, the most reliable solution is to identify what you're actually trying to achieve and target that directly:
-javascriptdocument.addEventListener("DOMContentLoaded", function() {
-    setTimeout(function() {
-        // Option 1: If you want to expand all collapsed sections
-        document.querySelectorAll('.expand-container.conf-macro.output-block')
-            .forEach(el => {
-                if (el.classList.contains('collapsed')) {
-                    el.querySelector('.expand-control').click();
-                }
-            });
         
-        // Option 2: If you want to highlight code without copying
-        document.querySelectorAll('pre.syntaxhighlighter-pre')
-            .forEach(pre => {
-                pre.style.backgroundColor = '#f0f0f0';
-                pre.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-            });
+        // Override execCommand
+        const originalExecCommand = document.execCommand;
+        document.execCommand = function(cmd) {
+            if (['copy', 'cut', 'paste'].includes(cmd)) {
+                return true;
+            }
+            return originalExecCommand.apply(this, arguments);
+        };
         
-        // Option 3: If you must click those buttons but avoid clipboard
+        // Click the buttons
         const buttons = document.querySelectorAll("button.css-117n0sn");
-        if (buttons.length > 0) {
-            // Override clipboard temporarily
-            const tempClipboard = {
-                writeText: () => Promise.resolve(),
-                write: () => Promise.resolve()
-            };
+        buttons.forEach(button => {
+            button.click();
+        });
+        
+        // Clean up after 1 second
+        setTimeout(() => {
+            // Restore real clipboard
             Object.defineProperty(navigator, 'clipboard', {
-                value: tempClipboard,
+                value: realClipboard,
+                writable: true,
                 configurable: true
             });
             
-            buttons.forEach(button => button.click());
+            // Remove event listeners
+            ['copy', 'cut', 'paste', 'beforecopy', 'beforecut', 'beforepaste'].forEach(eventType => {
+                document.removeEventListener(eventType, blockEvent, true);
+                window.removeEventListener(eventType, blockEvent, true);
+            });
             
-            // Restore after a delay
-            setTimeout(() => {
-                delete navigator.clipboard;
-            }, 100);
-        }
+            // Restore execCommand
+            document.execCommand = originalExecCommand;
+        }, 1000);
+        
     }, 2000);
 });
-The best solution depends on what these buttons actually do in your Confluence instance. If you can share what you're trying to achieve (expand content, navigate, etc.), I can provide a more targeted solution that avoids the clipboard entirely.
+Simplest Working Solution
+If you just need something that works without all the cleanup:
+javascriptdocument.addEventListener("DOMContentLoaded", function() {
+    setTimeout(function() {
+        // Kill clipboard access completely
+        navigator.clipboard = {
+            writeText: () => Promise.resolve(),
+            write: () => Promise.resolve(),
+            readText: () => Promise.resolve(''),
+            read: () => Promise.resolve([])
+        };
+        
+        // Click all buttons
+        document.querySelectorAll("button.css-117n0sn").forEach(btn => btn.click());
+    }, 2000);
+});
+This will prevent the clipboard prompt from appearing. The buttons will still be clicked and perform their other functions, but any clipboard operations will be silently ignored.

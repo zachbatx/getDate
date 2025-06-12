@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dynamic Greeting</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 40px 20px;
+      background: #f5f5f5;
+    }
+    
+    .greeting {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+    
+    h1 {
+      margin: 0;
+      color: #333;
+      font-weight: 500;
+    }
+    
+    .subtitle {
+      color: #666;
+      margin-top: 10px;
+      font-size: 0.9em;
+    }
+  </style>
+</head>
+<body>
+  <div class="greeting">
+    <h1 id="greeting-basic"></h1>
+    <p class="subtitle">Basic greeting that updates automatically</p>
+  </div>
+  
+  <div class="greeting">
+    <h1 id="greeting-personal"></h1>
+    <p class="subtitle">Personalized greeting with current time</p>
+  </div>
+  
+  <div class="greeting">
+    <h1 id="greeting-business"></h1>
+    <p class="subtitle">Custom business hours greeting</p>
+  </div>
+  
+  <script>
+    // Simple version - direct and efficient
+function getGreeting() {
+  const hour = new Date().getHours();
+  
+  if (hour < 12) return "Good morning";
+  if (hour < 17) return "Good afternoon";
+  if (hour < 21) return "Good evening";
+  return "Good night";
+}
+
+// Advanced version with customization and auto-updating
+class TimeGreeter {
+  constructor(options = {}) {
+    this.greetings = {
+      morning: "Good morning",
+      afternoon: "Good afternoon",
+      evening: "Good evening",
+      night: "Good night",
+      ...options.customGreetings
+    };
+    
+    this.timeRanges = {
+      morning: { start: 5, end: 12 },
+      afternoon: { start: 12, end: 17 },
+      evening: { start: 17, end: 21 },
+      night: { start: 21, end: 5 },
+      ...options.customTimeRanges
+    };
+  }
+  
+  getCurrentPeriod(hour = new Date().getHours()) {
+    for (const [period, range] of Object.entries(this.timeRanges)) {
+      if (range.start < range.end) {
+        if (hour >= range.start && hour < range.end) return period;
+      } else {
+        // Handle ranges that cross midnight
+        if (hour >= range.start || hour < range.end) return period;
+      }
+    }
+    return 'morning';
+  }
+  
+  getGreeting(date = new Date()) {
+    const period = this.getCurrentPeriod(date.getHours());
+    return this.greetings[period];
+  }
+  
+  getPersonalizedGreeting(name, date = new Date()) {
+    return `${this.getGreeting(date)}, ${name}!`;
+  }
+}
+
+// Auto-updating UI component
+class DynamicGreeting {
+  constructor(elementId, options = {}) {
+    this.element = document.getElementById(elementId);
+    this.greeter = new TimeGreeter(options);
+    this.updateInterval = options.updateInterval || 60000; // Update every minute
+    this.showTime = options.showTime || false;
+    this.name = options.name || null;
+    this.animate = options.animate !== false; // Default true
+    
+    this.init();
+  }
+  
+  init() {
+    if (!this.element) {
+      console.error(`Element with id '${elementId}' not found`);
+      return;
+    }
+    
+    this.update();
+    this.startAutoUpdate();
+  }
+  
+  update() {
+    const greeting = this.getFormattedGreeting();
+    
+    if (this.element.textContent !== greeting) {
+      this.animate ? this.animateTransition(greeting) : this.element.textContent = greeting;
+    }
+  }
+  
+  getFormattedGreeting() {
+    const now = new Date();
+    let greeting = this.name 
+      ? this.greeter.getPersonalizedGreeting(this.name, now)
+      : this.greeter.getGreeting(now);
+    
+    if (this.showTime) {
+      greeting += ` - ${now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+    }
+    
+    return greeting;
+  }
+  
+  animateTransition(newGreeting) {
+    this.element.style.opacity = '0';
+    this.element.style.transform = 'translateY(-5px)';
+    
+    setTimeout(() => {
+      this.element.textContent = newGreeting;
+      this.element.style.opacity = '1';
+      this.element.style.transform = 'translateY(0)';
+    }, 200);
+  }
+  
+  startAutoUpdate() {
+    this.intervalId = setInterval(() => this.update(), this.updateInterval);
+  }
+  
+  setName(name) {
+    this.name = name;
+    this.update();
+  }
+  
+  destroy() {
+    if (this.intervalId) {
+      clearInterval(this.intervalId);
+    }
+  }
+}
+
+// Utility function for one-time greeting with locale support
+function getLocalizedGreeting(locale = 'en') {
+  const hour = new Date().getHours();
+  
+  const greetings = {
+    en: {
+      morning: "Good morning",
+      afternoon: "Good afternoon",
+      evening: "Good evening",
+      night: "Good night"
+    },
+    es: {
+      morning: "Buenos días",
+      afternoon: "Buenas tardes",
+      evening: "Buenas tardes",
+      night: "Buenas noches"
+    },
+    fr: {
+      morning: "Bonjour",
+      afternoon: "Bon après-midi",
+      evening: "Bonsoir",
+      night: "Bonne nuit"
+    }
+  };
+  
+  const periods = greetings[locale] || greetings.en;
+  
+  if (hour < 12) return periods.morning;
+  if (hour < 17) return periods.afternoon;
+  if (hour < 21) return periods.evening;
+  return periods.night;
+}
+
+// Modern async version with timezone support
+async function getGreetingForTimezone(timezone = 'America/New_York') {
+  try {
+    const date = new Date();
+    const formatter = new Intl.DateTimeFormat('en-US', {
+      timeZone: timezone,
+      hour: 'numeric',
+      hour12: false
+    });
+    
+    const hour = parseInt(formatter.format(date));
+    
+    if (hour < 12) return "Good morning";
+    if (hour < 17) return "Good afternoon";
+    if (hour < 21) return "Good evening";
+    return "Good night";
+  } catch (error) {
+    console.error('Invalid timezone:', error);
+    return getGreeting(); // Fallback to local time
+  }
+}
+
+// Usage examples:
+
+// 1. Basic usage
+console.log(getGreeting()); // "Good afternoon" (depending on time)
+
+// 2. Custom greetings and time ranges
+const customGreeter = new TimeGreeter({
+  customGreetings: {
+    earlyMorning: "You're up early",
+    lateNight: "Still awake?"
+  },
+  customTimeRanges: {
+    earlyMorning: { start: 4, end: 6 },
+    lateNight: { start: 1, end: 4 }
+  }
+});
+
+// 3. Auto-updating greeting in HTML
+document.addEventListener('DOMContentLoaded', () => {
+  // Basic auto-updating greeting
+  const greeting1 = new DynamicGreeting('greeting-basic');
+  
+  // Personalized with time display
+  const greeting2 = new DynamicGreeting('greeting-personal', {
+    name: 'John',
+    showTime: true,
+    updateInterval: 30000 // Update every 30 seconds
+  });
+  
+  // Custom business hours greeting
+  const businessGreeting = new DynamicGreeting('greeting-business', {
+    customGreetings: {
+      morning: "Welcome! How can we help you today",
+      afternoon: "Good afternoon! How may we assist you",
+      evening: "Good evening! We're here to help",
+      night: "Thanks for visiting"
+    }
+  });
+});
+
+// 4. Localized greeting
+console.log(getLocalizedGreeting('es')); // "Buenas tardes"
+
+// 5. Timezone-aware greeting
+getGreetingForTimezone('Asia/Tokyo').then(greeting => {
+  console.log(`In Tokyo: ${greeting}`);
+});
+  </script>
+</body>
+</html>

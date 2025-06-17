@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Markdown to JSON Converter</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      display: flex;
+      gap: 20px;
+    }
+    textarea {
+      width: 45%;
+      height: 500px;
+      font-family: monospace;
+      font-size: 14px;
+    }
+    pre {
+      width: 45%;
+      height: 500px;
+      overflow: auto;
+      background: #f4f4f4;
+      padding: 10px;
+      border: 1px solid #ccc;
+      white-space: pre-wrap;
+    }
+    h2 {
+      margin-top: 0;
+    }
+  </style>
+</head>
+<body>
+
+  <div>
+    <h2>Markdown Input</h2>
+    <textarea id="markdownInput" placeholder="# Heading\n\nSome text..."></textarea>
+  </div>
+
+  <div>
+    <h2>JSON Output</h2>
+    <pre id="jsonOutput">{}</pre>
+  </div>
+
+  <script>
+    const markdownInput = document.getElementById('markdownInput');
+    const jsonOutput = document.getElementById('jsonOutput');
+
+    function parseMarkdown(markdown) {
+      const lines = markdown.split('\n');
+      const json = [];
+      let currentList = null;
+      let currentCodeBlock = null;
+
+      lines.forEach((line) => {
+        if (line.startsWith('```')) {
+          if (currentCodeBlock) {
+            json.push({ type: 'code', language: currentCodeBlock.lang, content: currentCodeBlock.content.join('\n') });
+            currentCodeBlock = null;
+          } else {
+            const lang = line.replace(/```/, '').trim();
+            currentCodeBlock = { lang: lang || null, content: [] };
+          }
+        } else if (currentCodeBlock) {
+          currentCodeBlock.content.push(line);
+        } else if (/^#{1,6} /.test(line)) {
+          const level = line.match(/^#+/)[0].length;
+          const content = line.replace(/^#{1,6} /, '');
+          json.push({ type: 'heading', level, content });
+        } else if (/^\s*[-*+] /.test(line)) {
+          const item = line.replace(/^\s*[-*+] /, '').trim();
+          if (!currentList) {
+            currentList = [];
+          }
+          currentList.push(item);
+        } else if (line.trim() === '') {
+          if (currentList) {
+            json.push({ type: 'list', items: currentList });
+            currentList = null;
+          }
+        } else {
+          json.push({ type: 'paragraph', content: line.trim() });
+        }
+      });
+
+      // Push any unfinished list
+      if (currentList) {
+        json.push({ type: 'list', items: currentList });
+      }
+
+      return json;
+    }
+
+    markdownInput.addEventListener('input', () => {
+      const markdown = markdownInput.value;
+      const parsed = parseMarkdown(markdown);
+      jsonOutput.textContent = JSON.stringify(parsed, null, 2);
+    });
+  </script>
+
+</body>
+</html>

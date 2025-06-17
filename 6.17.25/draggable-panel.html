@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Draggable Panel</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #1a1a2e;
+            min-height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        #llmPanel {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 320px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            transition: box-shadow 0.3s ease;
+            user-select: none;
+            will-change: transform;
+        }
+
+        #llmPanel.dragging {
+            box-shadow: 0 12px 48px rgba(0, 0, 0, 0.5);
+        }
+
+        logo {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 12px 12px 0 0;
+            cursor: grab;
+            color: #fff;
+            font-weight: 600;
+            transition: background 0.2s ease;
+        }
+
+        logo:hover {
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        #llmPanel.dragging logo {
+            cursor: grabbing;
+        }
+
+        .panel-content {
+            padding: 20px;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .panel-content h3 {
+            margin-bottom: 12px;
+            font-size: 18px;
+        }
+
+        .panel-content p {
+            line-height: 1.6;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+        }
+
+        .drag-indicator {
+            width: 40px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 2px;
+            margin: 0 auto;
+        }
+
+        /* Debug info */
+        .debug-info {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            color: #fff;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 12px;
+            z-index: 9999;
+        }
+    </style>
+</head>
+<body>
+    <div id="llmPanel">
+        <logo>
+            <span>LLM Panel</span>
+            <div class="drag-indicator"></div>
+        </logo>
+        <div class="panel-content">
+            <h3>Draggable Panel</h3>
+            <p>Grab the header to drag this panel around. The panel stays within viewport boundaries.</p>
+        </div>
+    </div>
+    
+    <div class="debug-info" id="debugInfo">
+        Position: X: 0, Y: 0
+    </div>
+
+    <script>
+        class DraggablePanel {
+            constructor(panelId, handleSelector = 'logo') {
+                this.panel = document.getElementById(panelId);
+                this.handle = this.panel.querySelector(handleSelector);
+                this.debugInfo = document.getElementById('debugInfo');
+                
+                if (!this.panel || !this.handle) {
+                    throw new Error('Panel or handle element not found');
+                }
+
+                // State
+                this.isDragging = false;
+                this.currentX = 0;
+                this.currentY = 0;
+                this.initialMouseX = 0;
+                this.initialMouseY = 0;
+
+                this.init();
+            }
+
+            init() {
+                // Set initial position to center
+                this.centerPanel();
+
+                // Mouse events
+                this.handle.addEventListener('mousedown', this.dragStart.bind(this));
+                document.addEventListener('mousemove', this.drag.bind(this));
+                document.addEventListener('mouseup', this.dragEnd.bind(this));
+
+                // Touch events
+                this.handle.addEventListener('touchstart', this.dragStart.bind(this), { passive: false });
+                document.addEventListener('touchmove', this.drag.bind(this), { passive: false });
+                document.addEventListener('touchend', this.dragEnd.bind(this));
+
+                // Prevent text selection
+                this.handle.addEventListener('selectstart', e => e.preventDefault());
+                
+                // Handle window resize
+                window.addEventListener('resize', this.handleResize.bind(this));
+            }
+
+            centerPanel() {
+                const rect = this.panel.getBoundingClientRect();
+                this.currentX = (window.innerWidth - rect.width) / 2;
+                this.currentY = (window.innerHeight - rect.height) / 2;
+                this.updatePosition();
+            }
+
+            dragStart(e) {
+                e.preventDefault();
+                
+                const clientX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+                const clientY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
+
+                // Store the initial mouse position and the offset from the panel's current position
+                this.initialMouseX = clientX - this.currentX;
+                this.initialMouseY = clientY - this.currentY;
+
+                this.isDragging = true;
+                this.panel.classList.add('dragging');
+            }
+
+            drag(e) {
+                if (!this.isDragging) return;
+
+                e.preventDefault();
+
+                const clientX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+                const clientY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
+
+                // Calculate new position
+                let newX = clientX - this.initialMouseX;
+                let newY = clientY - this.initialMouseY;
+
+                // Get panel dimensions
+                const rect = this.panel.getBoundingClientRect();
+                
+                // Apply boundaries - ensure panel stays within viewport
+                const minX = 0;
+                const minY = 0;
+                const maxX = window.innerWidth - rect.width;
+                const maxY = window.innerHeight - rect.height;
+
+                // Clamp the position to boundaries
+                newX = Math.max(minX, Math.min(newX, maxX));
+                newY = Math.max(minY, Math.min(newY, maxY));
+
+                this.currentX = newX;
+                this.currentY = newY;
+
+                this.updatePosition();
+            }
+
+            dragEnd(e) {
+                if (!this.isDragging) return;
+
+                this.isDragging = false;
+                this.panel.classList.remove('dragging');
+            }
+
+            updatePosition() {
+                this.panel.style.transform = `translate(${this.currentX}px, ${this.currentY}px)`;
+                this.updateDebugInfo();
+            }
+
+            updateDebugInfo() {
+                if (this.debugInfo) {
+                    const rect = this.panel.getBoundingClientRect();
+                    this.debugInfo.innerHTML = `
+                        Position: X: ${Math.round(this.currentX)}, Y: ${Math.round(this.currentY)}<br>
+                        Actual: X: ${Math.round(rect.left)}, Y: ${Math.round(rect.top)}<br>
+                        Window: ${window.innerWidth} x ${window.innerHeight}
+                    `;
+                }
+            }
+
+            handleResize() {
+                // Ensure panel stays within bounds after window resize
+                const rect = this.panel.getBoundingClientRect();
+                const maxX = window.innerWidth - rect.width;
+                const maxY = window.innerHeight - rect.height;
+
+                if (this.currentX > maxX) this.currentX = maxX;
+                if (this.currentY > maxY) this.currentY = maxY;
+                if (this.currentX < 0) this.currentX = 0;
+                if (this.currentY < 0) this.currentY = 0;
+
+                this.updatePosition();
+            }
+
+            // Public API methods
+            getPosition() {
+                return { x: this.currentX, y: this.currentY };
+            }
+
+            setPosition(x, y, animate = false) {
+                const rect = this.panel.getBoundingClientRect();
+                
+                // Apply boundaries
+                x = Math.max(0, Math.min(x, window.innerWidth - rect.width));
+                y = Math.max(0, Math.min(y, window.innerHeight - rect.height));
+
+                if (animate) {
+                    this.panel.style.transition = 'transform 0.3s ease';
+                    setTimeout(() => {
+                        this.panel.style.transition = '';
+                    }, 300);
+                }
+
+                this.currentX = x;
+                this.currentY = y;
+                this.updatePosition();
+            }
+
+            snapToEdge(edge = 'left', padding = 0) {
+                const rect = this.panel.getBoundingClientRect();
+                let x = this.currentX;
+                let y = this.currentY;
+
+                switch(edge) {
+                    case 'left':
+                        x = padding;
+                        break;
+                    case 'right':
+                        x = window.innerWidth - rect.width - padding;
+                        break;
+                    case 'top':
+                        y = padding;
+                        break;
+                    case 'bottom':
+                        y = window.innerHeight - rect.height - padding;
+                        break;
+                    case 'top-left':
+                        x = padding;
+                        y = padding;
+                        break;
+                    case 'top-right':
+                        x = window.innerWidth - rect.width - padding;
+                        y = padding;
+                        break;
+                    case 'bottom-left':
+                        x = padding;
+                        y = window.innerHeight - rect.height - padding;
+                        break;
+                    case 'bottom-right':
+                        x = window.innerWidth - rect.width - padding;
+                        y = window.innerHeight - rect.height - padding;
+                        break;
+                }
+
+                this.setPosition(x, y, true);
+            }
+        }
+
+        // Initialize the draggable panel
+        const draggablePanel = new DraggablePanel('llmPanel', 'logo');
+
+        // Keyboard shortcuts for testing
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey || e.metaKey) {
+                switch(e.key) {
+                    case '1':
+                        draggablePanel.snapToEdge('top-left');
+                        break;
+                    case '2':
+                        draggablePanel.snapToEdge('top-right');
+                        break;
+                    case '3':
+                        draggablePanel.snapToEdge('bottom-left');
+                        break;
+                    case '4':
+                        draggablePanel.snapToEdge('bottom-right');
+                        break;
+                    case 'ArrowLeft':
+                        draggablePanel.snapToEdge('left');
+                        break;
+                    case 'ArrowRight':
+                        draggablePanel.snapToEdge('right');
+                        break;
+                    case 'ArrowUp':
+                        draggablePanel.snapToEdge('top');
+                        break;
+                    case 'ArrowDown':
+                        draggablePanel.snapToEdge('bottom');
+                        break;
+                }
+            }
+        });
+
+        // Test boundary detection - remove this in production
+        setTimeout(() => {
+            console.log('Testing boundary positions...');
+            draggablePanel.setPosition(0, 0, true);
+            setTimeout(() => {
+                draggablePanel.setPosition(window.innerWidth, 0, true);
+            }, 1000);
+        }, 2000);
+    </script>
+</body>
+</html>

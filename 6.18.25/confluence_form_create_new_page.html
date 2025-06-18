@@ -1,0 +1,293 @@
+Direct Browser-to-Confluence Setup:
+javascript// Confluence HTML Macro Content
+const CONFLUENCE_CONFIG = {
+    baseUrl: window.location.origin,  // Same Confluence instance
+    apiToken: 'your-personal-access-token',
+    spaceKey: 'YOUR_SPACE',
+    parentPageId: '12345' // Optional - for child pages
+};
+
+// Form HTML
+const formHTML = `
+<div style="max-width: 600px; margin: 20px 0;">
+    <h3>Create New Page</h3>
+    <form id="confluenceForm">
+        <div style="margin-bottom: 10px;">
+            <label>Page Title:</label><br>
+            <input type="text" id="pageTitle" style="width: 100%; padding: 5px;" required>
+        </div>
+        <div style="margin-bottom: 10px;">
+            <label>Content:</label><br>
+            <textarea id="pageContent" rows="10" style="width: 100%; padding: 5px;" required></textarea>
+        </div>
+        <div style="margin-bottom: 10px;">
+            <label>Labels (comma-separated):</label><br>
+            <input type="text" id="pageLabels" style="width: 100%; padding: 5px;" placeholder="label1, label2">
+        </div>
+        <button type="submit" style="padding: 10px 20px; background: #0052CC; color: white; border: none; cursor: pointer;">
+            Create Page
+        </button>
+    </form>
+    <div id="result" style="margin-top: 20px;"></div>
+</div>
+`;
+
+document.getElementById('form-container').innerHTML = formHTML;
+
+// Create page function
+async function createConfluencePage(title, content, labels = []) {
+    const url = `${CONFLUENCE_CONFIG.baseUrl}/rest/api/content`;
+    
+    const pageData = {
+        type: 'page',
+        title: title,
+        space: {
+            key: CONFLUENCE_CONFIG.spaceKey
+        },
+        body: {
+            storage: {
+                value: content,
+                representation: 'storage'
+            }
+        }
+    };
+    
+    // Add parent if specified
+    if (CONFLUENCE_CONFIG.parentPageId) {
+        pageData.ancestors = [{
+            id: CONFLUENCE_CONFIG.parentPageId
+        }];
+    }
+    
+    try {
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${CONFLUENCE_CONFIG.apiToken}`,
+                'Content-Type': 'application/json',
+                'X-Atlassian-Token': 'no-check'
+            },
+            body: JSON.stringify(pageData)
+        });
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const result = await response.json();
+        
+        // Add labels if provided
+        if (labels.length > 0 && result.id) {
+            await addLabels(result.id, labels);
+        }
+        
+        return result;
+    } catch (error) {
+        console.error('Error creating page:', error);
+        throw error;
+    }
+}
+
+// Add labels function
+async function addLabels(pageId, labels) {
+    const url = `${CONFLUENCE_CONFIG.baseUrl}/rest/api/content/${pageId}/label`;
+    
+    const labelData = labels.map(label => ({
+        prefix: 'global',
+        name: label.trim()
+    }));
+    
+    try {
+        await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${CONFLUENCE_CONFIG.apiToken}`,
+                'Content-Type': 'application/json',
+                'X-Atlassian-Token': 'no-check'
+            },
+            body: JSON.stringify(labelData)
+        });
+    } catch (error) {
+        console.error('Error adding labels:', error);
+    }
+}
+
+// Form submission handler
+document.getElementById('confluenceForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const submitButton = e.target.querySelector('button[type="submit"]');
+    const resultDiv = document.getElementById('result');
+    
+    // Disable button during submission
+    submitButton.disabled = true;
+    submitButton.textContent = 'Creating...';
+    resultDiv.innerHTML = '';
+    
+    try {
+        const title = document.getElementById('pageTitle').value;
+        const content = document.getElementById('pageContent').value;
+        const labelsInput = document.getElementById('pageLabels').value;
+        const labels = labelsInput ? labelsInput.split(',').map(l => l.trim()).filter(l => l) : [];
+        
+        // Convert plain text to Confluence storage format if needed
+        const formattedContent = content.includes('<') ? content : `<p>${content.replace(/\n/g, '</p><p>')}</p>`;
+        
+        const result = await createConfluencePage(title, formattedContent, labels);
+        
+        // Success message with link
+        resultDiv.innerHTML = `
+            <div style="padding: 10px; background: #00875A; color: white; border-radius: 3px;">
+                ✓ Page created successfully! 
+                <a href="${CONFLUENCE_CONFIG.baseUrl}/pages/viewpage.action?pageId=${result.id}" 
+                   target="_blank" style="color: white; text-decoration: underline;">
+                   View Page
+                </a>
+            </div>
+        `;
+        
+        // Clear form
+        e.target.reset();
+        
+    } catch (error) {
+        resultDiv.innerHTML = `
+            <div style="padding: 10px; background: #DE350B; color: white; border-radius: 3px;">
+                ✗ Error: ${error.message}
+            </div>
+        `;
+    } finally {
+        submitButton.disabled = false;
+        submitButton.textContent = 'Create Page';
+    }
+});
+Enhanced Version with More Features:
+javascript// Add these to your form for more control
+const enhancedFormFields = `
+    <!-- Template Selection -->
+    <div style="margin-bottom: 10px;">
+        <label>Use Template:</label><br>
+        <select id="templateSelect" style="width: 100%; padding: 5px;">
+            <option value="">No template</option>
+            <option value="meeting">Meeting Notes</option>
+            <option value="project">Project Page</option>
+            <option value="decision">Decision Record</option>
+        </select>
+    </div>
+    
+    <!-- Page Location -->
+    <div style="margin-bottom: 10px;">
+        <label>Create under parent page (ID):</label><br>
+        <input type="text" id="parentId" style="width: 100%; padding: 5px;" 
+               placeholder="Leave empty for space root">
+    </div>
+`;
+
+// Template content generator
+function getTemplate(type) {
+    const templates = {
+        meeting: `
+            <h2>Meeting Notes</h2>
+            <p><strong>Date:</strong> ${new Date().toLocaleDateString()}</p>
+            <p><strong>Attendees:</strong></p>
+            <ul><li></li></ul>
+            <h3>Agenda</h3>
+            <ul><li></li></ul>
+            <h3>Discussion</h3>
+            <p></p>
+            <h3>Action Items</h3>
+            <ac:task-list>
+                <ac:task>
+                    <ac:task-body></ac:task-body>
+                </ac:task>
+            </ac:task-list>
+        `,
+        project: `
+            <h2>Project Overview</h2>
+            <p></p>
+            <h3>Objectives</h3>
+            <ul><li></li></ul>
+            <h3>Timeline</h3>
+            <p></p>
+            <h3>Team Members</h3>
+            <ul><li></li></ul>
+        `,
+        decision: `
+            <h2>Decision Record</h2>
+            <p><strong>Date:</strong> ${new Date().toLocaleDateString()}</p>
+            <p><strong>Decision:</strong></p>
+            <h3>Context</h3>
+            <p></p>
+            <h3>Options Considered</h3>
+            <ol><li></li></ol>
+            <h3>Decision Rationale</h3>
+            <p></p>
+        `
+    };
+    return templates[type] || '';
+}
+
+// Auto-save draft to localStorage
+function saveDraft() {
+    const draft = {
+        title: document.getElementById('pageTitle').value,
+        content: document.getElementById('pageContent').value,
+        labels: document.getElementById('pageLabels').value,
+        timestamp: new Date().toISOString()
+    };
+    localStorage.setItem('confluenceFormDraft', JSON.stringify(draft));
+}
+
+// Load draft on page load
+function loadDraft() {
+    const draft = localStorage.getItem('confluenceFormDraft');
+    if (draft) {
+        const data = JSON.parse(draft);
+        if (confirm('Load previous draft from ' + new Date(data.timestamp).toLocaleString() + '?')) {
+            document.getElementById('pageTitle').value = data.title;
+            document.getElementById('pageContent').value = data.content;
+            document.getElementById('pageLabels').value = data.labels;
+        }
+    }
+}
+
+// Auto-save every 30 seconds
+setInterval(saveDraft, 30000);
+Pro Tips for Internal Enterprise:
+
+Rate Limiting - Even internal, don't spam:
+
+javascriptlet lastSubmit = 0;
+const RATE_LIMIT = 5000; // 5 seconds
+
+if (Date.now() - lastSubmit < RATE_LIMIT) {
+    alert('Please wait before creating another page');
+    return;
+}
+
+Audit Trail - Log who's doing what:
+
+javascriptconst auditData = {
+    user: AJS.params.remoteUser, // Current Confluence user
+    timestamp: new Date().toISOString(),
+    action: 'page_created',
+    title: title
+};
+console.log('Audit:', auditData);
+
+Error Handling - Be specific:
+
+javascriptif (response.status === 403) {
+    throw new Error('No permission to create pages in this space');
+} else if (response.status === 400) {
+    const error = await response.json();
+    throw new Error(error.message || 'Invalid page data');
+}
+
+Validation - Don't trust users:
+
+javascriptif (title.length > 255) {
+    throw new Error('Title too long (max 255 characters)');
+}
+if (!content.trim()) {
+    throw new Error('Content cannot be empty');
+}

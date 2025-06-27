@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>X Close Icon</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 40px;
+            background-color: #f5f5f5;
+        }
+        
+        .icon-container {
+            display: flex;
+            gap: 40px;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .icon-wrapper {
+            text-align: center;
+        }
+        
+        .icon-title {
+            margin-top: 15px;
+            font-size: 14px;
+            color: #666;
+            font-weight: 500;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+        }
+        
+        .close-icon {
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .close-icon:hover {
+            transform: scale(1.1);
+        }
+        
+        .close-icon:hover .close-lines {
+            stroke: #e74c3c;
+        }
+        
+        .close-icon-bg {
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .close-icon-bg:hover {
+            transform: scale(1.05);
+        }
+        
+        .close-icon-bg:hover .close-bg {
+            fill: #e74c3c;
+        }
+        
+        .close-icon-bg:hover .close-lines {
+            stroke: white;
+        }
+        
+        .close-icon-rounded {
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .close-icon-rounded:hover {
+            transform: scale(1.05);
+        }
+        
+        .close-icon-rounded:hover .close-bg {
+            fill: #e74c3c;
+            stroke: #c0392b;
+        }
+        
+        .close-icon-rounded:hover .close-lines {
+            stroke: white;
+        }
+    </style>
+</head>
+<body>
+    <h1>X Close Icons</h1>
+    
+    <!-- Basic X Icons -->
+    <div class="icon-container">
+        <div class="icon-wrapper">
+            <svg class="close-icon" width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <line class="close-lines" x1="8" y1="8" x2="24" y2="24" stroke="#333" stroke-width="2" stroke-linecap="round"/>
+                <line class="close-lines" x1="24" y1="8" x2="8" y2="24" stroke="#333" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            <div class="icon-title">Basic X (32px)</div>
+        </div>
+        
+        <div class="icon-wrapper">
+            <svg class="close-icon" width="24" height="24" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <line class="close-lines" x1="8" y1="8" x2="24" y2="24" stroke="#333" stroke-width="2" stroke-linecap="round"/>
+                <line class="close-lines" x1="24" y1="8" x2="8" y2="24" stroke="#333" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            <div class="icon-title">Basic X (24px)</div>
+        </div>
+        
+        <div class="icon-wrapper">
+            <svg class="close-icon" width="20" height="20" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <line class="close-lines" x1="8" y1="8" x2="24" y2="24" stroke="#333" stroke-width="2" stroke-linecap="round"/>
+                <line class="close-lines" x1="24" y1="8" x2="8" y2="24" stroke="#333" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            <div class="icon-title">Basic X (20px)</div>
+        </div>
+        
+        <div class="icon-wrapper">
+            <svg class="close-icon" width="16" height="16" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <line class="close-lines" x1="8" y1="8" x2="24" y2="24" stroke="#333" stroke-width="2" stroke-linecap="round"/>
+                <line class="close-lines" x1="24" y1="8" x2="8" y2="24" stroke="#333" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            <div class="icon-title">Basic X (16px)</div>
+        </div>
+    </div>
+    
+    <!-- X with Background -->
+    <div class="icon-container">
+        <div class="icon-wrapper">
+            <svg class="close-icon-bg" width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect class="close-bg" width="32" height="32" rx="4" fill="#f8f9fa" stroke="#dee2e6" stroke-width="1"/>
+                <line class="close-lines" x1="10" y1="10" x2="22" y2="22" stroke="#6c757d" stroke-width="2" stroke-linecap="round"/>
+                <line class="close-lines" x1="22" y1="10" x2="10" y2="22" stroke="#6c757d" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            <div class="icon-title">X with Square Background</div>
+        </div>
+        
+        <div class="icon-wrapper">
+            <svg class="close-icon-rounded" width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle class="close-bg" cx="16" cy="16" r="15" fill="#f8f9fa" stroke="#dee2e6" stroke-width="1"/>
+                <line class="close-lines" x1="11" y1="11" x2="21" y2="21" stroke="#6c757d" stroke-width="2" stroke-linecap="round"/>
+                <line class="close-lines" x1="21" y1="11" x2="11" y2="21" stroke="#6c757d" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            <div class="icon-title">X with Circle Background</div>
+        </div>
+    </div>
+    
+    <!-- Larger versions -->
+    <div class="icon-container">
+        <div class="icon-wrapper">
+            <svg class="close-icon" width="48" height="48" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <line class="close-lines" x1="8" y1="8" x2="24" y2="24" stroke="#333" stroke-width="2" stroke-linecap="round"/>
+                <line class="close-lines" x1="24" y1="8" x2="8" y2="24" stroke="#333" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            <div class="icon-title">Large X (48px)</div>
+        </div>
+        
+        <div class="icon-wrapper">
+            <svg class="close-icon-rounded" width="48" height="48" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle class="close-bg" cx="16" cy="16" r="15" fill="#f8f9fa" stroke="#dee2e6" stroke-width="1"/>
+                <line class="close-lines" x1="11" y1="11" x2="21" y2="21" stroke="#6c757d" stroke-width="2" stroke-linecap="round"/>
+                <line class="close-lines" x1="21" y1="11" x2="11" y2="21" stroke="#6c757d" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            <div class="icon-title">Large X with Circle (48px)</div>
+        </div>
+    </div>
+    
+    <!-- Different styles -->
+    <div class="icon-container">
+        <div class="icon-wrapper">
+            <svg class="close-icon" width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <line class="close-lines" x1="6" y1="6" x2="26" y2="26" stroke="#dc3545" stroke-width="3" stroke-linecap="round"/>
+                <line class="close-lines" x1="26" y1="6" x2="6" y2="26" stroke="#dc3545" stroke-width="3" stroke-linecap="round"/>
+            </svg>
+            <div class="icon-title">Bold Red X</div>
+        </div>
+        
+        <div class="icon-wrapper">
+            <svg class="close-icon" width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <line class="close-lines" x1="10" y1="10" x2="22" y2="22" stroke="#6c757d" stroke-width="1.5" stroke-linecap="round"/>
+                <line class="close-lines" x1="22" y1="10" x2="10" y2="22" stroke="#6c757d" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            <div class="icon-title">Thin Gray X</div>
+        </div>
+    </div>
+</body>
+</html>
